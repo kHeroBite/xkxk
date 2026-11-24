@@ -24,7 +24,7 @@ ADB = os.environ.get("ADB", "/mnt/c/Program Files (x86)/Android/android-sdk/plat
 PKG = "com.pd.poc"
 HOST_PORT = 15960
 DEFAULT_APK = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
-    "src/Pd.Poc.Android/bin/Debug/net10.0-android/com.pd.poc-Signed.apk"))
+    "src/xkxk.frameworks.ui.android/bin/Debug/net10.0-android/com.pd.poc-Signed.apk"))
 DEFAULT_OUT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "logs/otest_m1/android_perf.json"))
 
 

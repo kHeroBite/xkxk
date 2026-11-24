@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/xkxk.frameworks.ui.data/xkxk.frameworks.ui.data.csproj" />
+    <Project Path="src/xkxk.frameworks.ui/xkxk.frameworks.ui.csproj" />
+    <Project Path="src/xkxk.frameworks.ui.views/xkxk.frameworks.ui.views.csproj" />
+    <Project Path="src/xkxk.frameworks.ui.shell/xkxk.frameworks.ui.shell.csproj" />
+    <Project Path="src/xkxk.frameworks.ui.desktop/xkxk.frameworks.ui.desktop.csproj" />
+    <Project Path="src/xkxk.frameworks.ui.fonts/xkxk.frameworks.ui.fonts.csproj" />
+    <Project Path="src/xkxk.frameworks.ui.browser/xkxk.frameworks.ui.browser.csproj" />
+    <Project Path="src/xkxk.frameworks.ui.android/xkxk.frameworks.ui.android.csproj" />
+  </Folder>
+</Solution>

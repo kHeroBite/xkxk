@@ -1,0 +1,136 @@
+<!-- 모바일형 화면 — 상단 왼쪽 ☰ 삼선(전체 메뉴 서랍)·문서 선택·알림·닫기 / 가운데 활성 문서(Body 슬롯) / 하단 아이콘 탭 줄. 데이터·명령은 MobileNavViewModel -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:xkxk.frameworks.ui.shell.ViewModels"
+             xmlns:vms="using:xkxk.frameworks.ui.shell.ViewModels.Settings"
+             xmlns:settings="using:xkxk.frameworks.ui.views.Settings"
+             xmlns:docking="using:xkxk.frameworks.ui.shell.Docking"
+             xmlns:loc="using:xkxk.frameworks.ui.shell.Localization"
+             xmlns:depth="using:xkxk.frameworks.ui.views.Depth"
+             xmlns:views="using:xkxk.frameworks.ui.views"
+             xmlns:theming="using:xkxk.frameworks.ui.shell.Theming"
+             x:Class="xkxk.frameworks.ui.views.MobileNavView"
+             x:Name="Root">
+  <Grid x:Name="NavRoot" x:DataType="vm:MobileNavViewModel">
+    <Grid.Styles>
+      <Style Selector="TextBlock.group"><Setter Property="FontWeight" Value="{DynamicResource PdFontWeightBold}" /></Style>
+    </Grid.Styles>
+    <DockPanel>
+      <!-- 상단 줄: ☰ 는 왼쪽(팀즈·아웃룩 모바일과 같은 쪽). 아이콘은 벡터(PathIcon) -->
+      <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto,Auto" Margin="2">
+        <Button Grid.Column="0" Command="{Binding ToggleMenuCommand}" Padding="10,6" MinWidth="44" MinHeight="44" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ToolTip.Tip="{loc:Tr nav.menuButton}"
+                AutomationProperties.AutomationId="shell.btnDrawer">
+          <PathIcon Width="18" Height="14" Data="M0,0 H18 V2 H0 Z M0,6 H18 V8 H0 Z M0,12 H18 V14 H0 Z" />
+        </Button>
+        <ComboBox Grid.Column="1" Margin="4,0" HorizontalAlignment="Stretch" AutomationProperties.AutomationId="shell.cmbDocs"
+                  ItemsSource="{Binding Main.OpenDocuments}" SelectedItem="{Binding SelectedDocument, Mode=TwoWay}"
+                  PlaceholderText="{loc:Tr compact.noDocs}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate x:DataType="docking:PocDocument">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <views:WindowIcon Document="{Binding}" Width="16" Height="16" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding Title}" VerticalAlignment="Center" />
+              </StackPanel>
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        <ToggleButton Grid.Column="2" IsChecked="{Binding Compact.IsNotifyOpen, Mode=TwoWay}" Padding="10,6" Margin="0,0,4,0"
+                      ToolTip.Tip="{loc:Tr notify.title}" AutomationProperties.AutomationId="shell.btnNotify">
+          <PathIcon Width="16" Height="16" Data="M8,0 C5,0 3,2.5 3,5.5 V9 L1.5,11.5 V12.5 H14.5 V11.5 L13,9 V5.5 C13,2.5 11,0 8,0 Z M6,13.5 A2,2 0 0 0 10,13.5 Z" />
+        </ToggleButton>
+        <Button Grid.Column="3" Command="{Binding Main.CloseCommand}" Padding="10,4" ToolTip.Tip="{loc:Tr menu.window.close}"
+                AutomationProperties.AutomationId="shell.compactClose" AutomationProperties.Name="{loc:Tr menu.window.close}">
+          <PathIcon Width="10" Height="10" Data="{StaticResource PdGlyphClose}" />
+        </Button>
+      </Grid>
+
+      <!-- 하단 아이콘 탭 줄: 탭 배분은 NavMenuCatalog 데이터(TabOrder) -->
+      <Border DockPanel.Dock="Bottom" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource PdBrushBorder}"
+              Background="{DynamicResource PdBrushSurface}" AutomationProperties.AutomationId="shell.navTabBar">
+        <ItemsControl ItemsSource="{Binding Tabs}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate><UniformGrid Rows="1" /></ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:MobileNavTab">
+              <Button Command="{Binding Command}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="Transparent"
+                      Padding="4,6" AutomationProperties.AutomationId="{Binding AutomationId}" AutomationProperties.Name="{Binding Label}">
+                <StackPanel Spacing="2" HorizontalAlignment="Center">
+                  <PathIcon Width="18" Height="18" Data="{Binding Icon}" HorizontalAlignment="Center" />
+                  <TextBlock Text="{Binding Label}" FontSize="11" HorizontalAlignment="Center" />
+                </StackPanel>
+              </Button>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </Border>
+
+      <SplitView DisplayMode="Overlay" IsPaneOpen="{Binding Compact.IsDrawerOpen, Mode=TwoWay}" OpenPaneLength="300">
+        <SplitView.Pane>
+          <Grid>
+            <!-- 서랍 ① 전체 메뉴 트리: 못 쓰는 항목은 숨기지 않고 비활성+사유 툴팁 -->
+            <ScrollViewer IsVisible="{Binding IsMenuPanel}" AutomationProperties.AutomationId="shell.navMenuPanel">
+              <StackPanel>
+              <!-- 삼선 메뉴 맨 위 즐겨찾기(22 §4.4) -->
+              <views:FavoriteListView DataContext="{Binding Main.FavoriteBar}" ItemOpened="OnFavoriteOpened" />
+              <ItemsControl ItemsSource="{Binding MenuItems}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:MobileNavItem">
+                    <Button Command="{Binding Command}" IsEnabled="{Binding IsEnabled}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                            Background="Transparent" Padding="10,8" ToolTip.Tip="{Binding Tip}" ToolTip.ShowOnDisabled="True"
+                            AutomationProperties.AutomationId="{Binding AutomationId}" AutomationProperties.Name="{Binding Text}">
+                      <StackPanel Orientation="Horizontal" Spacing="6">
+                        <Border Width="{Binding IndentPx}" />
+                        <TextBlock Text="{Binding Mark}" Width="14" />
+                        <Panel IsVisible="{Binding MenuIconVisible, Source={x:Static theming:UiSettings.Current}}">
+                          <views:WindowIcon Width="16" Height="16" VerticalAlignment="Center"
+                                            IconKey="{Binding Entry, Converter={x:Static views:WindowIcon.NavIconKey}}"
+                                            IsVisible="{Binding Entry, Converter={x:Static views:WindowIcon.NavHasIcon}}" />
+                        </Panel>
+                        <TextBlock Classes.group="{Binding IsGroup}" Text="{Binding Text}" />
+                      </StackPanel>
+                    </Button>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              </StackPanel>
+            </ScrollViewer>
+            <!-- 서랍 ② 탐색기 -->
+            <ContentControl IsVisible="{Binding IsExplorerPanel}" Content="{Binding Compact.DrawerExplorer}" AutomationProperties.AutomationId="shell.navExplorerPanel" />
+            <!-- 서랍 ③ 열린 문서 목록 -->
+            <ListBox IsVisible="{Binding IsDocsPanel}" ItemsSource="{Binding Main.OpenDocuments}" SelectedItem="{Binding SelectedDocument, Mode=TwoWay}"
+                     AutomationProperties.AutomationId="shell.navDocsPanel">
+              <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="docking:PocDocument">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <views:WindowIcon Document="{Binding}" Width="16" Height="16" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding Title}" VerticalAlignment="Center" />
+              </StackPanel>
+            </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+          </Grid>
+        </SplitView.Pane>
+        <Grid depth:DepthTransitions.PageFlip="True">
+          <!-- 활성 문서는 MainView 가 Body 로 넣는다(기존 M4 뷰 재활용: Dock 과 같은 캐시 인스턴스) -->
+          <!-- Body 는 MainView 에서 만든 MainViewModel 기준 바인딩이라 DataContext 를 Main 으로 되돌려 준다(캐스트 오류 방지) -->
+          <!-- pdMotionHostNav: 폰 화면 진입 효과 호스트(21 §3 배치 상태 표 NAV 행, Depth/WindowTransitions) -->
+          <ContentPresenter x:Name="NavBodyHost" Classes="pdMotionHostNav" Content="{Binding #Root.Body}" DataContext="{Binding Main}" />
+          <TextBlock Text="{loc:Tr doc.empty}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                     IsVisible="{Binding Compact.CompactDocument, Converter={x:Static ObjectConverters.IsNull}}" />
+          <Border IsVisible="{Binding Compact.IsNotifyOpen}" Background="{DynamicResource PdBrushSurface}" AutomationProperties.AutomationId="shell.notifyOverlay">
+            <ContentControl Content="{Binding Compact.CompactNotifications}" />
+          </Border>
+          <!-- 설정 시트(요건 7): 스마트폰 NAV 에서 설정 창과 같은 내용을 문서 영역 전체에 보인다. 닫으면 내용이 빠져 구독이 풀린다 -->
+          <Border IsVisible="{Binding IsSettingsSheetOpen}" Background="{DynamicResource PdBrushSurface}" AutomationProperties.AutomationId="shell.settingsSheet">
+            <ContentControl Content="{Binding SettingsSheet}">
+              <ContentControl.ContentTemplate>
+                <DataTemplate x:DataType="vms:SettingsWindowViewModel"><settings:SettingsView /></DataTemplate>
+              </ContentControl.ContentTemplate>
+            </ContentControl>
+          </Border>
+        </Grid>
+      </SplitView>
+    </DockPanel>
+  </Grid>
+</UserControl>

@@ -206,7 +206,7 @@ def phase_nav(c):
     import subprocess
     ui_root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))  # 이 체크아웃의 영역 루트(frameworks/ui)
     judge = os.path.join(ui_root, "test", "common", "judge", "nav_reach_judge.py")
-    menu_dir = os.path.join(ui_root, "src", "Pd.Ui.Views", "Menus")
+    menu_dir = os.path.join(ui_root, "src", "xkxk.frameworks.ui.views", "Menus")
     pr = subprocess.run([sys.executable, "-B", judge, "--menu-dir", menu_dir, "--dump", p], capture_output=True, text=True)
     c.raw["nav_reach_judge"] = {"rc": pr.returncode, "out": pr.stdout[-1500:], "err": pr.stderr[-500:]}
     c.check("L4 전체 메뉴 도달 100%(nav_reach_judge)", pr.returncode == 0, "rc=%d" % pr.returncode, "rc=0", pr.stdout[-200:].strip())

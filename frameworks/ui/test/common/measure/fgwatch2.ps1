@@ -1,4 +1,4 @@
-# 전경 창을 0.25초 간격으로 감시해 바뀔 때만 기록하고, Pd.Poc.Desktop 이 전경이 되면 HIT 줄을 남긴다(읽기 전용) — 사용: -Seconds <n> -Out <파일>; -StopFile <파일> 이 생기면 조기 종료
+# 전경 창을 0.25초 간격으로 감시해 바뀔 때만 기록하고, xkxk.frameworks.ui.desktop 이 전경이 되면 HIT 줄을 남긴다(읽기 전용) — 사용: -Seconds <n> -Out <파일>; -StopFile <파일> 이 생기면 조기 종료
 param([int]$Seconds = 600, [string]$Out, [string]$StopFile = "")
 Add-Type -Namespace W -Name G2 -MemberDefinition @'
 [System.Runtime.InteropServices.DllImport("user32.dll")] public static extern System.IntPtr GetForegroundWindow();
@@ -12,7 +12,7 @@ while ((Get-Date) -lt $end) {
   if ($h -ne $last) {
     $p = 0; [void][W.G2]::GetWindowThreadProcessId($h, [ref]$p)
     $name = (Get-Process -Id $p -ErrorAction SilentlyContinue).ProcessName
-    $tag = if ($name -eq 'Pd.Poc.Desktop') { $hits++; 'HIT' } else { 'fg' }
+    $tag = if ($name -eq 'xkxk.frameworks.ui.desktop') { $hits++; 'HIT' } else { 'fg' }
     "$tag $((Get-Date).ToString('HH:mm:ss.fff')) hwnd=$h pid=$p $name" | Add-Content -Path $Out
     $last = $h
   }

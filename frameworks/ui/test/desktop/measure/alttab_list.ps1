@@ -1,6 +1,6 @@
 ﻿# Alt+Tab 후보 창을 문서화된 규칙(가시·비cloaked·소유자 없음 또는 APPWINDOW·TOOLWINDOW/NOACTIVATE 제외)으로 열거해 Pd SDI 창 포함·PdSdiShadow 제외 여부를 출력 — 입력 0, 읽기 전용. 규칙 평가(비직접 증거)이며 Alt+Tab UI 직접 관찰이 아니다
 param(
-    [string]$ProcName = "Pd.Poc.Desktop",     # Pd 프로세스 이름(.exe 제외)
+    [string]$ProcName = "xkxk.frameworks.ui.desktop",     # Pd 프로세스 이름(.exe 제외)
     [string]$ShadowPattern = "PdSdiShadow",   # 그림자 창 식별(클래스명 또는 제목에 포함)
     [switch]$All,                             # 후보 전체를 출력(기본: 요약 + Pd 관련 창만)
     [switch]$ParseOnly

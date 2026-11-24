@@ -65,7 +65,7 @@ def self_test():
         "[perf-ui] 00:00 stage n=1 rep 1/2",
         "[perf-ui] 00:00 end perfui.n1.font.up sync=1ms frame=2ms",
         "[Layout]Layout cycle detected. Item 'Avalonia.Controls.Primitives.DataGridRowsPresenter' was enqueued '10' times.",
-        "[Layout]Layout cycle detected. Item 'Pd.Ui.Views.ZoomDecorator' was enqueued '10' times.",
+        "[Layout]Layout cycle detected. Item 'xkxk.frameworks.ui.views.ZoomDecorator' was enqueued '10' times.",
         "[perf-ui] 00:01 end perfui.n1.grid.sort sync=1ms frame=2ms",
         "[perf-split] perfui.n1.grid.sort sync=1 layout1=2",
     ]

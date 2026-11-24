@@ -42,3 +42,11 @@
 - 대안: GPT 제안 그대로(루트 `AGENTS.md` 실내용, `docs/decisions`·`docs/work` 에 결정·작업 기록)는 Tier1 공용 지침 분리 원칙과 충돌하고 하네스 세션 기록·plan 결정관리와 중복돼 기각했다. `frameworks/ui` 를 독립 git 저장소로 두는 안은 사용자가 루트 모노레포를 골라 기각했다. Pd 저장소 안에 계속 두는 안은 사용자 요구(새 홈에서 진행)와 맞지 않아 기각했다.
 - 영향: `/mnt/c/DATA/Project/xkxk/README.md`, 루트·영역 `.claude/rules/docs-map.md`·`docs_gate.json`, `plan/README.md`, `plan/index.json`, `05_아키텍처/01_XKXK_저장소구조.md`, `90_결정관리/이전기록_2026-11-24.md`. 다중 영역이 생기면 루트 docs_gate 가 한 영역만 가리키는 한계가 남는다(하네스 수정은 AI 프로젝트 세션 소관).
 - 상태: 채택
+
+## UADR-0002 프로젝트·어셈블리 이름은 저장소 폴더 경로 기준으로 짓는다
+- 일자: 2026-11-24
+- 결정: 프로젝트·라이브러리·어셈블리 이름을 저장소 폴더 경로를 점으로 이은 소문자 이름(`xkxk.frameworks.ui`, 층별 `.views`·`.shell`·`.data`·`.desktop`·`.browser`·`.android`·`.fonts`)으로 한다. 하위 네임스페이스는 하위 폴더 이름(PascalCase) 그대로 둔다. 이름 대응은 `Pd.Ui`→`xkxk.frameworks.ui`, `Pd.Ui.Views`→`.views`, `Pd.Poc.Shell`→`.shell`, `Pd.Client.Data`→`.data`, `Pd.Poc.Desktop`→`.desktop`, `Pd.Poc.Browser`→`.browser`, `Pd.Poc.Android`·`Pd.Poc.Droid`→`.android`, `Pd.Fonts`→`.fonts` 이다.
+- 근거: 사용자 원문 "프로젝트 라이브러리는 폴더기준으로 잡자. 예를들면 xkxk.frameworks.ui 같은거다". 이름과 폴더 경로가 기계적으로 대응하고, 실행 파일 이름이 사용자 Pd 앱과 달라져 프로세스 이름 겹침이 사라진다.
+- 대안: PascalCase(`Xkxk.Frameworks.Ui.*`)는 사용자 예시와 달라 기각했다. 폴더는 그대로 두고 어셈블리만 바꾸는 안은 폴더와 이름이 어긋나 기각했다. 하위 네임스페이스까지 소문자로 하는 안은 하위 폴더 수백 곳 이름 변경이 필요해 기각했다.
+- 영향: `src/` 전체, 도구·시험 스크립트, `AGENTS.md`, `README.md`, `plan/04_기술스택/02_소스구조_분할규칙.md`. Android 패키지 `com.pd.poc`(UTODO-0013)와 `PdPoc` 데이터 폴더·단일 인스턴스 이름(UTODO-0014)은 이번 결정 범위 밖이다.
+- 상태: 채택

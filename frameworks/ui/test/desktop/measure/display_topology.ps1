@@ -20,7 +20,7 @@ param(
     [string]$RunDir = '',
     [int]$UserPdPid,                            # 기본값 없음. preflight·apply·self-test 는 빠지면 rc=3 으로 거부한다
     [string]$TestPids = '',                     # 시험 앱 PID 쉼표 목록(자기 PID 만 — DISPLAY1 에 있어도 된다)
-    [string[]]$PdProcessNames = @('Pd.Poc.Desktop'),
+    [string[]]$PdProcessNames = @('xkxk.frameworks.ui.desktop'),
     [int]$DeadlineSec = 120,
     [int]$HoldSec = 30,
     [int]$SettleMs = 3000,
@@ -548,7 +548,7 @@ function Invoke-SelfTest {
     }
     # 겹침 판정(가짜 창)
     $tg = [pscustomobject]@{ l = 2560; t = 236; r = 4480; b = 1436 }
-    $mk = { param($id, $vis, $ico, $l, $t, $r, $b, $nl, $nt, $nr, $nb) [pscustomobject]@{ hwnd = $id; pid = 41312; process = 'Pd.Poc.Desktop'; class = 'x'; title = 't'; visible = $vis; iconic = $ico; zoomed = $false; cloaked = 0
+    $mk = { param($id, $vis, $ico, $l, $t, $r, $b, $nl, $nt, $nr, $nb) [pscustomobject]@{ hwnd = $id; pid = 41312; process = 'xkxk.frameworks.ui.desktop'; class = 'x'; title = 't'; visible = $vis; iconic = $ico; zoomed = $false; cloaked = 0
             rect = [pscustomobject]@{ l = $l; t = $t; r = $r; b = $b }; normal = [pscustomobject]@{ l = $nl; t = $nt; r = $nr; b = $nb } } }
     $off = & $mk 1 $true $false -2138 5 7 1303 -2138 5 7 1303
     $on = & $mk 2 $true $false 3000 300 3500 800 3000 300 3500 800

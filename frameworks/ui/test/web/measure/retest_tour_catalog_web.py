@@ -25,7 +25,7 @@ sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(HERE, "..", "..", "..", "tools"))
 from ui28_web706 import ARGS, W  # noqa: E402
 
-CATALOG = os.path.join(HERE, "..", "..", "..", "src", "Pd.Poc.Shell", "Tour", "tour_catalog.json")
+CATALOG = os.path.join(HERE, "..", "..", "..", "src", "xkxk.frameworks.ui.shell", "Tour", "tour_catalog.json")
 SIZES = {"pc": (1400, 900), "phone": (390, 844)}
 
 

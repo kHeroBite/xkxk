@@ -13,19 +13,19 @@
   {
    "token": "RemoteControlServer",
    "only_encoding": "utf8",
-   "근거": "src/Pd.Poc.Shell/Diagnostics/Remote/RemoteProductStubs.cs:2 '#if !PD_DIAGNOSTICS', :10-25 제품판 RemoteControlServer 는 Current=>null, StartFromArgs=>null, Port=>0, Url=>\"\", Dispose 빈 본문이다. 소켓·토큰·명령 코드가 없다. 실제 서버(Diagnostics/Remote/RemoteControlServer.cs:2)는 '#if PD_DIAGNOSTICS' 안에 있다.",
+   "근거": "src/xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteProductStubs.cs:2 '#if !PD_DIAGNOSTICS', :10-25 제품판 RemoteControlServer 는 Current=>null, StartFromArgs=>null, Port=>0, Url=>\"\", Dispose 빈 본문이다. 소켓·토큰·명령 코드가 없다. 실제 서버(Diagnostics/Remote/RemoteControlServer.cs:2)는 '#if PD_DIAGNOSTICS' 안에 있다.",
    "이유": "호출부(Desktop/Program.cs:60, Android/AndroidApp.cs:130)가 컴파일되도록 남긴 형식 이름이고 동작 코드가 없다."
   },
   {
    "token": "RemoteCommandRouter",
    "only_encoding": "utf8",
-   "근거": "src/Pd.Poc.Shell/Diagnostics/Remote/RemoteProductStubs.cs:2 '#if !PD_DIAGNOSTICS', :28-37 제품판은 InvokeJsonAsync 가 고정 거부 JSON(:30 Disabled)만 돌려주고, 명령 등록이 없다. 실제 라우터(Diagnostics/Remote/RemoteCommandRouter.cs:2)는 '#if PD_DIAGNOSTICS' 안에 있다.",
+   "근거": "src/xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteProductStubs.cs:2 '#if !PD_DIAGNOSTICS', :28-37 제품판은 InvokeJsonAsync 가 고정 거부 JSON(:30 Disabled)만 돌려주고, 명령 등록이 없다. 실제 라우터(Diagnostics/Remote/RemoteCommandRouter.cs:2)는 '#if PD_DIAGNOSTICS' 안에 있다.",
    "이유": "형식 이름만 있고 명령 실행 코드가 없다."
   },
   {
    "token": "AutomationBridge",
    "only_encoding": "utf8",
-   "근거": "src/Pd.Poc.Shell/Diagnostics/AutomationBridge.Product.cs:2 '#if !PD_DIAGNOSTICS', :11-27 HasScenarioArgs/IsTransientSettingArg=>false, TransientSettingArgs=>빈 집합, RunAsync 는 Rendering.RenderInfo.LogOnce()(렌더링 백엔드 이름 로그 1회)만 하고 인자 해석·명령 실행이 없다. 실제 브리지(AutomationBridge.cs:2)는 '#if PD_DIAGNOSTICS' 안에 있다.",
+   "근거": "src/xkxk.frameworks.ui.shell/Diagnostics/AutomationBridge.Product.cs:2 '#if !PD_DIAGNOSTICS', :11-27 HasScenarioArgs/IsTransientSettingArg=>false, TransientSettingArgs=>빈 집합, RunAsync 는 Rendering.RenderInfo.LogOnce()(렌더링 백엔드 이름 로그 1회)만 하고 인자 해석·명령 실행이 없다. 실제 브리지(AutomationBridge.cs:2)는 '#if PD_DIAGNOSTICS' 안에 있다.",
    "이유": "자동화 동작 코드가 없다. 남은 동작은 렌더러 이름 로그 1줄이며, 이는 자동화가 아니다."
   }
  ],
@@ -35,18 +35,18 @@
    "token": "PerfProbe",
    "only_encoding": "utf8",
    "requires_channel": "prod",
-   "적용": "Pd.Poc.Shell 어셈블리(AppChannel 형식 포함)의 AssemblyMetadata PdChannel 값이 정확히 prod 일 때만 허용한다. 그 밖의 값이거나 값을 읽지 못하면 '보류'로 집계한다.",
+   "적용": "xkxk.frameworks.ui.shell 어셈블리(AppChannel 형식 포함)의 AssemblyMetadata PdChannel 값이 정확히 prod 일 때만 허용한다. 그 밖의 값이거나 값을 읽지 못하면 '보류'로 집계한다.",
    "Q9_판정_전제": "Q9 판정 대상 제품판은 prod 채널(-p:PdChannel=prod)이다(team-lead 2026-10-30 (가) 채택. 출시 제품판은 prod 채널이며, dev 채널의 디버그 기록은 UI-17 채널 설계상 의도된 동작이다).",
    "prod_근거": "AppChannel.cs:16 IsProd=Current==\"prod\", :19 DebugDefault=!IsProd 이므로 prod 에서 false 다. Logging/PdLog.cs:15·:54 저장값이 없으면 DebugDefault, :47 디버그모드가 꺼지면 MinLevel=Information. PerfProbe.Product.cs:48 OpenLogOn=PdLog.IsEnabled(Debug) 이므로 false 이고, :52·:82 에서 BeginOpen·TrackOpen 이 즉시 return 한다. 사용자가 시스템 메뉴에서 디버그모드를 켜면 기록하는데, 이는 사용자 런타임 선택이지 상시가 아니다.",
-   "근거": "src/Pd.Poc.Shell/Diagnostics/PerfProbe.Product.cs:2 '#if !PD_DIAGNOSTICS'. 계측·JSON 출력 멤버는 빈 본문이다(:33-41, :107-125). 다만 :43-105 문서 열기 시간 로그(BeginOpen/EndOpen/TrackOpen)가 동작 코드로 남아 있다. 이 로그는 PdLog Debug 가 켜졌을 때만 돈다(:48 OpenLogOn, Q10 lead 승인).",
+   "근거": "src/xkxk.frameworks.ui.shell/Diagnostics/PerfProbe.Product.cs:2 '#if !PD_DIAGNOSTICS'. 계측·JSON 출력 멤버는 빈 본문이다(:33-41, :107-125). 다만 :43-105 문서 열기 시간 로그(BeginOpen/EndOpen/TrackOpen)가 동작 코드로 남아 있다. 이 로그는 PdLog Debug 가 켜졌을 때만 돈다(:48 OpenLogOn, Q10 lead 승인).",
    "이유": "'형식 이름만 있고 동작 코드 없음'을 증명할 수 없다. 상시 perf 는 아니지만(Debug 로그 꺼지면 무동작) 허용 여부는 lead 결정이 필요하다. 결정 전에는 검사에서 '보류'로 집계한다.",
    "lead_결정": "2026-10-30 15:2x 조건부 허용. 조건은 제품판에서 Debug 로그 기본값이 꺼짐이라는 것을 소스로 확인하는 것이다.",
-   "조건_확인(odev-q9)": "충족되지 않았다. 그래서 보류를 유지한다. 근거는 다음과 같다. Logging/PdLog.cs:15 s_debugMode=AppChannel.DebugDefault, :47 MinLevel=디버그모드면 Debug, :54 Configure(null)=채널 기본값. Theming/UiSystemSettings.cs:76 저장값이 없으면 AppChannel.DebugDefault 를 쓴다. AppChannel.cs:19 DebugDefault=!IsProd. Directory.Build.props:11 PdChannel 기본값은 dev 이고(:14 AssemblyMetadata), PdDiagnostics 와 직교한다. 실측으로 i2410 제품판 Pd.Poc.Shell.dll 메타데이터 PdChannel=dev 를 확인했다. 따라서 -p:PdChannel=prod 없이 만든 제품판은 Debug 로그가 기본 켜짐이고, 문서 열기 시간 기록이 기본으로 돈다."
+   "조건_확인(odev-q9)": "충족되지 않았다. 그래서 보류를 유지한다. 근거는 다음과 같다. Logging/PdLog.cs:15 s_debugMode=AppChannel.DebugDefault, :47 MinLevel=디버그모드면 Debug, :54 Configure(null)=채널 기본값. Theming/UiSystemSettings.cs:76 저장값이 없으면 AppChannel.DebugDefault 를 쓴다. AppChannel.cs:19 DebugDefault=!IsProd. Directory.Build.props:11 PdChannel 기본값은 dev 이고(:14 AssemblyMetadata), PdDiagnostics 와 직교한다. 실측으로 i2410 제품판 xkxk.frameworks.ui.shell.dll 메타데이터 PdChannel=dev 를 확인했다. 따라서 -p:PdChannel=prod 없이 만든 제품판은 Debug 로그가 기본 켜짐이고, 문서 열기 시간 기록이 기본으로 돈다."
 
   }
  ],
  "js_loader_tolerated": {
-  "근거": "src/Pd.Poc.Browser/wwwroot/main.js:82 exportsApi?.Pd?.Poc?.Browser?.AutomationExports 조회, :85 import('./diag.js'). 제품판은 AutomationExports.cs:2 '#if PD_DIAGNOSTICS' 로 JSExport 자체가 없고 diag.js 도 산출물에서 빠진다(Pd.Poc.Browser.csproj Content Remove). 기존 판정(팀 리드 결정)과 같다.",
+  "근거": "src/xkxk.frameworks.ui.browser/wwwroot/main.js:82 exportsApi?.Pd?.Poc?.Browser?.AutomationExports 조회, :85 import('./diag.js'). 제품판은 AutomationExports.cs:2 '#if PD_DIAGNOSTICS' 로 JSExport 자체가 없고 diag.js 도 산출물에서 빠진다(xkxk.frameworks.ui.browser.csproj Content Remove). 기존 판정(팀 리드 결정)과 같다.",
   "적용": "웹 .js 파일의 금지 문자열 적중은 참고로만 기록한다. .wasm·.dll·.exe·APK 어셈블리 적중만 위반으로 본다."
  }
 }

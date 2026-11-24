@@ -41,7 +41,7 @@ CS_STR = re.compile(r'\$?@?"((?:[^"\\\n]|\\.)*)"')
 
 # 경로 단위 제외(root 기준 상대 경로, '/' 구분). Documents/Bench 는 진단+벤치 빌드(PdBench=true)에서만 컴파일되는 시험 도구이고,
 # 남은 한글은 한글 렌더링·정렬·IME 검증용 시험 데이터다(odev-gc 요청·team-lead 지시, csproj 가 제품판에서 Documents\Bench\** 를 제거).
-SKIP_PATHS = ("Pd.Ui.Views/Documents/Bench",)
+SKIP_PATHS = ("xkxk.frameworks.ui.views/Documents/Bench",)
 
 
 def _skip_path(d, name):

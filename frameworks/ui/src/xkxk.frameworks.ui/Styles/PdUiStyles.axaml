@@ -1,0 +1,14 @@
+<!-- 순수 UI 층 스타일 진입점 — 앱 테마 토큰(DynamicResource)만 참조하고 색을 직접 정의하지 않는다. 컨트롤 스타일은 여기에 추가한다 -->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="using:xkxk.frameworks.ui.Controls">
+  <Style Selector="ctl|GanttSpinner">
+    <Setter Property="BarBrush" Value="{DynamicResource PdBrushAccent}" />
+  </Style>
+  <!-- 웹·Android 시스템 창 플라이아웃: 크기는 SystemDialogHost 가 뷰포트에 맞춘다. 기본 상한(폭 456)이 내용을 자르고, 안쪽 여백은 데스크톱 창에 없으므로 푼다 -->
+  <Style Selector="FlyoutPresenter.pdSystemDialog">
+    <Setter Property="MaxWidth" Value="Infinity" />
+    <Setter Property="MaxHeight" Value="Infinity" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+</Styles>

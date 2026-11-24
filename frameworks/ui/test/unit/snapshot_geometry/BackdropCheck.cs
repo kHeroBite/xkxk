@@ -13,7 +13,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using Pd.Ui.Views.Depth;
+using xkxk.frameworks.ui.views.Depth;
 
 namespace Pd.Test.SnapshotScale;
 

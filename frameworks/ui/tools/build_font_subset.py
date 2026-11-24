@@ -6,7 +6,7 @@
 사용:
   python3 tools/build_font_subset.py <원본 가변 글꼴 NotoSansKR-VF.ttf> [출력 경로]
   예) python3 tools/build_font_subset.py /mnt/c/Windows/Fonts/NotoSansKR-VF.ttf
-  출력 기본값: src/Pd.Poc.Browser/Assets/Fonts/NotoSansKR-Regular-subset.ttf (Android·Shell 벤치가 링크로 같은 파일을 쓴다)
+  출력 기본값: src/xkxk.frameworks.ui.browser/Assets/Fonts/NotoSansKR-Regular-subset.ttf (Android·Shell 벤치가 링크로 같은 파일을 쓴다)
 
 방법(2026-10-29 odev-3 확인):
   1) 가변 글꼴(Version 2.04, wght 100~900)을 wght=400 으로 고정(fontTools.varLib.instancer)
@@ -22,7 +22,7 @@ from fontTools import subset
 from fontTools.ttLib import TTFont
 from fontTools.varLib import instancer
 
-DEFAULT_OUT = os.path.join(os.path.dirname(__file__), "..", "src", "Pd.Poc.Browser", "Assets", "Fonts", "NotoSansKR-Regular-subset.ttf")
+DEFAULT_OUT = os.path.join(os.path.dirname(__file__), "..", "src", "xkxk.frameworks.ui.browser", "Assets", "Fonts", "NotoSansKR-Regular-subset.ttf")
 
 # PMS 표·금액 칸용 추가 글자(lead 12:0x — 웹 ₩ ☒ 표시 결함)
 EXTRA = {0x2713, 0x2264, 0x2265, 0x2260, 0x221E, 0x2605, 0x2606, 0x321C}  # ✓ ≤ ≥ ≠ ∞ ★ ☆ ㈜

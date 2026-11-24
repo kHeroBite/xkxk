@@ -3,7 +3,7 @@
 """
 사용: python3 tools/classify_layers.py [--check] [--json 경로] [--root 저장소]
   기본: LAYERS.md 재생성. --check: 기록된 분류와 다르면 rc=1. --json: 파일별 근거·참조 간선을 JSON 으로도 쓴다.
-분류(먼저 걸린 것): Host 호스트 프로젝트 / Ui Pd.Ui / Views axaml·코드비하인드·Views·Themes·Input·Documents 의 Avalonia 코드·벤치·갤러리 /
+분류(먼저 걸린 것): Host 호스트 프로젝트 / Ui xkxk.frameworks.ui / Views axaml·코드비하인드·Views·Themes·Input·Documents 의 Avalonia 코드·벤치·갤러리 /
   Diag 그 밖의 Diagnostics / Data Avalonia·Dock.Avalonia 무참조이고 참조 형식도 전부 Data(닫힘 계산) / Control 나머지.
 예외는 같은 폴더 classify_layers_overrides.json 에 사유와 함께 둔다. 소스는 읽기만 한다. 형식 참조는 정규식 근사이고 빌드가 최종 판정이다.
 """
@@ -16,9 +16,9 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 
 SRC = "src"
-HOSTS = ("Pd.Poc.Desktop", "Pd.Poc.Browser", "Pd.Poc.Android")
-SHELL = "Pd.Poc.Shell"
-FIXED = {"Pd.Ui": "Ui", "Pd.Ui.Views": "Views", "Pd.Client.Data": "Data"}
+HOSTS = ("xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android")
+SHELL = "xkxk.frameworks.ui.shell"
+FIXED = {"xkxk.frameworks.ui": "Ui", "xkxk.frameworks.ui.views": "Views", "xkxk.frameworks.ui.data": "Data"}
 SKIP = {"bin", "obj", ".vs", "node_modules", "__pycache__"}
 TOKEN = re.compile(r"(?s)@\"(?:[^\"]|\"\")*\"|\"\"\".*?\"\"\"|\$@?\"|\"(?:\\.|[^\"\\\n])*\"|'(?:\\.|[^'\\\n])+'|//[^\n]*|/\*.*?\*/")
 DECL = re.compile(r"\b(class|struct|interface|enum|record(?:\s+(?:struct|class))?|delegate\s+[\w<>\[\],\s?.]+?)\s+([A-Z_]\w*)")
@@ -203,9 +203,9 @@ def target_of(rel, layer, overrides):
         return None
     inner = key[len(SHELL) + 1:]
     if layer == "Views":
-        return "Pd.Ui.Views/" + inner.removeprefix("Views/")
+        return "xkxk.frameworks.ui.views/" + inner.removeprefix("Views/")
     if layer == "Data":
-        return "Pd.Client.Data/" + inner.replace("Docking/", "Layout/").replace("Documents/", "Samples/")
+        return "xkxk.frameworks.ui.data/" + inner.replace("Docking/", "Layout/").replace("Documents/", "Samples/")
     return None
 
 

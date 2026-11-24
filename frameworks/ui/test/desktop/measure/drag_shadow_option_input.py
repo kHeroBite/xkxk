@@ -9,7 +9,7 @@
 앱을 띄우거나 끝내지 않는다. 앱은 run_desktop_bg.sh 로만 `--multi-instance on --data-dir <절대경로 격리>`·화면 안(승인된 PD_ALLOW_ONSCREEN)에 새 프로필로 먼저 띄운다.
 안전 전제(하나라도 어긋나거나 조회에 실패하면 입력하지 않는다)
   1. 대상 PID 는 run_desktop_bg.sh 가 --owner 이름으로 기록한 PID 이고, 인자 값과 앱 로그 layout-file 이 격리 폴더다(perf_effect_common.verify_launch).
-  2. 입력 직전마다 자기 PID 를 뺀 Pd.Poc.* 프로세스가 0개다.
+  2. 입력 직전마다 자기 PID 를 뺀 xkxk.frameworks.ui.*(및 LEGACY 옛 이름 Pd.Poc.*) 프로세스가 0개다.
   3. 입력 직전마다 pc_away_monitor 가 away 이고 user_away_guard.check 를 통과한다.
   4. 전경 게이트·모니터 경계·safe_click 의 ExpectedProcessId 소유권(시작·끝점)은 retest_real_input.Rig 것을 그대로 쓴다.
   키·이동·터치·휠 입력은 쓰지 않는다(safe_click 왼쪽 끌기만).
@@ -53,9 +53,9 @@ class Precondition(Exception):
 
 
 def other_pd(tasklist_csv, own):
-    """tasklist CSV 에서 자기 PID 를 뺀 Pd.Poc.* PID. 자기 PID 조차 없으면 조회를 믿지 않는다."""
+    """tasklist CSV 에서 자기 PID 를 뺀 xkxk.frameworks.ui.*(및 LEGACY 옛 이름 Pd.Poc.*) PID. 자기 PID 조차 없으면 조회를 믿지 않는다."""
     pids = [int(r[1]) for r in csv.reader(tasklist_csv.splitlines())
-            if len(r) > 1 and r[0].lower().startswith("pd.poc") and r[1].isdigit()]
+            if len(r) > 1 and r[0].lower().startswith(("xkxk.frameworks.ui.", "pd.poc")) and r[1].isdigit()]  # "pd.poc" 는 LEGACY(사용자 Pd 앱 Pd.Poc.Desktop.exe) 이름 접두
     if own not in pids:
         raise Precondition("프로세스 목록에 자기 PID %s 가 없다 — 조회를 믿을 수 없다" % own)
     return [p for p in pids if p != own]
@@ -250,8 +250,8 @@ def self_test():
         judge("hide", dict(idle, shadow="none"), end, [mid_off])[0] == "UNDET",
         judge("hide", idle, idle, [mid_off])[0] == "FAIL",
         judge("hide", idle, dict(end, shadow="none"), [mid_off])[0] == "FAIL",
-        other_pd('"Pd.Poc.Desktop.exe","7"\n"cmd.exe","9"', 7) == [],
-        other_pd('"Pd.Poc.Desktop.exe","7"\n"Pd.Poc.Other.exe","8"', 7) == [8],
+        other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"cmd.exe","9"', 7) == [],
+        other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"Pd.Poc.Other.exe","8"', 7) == [8],
     ]
     try:
         other_pd("", 7)

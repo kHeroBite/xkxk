@@ -1,7 +1,7 @@
 #!/bin/bash
-# Pd.Poc.Desktop 을 비전경(화면 밖 --bg-pos)·stdio 분리로 기동하고 프로세스 실존을 2회 확인하는 스크립트
+# xkxk.frameworks.ui.desktop 을 비전경(화면 밖 --bg-pos)·stdio 분리로 기동하고 프로세스 실존을 2회 확인하는 스크립트
 # 사용: run_desktop_bg.sh [--conf Release|Debug|R2R|JIT] [--kill|--no-kill] -- <앱 인자...>   (R2R = build_desktop.sh R2R 게시본)
-#   기본: 다른 Pd.Poc.Desktop 프로세스가 있으면 종료하지 않고 실패(rc=3) — 실행 슬롯 충돌 방지.
+#   기본: 다른 xkxk.frameworks.ui.desktop 프로세스가 있으면 종료하지 않고 실패(rc=3) — 실행 슬롯 충돌 방지.
 #   --kill: 이 호출자(PD_SLOT_OWNER)가 이 스크립트로 띄워 기록한 자기 PID 만 종료하고 실행(다른 Pd 는 건드리지 않는다). 다른 Pd 가 남아 있으면 --multi-instance 없이는 rc=11.
 #   --no-kill: 기존 프로세스를 그대로 두고 함께 실행. 기존 Pd 가 있으면 --multi-instance on(진단판·lead 승인)이 필요하고, 없으면 rc=11(단일 인스턴스 신호 차단).
 #   결과는 자기 PID 기준이다: 성공이면 PID=<Windows PID> 와 RESULT=RUNNING, 단일 인스턴스에 걸리면 RESULT=SIGNALLED_EXISTING(rc=10). --multi-instance 기동은 logs/user_files/pending 을 덮지 않는다.
@@ -24,8 +24,8 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-EXE="$ROOT/src/Pd.Poc.Desktop/bin/$CONF/net11.0/Pd.Poc.Desktop.exe"
-IMAGE="Pd.Poc.Desktop.exe"
+EXE="$ROOT/src/xkxk.frameworks.ui.desktop/bin/$CONF/net11.0/xkxk.frameworks.ui.desktop.exe"
+IMAGE="xkxk.frameworks.ui.desktop.exe"
 TS="$(date +%Y%m%d_%H%M%S_%3N)" # ms 까지 — 같은 초 동시 기동 시 로그 파일 충돌 방지
 mkdir -p "$ROOT/logs"
 APP_LOG="$ROOT/logs/desktop_$TS.log"
@@ -33,7 +33,11 @@ STDIO_LOG="$ROOT/logs/desktop_${TS}_stdio.log"
 
 [ -f "$EXE" ] || { echo "실행파일 없음: $EXE (build_desktop.sh 먼저)"; exit 2; }
 
-proc_count() { tasklist.exe /FI "IMAGENAME eq $IMAGE" /NH 2>/dev/null | grep -ci "$IMAGE"; }
+proc_count() { tasklist.exe /FI "IMAGENAME eq $IMAGE" /FO CSV /NH 2>/dev/null | grep -ci "^\"$IMAGE\""; }
+# LEGACY: 사용자 Pd 앱 실행 파일 이름(Pd.Poc.Desktop.exe) — 같은 %LOCALAPPDATA%\PdPoc 폴더·단일 인스턴스 이름을 쓰므로 사용자 파일 대조 건너뜀·신호 차단 판정에만 센다(BUSY·--kill 대상은 새 이름만).
+LEGACY_IMAGE="Pd.Poc.Desktop.exe" # LEGACY
+legacy_count() { tasklist.exe /FI "IMAGENAME eq $LEGACY_IMAGE" /FO CSV /NH 2>/dev/null | grep -ci "^\"$LEGACY_IMAGE\""; }
+any_count() { echo $(( $(proc_count) + $(legacy_count) )); }
 
 # ⓪ 슬롯 소유자 확인(team-lead 02:2x 지시) — logs/odev4b/slot_owner.txt 첫 줄 '소유자 시각'. 호출자는 PD_SLOT_OWNER=<이름> 을 준다.
 #    소유자가 아니면 기동하지 않는다(rc=6). 슬롯 관리자(odev-4b)가 넘길 때 이전 소유자의 회수 확인 뒤 이 파일을 바꾼다.
@@ -54,12 +58,14 @@ UF_DIR="$ROOT/logs/user_files"
 USER_PD="$(wslpath "$(cmd.exe /c 'echo %LOCALAPPDATA%' 2>/dev/null | tr -d '\r')" 2>/dev/null)/PdPoc"
 # 대상: layout.json·settings.json·layouts/*(진단 원격 제어가 쓰는 remote-control.json 은 제외 — 진단판 기동마다 바뀐다)
 # + 사용자 폴더 전체의 파일·폴더 이름 목록(logs\ 하위 포함, lead 10:4x — 새 파일·폴더가 생기면 불일치). remote-control.json 은 목록에서도 제외
-uf_md5() { [ -d "$USER_PD" ] && (cd "$USER_PD" && find . -maxdepth 2 -type f \( -name layout.json -o -name settings.json -o -path './layouts/*' \) | sort | xargs -r md5sum; find . -mindepth 1 ! -name remote-control.json -printf 'entry %P\n' | sort) ; }
-if [ -z "$DRY" ] && [ -f "$UF_DIR/pending" ] && [ "$(proc_count)" -eq 0 ]; then
+#   일자 로그 logs/pd-YYYYMMDD.log(숫자 정확히 8자리)도 목록에서 제외(사용자 결정 Q2, 2026-11-24 — 앱이 매일 새로 만드는 파일이라 거짓 불일치). settings.json·layout.json md5 대조는 유지
+uf_md5() { [ -d "$USER_PD" ] && (cd "$USER_PD" && find . -maxdepth 2 -type f \( -name layout.json -o -name settings.json -o -path './layouts/*' \) | sort | xargs -r md5sum; find . -mindepth 1 ! -name remote-control.json ! -path './logs/pd-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].log' -printf 'entry %P\n' | sort) ; }
+if [ -z "$DRY" ] && [ -f "$UF_DIR/pending" ] && [ "$(any_count)" -eq 0 ]; then
   PREV_TS="$(cat "$UF_DIR/pending")"
   BASE="$UF_DIR/$PREV_TS.md5"
   # 이름 목록(entry) 도입 전 기준 파일이면 md5 줄만 대조한다(형식 호환)
-  if { if grep -q '^entry ' "$BASE"; then uf_md5; else uf_md5 | grep -v '^entry '; fi; } | diff -q - "$BASE" >/dev/null; then
+  # 기준 쪽에서도 일자 로그 entry 줄을 뺀다(이 제외 도입 전에 만든 기준 파일과 형식 호환)
+  if diff -q <( if grep -q '^entry ' "$BASE"; then uf_md5; else uf_md5 | grep -v '^entry '; fi ) <(grep -vE '^entry logs/pd-[0-9]{8}\.log$' "$BASE") >/dev/null; then
     echo "사용자 파일 대조 OK(직전 제품판 $PREV_TS)"; rm -f "$UF_DIR/pending"
   else
     echo "사용자 파일 변경 감지 — 직전 제품판 기동($PREV_TS) 전후 md5 불일치. 백업: $UF_DIR/$PREV_TS/ — 확인·복구 후 $UF_DIR/pending 삭제."
@@ -67,8 +73,8 @@ if [ -z "$DRY" ] && [ -f "$UF_DIR/pending" ] && [ "$(proc_count)" -eq 0 ]; then
   fi
 elif [ -z "$DRY" ] && [ -f "$UF_DIR/pending" ]; then
   # 대조 건너뜀 기록 — Pd 가 1개 이상 떠 있으면 사용자 파일 대조(위)를 하지 않는다. 건너뛴 사실을 남겨 빈틈을 눈에 보이게 한다(검출을 늘리는 방향만).
-  echo "사용자 파일 대조 건너뜀: $IMAGE 실행 중($(proc_count)개) — 직전 제품판 기동 $(cat "$UF_DIR/pending") 기준 pending 유지. 앱 종료 후 다음 기동에서 대조된다."
-  echo "$(date '+%Y-%m-%d %H:%M:%S') owner=${PD_SLOT_OWNER:-} conf=$CONF pending=$(cat "$UF_DIR/pending") proc=$(proc_count) 대조 건너뜀" >> "$UF_DIR/skipped_compare.log" 2>/dev/null
+  echo "사용자 파일 대조 건너뜀: $IMAGE 또는 $LEGACY_IMAGE 실행 중($(any_count)개) — 직전 제품판 기동 $(cat "$UF_DIR/pending") 기준 pending 유지. 앱 종료 후 다음 기동에서 대조된다."
+  echo "$(date '+%Y-%m-%d %H:%M:%S') owner=${PD_SLOT_OWNER:-} conf=$CONF pending=$(cat "$UF_DIR/pending") proc=$(any_count) 대조 건너뜀" >> "$UF_DIR/skipped_compare.log" 2>/dev/null
 fi
 # ① 사전 확인 — 기본은 실행 중이면 실패(BUSY, 아무것도 죽이지 않음), --kill 은 슬롯 소유자만(위에서 확인) 자기가 기록한 PID 를 종료(①-1)
 if [ -z "$DRY" ] && [ "$KILL" = "check" ] && [ "$(proc_count)" -gt 0 ]; then
@@ -95,15 +101,16 @@ kill_recorded() {
     if [ -n "$DRY" ]; then echo "--kill: 종료 대상 pid=$pid ($base) (점검 모드라 종료하지 않음)"; continue; fi
     taskkill.exe /PID "$pid" /FI "IMAGENAME eq $IMAGE" /F >/dev/null 2>&1
     sleep 1
-    if [ "$(tasklist.exe /FI "PID eq $pid" /NH 2>/dev/null | grep -ci "$IMAGE")" -gt 0 ]; then echo "자기 프로세스 종료 실패: pid=$pid"; return 4; fi
+    if [ "$(tasklist.exe /FI "PID eq $pid" /FO CSV /NH 2>/dev/null | grep -ci "^\"$IMAGE\"")" -gt 0 ]; then echo "자기 프로세스 종료 실패: pid=$pid"; return 4; fi
     echo "--kill: 자기 프로세스 종료 pid=$pid"
   done < "$PID_FILE"
   [ -n "$DRY" ] || rm -f "$PID_FILE"
   return 0
 }
 if [ "$KILL" = "1" ]; then kill_recorded || exit 4; fi
-if [ -z "$DRY" ] && [ "$KILL" != "check" ] && [ "$HAS_MULTI" -eq 0 ] && [ "$(proc_count)" -gt 0 ]; then
-  echo "실행 중인 $IMAGE 가 있어 기동하지 않음 — 그대로 띄우면 기존 창에 활성화 신호가 간다. 함께 띄우려면 --multi-instance on(진단판·lead 승인)을 준다."
+# 옛 이름(사용자 Pd 앱)은 KILL 모드와 무관하게 거부한다 — 단일 인스턴스 이름 PdPoc.{채널}.Instance 를 공유하므로 신호가 사용자 창으로 간다(UTODO-0014).
+if [ -z "$DRY" ] && [ "$HAS_MULTI" -eq 0 ] && { { [ "$KILL" != "check" ] && [ "$(proc_count)" -gt 0 ]; } || [ "$(legacy_count)" -gt 0 ]; }; then
+  echo "실행 중인 $IMAGE 또는 $LEGACY_IMAGE 가 있어 기동하지 않음 — 그대로 띄우면 기존 창에 활성화 신호가 간다. 함께 띄우려면 --multi-instance on(진단판·lead 승인)을 준다."
   echo "RESULT=EXISTING_INSTANCE"; exit 11
 fi
 
@@ -137,7 +144,7 @@ done
 #      제품판은 항상 임시 데이터 폴더(--data-dir logs/proddata/<시각>)로 띄운다. 이 기능이 없는 옛 제품판(문자열 '--data-dir' 없음)과
 #      사용자 폴더를 가리키는 --data-dir 은 거부(rc=8). 단일 인스턴스 우회(--multi-instance on)는 기본으로 붙이지 않는다(연속 기동 시험만).
 has_u16() { python3 -c "import sys;print(int(sys.argv[2].encode('utf-16-le') in open(sys.argv[1],'rb').read()))" "$1" "$2" 2>/dev/null; }
-DLL="$(dirname "$EXE")/Pd.Poc.Desktop.dll"
+DLL="$(dirname "$EXE")/xkxk.frameworks.ui.desktop.dll"
 IS_PRODUCT=0
 case "$CONF" in *product*) IS_PRODUCT=1 ;; esac
 [ "$IS_PRODUCT" -eq 0 ] && [ "$(has_u16 "$DLL" "--offscreen-guard")" != "1" ] && IS_PRODUCT=1
@@ -165,7 +172,7 @@ if [ "$HAS_DD" = "1" ]; then
     elif [ ! -f "$UF_DIR/pending" ]; then echo "$TS" > "$UF_DIR/pending"; PEND_STATE="신규(없어서 기록)"; fi
     echo "사용자 파일 백업: $UF_DIR/$TS/ ($(wc -l < "$UF_DIR/$TS.md5")개) pending=$PEND_STATE"
     # 자기 PID 외 Pd 가 떠 있는데 --data-dir 격리 없이 기동하면 사용자 폴더를 같이 쓰므로 경고한다(경고만, 동작 불변). 이 분기는 --data-dir 지원판만 들어온다.
-    [ "$HAS_MULTI" -eq 1 ] && [ "$(proc_count)" -gt 0 ] && echo "경고: 다른 $IMAGE 가 실행 중인 상태의 --multi-instance 기동 — 사용자 폴더 변경은 이후 대조(pending=$(cat "$UF_DIR/pending" 2>/dev/null))에서 검출된다."
+    [ "$HAS_MULTI" -eq 1 ] && [ "$(any_count)" -gt 0 ] && echo "경고: 다른 $IMAGE 또는 $LEGACY_IMAGE 가 실행 중인 상태의 --multi-instance 기동 — 사용자 폴더 변경은 이후 대조(pending=$(cat "$UF_DIR/pending" 2>/dev/null))에서 검출된다."
   fi
 fi
 [ "$HAS_EXIT" -eq 1 ] || ARGS+=(--exit-after 30)
@@ -218,7 +225,7 @@ for _ in $(seq 1 120); do
   sleep 0.5
 done
 if [ -z "$OWN_PID" ]; then echo "앱 로그에서 자기 PID 를 찾지 못함: $APP_LOG"; echo "RESULT=FAILED"; exit 5; fi
-own_count() { tasklist.exe /FI "PID eq $OWN_PID" /NH 2>/dev/null | grep -ci "$IMAGE"; }
+own_count() { tasklist.exe /FI "PID eq $OWN_PID" /FO CSV /NH 2>/dev/null | grep -ci "^\"$IMAGE\""; }
 
 # ⑤ 프로세스 실존 2회 확인(자기 PID)
 sleep 2

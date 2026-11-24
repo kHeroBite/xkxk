@@ -20,14 +20,14 @@
 
   <ItemGroup>
     <!-- Android·웹과 같은 한글 글꼴 파일(사본 없이 링크) -->
-    <AvaloniaResource Include="../../../src/Pd.Poc.Browser/Assets/Fonts/*.ttf" Link="Assets/Fonts/%(Filename)%(Extension)" />
+    <AvaloniaResource Include="../../../src/xkxk.frameworks.ui.browser/Assets/Fonts/*.ttf" Link="Assets/Fonts/%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="../../../src/Pd.Ui.Views/Depth/SnapshotGeometry.cs" Link="Product/SnapshotGeometry.cs" />
-    <Compile Include="../../../src/Pd.Ui.Views/Depth/SnapshotRenderer.cs" Link="Product/SnapshotRenderer.cs" />
-    <Compile Include="../../../src/Pd.Ui.Views/Depth/SnapshotPicture.cs" Link="Product/SnapshotPicture.cs" />
-    <Compile Include="../../../src/Pd.Ui.Views/Depth/SnapshotBackdrop.cs" Link="Product/SnapshotBackdrop.cs" />
+    <Compile Include="../../../src/xkxk.frameworks.ui.views/Depth/SnapshotGeometry.cs" Link="Product/SnapshotGeometry.cs" />
+    <Compile Include="../../../src/xkxk.frameworks.ui.views/Depth/SnapshotRenderer.cs" Link="Product/SnapshotRenderer.cs" />
+    <Compile Include="../../../src/xkxk.frameworks.ui.views/Depth/SnapshotPicture.cs" Link="Product/SnapshotPicture.cs" />
+    <Compile Include="../../../src/xkxk.frameworks.ui.views/Depth/SnapshotBackdrop.cs" Link="Product/SnapshotBackdrop.cs" />
   </ItemGroup>
 
 </Project>

@@ -24,7 +24,7 @@ RULES = {
 }
 CRASH_RUNS = ["phone_Debug", "tablet_Debug"]
 REL_RUNS = ["phone_Release", "tablet_Release"]
-APK = "src/Pd.Poc.Android/bin/Debug/net10.0-android/com.pd.poc-Signed.apk"
+APK = "src/xkxk.frameworks.ui.android/bin/Debug/net10.0-android/com.pd.poc-Signed.apk"
 SCRIPT = "test/mobile/measure/ui28_android.py"
 
 

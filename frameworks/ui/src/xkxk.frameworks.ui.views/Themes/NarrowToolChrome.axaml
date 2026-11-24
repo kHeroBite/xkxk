@@ -1,0 +1,54 @@
+<!-- 측면 패널·좁은 머리줄: 측면 패널은 ▾ 를 숨기고, Android·웹에서 폭이 좁으면 최대화(측면 패널 아니면 📌 도)를 접어 제목 칸을 확보한다(✕ 는 유지). 클래스는 Views/NarrowToolChrome.cs 가 단다.
+     IsVisible 은 Dock 템플릿이 LocalValue 바인딩(PinButton 의 CanPin MultiBinding)으로 잡고 있어 스타일로 덮을 수 없다(i1113 실측: 📌 가 남음).
+     그래서 바인딩이 없는 MaxWidth·Margin 을 0 으로 접는다 — 폭 0 이면 그리지도 차지하지도 않는다. PART_MenuButton 은 바인딩이 없어 IsVisible 스타일로 숨긴다.
+     MdiChrome.axaml 끝에서 포함한다 -->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:Dock.Avalonia.Controls"
+        xmlns:views="using:xkxk.frameworks.ui.views"
+        xmlns:ui="clr-namespace:xkxk.frameworks.ui.Controls;assembly=xkxk.frameworks.ui">
+  <Style Selector="controls|ToolChromeControl">
+    <Setter Property="views:NarrowToolChrome.Enable" Value="True" />
+  </Style>
+  <!-- 패널 끝 확장 버튼(요건 3): 색은 테마 토큰으로만 준다 -->
+  <Style Selector="ui|PanelCornerButton">
+    <Setter Property="Foreground" Value="{DynamicResource PdBrushText}" />
+    <Setter Property="Background" Value="{DynamicResource PdBrushSurface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource PdBrushBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="3" />
+  </Style>
+  <!-- 측면 패널(탭 영역을 품은 도구 dock, 클래스는 NarrowToolChrome.cs): ▾ 숨김(모든 폭·플랫폼). 원본 PART_MenuButton 은 IsVisible 바인딩이 없어 스타일이 먹는다(Dock 12.1.0.12 디컴파일).
+       ▾ 메뉴 대상이 탭 영역이라 '떠 있게·닫기'가 도구 의도와 어긋난다(lead 결정 (나)). 자동 숨김은 📌 로 남고, 그래서 측면 패널은 좁아도 📌 를 접지 않는다.
+       터치 기기(pdTouchPanelMenu)만 ▾ 를 남긴다. 우클릭이 없어 ▾ 가 '위치' 메뉴를 연다(PanelPositionMenu) -->
+  <Style Selector="controls|ToolChromeControl.pdSidePanel:not(.pdTouchPanelMenu) /template/ Button#PART_MenuButton">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+  <!-- 측면 패널 제목 칸(Dock 12.1.0.12 디컴파일: PART_Grip > Grid > Panel > PART_Title, 📌·✕ 는 다른 열): DataContext 를 안쪽 탭 영역으로 바꾼다.
+       ① PART_Title 의 ActiveDockable.Title 이 활성 탭 제목이 되어 탭 줄을 숨긴 1탭 패널에도 탭 정보가 보인다(사용자 요구 10-30).
+       ② 드롭 대상의 DataContext 가 탭 영역이라 합류가 허용되고, IsDockTarget 이 아니므로 숨긴 탭 줄처럼 안내 없이 합류한다(Q15 ①)
+       ③ 끌기 원본도 탭 영역이다. 바깥 ToolDock 을 끌면 Dock 이 안쪽 탭 영역을 나누려다 거부해(디컴파일 DockDockIntoDock·SplitDockable) 안내 가장자리 판정이 항상 거짓이다. 실행은 PanelDropService 가 가로챈다 -->
+  <Style Selector="controls|ToolChromeControl.pdSidePanel /template/ Grid#PART_Grip > Grid > Panel" x:CompileBindings="False">
+    <Setter Property="DataContext" Value="{Binding ActiveDockable}" />
+    <Setter Property="(DockProperties.IsDropArea)" Value="True" />
+    <Setter Property="(DockProperties.IsDragArea)" Value="True" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <!-- U19 선택(활성) 패널 머리줄: 바탕이 창 제목줄 색(DockSurfaceHeaderActiveBrush=PdBrushMdiTitleBar, ThemeApplier)이므로 글자·📌·✕ 도 창 제목 글자색으로 반전한다.
+       Dock 원본은 DockTabActiveForegroundBrush(어두운 글자)라 파랑 바탕 위 검정이 되어 읽기 어려웠다(13.png) -->
+  <Style Selector="controls|ToolChromeControl:active /template/ Grid#PART_Grip">
+    <Setter Property="Background" Value="{DynamicResource PdChromePanelTabSelectedBackground}" />
+  </Style>
+  <Style Selector="controls|ToolChromeControl:active /template/ TextBlock#PART_Title">
+    <Setter Property="Foreground" Value="{DynamicResource PdChromePanelTabSelectedText}" />
+  </Style>
+  <Style Selector="controls|ToolChromeControl:active /template/ Path">
+    <Setter Property="Fill" Value="{DynamicResource PdChromePanelTabSelectedText}" />
+  </Style>
+  <Style Selector="controls|ToolChromeControl.pdNarrow:not(.pdSidePanel) /template/ Button#PART_PinButton, controls|ToolChromeControl.pdNarrow /template/ Button#PART_MaximizeRestoreButton">
+    <Setter Property="MaxWidth" Value="0" />
+    <Setter Property="Margin" Value="0" />
+    <Setter Property="IsHitTestVisible" Value="False" />
+  </Style>
+</Styles>

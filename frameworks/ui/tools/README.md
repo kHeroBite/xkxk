@@ -8,9 +8,9 @@
 
 | 경로 | 용도 | 재사용 이유 | 실행 명령 | 상태 |
 |---|---|---|---|---|
-| `tools/build_desktop.sh` | Pd.Poc.Desktop 을 Windows dotnet.exe 로 비증분 빌드(WSL 에서 실행) | 데스크톱 빌드의 단일 경로 | `bash tools/build_desktop.sh --bg [Debug\|Release\|R2R\|Work\|Product]` → `logs/build_desktop_<시각>.log` 와 `.rc` | 새 홈에서 동작(스크립트 위치 기준 상대 해석). 주석에 `poc/ui` 문구 1곳 잔존 |
-| `tools/build_browser.sh` | Pd.Poc.Browser(WASM) 정적 번들 publish | 웹 번들 빌드 | `bash tools/build_browser.sh --bg [Release\|Debug]` | 경로 문구 없음 |
-| `tools/build_android.sh` | Pd.Poc.Android 비증분 빌드 | Android 빌드 | `bash tools/build_android.sh --bg [Debug\|Release] [PdDiagnostics=true\|false]` | 경로 문구 없음 |
+| `tools/build_desktop.sh` | xkxk.frameworks.ui.desktop 을 Windows dotnet.exe 로 비증분 빌드(WSL 에서 실행) | 데스크톱 빌드의 단일 경로 | `bash tools/build_desktop.sh --bg [Debug\|Release\|R2R\|Work\|Product]` → `logs/build_desktop_<시각>.log` 와 `.rc` | 새 홈에서 동작(스크립트 위치 기준 상대 해석). 주석에 `poc/ui` 문구 1곳 잔존 |
+| `tools/build_browser.sh` | xkxk.frameworks.ui.browser(WASM) 정적 번들 publish | 웹 번들 빌드 | `bash tools/build_browser.sh --bg [Release\|Debug]` | 경로 문구 없음 |
+| `tools/build_android.sh` | xkxk.frameworks.ui.android 비증분 빌드 | Android 빌드 | `bash tools/build_android.sh --bg [Debug\|Release] [PdDiagnostics=true\|false]` | 경로 문구 없음 |
 | `tools/build_lock.sh` | 같은 Configuration 빌드 직렬화 잠금(source 해서 씀) | 빌드 스크립트 3종이 공유 | `source tools/build_lock.sh; pd_build_lock <ROOT> <Configuration> <LOG>` | 경로 문구 없음 |
 | `tools/build_avalonia_browser_pd.sh` | Avalonia.Browser 유휴 rAF 패치판을 로컬 피드로 pack(기본 dry-run) | 패치판 재생성 | `bash tools/build_avalonia_browser_pd.sh` | 경로 문구 없음 |
 | `tools/build_font_subset.py` | 웹·Android 임베드 한글 글꼴 부분집합 재생성 | 글꼴 글자 추가 때 | `python3 -B tools/build_font_subset.py` | 경로 문구 없음 |

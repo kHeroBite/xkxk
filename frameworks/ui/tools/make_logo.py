@@ -145,7 +145,7 @@ def build(art, src_path, src_img, out, written):
         written.append(p)
     # Windows .ico
     frames = [art.masked(s) for s in ICO_SIZES]
-    p = os.path.join(srcd, "Pd.Poc.Desktop", "Assets", "pd.ico")
+    p = os.path.join(srcd, "xkxk.frameworks.ui.desktop", "Assets", "pd.ico")
     os.makedirs(os.path.dirname(p), exist_ok=True)
     frames[-1].save(p, format="ICO", sizes=[(s, s) for s in ICO_SIZES], append_images=frames[:-1])
     written.append(p)
@@ -165,7 +165,7 @@ def build(art, src_path, src_img, out, written):
     # iOS (Contents.json 은 기존과 동일 내용이라 손대지 않음)
     save_png(art.opaque(1024), os.path.join(asset, "ios", "AppIcon.appiconset", "AppIcon-1024.png"), written)
     # Android 런처·adaptive 전경·알림
-    res = os.path.join(srcd, "Pd.Poc.Android", "Resources")
+    res = os.path.join(srcd, "xkxk.frameworks.ui.android", "Resources")
     nm = notif_master(src_img)
     for name, sc in ANDROID.items():
         d = os.path.join(res, "mipmap-" + name)
@@ -178,7 +178,7 @@ def build(art, src_path, src_img, out, written):
     r, g, b, _ = art.full.getpixel((0, art.full.height // 2))
     bg = f"#{r:02X}{g:02X}{b:02X}"
     # 웹
-    www = os.path.join(srcd, "Pd.Poc.Browser", "wwwroot")
+    www = os.path.join(srcd, "xkxk.frameworks.ui.browser", "wwwroot")
     fav = [art.masked(s) for s in FAV_SIZES]
     p = os.path.join(www, "favicon.ico")
     os.makedirs(os.path.dirname(p), exist_ok=True)
@@ -190,7 +190,7 @@ def build(art, src_path, src_img, out, written):
     save_png(art.opaque(512), os.path.join(www, "icons", "icon-maskable-512.png"), written)
     # 제목줄 컬러 로고(16·11px 표시용, 항상 단순화 판)
     title = Art(art.full, art.simple, 9999)
-    save_png(title.masked(64), os.path.join(srcd, "Pd.Poc.Shell", "Assets", "Logo", "pd-logo-64.png"), written)
+    save_png(title.masked(64), os.path.join(srcd, "xkxk.frameworks.ui.shell", "Assets", "Logo", "pd-logo-64.png"), written)
     return bg
 
 

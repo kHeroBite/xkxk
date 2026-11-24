@@ -1,4 +1,0 @@
-<!-- DataGrid 테마 선택(ProDataGrid 12.1.0.6) — csproj 가 PocGrid=Pro 일 때 이 파일을 avares://Pd.Ui.Views/Themes/DataGridTheme.axaml 로 링크한다. ProDataGrid 는 Themes/Fluent.xaml 을 컴파일해 두지 않고 Fluent.v2.xaml 을 쓴다(DLL 의 Build:/Themes/* 목록·README 확인) -->
-<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.v2.xaml" />
-</Styles>

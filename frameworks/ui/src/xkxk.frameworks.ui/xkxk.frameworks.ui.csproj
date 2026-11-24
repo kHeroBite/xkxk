@@ -1,0 +1,17 @@
+<!-- 순수 UI 층 라이브러리(재사용 컨트롤·스타일·애니메이션·문자열 훅) — Avalonia 만 참조하고 상위 층을 모른다. 계층 규칙은 tools/check_layers.py 가 강제한다 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>xkxk.frameworks.ui</RootNamespace>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.4" />
+  </ItemGroup>
+
+</Project>

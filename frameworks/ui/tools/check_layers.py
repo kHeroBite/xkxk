@@ -131,7 +131,7 @@ def check_all(files, rules, dock_blob=None):
         if layer and rel.endswith(CODE_EXTS + (".csproj",)):
             found += check_layer_file(rel, text, layer, rules["layers"][layer], compiled[layer])
             if rel.endswith(tuple(rules["layers"][layer].get("forbid_exts", ["\0"]))):
-                found.append(f"{rel} {layer} 에 둘 수 없는 파일 형식이다(화면 파일은 Pd.Ui.Views)")
+                found.append(f"{rel} {layer} 에 둘 수 없는 파일 형식이다(화면 파일은 xkxk.frameworks.ui.views)")
         if is_new_file(rel, cfg):
             found += check_new_file(rel, text, cfg)
         elif is_limited_file(rel, rules):
@@ -182,49 +182,49 @@ def self_test(rules):
     """규칙이 실제로 위반을 잡는지(진양성)와 주석·허용 경로를 건너뛰는지(진음성)를 내장 사례로 확인한다."""
     ok = "// 정상 헤더\nusing System;\n"
     src = "src/"
-    parts, tpl = rules["template_parts"]["contract"], src + "Pd.Ui.Views/T.axaml"
+    parts, tpl = rules["template_parts"]["contract"], src + "xkxk.frameworks.ui.views/T.axaml"
     part = lambda **kv: "// 헤더\n" + "".join(f'public const string {k} = "{v}";\n' for k, v in kv.items())
     base = {
-        src + "Pd.Ui/Pd.Ui.csproj": '<!-- 헤더 -->\n<Project><PackageReference Include="Avalonia" Version="12.1.4" /></Project>\n',
-        src + "Pd.Poc.Shell/Pd.Poc.Shell.csproj": '<!-- 헤더 -->\n<Project><ProjectReference Include="..\\Pd.Ui\\Pd.Ui.csproj" /></Project>\n',
-        src + "Pd.Ui.Views/Pd.Ui.Views.csproj": '<!-- 헤더 -->\n<Project><ProjectReference Include="..\\Pd.Poc.Shell\\Pd.Poc.Shell.csproj" /></Project>\n',
-        src + "Pd.Client.Data/Pd.Client.Data.csproj": '<!-- 헤더 -->\n<Project></Project>\n',
+        src + "xkxk.frameworks.ui/xkxk.frameworks.ui.csproj": '<!-- 헤더 -->\n<Project><PackageReference Include="Avalonia" Version="12.1.4" /></Project>\n',
+        src + "xkxk.frameworks.ui.shell/xkxk.frameworks.ui.shell.csproj": '<!-- 헤더 -->\n<Project><ProjectReference Include="..\\xkxk.frameworks.ui\\xkxk.frameworks.ui.csproj" /></Project>\n',
+        src + "xkxk.frameworks.ui.views/xkxk.frameworks.ui.views.csproj": '<!-- 헤더 -->\n<Project><ProjectReference Include="..\\xkxk.frameworks.ui.shell\\xkxk.frameworks.ui.shell.csproj" /></Project>\n',
+        src + "xkxk.frameworks.ui.data/xkxk.frameworks.ui.data.csproj": '<!-- 헤더 -->\n<Project></Project>\n',
         parts: part(Prefix="PART_", Header="PART_Header", Pin="PART_PinButton"),
         tpl: '<!-- 헤더 -->\n<Border x:Name="PART_Header" />\n',
     }
     dock = "PART_PinButton".encode("utf-16-le") + b"\0\0"
     cases = [
         ("정상 기준", {}, 0),
-        ("Ui→Shell using", {src + "Pd.Ui/A.cs": "// 헤더\nusing Pd.Poc.Shell.Views;\n"}, 1),
-        ("Ui→Shell 문자열 avares", {src + "Pd.Ui/A.cs": '// 헤더\nvar u = "avares://Pd.Poc.Shell/x";\n'}, 1),
-        ("Ui→Shell axaml", {src + "Pd.Ui/A.axaml": '<!-- 헤더 -->\n<A xmlns:v="using:Pd.Poc.Shell.Views" />\n'}, 1),
-        ("Ui→Data 코드", {src + "Pd.Ui/A.cs": "// 헤더\nusing Pd.Client.Data;\n"}, 1),
-        ("Ui→Views 코드", {src + "Pd.Ui/A.cs": "// 헤더\nusing Pd.Ui.Views;\n"}, 1),
-        ("주석 안 언급은 통과", {src + "Pd.Ui/A.cs": "// 헤더 Pd.Poc.Shell\nint a; // Pd.Ui.Views\n/* Pd.Client.Data */\n"}, 0),
-        ("Ui→Shell 프로젝트", {src + "Pd.Ui/Pd.Ui.csproj": '<!-- 헤더 -->\n<Project><PackageReference Include="Avalonia" Version="12.1.4" /><ProjectReference Include="..\\Pd.Poc.Shell\\Pd.Poc.Shell.csproj" /></Project>\n'}, 1),
-        ("Ui 허용 밖 패키지", {src + "Pd.Ui/Pd.Ui.csproj": '<!-- 헤더 -->\n<Project><PackageReference Include="Avalonia" Version="12.1.4" /><PackageReference Include="Dock.Avalonia" Version="1" /></Project>\n'}, 1),
-        ("Ui 패키지 버전 불일치", {src + "Pd.Ui/Pd.Ui.csproj": '<!-- 헤더 -->\n<Project><PackageReference Include="Avalonia" Version="12.0.0" /></Project>\n'}, 1),
-        ("Shell→Views 프로젝트", {src + "Pd.Poc.Shell/Pd.Poc.Shell.csproj": '<!-- 헤더 -->\n<Project><ProjectReference Include="../Pd.Ui.Views/Pd.Ui.Views.csproj" /></Project>\n'}, 1),
-        ("Shell→Views 코드", {src + "Pd.Poc.Shell/A.cs": "using Pd.Ui.Views;\n"}, 1),
-        ("Shell 에 axaml", {src + "Pd.Poc.Shell/A.axaml": "<A />\n"}, 1),
-        ("Data→Shell 코드", {src + "Pd.Client.Data/A.cs": "// 헤더\nusing Pd.Poc.Shell.Docking;\n"}, 1),
-        ("Views→Shell 허용", {src + "Pd.Ui.Views/Pd.Ui.Views.csproj": '<!-- 헤더 -->\n<Project><ProjectReference Include="..\\Pd.Poc.Shell\\Pd.Poc.Shell.csproj" /></Project>\n', src + "Pd.Ui.Views/A.cs": "// 헤더\nusing Pd.Poc.Shell.Views;\n"}, 0),
-        ("Data→Avalonia 패키지", {src + "Pd.Client.Data/Pd.Client.Data.csproj": '<!-- 헤더 -->\n<Project><PackageReference Include="Avalonia" Version="12.1.4" /></Project>\n'}, 1),
-        ("Data→Avalonia 코드", {src + "Pd.Client.Data/A.cs": "// 헤더\nusing Avalonia.Controls;\n"}, 1),
-        ("Data→Shell 프로젝트", {src + "Pd.Client.Data/Pd.Client.Data.csproj": '<!-- 헤더 -->\n<Project><ProjectReference Include="..\\Pd.Poc.Shell\\Pd.Poc.Shell.csproj" /></Project>\n'}, 1),
-        ("신규 파일 301줄", {src + "Pd.Ui/A.cs": ok + "\n" * 299}, 1),
-        ("신규 파일 300줄 통과", {src + "Pd.Ui/A.cs": ok + "\n" * 298}, 0),
-        ("헤더 없음", {src + "Pd.Ui/A.cs": "using System;\n"}, 1),
-        ("영문 헤더", {src + "Pd.Ui/A.cs": "// english only\n"}, 1),
-        ("BOM 뒤 헤더 통과", {src + "Pd.Ui/A.cs": "﻿// 정상 헤더\n"}, 0),
-        ("Shell 기존 파일은 헤더 면제", {src + "Pd.Poc.Shell/A.cs": "using System;\n"}, 0),
-        ("Shell 301줄", {src + "Pd.Poc.Shell/A.cs": "using System;\n" * 301}, 1),
-        ("Shell 300줄 통과", {src + "Pd.Poc.Shell/A.cs": "using System;\n" * 300}, 0),
-        ("Shell axaml 301줄", {src + "Pd.Poc.Shell/A.axaml": "\n" * 301}, 2),
-        ("Shell PART_ 리터럴", {src + "Pd.Poc.Shell/A.cs": 'var n = "PART_Header";\n'}, 1),
-        ("Shell 선택자 안 PART_", {src + "Pd.Poc.Shell/A.cs": 'var n = "#PART_Header";\n'}, 1),
-        ("Shell 주석 PART_ 통과", {src + "Pd.Poc.Shell/A.cs": "// 템플릿 PART_Header\nint a;\n"}, 0),
-        ("Shell 계약 상수 통과", {src + "Pd.Poc.Shell/A.cs": "var n = TemplateParts.Header;\n"}, 0),
+        ("Ui→Shell using", {src + "xkxk.frameworks.ui/A.cs": "// 헤더\nusing xkxk.frameworks.ui.shell.Views;\n"}, 1),
+        ("Ui→Shell 문자열 avares", {src + "xkxk.frameworks.ui/A.cs": '// 헤더\nvar u = "avares://xkxk.frameworks.ui.shell/x";\n'}, 1),
+        ("Ui→Shell axaml", {src + "xkxk.frameworks.ui/A.axaml": '<!-- 헤더 -->\n<A xmlns:v="using:xkxk.frameworks.ui.shell.Views" />\n'}, 1),
+        ("Ui→Data 코드", {src + "xkxk.frameworks.ui/A.cs": "// 헤더\nusing xkxk.frameworks.ui.data;\n"}, 1),
+        ("Ui→Views 코드", {src + "xkxk.frameworks.ui/A.cs": "// 헤더\nusing xkxk.frameworks.ui.views;\n"}, 1),
+        ("주석 안 언급은 통과", {src + "xkxk.frameworks.ui/A.cs": "// 헤더 xkxk.frameworks.ui.shell\nint a; // xkxk.frameworks.ui.views\n/* xkxk.frameworks.ui.data */\n"}, 0),
+        ("Ui→Shell 프로젝트", {src + "xkxk.frameworks.ui/xkxk.frameworks.ui.csproj": '<!-- 헤더 -->\n<Project><PackageReference Include="Avalonia" Version="12.1.4" /><ProjectReference Include="..\\xkxk.frameworks.ui.shell\\xkxk.frameworks.ui.shell.csproj" /></Project>\n'}, 1),
+        ("Ui 허용 밖 패키지", {src + "xkxk.frameworks.ui/xkxk.frameworks.ui.csproj": '<!-- 헤더 -->\n<Project><PackageReference Include="Avalonia" Version="12.1.4" /><PackageReference Include="Dock.Avalonia" Version="1" /></Project>\n'}, 1),
+        ("Ui 패키지 버전 불일치", {src + "xkxk.frameworks.ui/xkxk.frameworks.ui.csproj": '<!-- 헤더 -->\n<Project><PackageReference Include="Avalonia" Version="12.0.0" /></Project>\n'}, 1),
+        ("Shell→Views 프로젝트", {src + "xkxk.frameworks.ui.shell/xkxk.frameworks.ui.shell.csproj": '<!-- 헤더 -->\n<Project><ProjectReference Include="../xkxk.frameworks.ui.views/xkxk.frameworks.ui.views.csproj" /></Project>\n'}, 1),
+        ("Shell→Views 코드", {src + "xkxk.frameworks.ui.shell/A.cs": "using xkxk.frameworks.ui.views;\n"}, 1),
+        ("Shell 에 axaml", {src + "xkxk.frameworks.ui.shell/A.axaml": "<A />\n"}, 1),
+        ("Data→Shell 코드", {src + "xkxk.frameworks.ui.data/A.cs": "// 헤더\nusing xkxk.frameworks.ui.shell.Docking;\n"}, 1),
+        ("Views→Shell 허용", {src + "xkxk.frameworks.ui.views/xkxk.frameworks.ui.views.csproj": '<!-- 헤더 -->\n<Project><ProjectReference Include="..\\xkxk.frameworks.ui.shell\\xkxk.frameworks.ui.shell.csproj" /></Project>\n', src + "xkxk.frameworks.ui.views/A.cs": "// 헤더\nusing xkxk.frameworks.ui.shell.Views;\n"}, 0),
+        ("Data→Avalonia 패키지", {src + "xkxk.frameworks.ui.data/xkxk.frameworks.ui.data.csproj": '<!-- 헤더 -->\n<Project><PackageReference Include="Avalonia" Version="12.1.4" /></Project>\n'}, 1),
+        ("Data→Avalonia 코드", {src + "xkxk.frameworks.ui.data/A.cs": "// 헤더\nusing Avalonia.Controls;\n"}, 1),
+        ("Data→Shell 프로젝트", {src + "xkxk.frameworks.ui.data/xkxk.frameworks.ui.data.csproj": '<!-- 헤더 -->\n<Project><ProjectReference Include="..\\xkxk.frameworks.ui.shell\\xkxk.frameworks.ui.shell.csproj" /></Project>\n'}, 1),
+        ("신규 파일 301줄", {src + "xkxk.frameworks.ui/A.cs": ok + "\n" * 299}, 1),
+        ("신규 파일 300줄 통과", {src + "xkxk.frameworks.ui/A.cs": ok + "\n" * 298}, 0),
+        ("헤더 없음", {src + "xkxk.frameworks.ui/A.cs": "using System;\n"}, 1),
+        ("영문 헤더", {src + "xkxk.frameworks.ui/A.cs": "// english only\n"}, 1),
+        ("BOM 뒤 헤더 통과", {src + "xkxk.frameworks.ui/A.cs": "﻿// 정상 헤더\n"}, 0),
+        ("Shell 기존 파일은 헤더 면제", {src + "xkxk.frameworks.ui.shell/A.cs": "using System;\n"}, 0),
+        ("Shell 301줄", {src + "xkxk.frameworks.ui.shell/A.cs": "using System;\n" * 301}, 1),
+        ("Shell 300줄 통과", {src + "xkxk.frameworks.ui.shell/A.cs": "using System;\n" * 300}, 0),
+        ("Shell axaml 301줄", {src + "xkxk.frameworks.ui.shell/A.axaml": "\n" * 301}, 2),
+        ("Shell PART_ 리터럴", {src + "xkxk.frameworks.ui.shell/A.cs": 'var n = "PART_Header";\n'}, 1),
+        ("Shell 선택자 안 PART_", {src + "xkxk.frameworks.ui.shell/A.cs": 'var n = "#PART_Header";\n'}, 1),
+        ("Shell 주석 PART_ 통과", {src + "xkxk.frameworks.ui.shell/A.cs": "// 템플릿 PART_Header\nint a;\n"}, 0),
+        ("Shell 계약 상수 통과", {src + "xkxk.frameworks.ui.shell/A.cs": "var n = TemplateParts.Header;\n"}, 0),
         ("계약 파일 없음", {parts: None}, 1),
         ("계약 상수 없음", {parts: part(Prefix="PART_")}, 1),
         ("계약 값이 PART_ 아님", {parts: part(Header="Header")}, 1),

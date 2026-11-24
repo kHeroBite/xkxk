@@ -1,0 +1,134 @@
+<!-- D-2 예비안 B: 문서 dock 템플릿 변형 — LayoutMode 에 맞는 쪽(탭 DocumentControl 또는 MdiDocumentControl)만 생성해, 숨은 쪽 본문 표시기가 공용 ControlRecycling 캐시에서 문서 뷰를 빼앗지 않게 한다 -->
+<!-- 원문: Dock.Avalonia.Themes.Fluent 12.1.0.12 Controls/DocumentDockControl.axaml (https://github.com/wieslawsoltes/Dock, commit 4b12dc1ef877d9950e5d1c620a9261d820afef72).
+     MIT License, Copyright © Wiesław Šoltés. 패키지에 axaml 원문이 없어 컴파일된 XAML 디컴파일로 재구성했다.
+     원문과 다른 점: Panel 안 DocumentControl/MdiDocumentControl 을 IsVisible 전환 대신 LayoutModeGate(MultiBinding)가 Content 를 주는 ContentControl 로 감쌌다.
+     폰 모드(MainViewModel.Compact.IsCompact)에서는 두 래퍼 모두 닫는다(M4 — 폰 모드 화면이 같은 뷰 인스턴스를 쓰고, 돌아오면 새 문서 영역이 캐시에서 되찾는다).
+     모드가 맞지 않으면 Content 는 null 이 아니라 DocumentAreaClosed 표식이고 지역 DataTemplate 이 빈 Panel 로 그린다(D-11: null 이면 앱 수준 템플릿이 끼어들어 탭 영역을 덮었다).
+     원문 Setter 5개(AutomationId·Name·IsDragEnabled·IsDropEnabled·DockGroup)와 DockableControl(TrackingMode=Visible)은 그대로다.
+     연결: MdiChrome.axaml 의 Styles.Resources MergedDictionaries 에서 ResourceInclude(odev-7c). App.axaml 에서 Dock 테마보다 뒤라 타입 키 재정의가 이긴다 -->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="using:Dock.Avalonia.Controls"
+                    xmlns:dmc="using:Dock.Model.Controls"
+                    xmlns:core="using:Dock.Model.Core"
+                    xmlns:theming="using:xkxk.frameworks.ui.shell.Theming"
+                    xmlns:docking="using:xkxk.frameworks.ui.shell.Docking"
+                    xmlns:shell="using:xkxk.frameworks.ui.shell"
+                    xmlns:views="using:xkxk.frameworks.ui.views">
+
+  <ControlTheme x:Key="{x:Type controls:DocumentDockControl}" TargetType="controls:DocumentDockControl" x:DataType="dmc:IDocumentDock">
+    <Setter Property="AutomationProperties.AutomationId" Value="{Binding Id}" />
+    <Setter Property="AutomationProperties.Name" Value="{Binding Title}" />
+    <Setter Property="(DockProperties.IsDragEnabled)" Value="{Binding CanDrag}" />
+    <Setter Property="(DockProperties.IsDropEnabled)" Value="{Binding CanDrop}" />
+    <Setter Property="(DockProperties.DockGroup)" Value="{Binding DockGroup}" />
+    <Setter Property="Template">
+      <ControlTemplate x:DataType="dmc:IDocumentDock">
+        <controls:DockableControl TrackingMode="Visible">
+          <Panel>
+            <!-- 탭 모드에서만 존재 -->
+            <ContentControl HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+              <ContentControl.Content>
+                <MultiBinding Converter="{x:Static docking:LayoutModeGate.Instance}" ConverterParameter="Tabbed">
+                  <Binding />
+                  <Binding Path="LayoutMode" />
+                  <Binding Path="Compact.IsCompact" Source="{x:Static shell:App.MainViewModel}" />
+                </MultiBinding>
+              </ContentControl.Content>
+              <ContentControl.DataTemplates>
+                <DataTemplate DataType="docking:DocumentAreaClosed"><Panel /></DataTemplate>
+              </ContentControl.DataTemplates>
+              <ContentControl.ContentTemplate>
+                <DataTemplate x:DataType="dmc:IDocumentDock">
+                  <!-- 문서 전환 가속(설정 기본 켬): 비활성 탭 문서 뷰를 떼지 않고 숨겨 둔다 — xkxk.frameworks.ui.views/DocumentTabKeepAlive.cs -->
+                  <!-- pdMotionHostDock: DOCK·탭 모드 문서 탭 내용 전환 호스트 — 창 움직임 재생기(Depth/WindowTransitions)가 이 아래 활성 문서 뷰에 들어옴·나감 효과를 건다(21 설계 §3 배치 상태 표 DOCK 행) -->
+                  <controls:DocumentControl Classes="pdMotionHostDock" IsActive="{Binding IsActive}" views:DocumentTabKeepAlive.Enable="True">
+                    <!-- 측면 패널 탭 영역에서 보이는 탭이 1개 이하면 탭 줄 숨김 — 머리줄만 보인다(아래 구분선은 원 템플릿이 탭 줄 IsVisible 을 따른다) -->
+                    <controls:DocumentControl.Styles>
+                      <Style Selector="controls|DocumentControl /template/ controls|DocumentTabStrip#PART_TabStrip" x:CompileBindings="False">
+                        <Setter Property="IsVisible">
+                          <MultiBinding Converter="{x:Static docking:PanelTabStripVisibility.Instance}">
+                            <Binding />
+                            <Binding Path="VisibleDockables.Count" />
+                            <Binding Path="Owner.VisibleDockables.Count" /><!-- 분리 창 안에서 칸이 나뉘거나 닫히면 소유자 또는 그 자식 수가 바뀐다 — 다시 계산한다 -->
+                          </MultiBinding>
+                        </Setter>
+                      </Style>
+                    </controls:DocumentControl.Styles>
+                    <!-- 탭 아이콘·표시 방식(22 §3): 문서만. 문서가 아닌 탭은 Dock 12.1.0.12 기본(아이콘 = 빈 Panel, 제목 = Title + DockHeaderContentPadding) 그대로 -->
+                    <controls:DocumentControl.IconTemplate>
+                      <DataTemplate x:DataType="core:IDockable">
+                        <ContentControl Content="{Binding}" VerticalAlignment="Center">
+                          <ContentControl.DataTemplates>
+                            <DataTemplate DataType="docking:PocDocument">
+                              <Panel Background="Transparent" ToolTip.Tip="{Binding Title}" AutomationProperties.Name="{Binding Title}">
+                                <views:WindowIcon Classes="dockTabIcon" Document="{Binding}" Width="14" Height="14" Margin="4,0,0,0" VerticalAlignment="Center">
+                                  <views:WindowIcon.IsVisible>
+                                  <MultiBinding Converter="{x:Static views:WindowIcon.TabIconVisible}">
+                                    <Binding Path="TitleTabDisplay" Source="{x:Static theming:UiSettings.Current}" />
+                                    <Binding Path="BusyIconTitleOnly" Source="{x:Static theming:UiSettings.Current}" />
+                                    <Binding Path="$self.IsBusyShown" />
+                                  </MultiBinding>
+                                  </views:WindowIcon.IsVisible>
+                                </views:WindowIcon>
+                              </Panel>
+                            </DataTemplate>
+                            <DataTemplate DataType="core:IDockable"><Panel /></DataTemplate>
+                          </ContentControl.DataTemplates>
+                        </ContentControl>
+                      </DataTemplate>
+                    </controls:DocumentControl.IconTemplate>
+                    <controls:DocumentControl.HeaderTemplate>
+                      <DataTemplate x:DataType="core:IDockable">
+                        <ContentControl Content="{Binding}" VerticalAlignment="Center">
+                          <ContentControl.DataTemplates>
+                            <DataTemplate DataType="docking:PocDocument">
+                              <Panel IsVisible="{Binding TitleTabDisplay, Source={x:Static theming:UiSettings.Current}, Converter={x:Static views:WindowIcon.TabTitleVisible}}">
+                                <TextBlock Text="{Binding Title}" Padding="{DynamicResource DockHeaderContentPadding}" VerticalAlignment="Center" />
+                                <views:WindowIcon x:Name="HeaderBusy" Document="{Binding}" IsVisible="False" /><!-- 표시 시간 판정(23 §3)만 빌린다 -->
+                                <Border Classes="dockTabUnderline" Height="2" VerticalAlignment="Bottom" Background="{DynamicResource PdBrushAccent}">
+                                  <Border.IsVisible>
+                                  <MultiBinding Converter="{x:Static views:WindowIcon.TabUnderlineVisible}">
+                                    <Binding Path="TitleTabDisplay" Source="{x:Static theming:UiSettings.Current}" />
+                                    <Binding Path="BusyIconTitleOnly" Source="{x:Static theming:UiSettings.Current}" />
+                                    <Binding Path="#HeaderBusy.IsBusyShown" />
+                                  </MultiBinding>
+                                  </Border.IsVisible>
+                                </Border>
+                              </Panel>
+                            </DataTemplate>
+                            <DataTemplate DataType="core:IDockable">
+                              <TextBlock Text="{Binding Title}" Padding="{DynamicResource DockHeaderContentPadding}" VerticalAlignment="Center" />
+                            </DataTemplate>
+                          </ContentControl.DataTemplates>
+                        </ContentControl>
+                      </DataTemplate>
+                    </controls:DocumentControl.HeaderTemplate>
+                  </controls:DocumentControl>
+                </DataTemplate>
+              </ContentControl.ContentTemplate>
+            </ContentControl>
+            <!-- MDI 모드에서만 존재(LayoutManager·PART_Root 배경은 MdiChrome 의 타입 셀렉터 스타일이 그대로 적용) -->
+            <ContentControl HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+              <ContentControl.Content>
+                <MultiBinding Converter="{x:Static docking:LayoutModeGate.Instance}" ConverterParameter="Mdi">
+                  <Binding />
+                  <Binding Path="LayoutMode" />
+                  <Binding Path="Compact.IsCompact" Source="{x:Static shell:App.MainViewModel}" />
+                </MultiBinding>
+              </ContentControl.Content>
+              <ContentControl.DataTemplates>
+                <DataTemplate DataType="docking:DocumentAreaClosed"><Panel /></DataTemplate>
+              </ContentControl.DataTemplates>
+              <ContentControl.ContentTemplate>
+                <DataTemplate x:DataType="dmc:IDocumentDock">
+                  <controls:MdiDocumentControl IsActive="{Binding IsActive}" />
+                </DataTemplate>
+              </ContentControl.ContentTemplate>
+            </ContentControl>
+          </Panel>
+        </controls:DockableControl>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>

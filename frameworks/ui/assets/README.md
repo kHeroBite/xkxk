@@ -87,7 +87,7 @@
 
 - 근거는 REQ-113·`plan/09_화면설계/22_메뉴아이콘_제목탭_즐겨찾기_설계.md` 다. 아이콘은 메뉴 ID(`plan/_build/menu_data.py` MENU_ID, ADR-085) 기준이며 개수는 생성기 출력으로만 센다.
 - 정본은 데이터 두 파일이다. 조합(메뉴 ID → 기본 글리프 + 보조 표지)은 `plan/_build/menu_icon_data.py`, 그림(24 격자 단색 도형)은 `plan/_build/icon_glyphs.py` 다.
-- 생성기 `plan/_build/menu_icons.py` 가 `icons/menu/m<메뉴ID>.svg`, `poc/ui/src/Pd.Ui.Views/Themes/MenuIcons.axaml`(키 `PdMenuIcon<메뉴ID>`·`PdShellIcon<이름>`·`PdIcon<이름>`), `poc/ui/src/Pd.Client.Data/Navigation/MenuIconCatalog.Generated.cs`(화면 ID → 메뉴 ID·아이콘 키), `_LICENSES.csv` 의 `icons/menu/` 행을 만든다.
+- 생성기 `plan/_build/menu_icons.py` 가 `icons/menu/m<메뉴ID>.svg`, `poc/ui/src/xkxk.frameworks.ui.views/Themes/MenuIcons.axaml`(키 `PdMenuIcon<메뉴ID>`·`PdShellIcon<이름>`·`PdIcon<이름>`), `poc/ui/src/xkxk.frameworks.ui.data/Navigation/MenuIconCatalog.Generated.cs`(화면 ID → 메뉴 ID·아이콘 키), `_LICENSES.csv` 의 `icons/menu/` 행을 만든다.
 - 메뉴를 더하거나 아이콘을 바꿀 때는 데이터 파일을 고치고 `python3 -B plan/_build/menu_icons.py` 를 다시 돌린다. 생성물을 손으로 고치지 않는다.
 - 검사는 `--check`(누락·중복 조합·없는 이름·폐기 번호·경로 문법·생성물 최신 여부), `--self-test`(검사기 결함 주입·차집합·결정성), 품질 확인은 `--sheet <png>`(16·24·32px × 밝음·어두움 접촉 시트, 세션 임시 폴더에 둔다)다.
 - 라이선스: 외부 아이콘 세트(Material·Lucide·Font Awesome 등)의 path 를 복사하거나 기억으로 재현하지 않고 사각·원·다각형·선을 조합해 새로 그린다. `_LICENSES.csv` source 열에 생성 도구·모델·날짜를 적는다.
@@ -96,7 +96,7 @@
 
 - 근거는 REQ-115 다. 로고 원본은 `logos/logo-pd-mark.svg`(기존 64px 로고 모양을 따라 새로 그림)이고, 생성 도구는 `tools/make_icons.py` 다.
 - 생성물은 `logos/pd-app.ico`(16·20·24·32·40·48·64 = 32bpp DIB, 256 = PNG)와 `logos/pd-app-<16|24|32|48|64|128|256>.png` 다.
-- 같은 실행이 빌드 반영본 `poc/ui/src/Pd.Poc.Desktop/Assets/pd.ico`(csproj `ApplicationIcon`)와 `poc/ui/src/Pd.Ui.Views/Assets/Logo/pd-logo-64.png`(제목줄 로고)를 교체한다. 로고를 바꿀 때는 SVG 를 고치고 `python3 -B tools/make_icons.py` 를 다시 돌린다.
+- 같은 실행이 빌드 반영본 `poc/ui/src/xkxk.frameworks.ui.desktop/Assets/pd.ico`(csproj `ApplicationIcon`)와 `poc/ui/src/xkxk.frameworks.ui.views/Assets/Logo/pd-logo-64.png`(제목줄 로고)를 교체한다. 로고를 바꿀 때는 SVG 를 고치고 `python3 -B tools/make_icons.py` 를 다시 돌린다.
 - 도구는 SVG 의 `pd-frame`(rx)·`pd-left`(경로 M·H·V·L·C·Z)·두 그라데이션 id 만 읽는다. 이 id·속성 이름을 바꾸면 도구도 함께 고친다.
 - 검사는 `--check`(원본에서 다시 만든 결과와 저장소 파일 일치, ico 크기별 형식), `--self-test`(ico 왕복·작은 PNG 항목 결함 주입)다.
 

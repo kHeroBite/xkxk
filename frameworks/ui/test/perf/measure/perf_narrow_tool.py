@@ -132,7 +132,7 @@ def main():
     ap.add_argument("--h", type=int, default=800, help="창 높이(px)")
     ap.add_argument("--out", help="결과 JSON 경로")
     ap.add_argument("--dry-run", action="store_true", help="1회만 재고 값 출력(파일 저장 없음)")
-    ap.add_argument("--build-dir", help="Pd.Ui.Views.dll 이 있는 실행 폴더(sha256 기록)")
+    ap.add_argument("--build-dir", help="xkxk.frameworks.ui.views.dll 이 있는 실행 폴더(sha256 기록)")
     a = ap.parse_args()
     if a.self_test:
         return self_test()

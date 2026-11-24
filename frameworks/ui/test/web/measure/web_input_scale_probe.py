@@ -53,7 +53,7 @@ def self_test():
 
 def main():
     ap = argparse.ArgumentParser(description="웹 기기 배율에서 그리기 배율과 누름 배율을 비교한다(흉내 배율 대 Chrome 실제 배율).")
-    ap.add_argument("--bundle", help="Pd.Poc.Browser publish 의 wwwroot 경로(index.html 이 있는 폴더)")
+    ap.add_argument("--bundle", help="xkxk.frameworks.ui.browser publish 의 wwwroot 경로(index.html 이 있는 폴더)")
     ap.add_argument("--port", type=int, default=0, help="정적 서버 포트(필수, 5180·5220 금지 — 사용자 Pd 앱 포트)")
     ap.add_argument("--out-dir", help="결과 폴더(web_input_scale_probe.json 을 쓴다)")
     ap.add_argument("--dpr", type=float, default=2.25, help="기기 배율(기본 2.25)")

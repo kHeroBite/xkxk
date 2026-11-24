@@ -1,0 +1,86 @@
+<!-- 레이아웃 저장·관리 패널(UI-11, 윈도우 메뉴 ⑪⑫) — 저장 화면(이름 입력·덮어쓰기 확인)과 관리 화면(목록·불러오기·이름 변경·삭제 확인·템플릿). 문자열은 다국어 사전 키 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:xkxk.frameworks.ui.shell.ViewModels"
+             xmlns:docking="using:xkxk.frameworks.ui.data.Layout"
+             xmlns:loc="using:xkxk.frameworks.ui.shell.Localization"
+             xmlns:views="using:xkxk.frameworks.ui.views"
+             x:Class="xkxk.frameworks.ui.views.LayoutManagerView"
+             x:DataType="vm:LayoutManagerViewModel">
+  <Border Padding="8" Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
+          BorderThickness="0,0,0,1" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+    <StackPanel Spacing="6">
+
+      <!-- ⑪ 저장 화면 -->
+      <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding IsSaveMode}">
+        <TextBlock Text="{loc:Tr layout.name}" VerticalAlignment="Center" />
+        <TextBox Text="{Binding SaveName, Mode=TwoWay}" Width="260" AutomationProperties.AutomationId="shell.layout.txtName" />
+        <Button Content="{loc:Tr common.save}" Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}" IsDefault="True"
+                AutomationProperties.AutomationId="shell.layout.btnSave" />
+        <Button Content="{loc:Tr common.cancel}" Command="{Binding CancelCommand}" AutomationProperties.AutomationId="shell.layout.btnCancel" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding ConfirmOverwrite}">
+        <Button Content="{loc:Tr layout.overwrite}" Command="{Binding ConfirmOverwriteCommand}" AutomationProperties.AutomationId="shell.layout.btnOverwrite" />
+        <Button Content="{loc:Tr common.no}" Command="{Binding CancelCommand}" AutomationProperties.AutomationId="shell.layout.btnOverwriteNo" />
+      </StackPanel>
+
+      <!-- ⑫ 관리 화면 -->
+      <Grid ColumnDefinitions="*,12,Auto" IsVisible="{Binding IsManageMode}">
+        <StackPanel Grid.Column="0" Spacing="4">
+          <TextBlock Text="{loc:Tr layout.saved}" FontWeight="{DynamicResource PdFontWeightStrong}" />
+          <ListBox ItemsSource="{Binding Entries}" SelectedItem="{Binding Selected, Mode=TwoWay}" MaxHeight="220" MinHeight="80"
+                   AutomationProperties.AutomationId="shell.layout.list">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="docking:LayoutEntry">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <TextBlock Text="{Binding Name}" />
+                  <!-- 웹 임베드 폰트 부분집합에 자물쇠 이모지가 없어 글자로 표시 -->
+                  <TextBlock Text="{loc:Tr layout.readOnly}" Opacity="0.7" IsVisible="{Binding IsReadOnly}" ToolTip.Tip="{loc:Tr layout.readOnly.tip}" />
+                  <TextBlock Text="{Binding DocumentCount, StringFormat='({0})'}" Opacity="0.7" />
+                </StackPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Button Content="{loc:Tr common.load}" Command="{Binding LoadCommand}" IsEnabled="{Binding HasSelection}" AutomationProperties.AutomationId="shell.layout.btnLoad" />
+            <Button Content="{loc:Tr layout.saveAs}" Command="{Binding SaveAsCommand}" AutomationProperties.AutomationId="shell.layout.btnSaveAs"
+                    ToolTip.Tip="{loc:Tr layout.saveAs.tip}" />
+            <TextBox Text="{Binding RenameText, Mode=TwoWay}" Width="200" IsEnabled="{Binding CanEditSelected}" AutomationProperties.AutomationId="shell.layout.txtRename" />
+            <Button Content="{loc:Tr common.rename}" Command="{Binding RenameCommand}" IsEnabled="{Binding CanEditSelected}" AutomationProperties.AutomationId="shell.layout.btnRename" />
+            <Button Content="{loc:Tr common.delete}" Command="{Binding DeleteCommand}" IsEnabled="{Binding CanEditSelected}" AutomationProperties.AutomationId="shell.layout.btnDelete" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding ConfirmDelete}">
+            <Button Content="{loc:Tr common.delete}" Command="{Binding ConfirmDeleteCommand}" AutomationProperties.AutomationId="shell.layout.btnDeleteYes" />
+            <Button Content="{loc:Tr common.no}" Command="{Binding CancelCommand}" AutomationProperties.AutomationId="shell.layout.btnDeleteNo" />
+          </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Spacing="4" MinWidth="220">
+          <TextBlock Text="{loc:Tr layout.templates}" FontWeight="{DynamicResource PdFontWeightStrong}" />
+          <ListBox ItemsSource="{Binding TemplatePicker.Templates}" SelectedItem="{Binding TemplatePicker.SelectedTemplate, Mode=TwoWay}" MaxHeight="220"
+                   AutomationProperties.AutomationId="shell.layout.templates">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="docking:LayoutTemplate">
+                <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Description}" />
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+          <Button Content="{loc:Tr layout.applyTemplate}" Command="{Binding TemplatePicker.ApplyTemplateCommand}" AutomationProperties.AutomationId="shell.layout.btnApplyTemplate"
+                  ToolTip.Tip="{loc:Tr layout.applyTemplate.tip}" />
+        </StackPanel>
+      </Grid>
+
+      <!-- ⑫ 전체 백업·복원: 설정·자동 저장 슬롯·개인 레이아웃 묶음. 복원 전 현재 상태를 자동 백업 -->
+      <Border IsVisible="{Binding IsManageMode}" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}" Padding="0,6,0,0">
+        <views:LayoutBackupView DataContext="{Binding Backups}" />
+      </Border>
+
+      <!-- 안내·확인 문구(덮어쓰기·삭제·복원 확인 질문도 여기에 표시) -->
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Grid.Column="0" Text="{Binding Message}" VerticalAlignment="Center" TextWrapping="Wrap" AutomationProperties.AutomationId="shell.layout.message" />
+        <Button Grid.Column="1" Content="{loc:Tr common.close}" Command="{Binding CloseCommand}" IsVisible="{Binding IsManageMode}"
+                AutomationProperties.AutomationId="shell.layout.btnClose" />
+      </Grid>
+    </StackPanel>
+  </Border>
+</UserControl>

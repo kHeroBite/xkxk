@@ -6,7 +6,7 @@
   title_tab_width_check.py --live [--out 결과.json] [--widths 700,1100,1600]
                                             진단 빌드에 원격 연결해 실제 폭을 잰다. 연결은 pdctl.py 와 같다. rc 0/1/2(판정불가)
 
-규칙(정본 plan/09_화면설계/01_화면설계_공통원칙.md §2-1, 구현 Pd.Ui/Controls/TitleTabWidth.cs):
+규칙(정본 plan/09_화면설계/01_화면설계_공통원칙.md §2-1, 구현 xkxk.frameworks.ui/Controls/TitleTabWidth.cs):
   폭 = clamp(자연 폭, 72, 240). 합계가 (가용 폭 - 간격 2×(n-1)) 를 넘으면 모든 탭에 같은 상한 max(72, 가용/n) 을 씌운다.
   72 에서도 넘치면 가로 스크롤(마지막 탭이 줄 오른쪽 밖). 자연 폭은 같은 제목의 탭을 홀로 열어 넓은 줄에서 잰 값이다.
 측정 이름: tab_natural_le_240 · tab_shrink_common_cap · tab_min_72_then_scroll · ellipsis_tooltip (판정기 E2 필수 이름)
@@ -18,9 +18,9 @@ import sys
 import time
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
-WIDTH_CS = os.path.join(ROOT, "src/Pd.Ui/Controls/TitleTabWidth.cs")
-PANEL_CS = os.path.join(ROOT, "src/Pd.Ui/Controls/TitleTabPanel.cs")
-VIEW = os.path.join(ROOT, "src/Pd.Ui.Views/MainView.axaml")
+WIDTH_CS = os.path.join(ROOT, "src/xkxk.frameworks.ui/Controls/TitleTabWidth.cs")
+PANEL_CS = os.path.join(ROOT, "src/xkxk.frameworks.ui/Controls/TitleTabPanel.cs")
+VIEW = os.path.join(ROOT, "src/xkxk.frameworks.ui.views/MainView.axaml")
 MIN, MAX, GAP, TOL = 72.0, 240.0, 2.0, 2.5
 COUNTS = (1, 3, 5, 10, 30)
 TITLES = ("가", "열린 문서 제목 스무 자 정도", "아주 긴 문서 제목 " * 8)  # 짧음·중간·240 초과(말줄임) — 번갈아 쓴다

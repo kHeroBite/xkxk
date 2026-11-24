@@ -1,7 +1,7 @@
 # 제품(PdDiagnostics=false) 산출물(웹 wwwroot·데스크톱 출력 폴더·Android APK)의 '진단 기능 부재'(Q9)를 정적 문자열 검사와 웹 headless 부팅 실측으로 판정하는 스크립트
 # 사용: python3 check_product_web.py <웹 wwwroot | 데스크톱 출력 폴더 | .apk> [포트=5183] [--kind web|desktop|apk] [--out 결과.json] [--shots-dir 폴더] [--allowlist 목록.json]
 # 웹 조건 ① diag.js 파일 없음 ② 부팅 후 window.pdAutomation·__pdPoc 없음 ③ 어셈블리에 금지 문자열 0건 ④ ?cmd= 등 쿼리가 효과 없음 ⑤ 유휴 rAF 재등록 없음
-# Q9 판정 대상 제품판 = prod 채널(-p:PdChannel=prod, team-lead 2026-10-30). PerfProbe 허용은 Pd.Poc.Shell 메타데이터 PdChannel=prod 일 때만, 아니면 보류.
+# Q9 판정 대상 제품판 = prod 채널(-p:PdChannel=prod, team-lead 2026-10-30). PerfProbe 허용은 xkxk.frameworks.ui.shell 메타데이터 PdChannel=prod 일 때만, 아니면 보류.
 # 종료 코드: 0=PASS, 1=FAIL, 2=판정불가, 3=보류. 데스크톱·APK 는 ③(어셈블리 금지 문자열 0건)만 본다. 금지·허용 목록은 q9_product_allowlist.json(소스 정적 근거로 고정)에서 읽는다.
 # 구조(D-LAYER): 측정(scan_raw·measure_runtime·runtime_checks) / 판정(classify_hits·judge_conditions·judge_verdict) / 기록(print_*·write_json), main 은 순서만 정한다.
 import hashlib
@@ -34,7 +34,7 @@ def load_rules(path):
 
 
 def read_channel(data):
-    """Pd.Poc.Shell(AppChannel 형식 포함) 어셈블리의 AssemblyMetadata("PdChannel") 값. 커스텀 특성 blob = 길이접두 'PdChannel' 다음 길이접두 값."""
+    """xkxk.frameworks.ui.shell(AppChannel 형식 포함) 어셈블리의 AssemblyMetadata("PdChannel") 값. 커스텀 특성 blob = 길이접두 'PdChannel' 다음 길이접두 값."""
     if b"AppChannel" not in data:
         return None
     i = data.find(b"\x09PdChannel")
@@ -129,7 +129,7 @@ def scan_raw(root, kind, rules):
     files, raw, channels = 0, [], set()
     for name, data, cls in collect_blobs(root, kind, stats):
         files += 1
-        if cls == "asm" and b"Pd.Poc.Shell" in data and b"BSJB" in data:
+        if cls == "asm" and b"xkxk.frameworks.ui.shell" in data and b"BSJB" in data:
             stats["shell_assembly_seen"] = True
         if cls == "asm":
             ch = read_channel(data)
@@ -309,7 +309,7 @@ def exit_code(verdict):
 # ── 기록 ──
 
 def print_static(kind, files, stats, diag, hits, tol, pend):
-    print("종류:", kind, "| 검사 파일:", files, "| XALZ 해제:", stats["xalz_ok"], "/", stats["xalz"], "| Pd.Poc.Shell 어셈블리 확인:", stats["shell_assembly_seen"], "| PdChannel:", stats["channel"])
+    print("종류:", kind, "| 검사 파일:", files, "| XALZ 해제:", stats["xalz_ok"], "/", stats["xalz"], "| xkxk.frameworks.ui.shell 어셈블리 확인:", stats["shell_assembly_seen"], "| PdChannel:", stats["channel"])
     print("① diag 파일:", diag or "없음")
     print("③ 금지 문자열 적중:", json.dumps(hits, ensure_ascii=False) or "없음", "| 허용:", json.dumps(tol, ensure_ascii=False), "| 보류(lead 결정 필요):", json.dumps(pend, ensure_ascii=False))
 

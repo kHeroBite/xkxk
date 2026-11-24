@@ -53,7 +53,7 @@ def log_violation(log_path):
 def launch(run_dir, work, extra=(), seed_layout=None):
     """기동해 (Windows PID, 연결 정보 파일, 로그 경로)를 돌려준다. 어긋나면 SystemExit. seed_layout 은 기동 전에 임시 프로필에 넣을 layout.json 내용(문자열)이다."""
     run_dir = os.path.abspath(run_dir)
-    exe = os.path.join(run_dir, "Pd.Poc.Desktop.exe")
+    exe = os.path.join(run_dir, "xkxk.frameworks.ui.desktop.exe")
     if "/bin/run/" not in run_dir.replace("\\", "/") or not os.path.exists(exe):
         sys.exit("bin/run 복사본만 실행한다: %s" % run_dir)
     vx, _, vw, _ = virtual_screen()

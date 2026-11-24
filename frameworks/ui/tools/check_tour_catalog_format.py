@@ -2,9 +2,9 @@
 import json
 import re
 
-CATALOG = "src/Pd.Poc.Shell/Tour/tour_catalog.json"
-STEP_FILE = "src/Pd.Poc.Shell/Tour/TourStep.cs"
-CONDITIONS = "src/Pd.Poc.Shell/Tour/TourConditions.cs"
+CATALOG = "src/xkxk.frameworks.ui.shell/Tour/tour_catalog.json"
+STEP_FILE = "src/xkxk.frameworks.ui.shell/Tour/TourStep.cs"
+CONDITIONS = "src/xkxk.frameworks.ui.shell/Tour/TourConditions.cs"
 ALLOWED = {
     "root": {"_note", "version", "steps", "shortcuts", "features", "menuRows", "coverage"},
     "step": {"id", "target", "text", "scope", "modes", "platforms", "requires", "covers", "_note"},

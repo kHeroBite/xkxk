@@ -12,8 +12,8 @@ from menu_data import MENU_ID, RETIRED_MENU_IDS, SCREENS, REF_SCREENS
 
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 SVG_DIR = os.path.join(ROOT, "assets", "icons", "menu")
-AXAML = os.path.join(ROOT, "src", "Pd.Ui.Views", "Themes", "MenuIcons.axaml")
-CS = os.path.join(ROOT, "src", "Pd.Client.Data", "Navigation", "MenuIconCatalog.Generated.cs")
+AXAML = os.path.join(ROOT, "src", "xkxk.frameworks.ui.views", "Themes", "MenuIcons.axaml")
+CS = os.path.join(ROOT, "src", "xkxk.frameworks.ui.data", "Navigation", "MenuIconCatalog.Generated.cs")
 LIC = os.path.join(ROOT, "assets", "_LICENSES.csv")
 LIC_PREFIX = "icons/menu/"
 CORNERS = "M0,0L0.01,0L0,0.01ZM24,24L23.99,24L24,23.99Z"     # 두 모서리 점 — Stretch=Uniform 이 격자 전체 기준으로 맞추게 한다
@@ -82,8 +82,8 @@ def cs_text():
     shell = ", ".join(f'"{n}"' for n in D.SHELL)
     return "\n".join([
         "// 화면 ID → 메뉴 ID·아이콘 키 대응표 — plan/_build/menu_icons.py 생성물(손으로 고치지 말고 menu_data.py·menu_icon_data.py 를 고친 뒤 다시 만든다)",
-        "using System;", "using System.Collections.Generic;", "", "namespace Pd.Client.Data.Navigation;", "",
-        "/// <summary>메뉴 아이콘 카탈로그의 생성 부분. 아이콘 키는 Pd.Ui.Views/Themes/MenuIcons.axaml 의 StreamGeometry 키다(UI 비의존 문자열만 둔다).</summary>",
+        "using System;", "using System.Collections.Generic;", "", "namespace xkxk.frameworks.ui.data.Navigation;", "",
+        "/// <summary>메뉴 아이콘 카탈로그의 생성 부분. 아이콘 키는 xkxk.frameworks.ui.views/Themes/MenuIcons.axaml 의 StreamGeometry 키다(UI 비의존 문자열만 둔다).</summary>",
         "public static partial class MenuIconCatalog", "{",
         '    public const string MenuIconKeyPrefix = "PdMenuIcon";', '    public const string ShellIconKeyPrefix = "PdShellIcon";',
         '    public const string BusyStaticKey = "PdIconBusyStatic";', '    public const string BadgeSlowKey = "PdIconBadgeSlow";',

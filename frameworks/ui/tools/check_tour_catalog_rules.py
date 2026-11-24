@@ -7,10 +7,10 @@ import re
 
 from check_tour_catalog_format import CATALOG, check_format, parse_catalog
 
-BINDINGS = "src/Pd.Ui.Views/Input/ShortcutBindings.cs"
-NAV_MENU = "src/Pd.Client.Data/Navigation/NavMenuCatalog.cs"
-WINDOW_MENU = "src/Pd.Ui.Views/WindowTitleMenu.cs"
-PANEL_MENU = "src/Pd.Ui.Views/PanelPositionMenu.cs"
+BINDINGS = "src/xkxk.frameworks.ui.views/Input/ShortcutBindings.cs"
+NAV_MENU = "src/xkxk.frameworks.ui.data/Navigation/NavMenuCatalog.cs"
+WINDOW_MENU = "src/xkxk.frameworks.ui.views/WindowTitleMenu.cs"
+PANEL_MENU = "src/xkxk.frameworks.ui.views/PanelPositionMenu.cs"
 
 UI_KEY = re.compile(r'UiKey \+ "([^"]+)"')
 LOC_KEY = re.compile(r'Loc\.Tr\("(sysview\.[^"]+)"\)')
@@ -23,27 +23,27 @@ KEY_NAMES = {"OemMinus": "-", "Subtract": "-", "OemTilde": "`", "Escape": "Esc",
 MOD_ORDER = (("Control", "Ctrl"), ("Meta", "Cmd"), ("Alt", "Alt"), ("Shift", "Shift"))
 # 제스처 처리가 코드에 흩어진 곳의 고정 표식: (파일, 코드에 있어야 할 표식, 카탈로그에 있어야 할 키)
 FIXED_MARKERS = (
-    ("src/Pd.Ui.Views/EscCloseInput.cs", "Key.Escape", "Esc"),
-    ("src/Pd.Ui.Views/Input/TabFocusScope.cs", "Key.Tab", "Tab"),
-    ("src/Pd.Ui.Views/Input/TabFocusScope.cs", "KeyModifiers.Shift", "Shift+Tab"),
-    ("src/Pd.Ui.Views/MainTitleBar.axaml.cs", "Key.F10", "F10"),
-    ("src/Pd.Poc.Shell/Input/SettingsInput.cs", "Key.D0", "Ctrl+0"),
-    ("src/Pd.Poc.Shell/Tour/TourInputGate.cs", "Key.F1", "F1"),
+    ("src/xkxk.frameworks.ui.views/EscCloseInput.cs", "Key.Escape", "Esc"),
+    ("src/xkxk.frameworks.ui.views/Input/TabFocusScope.cs", "Key.Tab", "Tab"),
+    ("src/xkxk.frameworks.ui.views/Input/TabFocusScope.cs", "KeyModifiers.Shift", "Shift+Tab"),
+    ("src/xkxk.frameworks.ui.views/MainTitleBar.axaml.cs", "Key.F10", "F10"),
+    ("src/xkxk.frameworks.ui.shell/Input/SettingsInput.cs", "Key.D0", "Ctrl+0"),
+    ("src/xkxk.frameworks.ui.shell/Tour/TourInputGate.cs", "Key.F1", "F1"),
 )
 # 대상을 찾는 곳. 고정 파일에 없는 대상이 있으면 폴더 전체를 읽으므로 새 화면 axaml 도 자동으로 포함된다
 TARGET_FILES = (
-    "src/Pd.Ui.Views/MainView.axaml", "src/Pd.Ui.Views/MainTitleBar.axaml", "src/Pd.Ui.Views/ShellStatusBar.axaml",
-    "src/Pd.Ui.Views/MobileNavView.axaml", "src/Pd.Ui.Views/SdiTitleBar.axaml", "src/Pd.Ui.Views/ChromeButtons.axaml",
-    "src/Pd.Ui.Views/Settings/SettingsView.axaml", "src/Pd.Ui/Controls/SettingsShell.axaml",
+    "src/xkxk.frameworks.ui.views/MainView.axaml", "src/xkxk.frameworks.ui.views/MainTitleBar.axaml", "src/xkxk.frameworks.ui.views/ShellStatusBar.axaml",
+    "src/xkxk.frameworks.ui.views/MobileNavView.axaml", "src/xkxk.frameworks.ui.views/SdiTitleBar.axaml", "src/xkxk.frameworks.ui.views/ChromeButtons.axaml",
+    "src/xkxk.frameworks.ui.views/Settings/SettingsView.axaml", "src/xkxk.frameworks.ui/Controls/SettingsShell.axaml",
 )
-TARGET_GLOBS = ("src/Pd.Ui.Views/*.axaml", "src/Pd.Ui.Views/*/*.axaml", "src/Pd.Ui/Controls/*.axaml")
-GESTURE_AXAMLS = ("src/Pd.Ui.Views/MainView.axaml", "src/Pd.Ui.Views/MainTitleBar.axaml", "src/Pd.Ui.Views/Menus/*.axaml")
-TOUR_UI_CS = ("src/Pd.Ui/Controls/TourCard.axaml.cs", "src/Pd.Ui/Controls/ShortcutLayer.axaml.cs", "src/Pd.Ui/Controls/TourOverlay.axaml.cs",
-              "src/Pd.Poc.Shell/Tour/TourController.cs", "src/Pd.Poc.Shell/Tour/TourLayerContent.cs")
+TARGET_GLOBS = ("src/xkxk.frameworks.ui.views/*.axaml", "src/xkxk.frameworks.ui.views/*/*.axaml", "src/xkxk.frameworks.ui/Controls/*.axaml")
+GESTURE_AXAMLS = ("src/xkxk.frameworks.ui.views/MainView.axaml", "src/xkxk.frameworks.ui.views/MainTitleBar.axaml", "src/xkxk.frameworks.ui.views/Menus/*.axaml")
+TOUR_UI_CS = ("src/xkxk.frameworks.ui/Controls/TourCard.axaml.cs", "src/xkxk.frameworks.ui/Controls/ShortcutLayer.axaml.cs", "src/xkxk.frameworks.ui/Controls/TourOverlay.axaml.cs",
+              "src/xkxk.frameworks.ui.shell/Tour/TourController.cs", "src/xkxk.frameworks.ui.shell/Tour/TourLayerContent.cs")
 # 커버리지 대상: 메뉴 항목, 그리고 셸 표면의 버튼·선택 칸·상태 표시
-MENU_GLOB = "src/Pd.Ui.Views/Menus/*.axaml"
-SURFACE_FILES = ("src/Pd.Ui.Views/MainTitleBar.axaml", "src/Pd.Ui.Views/MainView.axaml", "src/Pd.Ui.Views/ShellStatusBar.axaml",
-                 "src/Pd.Ui.Views/ChromeButtons.axaml", "src/Pd.Ui.Views/SdiTitleBar.axaml", "src/Pd.Ui.Views/MobileNavView.axaml")
+MENU_GLOB = "src/xkxk.frameworks.ui.views/Menus/*.axaml"
+SURFACE_FILES = ("src/xkxk.frameworks.ui.views/MainTitleBar.axaml", "src/xkxk.frameworks.ui.views/MainView.axaml", "src/xkxk.frameworks.ui.views/ShellStatusBar.axaml",
+                 "src/xkxk.frameworks.ui.views/ChromeButtons.axaml", "src/xkxk.frameworks.ui.views/SdiTitleBar.axaml", "src/xkxk.frameworks.ui.views/MobileNavView.axaml")
 SURFACE_ID = re.compile(r"^(shell\.(btn|sw|cmb|status|ctx|nav|mnuMore)|chrome\.btn)")
 
 
@@ -98,7 +98,7 @@ def code_gestures(src, problems):
         for rel in src.glob(pattern):
             for gesture in GESTURE_AXAML.findall(XML_COMMENT.sub("", src.read(rel) or "")):
                 found.setdefault(normalize_gesture(gesture), os.path.basename(rel))
-    rel = "src/Pd.Ui.Views/Input/WindowKeyGestures.cs"
+    rel = "src/xkxk.frameworks.ui.views/Input/WindowKeyGestures.cs"
     for gesture in tuple_gestures(src.read(rel) or ""):
         found.setdefault(gesture, os.path.basename(rel))
     for rel, marker, gesture in FIXED_MARKERS:
@@ -110,7 +110,7 @@ def code_gestures(src, problems):
 
 def load_dict(src, lang):
     """투어 키는 전부 sysview 영역이다."""
-    return set(json.loads(src.read("src/Pd.Poc.Shell/Localization/sysview.%s.json" % lang)).keys())
+    return set(json.loads(src.read("src/xkxk.frameworks.ui.shell/Localization/sysview.%s.json" % lang)).keys())
 
 
 def automation_ids(src, wanted):
@@ -159,7 +159,7 @@ def check_shortcuts(entries, src, problems):
             rel, _, marker = entry["handler"].partition(":")
             if not marker or marker not in (src.read(rel) or ""):
                 problems.append("③ %s: 처리 위치 '%s' 에 표식이 없음" % (label, entry["handler"]))
-    if "<KeyBinding" in XML_COMMENT.sub("", src.read("src/Pd.Ui.Views/MainView.axaml") or ""):
+    if "<KeyBinding" in XML_COMMENT.sub("", src.read("src/xkxk.frameworks.ui.views/MainView.axaml") or ""):
         problems.append("③ MainView.axaml 에 KeyBinding 직접 작성 금지 — 카탈로그 shortcuts 의 binding 으로 등록")
 
 
@@ -219,7 +219,7 @@ def check(src):
             problems.append("① %s 사전에 키 없음: %s" % (lang, key))
 
     ids = automation_ids(src, {s["target"] for s in steps if not s["target"].startswith("@")})
-    anchors = set(re.findall(r'const string \w+ = "(@\w+)"', src.read("src/Pd.Poc.Shell/Tour/TourCatalog.cs") or ""))
+    anchors = set(re.findall(r'const string \w+ = "(@\w+)"', src.read("src/xkxk.frameworks.ui.shell/Tour/TourCatalog.cs") or ""))
     for step in steps:
         target = step["target"]
         if (target.startswith("@") and target not in anchors) or (not target.startswith("@") and target not in ids):

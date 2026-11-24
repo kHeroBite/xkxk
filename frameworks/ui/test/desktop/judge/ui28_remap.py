@@ -23,7 +23,7 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 sys.path.insert(0, HERE)
 import ui_req3_8_rules as rules  # noqa: E402
 
-BUILD = "src/Pd.Poc.Desktop/bin/run/pcaway_r2f/Pd.Poc.Desktop.dll"
+BUILD = "src/xkxk.frameworks.ui.desktop/bin/run/pcaway_r2f/xkxk.frameworks.ui.desktop.dll"
 M = "test/desktop/measure/"
 AC_TEXT = {
     "AC-3-01": "잘림 판정 순수 함수: 좌/하/알림(4방향) 조합 표본에서 잘린 모서리 집합이 기대값과 일치",

@@ -1,0 +1,32 @@
+<!-- 최대화·이전 크기 단추 호버 배치 칸 팝업 내용 — 칸 종류마다 작은 칸 그림, 포인터가 올라간 칸 강조, 적용 불가 칸 흐리게(색은 SnapLayoutBar 와 같은 테마 토큰, 사용자 요구 2026-11-11 16:58) -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="xkxk.frameworks.ui.views.Snap.SnapLayoutFlyout"
+             Focusable="False"
+             AutomationProperties.AutomationId="snap.flyout">
+  <UserControl.Styles>
+    <!-- 칸 종류 묶음(타일): 바탕 투명, 포인터가 올라가면 테두리만 드러낸다 -->
+    <Style Selector="Border.pdSnapTile">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Padding" Value="4" />
+      <Setter Property="Margin" Value="3" />
+    </Style>
+    <!-- 칸: 보조 표면색 + 외곽선, 포인터가 올라가면 강조색, 적용 불가면 흐리게(SnapBarCells 의 DisabledOpacity 0.35 와 같은 값) -->
+    <Style Selector="Border.pdSnapCell">
+      <Setter Property="Background" Value="{DynamicResource PdBrushSurfaceAlt}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource PdBrushBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="2" />
+    </Style>
+    <Style Selector="Border.pdSnapCell:pointerover">
+      <Setter Property="Background" Value="{DynamicResource PdBrushAccent}" />
+    </Style>
+    <Style Selector="Border.pdSnapCell:disabled">
+      <Setter Property="Opacity" Value="0.35" />
+      <Setter Property="BorderBrush" Value="{DynamicResource PdBrushTextMuted}" />
+    </Style>
+  </UserControl.Styles>
+  <!-- 칸 종류는 한 줄에 3개씩(Windows 11 최대화 단추 메뉴와 비슷한 배열, 수치는 초기 제시값). 타일은 코드가 만든다 -->
+  <WrapPanel x:Name="Tiles" Orientation="Horizontal" />
+</UserControl>

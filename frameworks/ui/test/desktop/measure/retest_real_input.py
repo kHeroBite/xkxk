@@ -172,7 +172,7 @@ class Rig:
     def start(self, extra=(), reuse=False):
         """reuse=True 면 직전 임시 data·profile 로 다시 띄운다(저장 레이아웃 복원 측정)."""
         run_dir = os.path.abspath(self.args.run_dir)
-        exe = os.path.join(run_dir, "Pd.Poc.Desktop.exe")
+        exe = os.path.join(run_dir, "xkxk.frameworks.ui.desktop.exe")
         if "/bin/run/" not in run_dir.replace("\\", "/") or not os.path.exists(exe):
             raise SystemExit("bin/run 복사본만 실행한다: %s" % run_dir)
         stamp = time.strftime("%H%M%S")
@@ -503,7 +503,7 @@ def script_info(path, root=ROOT):
     return {"path": rel(path, root), "sha256": sha256(path)}
 
 
-def build_info(run_dir, role, session, root=ROOT, name="Pd.Poc.Desktop.dll", final=False):
+def build_info(run_dir, role, session, root=ROOT, name="xkxk.frameworks.ui.desktop.dll", final=False):
     """최종 빌드 목록에 그 역할이 있으면 그 값을 쓰고, 실행 복사본의 같은 파일과 sha 가 다르면 거부한다."""
     local = os.path.join(os.path.abspath(run_dir), name)
     manifest = None
@@ -528,7 +528,7 @@ class UserPdUnknown(Exception):
 
 
 def pick_user_pid(rows, explicit=None):
-    """Pd.Poc.Desktop 프로세스 목록에서 사용자 Pd 를 고른다. 시험 인스턴스(--data-dir)는 제외한다. 0개면 None(사용자 Pd 없음), 2개 이상·지정 PID 불일치는 UserPdUnknown 이다."""
+    """xkxk.frameworks.ui.desktop 프로세스 목록에서 사용자 Pd 를 고른다. 시험 인스턴스(--data-dir)는 제외한다. 0개면 None(사용자 Pd 없음), 2개 이상·지정 PID 불일치는 UserPdUnknown 이다."""
     found = [r["ProcessId"] for r in rows if USER_PD_PATH_MARK in str(r.get("ExecutablePath") or "").lower() and "--data-dir" not in str(r.get("CommandLine") or "")]
     if explicit is not None:
         if explicit not in found:
@@ -547,7 +547,7 @@ def user_pd_path_pids(rows):
 
 
 def query_user_pd_rows():
-    out = app.ps("Get-CimInstance Win32_Process -Filter \"Name='Pd.Poc.Desktop.exe'\" | Select-Object ProcessId,ExecutablePath,CommandLine,@{n='CreationDate';e={$_.CreationDate.ToString('o')}} | ConvertTo-Json -Compress").strip()
+    out = app.ps("Get-CimInstance Win32_Process -Filter \"Name='xkxk.frameworks.ui.desktop.exe'\" | Select-Object ProcessId,ExecutablePath,CommandLine,@{n='CreationDate';e={$_.CreationDate.ToString('o')}} | ConvertTo-Json -Compress").strip()
     if not out:
         return []
     rows = json.loads(out)
@@ -1446,8 +1446,8 @@ def self_test(args):
             got = True
         if got != refused:
             fails.append("경계 좌표 판정 오류 %s" % (pt,))
-    user = {"ProcessId": 352, "ExecutablePath": "C:\\P\\bin\\run\\otest_final\\net10.0\\Pd.Poc.Desktop.exe", "CommandLine": "x.exe"}
-    copy3 = {"ProcessId": 7, "ExecutablePath": "C:\\P\\bin\\run\\otest_final3\\net10.0\\Pd.Poc.Desktop.exe", "CommandLine": "x.exe"}
+    user = {"ProcessId": 352, "ExecutablePath": "C:\\P\\bin\\run\\otest_final\\net10.0\\xkxk.frameworks.ui.desktop.exe", "CommandLine": "x.exe"}
+    copy3 = {"ProcessId": 7, "ExecutablePath": "C:\\P\\bin\\run\\otest_final3\\net10.0\\xkxk.frameworks.ui.desktop.exe", "CommandLine": "x.exe"}
     test = dict(user, ProcessId=8, CommandLine="x.exe --data-dir C:\\t")
     for rows, given, want in (([user], None, 352), ([user, copy3, test], None, 352), ([dict(user, ExecutablePath=user["ExecutablePath"].upper())], None, 352), ([user], 352, 352),
                               ([], None, None), ([copy3], None, None), ([test], None, None), ([user, dict(user, ProcessId=9)], None, None), ([user], 41312, None), ([{"ProcessId": 5}], None, None)):

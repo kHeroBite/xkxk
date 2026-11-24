@@ -52,21 +52,21 @@ def _read(rel):
 
 
 def static_checks():
-    wheel = _read("Pd.Ui/Input/DenseWheel.cs")
-    lst = _read("Pd.Ui/Input/DenseList.cs")
-    canvas = _read("Pd.Ui.Views/Documents/GanttCanvas.cs")
-    dense = _read("Pd.Ui.Views/Documents/GanttCanvas.Dense.cs")
-    gantt = _read("Pd.Ui.Views/Documents/GanttDocumentView.axaml.cs")
-    target = _read("Pd.Ui.Views/Documents/GridDenseTarget.cs")
-    pd = _read("Pd.Ui.Views/Documents/PdDataGrid.cs")
-    gridx = _read("Pd.Ui.Views/Documents/GridDocumentView.axaml")
-    bench = _read("Pd.Ui.Views/Documents/Bench/GridBenchView.axaml.cs")
-    settings = _read("Pd.Poc.Shell/Input/SettingsInput.cs")
-    remote = _read("Pd.Poc.Shell/Diagnostics/Remote/RemoteWheelCommands.cs")
+    wheel = _read("xkxk.frameworks.ui/Input/DenseWheel.cs")
+    lst = _read("xkxk.frameworks.ui/Input/DenseList.cs")
+    canvas = _read("xkxk.frameworks.ui.views/Documents/GanttCanvas.cs")
+    dense = _read("xkxk.frameworks.ui.views/Documents/GanttCanvas.Dense.cs")
+    gantt = _read("xkxk.frameworks.ui.views/Documents/GanttDocumentView.axaml.cs")
+    target = _read("xkxk.frameworks.ui.views/Documents/GridDenseTarget.cs")
+    pd = _read("xkxk.frameworks.ui.views/Documents/PdDataGrid.cs")
+    gridx = _read("xkxk.frameworks.ui.views/Documents/GridDocumentView.axaml")
+    bench = _read("xkxk.frameworks.ui.views/Documents/Bench/GridBenchView.axaml.cs")
+    settings = _read("xkxk.frameworks.ui.shell/Input/SettingsInput.cs")
+    remote = _read("xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteWheelCommands.cs")
     doc = _read(DOC)
     checks = [
         ("wheel_common_part", "enum DenseWheelAction" in wheel and "KeyModifiers.Alt | KeyModifiers.Shift" in wheel),
-        ("wheel_no_shell_ref", wheel != "" and "Pd.Poc.Shell" not in wheel and lst != "" and "Pd.Poc.Shell" not in lst),
+        ("wheel_no_shell_ref", wheel != "" and "xkxk.frameworks.ui.shell" not in wheel and lst != "" and "xkxk.frameworks.ui.shell" not in lst),
         ("wheel_delta_x_fallback", "delta.Y" in wheel and "delta.X" in wheel),
         ("gantt_row_scale", "_rowLevel" in dense and "DenseScale.Factor(_rowLevel)" in canvas),
         ("gantt_one_row_height", canvas.count("RowHeight =>") == 1),
@@ -76,20 +76,20 @@ def static_checks():
         ("grid_target_anchor", "RowIndexAt" in target and "StepRows" in target and "StepColumns" in target),
         ("bench_attached", "GridDenseTarget.AttachFixed(BenchGrid" in bench),
         ("lists_attached", all('input:DenseList.Enable="True"' in _read(p) for p in (
-            "Pd.Ui.Views/SystemMenu/LogViewerView.axaml",
-            "Pd.Ui.Views/SystemMenu/InquiryListView.axaml",
-            "Pd.Ui.Views/NotificationPanelView.axaml"))),
+            "xkxk.frameworks.ui.views/SystemMenu/LogViewerView.axaml",
+            "xkxk.frameworks.ui.views/SystemMenu/InquiryListView.axaml",
+            "xkxk.frameworks.ui.views/NotificationPanelView.axaml"))),
         ("ctrl_wheel_command_modifier", "IsCommandModifier(sender, e.KeyModifiers) && e.Delta.Y != 0" in settings),
         ("automation_commands", '"input.wheel"' in remote and '"dense.state"' in remote),
-        ("no_row_buttons", "btnRowThin" not in _read("Pd.Ui.Views/Documents/GanttDocumentView.axaml") and "rowThin" not in _read("Pd.Poc.Shell/Localization/doc.ko.json")),
-        ("i18n_tip", all("Alt+Shift" in _read("Pd.Poc.Shell/Localization/doc.%s.json" % l) for l in ("ko", "en"))),
+        ("no_row_buttons", "btnRowThin" not in _read("xkxk.frameworks.ui.views/Documents/GanttDocumentView.axaml") and "rowThin" not in _read("xkxk.frameworks.ui.shell/Localization/doc.ko.json")),
+        ("i18n_tip", all("Alt+Shift" in _read("xkxk.frameworks.ui.shell/Localization/doc.%s.json" % l) for l in ("ko", "en"))),
         ("doc_table", "### 5.4" in doc and "Alt+Shift+휠" in doc),
         ("doc_grid_decision", "PdDataGrid" in doc and "재검토 조건" in doc),
         ("safe_wheel_tool", "MOUSEEVENTF_WHEEL = 0x0800" in _read(SAFE_WHEEL) and "user_returned.flag" in _read(SAFE_WHEEL)),
     ]
-    for rel in ("Pd.Ui/Input/DenseWheel.cs", "Pd.Ui/Input/DenseList.cs", "Pd.Ui.Views/Documents/GanttCanvas.cs",
-                "Pd.Ui.Views/Documents/GanttCanvas.Dense.cs", "Pd.Ui.Views/Documents/PdDataGrid.cs",
-                "Pd.Ui.Views/Documents/GridDenseTarget.cs", "Pd.Ui.Views/Documents/GridDocumentView.axaml.cs"):
+    for rel in ("xkxk.frameworks.ui/Input/DenseWheel.cs", "xkxk.frameworks.ui/Input/DenseList.cs", "xkxk.frameworks.ui.views/Documents/GanttCanvas.cs",
+                "xkxk.frameworks.ui.views/Documents/GanttCanvas.Dense.cs", "xkxk.frameworks.ui.views/Documents/PdDataGrid.cs",
+                "xkxk.frameworks.ui.views/Documents/GridDenseTarget.cs", "xkxk.frameworks.ui.views/Documents/GridDocumentView.axaml.cs"):
         text = _read(rel)
         checks.append(("lines_le_300:" + os.path.basename(rel), text != "" and text.count("\n") <= LINE_LIMIT))
     return [{"name": n, "pass": bool(p)} for n, p in checks]

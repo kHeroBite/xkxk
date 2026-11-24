@@ -1,0 +1,33 @@
+<!-- 도움말 투어 호출 카드(요건 6) — 도우미 표시·제목·본문·n/N·이전/다음/건너뛰기·X. 문구는 상위 층이 넣고 색은 테마 토큰만 쓴다 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="xkxk.frameworks.ui.Controls.TourCard"
+             AutomationProperties.AutomationId="tour.card">
+  <Border Background="{DynamicResource PdBrushSurface}" BorderBrush="{DynamicResource PdBrushAccent}" BorderThickness="1"
+          CornerRadius="8" Padding="14,12">
+    <DockPanel>
+      <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+        <Border Width="24" Height="24" CornerRadius="12" Background="{DynamicResource PdBrushAccent}" VerticalAlignment="Top">
+          <PathIcon Width="12" Height="12" Foreground="{DynamicResource PdBrushAccentText}" Data="{DynamicResource PdIconHelp}" />
+        </Border>
+        <TextBlock x:Name="TitleText" Grid.Column="1" VerticalAlignment="Center" TextWrapping="Wrap" FontSize="15"
+                   FontWeight="{DynamicResource PdFontWeightStrong}" Foreground="{DynamicResource PdBrushText}"
+                   AutomationProperties.AutomationId="tour.title" />
+        <Button x:Name="BtnClose" Grid.Column="2" Padding="8,6" VerticalAlignment="Top" Background="Transparent" Click="OnClose"
+                AutomationProperties.AutomationId="tour.btnClose">
+          <PathIcon Width="10" Height="10" Data="{DynamicResource PdGlyphClose}" />
+        </Button>
+      </Grid>
+      <Grid DockPanel.Dock="Bottom" ColumnDefinitions="Auto,*,Auto,Auto,Auto" ColumnSpacing="6" Margin="0,12,0,0">
+        <TextBlock x:Name="CounterText" VerticalAlignment="Center" Foreground="{DynamicResource PdBrushTextMuted}"
+                   AutomationProperties.AutomationId="tour.counter" />
+        <Button x:Name="BtnSkip" Grid.Column="2" Click="OnSkip" Background="Transparent" AutomationProperties.AutomationId="tour.btnSkip" />
+        <Button x:Name="BtnPrev" Grid.Column="3" Click="OnPrevious" AutomationProperties.AutomationId="tour.btnPrev" />
+        <Button x:Name="BtnNext" Grid.Column="4" Click="OnNext" Background="{DynamicResource PdBrushAccent}"
+                Foreground="{DynamicResource PdBrushAccentText}" AutomationProperties.AutomationId="tour.btnNext" />
+      </Grid>
+      <TextBlock x:Name="BodyText" Margin="0,8,0,0" TextWrapping="Wrap" Foreground="{DynamicResource PdBrushText}"
+                 AutomationProperties.AutomationId="tour.body" />
+    </DockPanel>
+  </Border>
+</UserControl>

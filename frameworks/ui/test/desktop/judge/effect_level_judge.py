@@ -18,7 +18,7 @@ import judge_session as session
 
 ROOT = os.path.join(session.HERE, "..", "..", "..")
 DOC = os.path.join(ROOT, "..", "..", "plan", "09_*", "21_*.md")
-TABLE = os.path.join(ROOT, "src", "Pd.Poc.Shell", "Theming", "DesignThemes.Levels.cs")
+TABLE = os.path.join(ROOT, "src", "xkxk.frameworks.ui.shell", "Theming", "DesignThemes.Levels.cs")
 LEVELS = ("high", "medium", "low")
 THEMES = ("ds-cute", "ds-depth")
 SHADOW = "ui.mdi.move_light.shadow"

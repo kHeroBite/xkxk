@@ -165,7 +165,7 @@ def self_test():
 
 def main():
     ap = argparse.ArgumentParser(description="h15 빈 패널 머리줄 Binding 오류 점검(rc 0=PASS 1=FAIL 2=실행오류 3=판정불가)")
-    ap.add_argument("--run-dir", help="bin/run/<이름>/net* 폴더(Pd.Poc.Desktop.exe 가 있는 곳)")
+    ap.add_argument("--run-dir", help="bin/run/<이름>/net* 폴더(xkxk.frameworks.ui.desktop.exe 가 있는 곳)")
     ap.add_argument("--work", help="임시 데이터·로그 작업 폴더")
     ap.add_argument("--out", help="결과 JSON 경로")
     ap.add_argument("--self-test", action="store_true", help="앱 없이 판정·집계 로직만 자가시험")

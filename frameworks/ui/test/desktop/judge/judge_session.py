@@ -27,7 +27,7 @@ import perf_effect_common as common  # noqa: E402
 Abort = common.Abort
 run_cases = common.run_cases
 WEB_REFUSED_PORTS = common.USER_PORTS + (5242,)
-SETTINGS_KEY = "pd-poc-settings"  # Pd.Poc.Browser/Program.cs SettingsKey
+SETTINGS_KEY = "pd-poc-settings"  # xkxk.frameworks.ui.browser/Program.cs SettingsKey
 PIXEL_DELTA = 12  # 밝기 차가 이보다 크면 다른 화소(옅은 꼬리 점·낮은 대비까지 센다)
 WORST = ("STOPPED", "FAIL", "INVALID", "DEFERRED", "RECORDED", "PASS")
 

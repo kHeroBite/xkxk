@@ -1,0 +1,25 @@
+<!-- 창 배치(스냅) 상단 레이아웃 막대 — 칸 종류별 배치도를 SnapZoneContext 의 BarRect·Tiles 그대로 그린다(판정과 그림 일치, 11 문서 §3.1·§10). 입력 통과, 포커스 없음 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:snap="using:xkxk.frameworks.ui.views.Snap"
+             x:Class="xkxk.frameworks.ui.views.Snap.SnapLayoutBar"
+             IsHitTestVisible="False"
+             Focusable="False"
+             IsVisible="False"
+             AutomationProperties.AutomationId="snap.bar">
+  <Panel>
+    <!-- 막대 바탕: 테마 표면색 + 외곽선 + 둥근 모서리 + 약한 그림자(Windows 11 Snap 막대와 비슷한 모양, 수치는 초기 제시값) -->
+    <Border x:Name="Chrome"
+            Background="{DynamicResource PdBrushSurface}"
+            BorderBrush="{DynamicResource PdBrushBorder}"
+            BorderThickness="1"
+            CornerRadius="8"
+            BoxShadow="0 4 12 0 #40000000" />
+    <!-- 칸 배치도: 칸 바탕 = 보조 표면색, 칸 테두리 = 외곽선색, 강조 칸 = 강조색, 비활성 칸 = 흐리게 -->
+    <snap:SnapBarCells x:Name="Cells"
+                       CellBrush="{DynamicResource PdBrushSurfaceAlt}"
+                       CellBorderBrush="{DynamicResource PdBrushBorder}"
+                       HighlightBrush="{DynamicResource PdBrushAccent}"
+                       DisabledBorderBrush="{DynamicResource PdBrushTextMuted}" />
+  </Panel>
+</UserControl>

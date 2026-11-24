@@ -7,7 +7,7 @@ using System.Text.Json;
 using Avalonia;
 using Avalonia.Headless;
 using Avalonia.Media;
-using Pd.Ui.Views.Depth;
+using xkxk.frameworks.ui.views.Depth;
 
 namespace Pd.Test.SnapshotScale;
 

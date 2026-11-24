@@ -25,7 +25,7 @@ PAIRS = [("lang.label", "shell.cmbLanguage", "Language"), ("settings.docFont", "
          ("settings.theme", "shell.cmbTheme", "Appearance"), ("settings.font", "shell.cmbFont", "Appearance"),
          ("settings.wheelMode", "shell.cmbWheelMode", "Appearance"), ("settings.windowStyle", "shell.cmbWindowStyle", "Window")]
 # 이 체크아웃의 로컬라이제이션(메인 체크아웃 경로 하드코딩 금지)
-LOC = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "src", "Pd.Poc.Shell", "Localization"))
+LOC = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "src", "xkxk.frameworks.ui.shell", "Localization"))
 
 
 def labels(loc, lang):

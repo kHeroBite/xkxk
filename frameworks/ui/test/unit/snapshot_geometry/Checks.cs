@@ -6,7 +6,7 @@ using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using Pd.Ui.Views.Depth;
+using xkxk.frameworks.ui.views.Depth;
 
 namespace Pd.Test.SnapshotScale;
 
@@ -70,7 +70,7 @@ internal static class Checks
         Trees.NoLayoutRounding(root);
         root.Measure(size);
         root.Arrange(new Rect(size));
-        var g = new Pd.Ui.Views.Depth.SnapshotGeometry(size, scale);
+        var g = new xkxk.frameworks.ui.views.Depth.SnapshotGeometry(size, scale);
         var err = new Dictionary<string, double>();
         double oldFactor;
 
@@ -107,7 +107,7 @@ internal static class Checks
         {
             foreach (var size in sizes)
             {
-                var g = new Pd.Ui.Views.Depth.SnapshotGeometry(size, s);
+                var g = new xkxk.frameworks.ui.views.Depth.SnapshotGeometry(size, s);
                 var spareW = g.Pixels.Width - g.Source.Width;
                 var spareH = g.Pixels.Height - g.Source.Height;
                 var k = g.Dest.Width * s / g.Source.Width;

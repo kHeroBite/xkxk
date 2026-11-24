@@ -1,0 +1,60 @@
+<!-- 셸 상태바 — 문서 수·활성 문서·상태(FPS)·활성 창 배율·프로젝트. MainView.axaml 에서 분리(DataContext 상속) -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:xkxk.frameworks.ui.shell.ViewModels"
+             xmlns:docking="using:xkxk.frameworks.ui.shell.Docking"
+             xmlns:loc="using:xkxk.frameworks.ui.shell.Localization"
+             x:Class="xkxk.frameworks.ui.views.ShellStatusBar"
+             x:DataType="vm:MainViewModel" Classes="pdStatusBar">
+
+  <!-- 상태바: 문서 수 · 활성 문서 · 상태(FPS — 진단 빌드) · 활성 창 배율 · 프로젝트.
+       WrapPanel: 한 줄에 들어가면 지금 배치 그대로, 영어처럼 길어지거나 화면이 좁으면 항목 단위로 다음 줄에 내려가 화면 밖으로 나가지 않는다(Fold5 i0136).
+       상태 정보 줄이라 항목을 자르지 않고 내리되, 길이 제한이 없는 활성 문서 제목만 말줄임표 + 툴팁으로 줄인다 -->
+  <Border Padding="8,2" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+    <WrapPanel Orientation="Horizontal" ItemSpacing="16" LineSpacing="2">
+      <StackPanel Orientation="Horizontal" Spacing="4">
+        <TextBlock Text="{loc:Tr status.docs}" />
+        <TextBlock Text="{Binding OpenDocuments.Count}" AutomationProperties.AutomationId="shell.statusDocCount" />
+      </StackPanel>
+      <!-- D-C3-10: 활성 문서가 없을 때 경로 중간 null 바인딩 오류(Value is null)가 나지 않게, 문서를 DataContext 로 받아 Title·Zoom 을 직접 읽는다 -->
+      <StackPanel IsVisible="{Binding ActiveDocument, Converter={x:Static ObjectConverters.IsNotNull}}">
+        <TextBlock DataContext="{Binding ActiveDocument}" x:DataType="docking:PocDocument" Text="{Binding Title}"
+                   MaxWidth="240" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Title}" />
+      </StackPanel>
+      <TextBlock Text="{loc:Tr status.noActive}" IsVisible="{Binding ActiveDocument, Converter={x:Static ObjectConverters.IsNull}}" />
+      <TextBlock x:Name="StatusLabel" Text="{Binding StatusText}" />
+      <!-- 새 알림 배지(F03): 알림 패널이 집중 숨김·닫힘일 때 새 알림 건수. 누르면 패널을 표시하고 지운다. DataContext 는 코드비하인드가 NotifyBadgeViewModel 로 둔다 -->
+      <!-- 대비(18 §2 예외): 바탕·글자는 4.5 를 맞춘 주 타이틀바 짝이고 올림·누름에도 같다. 테두리는 겹쳐 그려 테마 테두리 두께(0 포함)와 무관하게 크기가 그대로다 -->
+      <Panel IsVisible="{Binding #NotifyBadge.IsVisible}" HorizontalAlignment="{Binding #NotifyBadge.HorizontalAlignment}"
+             VerticalAlignment="{Binding #NotifyBadge.VerticalAlignment}">
+        <Button x:Name="NotifyBadge" x:DataType="vm:NotifyBadgeViewModel" Command="{Binding ShowCommand}" IsVisible="{Binding IsVisible}"
+                Padding="6,0" MinHeight="0" Background="{DynamicResource PdBrushMainTitleBar}" Foreground="{DynamicResource PdBrushMainTitleText}"
+                ToolTip.Tip="{Binding Tip}" AutomationProperties.AutomationId="shell.notifyBadge" AutomationProperties.Name="{Binding Name}">
+          <Button.Styles>
+            <Style Selector="Button#NotifyBadge:pointerover /template/ ContentPresenter#PART_ContentPresenter, Button#NotifyBadge:pressed /template/ ContentPresenter#PART_ContentPresenter">
+              <Setter Property="Background" Value="{DynamicResource PdBrushMainTitleBar}" />
+              <Setter Property="Foreground" Value="{DynamicResource PdBrushMainTitleText}" />
+            </Style>
+          </Button.Styles>
+          <StackPanel Orientation="Horizontal" Spacing="4">
+            <TextBlock Text="{Binding Name}" Foreground="{DynamicResource PdBrushMainTitleText}" />
+            <TextBlock Text="{Binding Count}" Foreground="{DynamicResource PdBrushMainTitleText}" />
+          </StackPanel>
+        </Button>
+        <Border IsHitTestVisible="False" BorderThickness="1" BorderBrush="{DynamicResource PdBrushMainTitleText}"
+                CornerRadius="{Binding #NotifyBadge.CornerRadius}" />
+      </Panel>
+      <!-- 현재(활성) 창 배율(UI-06) -->
+      <StackPanel Orientation="Horizontal" Spacing="4" IsVisible="{Binding ActiveDocument, Converter={x:Static ObjectConverters.IsNotNull}}">
+        <TextBlock Text="{loc:Tr status.zoomLabel}" />
+        <TextBlock DataContext="{Binding ActiveDocument}" x:DataType="docking:PocDocument" Text="{Binding Zoom, StringFormat='{}{0:P0}'}" AutomationProperties.AutomationId="shell.statusZoom" />
+      </StackPanel>
+      <!-- 창 간 문맥 연동(MDI-22): 바꾸면 열린 모든 창에 전파. 라벨·콤보는 한 묶음으로 함께 줄을 바꾼다 -->
+      <StackPanel Orientation="Horizontal" Spacing="16" IsVisible="{Binding Compact.IsWide}">
+        <TextBlock Text="{loc:Tr status.project}" VerticalAlignment="Center" />
+        <ComboBox ItemsSource="{Binding Extras.Projects}" SelectedItem="{Binding Extras.CurrentProject, Mode=TwoWay}" AutomationProperties.AutomationId="shell.cmbProject"
+                  MinWidth="160" Padding="4,0" PlaceholderText="{loc:Tr status.projectNone}" />
+      </StackPanel>
+    </WrapPanel>
+  </Border>
+</UserControl>

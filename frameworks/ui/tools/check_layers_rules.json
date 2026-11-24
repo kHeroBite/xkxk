@@ -4,49 +4,49 @@
   "scan_paths": ["src", "tools"],
   "skip_dirs": ["bin", "obj", ".vs", "node_modules", "__pycache__"],
   "layers": {
-    "Pd.Ui": {
+    "xkxk.frameworks.ui": {
       "required": true,
-      "forbid_projects": ["Pd.Poc.Shell", "Pd.Client.Data", "Pd.Ui.Views", "Pd.Poc.Desktop", "Pd.Poc.Browser", "Pd.Poc.Android"],
+      "forbid_projects": ["xkxk.frameworks.ui.shell", "xkxk.frameworks.ui.data", "xkxk.frameworks.ui.views", "xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android"],
       "allow_packages": { "Avalonia": "12.1.4" },
-      "forbid_code": ["\\bPd\\.Poc\\.(Shell|Desktop|Browser|Droid)\\b", "\\bPd\\.Client\\.Data\\b", "\\bPd\\.Ui\\.Views\\b", "\\busing\\s+Dock\\."]
+      "forbid_code": ["\\bxkxk\\.frameworks\\.ui\\.(shell|desktop|browser|android|data|views)\\b", "\\busing\\s+Dock\\."]
     },
-    "Pd.Ui.Views": {
+    "xkxk.frameworks.ui.views": {
       "required": true,
-      "forbid_projects": ["Pd.Poc.Desktop", "Pd.Poc.Browser", "Pd.Poc.Android"],
+      "forbid_projects": ["xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android"],
       "_note_avares": "벤치 글꼴 후보가 호스트 자원을 avares URI 문자열로 찾는 것은 형식 참조가 아니라 허용한다",
-      "forbid_code": ["(?<!avares://)\\bPd\\.Poc\\.(Desktop|Browser|Droid)\\b"]
+      "forbid_code": ["(?<!avares://)\\bxkxk\\.frameworks\\.ui\\.(desktop|browser|android)\\b"]
     },
-    "Pd.Poc.Shell": {
+    "xkxk.frameworks.ui.shell": {
       "required": true,
-      "forbid_projects": ["Pd.Ui.Views", "Pd.Poc.Desktop", "Pd.Poc.Browser", "Pd.Poc.Android"],
+      "forbid_projects": ["xkxk.frameworks.ui.views", "xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android"],
       "forbid_exts": [".axaml"],
-      "_note_parts": "템플릿 부품 이름은 Pd.Ui 의 TemplateParts 상수로만 쓴다(문자열 리터럴·조합 금지). 주석 언급은 허용",
-      "forbid_code": ["\\bPd\\.Ui\\.Views\\b", "\\bPART_"]
+      "_note_parts": "템플릿 부품 이름은 xkxk.frameworks.ui 의 TemplateParts 상수로만 쓴다(문자열 리터럴·조합 금지). 주석 언급은 허용",
+      "forbid_code": ["\\bxkxk\\.frameworks\\.ui\\.views\\b", "\\bPART_"]
     },
-    "Pd.Client.Data": {
+    "xkxk.frameworks.ui.data": {
       "required": true,
-      "forbid_projects": ["Pd.Poc.Shell", "Pd.Ui", "Pd.Ui.Views", "Pd.Poc.Desktop", "Pd.Poc.Browser", "Pd.Poc.Android"],
+      "forbid_projects": ["xkxk.frameworks.ui.shell", "xkxk.frameworks.ui", "xkxk.frameworks.ui.views", "xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android"],
       "forbid_packages": ["Avalonia"],
-      "forbid_code": ["\\bAvalonia\\b", "\\bPd\\.Ui\\b", "\\bPd\\.Poc\\.Shell\\b"]
+      "forbid_code": ["\\bAvalonia\\b", "\\bxkxk\\.frameworks\\.ui\\b(?!\\.data\\b)"]
     }
   },
   "template_parts": {
     "_note": "contract 의 상수 이름이 definer 층 axaml 의 Name 정의나 dock_packages 의 DLL(버전은 version_from 의 PackageReference)에 실재해야 한다. DLL 을 못 찾으면 통과가 아니라 위반이다.",
-    "contract": "src/Pd.Ui/Controls/TemplateParts.cs",
-    "definer": "Pd.Ui.Views",
-    "version_from": "src/Pd.Poc.Shell/Pd.Poc.Shell.csproj",
+    "contract": "src/xkxk.frameworks.ui/Controls/TemplateParts.cs",
+    "definer": "xkxk.frameworks.ui.views",
+    "version_from": "src/xkxk.frameworks.ui.shell/xkxk.frameworks.ui.shell.csproj",
     "dock_packages": ["Dock.Avalonia", "Dock.Avalonia.Themes.Fluent"],
     "dock_tfm": "net10.0"
   },
   "new_files": {
-    "prefixes": ["src/Pd.Ui/", "src/Pd.Ui.Views/", "src/Pd.Client.Data/", "tools/check_layers.py", "tools/check_layers_parts.py", "tools/classify_layers.py"],
+    "prefixes": ["src/xkxk.frameworks.ui/", "src/xkxk.frameworks.ui.views/", "src/xkxk.frameworks.ui.data/", "tools/check_layers.py", "tools/check_layers_parts.py", "tools/classify_layers.py"],
     "max_lines": 300,
     "exts": [".cs", ".axaml", ".csproj", ".py"],
     "exempt": []
   },
   "line_limit_only": {
     "_note": "기존 층 파일이라 헤더 규칙은 면제하되 줄 수 상한만 건다(소스 분할 라운드 2). 코드·화면 파일이 대상이다.",
-    "prefixes": ["src/Pd.Poc.Shell/"],
+    "prefixes": ["src/xkxk.frameworks.ui.shell/"],
     "max_lines": 300,
     "exts": [".cs", ".axaml"]
   }

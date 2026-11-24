@@ -1,11 +1,11 @@
 #!/bin/bash
-# Pd.Poc.Android 를 Windows dotnet.exe 로 비증분 빌드하는 스크립트 (WSL 에서 실행)
+# xkxk.frameworks.ui.android 를 Windows dotnet.exe 로 비증분 빌드하는 스크립트 (WSL 에서 실행)
 # 사용: build_android.sh [--bg] [Debug|Release] [PdDiagnostics=true|false]
 #   두 번째 인자 PdDiagnostics 기본 true(시험 빌드). false 면 제품 확인용 진단 제거 빌드.
 #   환경변수: PD_EXTRA_PROPS="-p:이름=값 …"(예: -p:PdChannel=prod), PD_BUILD_LOCK_WAIT=<초>
 #   --bg : 분리 실행(setsid nohup). 로그 경로와 rc 파일 경로를 출력하고 즉시 반환한다.
 # 직렬화: 같은 Configuration 빌드는 build_lock.sh 의 flock 으로 순서를 기다린다(데스크톱·브라우저와 obj 공유).
-# 끝에서 check_assembly_closure.py 로 APK 안 Pd.* 어셈블리 참조 폐포를 검사한다(누락이면 rc=4).
+# 끝에서 check_assembly_closure.py 로 APK 안 xkxk.frameworks.ui* 어셈블리 참조 폐포를 검사한다(누락이면 rc=4).
 # 결과: logs/build_android_<시각>.log, 같은 이름 .rc. 마지막 줄 APK=...
 set -u
 TOOLS="$(cd "$(dirname "$0")" && pwd)"
@@ -42,8 +42,8 @@ export PD_ANDROID_SDK PD_JAVA_SDK
 export WSLENV="${WSLENV:+$WSLENV:}PD_ANDROID_SDK:PD_JAVA_SDK"
 LOG="${BUILD_LOG:-$ROOT/logs/build_android_$(date +%Y%m%d_%H%M%S).log}"
 rm -f "$LOG.rc"
-PROJ_WIN="$(wslpath -w "$ROOT/src/Pd.Poc.Android/Pd.Poc.Android.csproj")"
-APK="$ROOT/src/Pd.Poc.Android/bin/$CONF/net11.0-android/com.pd.poc-Signed.apk"
+PROJ_WIN="$(wslpath -w "$ROOT/src/xkxk.frameworks.ui.android/xkxk.frameworks.ui.android.csproj")"
+APK="$ROOT/src/xkxk.frameworks.ui.android/bin/$CONF/net11.0-android/com.pd.poc-Signed.apk"
 
 {
   echo "# build_android start $(date '+%Y-%m-%d %H:%M:%S') conf=$CONF PdDiagnostics=$DIAG"

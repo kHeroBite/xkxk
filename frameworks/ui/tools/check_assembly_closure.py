@@ -1,7 +1,7 @@
-# 제품 산출물(폴더·APK·웹 번들)의 Pd.* 어셈블리 간 TypeRef/MemberRef 폐포 정적 검사
+# 제품 산출물(폴더·APK·웹 번들)의 xkxk.frameworks.ui* 어셈블리 간 TypeRef/MemberRef 폐포 정적 검사
 # 사용: check_assembly_closure.py <폴더|apk> [...]   (라벨 붙이려면 <라벨> <경로> 쌍 반복)
 #   메타데이터 루트(BSJB)를 직접 찾으므로 PE·webcil·XALZ 모두 처리한다.
-# APK 레이아웃: Release=libassembly-store.so(net10=XALZ/LZ4, net11=XABA 구조+XAZS/Zstandard), Debug=lib_Pd.*.dll.so(ELF 포장 PE). 모두 없으면 rc=2.
+# APK 레이아웃: Release=libassembly-store.so(net10=XALZ/LZ4, net11=XABA 구조+XAZS/Zstandard), Debug=lib_xkxk.frameworks.ui*.dll.so(ELF 포장 PE). 모두 없으면 rc=2.
 # --self-test: 외부 파일 없이 스토어 파서·zstd 프레임(원시/RLE 블록)·전체 흐름을 합성 데이터로 검사한다(rc 0=통과).
 # 종료 코드: 0=누락 없음, 1=Pd 타입/멤버 참조 누락, 2=검사 대상 없음·사용법 오류
 import struct,sys,os,zipfile,hashlib,glob
@@ -297,8 +297,8 @@ def fromapk(path):
                 if m: D[m['mod']]=(d,m)
             except Exception as e: pass
             i+=12
-        if not D: # net11 XABA 스토어(XAZS=Zstandard). Pd.* 만 복호하고 .r2r.dll(합성 네이티브 이미지, 메타데이터 없음)은 건너뛴다
-            D = store_entries(s, want=lambda n: n.startswith('Pd.') and n.endswith('.dll') and not n.endswith('.r2r.dll') and '/' not in n)
+        if not D: # net11 XABA 스토어(XAZS=Zstandard). xkxk.frameworks.ui* 만 복호하고 .r2r.dll(합성 네이티브 이미지, 메타데이터 없음)은 건너뛴다
+            D = store_entries(s, want=lambda n: n.startswith('xkxk.frameworks.ui') and n.endswith('.dll') and not n.endswith('.r2r.dll') and '/' not in n)
         if not D: # 비압축 스토어
             i=0
             while True:
@@ -308,19 +308,19 @@ def fromapk(path):
                 if m: D[m['mod']]=(None,m)
                 i+=4
         out[abi]=D
-    # Debug 레이아웃: 어셈블리 스토어 없이 lib/<abi>/lib_Pd.*.dll.so 개별 파일(ELF 포장, 안에 PE 페이로드).
+    # Debug 레이아웃: 어셈블리 스토어 없이 lib/<abi>/lib_xkxk.frameworks.ui*.dll.so 개별 파일(ELF 포장, 안에 PE 페이로드).
     # md() 가 BSJB 를 직접 찾으므로 ELF 래퍼째로 읽는다. .pdb.so 는 제외.
     if not out:
         for n in sorted(z.namelist()):
             p_=n.split('/')
-            if len(p_)==3 and p_[0]=='lib' and p_[2].startswith('lib_Pd.') and p_[2].endswith('.dll.so'):
+            if len(p_)==3 and p_[0]=='lib' and p_[2].startswith('lib_xkxk.frameworks.ui') and p_[2].endswith('.dll.so'):
                 try: b=z.read(n); m=md(b)
                 except Exception: m=None
                 if m: out.setdefault(p_[1],{})[m['mod']]=(b,m)
     return out
 def fromdir(path):
     D={}
-    for f in glob.glob(os.path.join(path,'**','Pd.*'),recursive=True):
+    for f in glob.glob(os.path.join(path,'**','xkxk.frameworks.ui*'),recursive=True):
         if f.endswith(('.dll','.wasm')) and '/ref/' not in f and '/refint/' not in f:
             b=open(f,'rb').read(); m=md(b)
             if m:
@@ -328,7 +328,7 @@ def fromdir(path):
                 m['size']=len(b); m['path']=f; D.setdefault(n,(b,m))
     return {'.':D}
 def check(label,D):
-    pd={k:v[1] for k,v in D.items() if k.startswith('Pd.')}
+    pd={k:v[1] for k,v in D.items() if k.startswith('xkxk.frameworks.ui')}
     tset={};
     for k,m in pd.items():
         for ns,nm,_,_ in m['td']: tset[(ns,nm)]=k
@@ -337,24 +337,24 @@ def check(label,D):
     for k,m in pd.items():
         own={(ns,nm) for ns,nm,_,_ in m['td']}
         for i,(sc,idx,ns,nm) in enumerate(m['tr']):
-            if sc==2 and ns.startswith('Pd.'):
+            if sc==2 and ns.startswith('xkxk.frameworks.ui'):
                 nref+=1
                 if (ns,nm) not in tset: bad.append(f'{k}->{ns}.{nm}')
             elif sc==3:
                 # 중첩 typeref: 바깥이 Pd 이면 이름만 검사
                 o=m['tr'][idx-1] if idx-1<len(m['tr']) else None
-                if o and o[2].startswith('Pd.') and o[0]==2:
+                if o and o[2].startswith('xkxk.frameworks.ui') and o[0]==2:
                     nref+=1
                     if nm not in names: bad.append(f'{k}->{o[2]}.{o[3]}/{nm}')
         for c,idx,nm in m['mr']:
             if c==1 and idx-1<len(m['tr']):
                 sc,_,ns,tn=m['tr'][idx-1]
-                if sc==2 and ns.startswith('Pd.') and (ns,tn) in tset:
+                if sc==2 and ns.startswith('xkxk.frameworks.ui') and (ns,tn) in tset:
                     mcheck+=1
                     if nm not in pd[tset[(ns,tn)]]['members'].get((ns,tn),set()): mbad.append(f'{k}->{ns}.{tn}::{nm}')
     print(f'[{label}] Pd어셈블리={len(pd)} typeref검사={nref} 누락={len(set(bad))} memberref검사={mcheck} 누락={len(set(mbad))}')
     for k,m in sorted(pd.items()):
-        print(f'    {k:18} mvid={m["mvid"][:8]} types={m["typedefs"]} methods={m["methods"]} ProfileStores={"Y" if ("Pd.Client.Data.Layout","ProfileStores") in tset and tset[("Pd.Client.Data.Layout","ProfileStores")]==k else "-"} tref={"Y" if any(x[3]=="ProfileStores" and x[0]==2 for x in m["tr"]) else "-"} diagmark={"Y" if ("Pd.Client.Data.Samples","GridSeedLegacy") in [(a,b) for a,b,_,_ in m["td"]] else "-"}')
+        print(f'    {k:18} mvid={m["mvid"][:8]} types={m["typedefs"]} methods={m["methods"]} ProfileStores={"Y" if ("xkxk.frameworks.ui.data.Layout","ProfileStores") in tset and tset[("xkxk.frameworks.ui.data.Layout","ProfileStores")]==k else "-"} tref={"Y" if any(x[3]=="ProfileStores" and x[0]==2 for x in m["tr"]) else "-"} diagmark={"Y" if ("xkxk.frameworks.ui.data.Samples","GridSeedLegacy") in [(a,b) for a,b,_,_ in m["td"]] else "-"}')
     for x in sorted(set(bad))[:15]: print('    MISSING-TYPE',x)
     for x in sorted(set(mbad))[:15]: print('    MISSING-MEMBER',x)
     return len(set(bad)) + len(set(mbad)) if pd else -1
@@ -365,7 +365,7 @@ def selftest():
     fr = b'\x28\xb5\x2f\xfd' + bytes([0x20]) + bytes([8]) + blk(0, 0, 3) + b'abc' + blk(1, 1, 5) + b'x'
     assert zstd_decompress(fr) == b'abcxxxxx', 'zstd 원시/RLE 블록'
     z = b'XAZS' + struct.pack('<II', 0, 8) + fr
-    names = ['Pd.Test.dll', 'System.Foo.dll']; datas = [z, b'MZ-raw']
+    names = ['xkxk.frameworks.ui.Test.dll', 'System.Foo.dll']; datas = [z, b'MZ-raw']
     idx = b''.join(struct.pack('<IIB', 0x1000 + i, i, 0) for i in range(4))
     nb = b''.join(struct.pack('<I', len(n)) + n.encode() for n in names)
     base = 20 + len(idx) + 28 * 2 + len(nb); descs = b''; blob = b''
@@ -374,10 +374,10 @@ def selftest():
     st = b'\x7fELF' + b'\0' * 12 + struct.pack('<5I', 0x41424158, 0x80010003, 2, 4, len(idx)) + idx + descs + nb + blob
     old = md
     try:
-        md = lambda b: {'mod': 'Pd.Test.dll', 'raw': b}
-        got = store_entries(st, want=lambda n: n.startswith('Pd.'))
+        md = lambda b: {'mod': 'xkxk.frameworks.ui.Test.dll', 'raw': b}
+        got = store_entries(st, want=lambda n: n.startswith('xkxk.frameworks.ui'))
     finally: md = old
-    assert list(got) == ['Pd.Test.dll'] and got['Pd.Test.dll'][0] == b'abcxxxxx', 'XABA 스토어 파싱'
+    assert list(got) == ['xkxk.frameworks.ui.Test.dll'] and got['xkxk.frameworks.ui.Test.dll'][0] == b'abcxxxxx', 'XABA 스토어 파싱'
     print('self-test OK'); return 0
 def main(a):
     if a[:1] == ['--self-test']: return selftest()
@@ -394,7 +394,7 @@ def main(a):
         if p.endswith('.apk'):
             res = fromapk(p)
             if not res:
-                print('[어셈블리 없음] %s — 본 레이아웃: lib/<abi>/libassembly-store.so(Release 스토어), lib/<abi>/lib_Pd.*.dll.so(Debug 개별) 모두 없음' % lab); rc = max(rc, 2)
+                print('[어셈블리 없음] %s — 본 레이아웃: lib/<abi>/libassembly-store.so(Release 스토어), lib/<abi>/lib_xkxk.frameworks.ui*.dll.so(Debug 개별) 모두 없음' % lab); rc = max(rc, 2)
             for abi, D in res.items():
                 n = check(lab + ':' + abi, D)
                 rc = max(rc, 2 if n < 0 else (1 if n else 0))

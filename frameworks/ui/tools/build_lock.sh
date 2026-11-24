@@ -1,6 +1,6 @@
 #!/bin/bash
 # 빌드 직렬화 잠금(source 해서 쓴다). 같은 Configuration 의 빌드는 헤드(Desktop·Browser·Android)·PdDiagnostics·PdChannel 과
-# 무관하게 겹치지 않는다. 공유 프로젝트(Pd.Ui·Pd.Ui.Views·Pd.Client.Data·Pd.Poc.Shell)의 obj/<Configuration> 을 함께 쓰기 때문이다.
+# 무관하게 겹치지 않는다. 공유 프로젝트(xkxk.frameworks.ui·xkxk.frameworks.ui.views·xkxk.frameworks.ui.data·xkxk.frameworks.ui.shell)의 obj/<Configuration> 을 함께 쓰기 때문이다.
 # 사용: source build_lock.sh; pd_build_lock <ROOT> <Configuration> <LOG>   (실패 시 rc 75 로 종료)
 #   Work·Product·R2R 은 Release 로 빌드하므로 Release 잠금을 쓴다(호출 쪽이 Release 로 넘긴다).
 #   대기 상한 PD_BUILD_LOCK_WAIT 초(기본 1800). 잠금은 이 스크립트가 끝날 때 fd 9 가 닫히며 풀린다.

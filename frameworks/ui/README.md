@@ -5,44 +5,44 @@
 ## 구성
 | 프로젝트 | 대상 | 역할 |
 |---|---|---|
-| `src/Pd.Poc.Shell` | net11.0 | 컨트롤 층(명령·상태·뷰모델, Dock 조작, 계측·자동화). axaml 없음. 화면은 `IViewRegistry` 로만 연다 |
-| `src/Pd.Ui.Views` | net11.0 | 화면 조립 층(axaml·코드비하인드·테마·샘플 문서 3종·벤치·갤러리, 앱 진입점 `PdApp`). 호스트가 참조한다 |
-| `src/Pd.Client.Data` | net11.0 | 데이터 층(로깅·저장소·백업 DTO·카탈로그). Avalonia 무참조 |
-| `src/Pd.Poc.Desktop` | net11.0 | Windows·macOS 호스트(파일 레이아웃 저장소, SDI OS 창) |
-| `src/Pd.Poc.Browser` | net11.0-browser | WASM 호스트(localStorage 레이아웃 저장소, URL 쿼리 → 자동화 인자) |
-| `src/Pd.Poc.Android` | net11.0-android | Android 호스트(Debug APK) |
-| `src/Pd.Ui` | net11.0 | 순수 UI 층(재사용 컨트롤·스타일·애니메이션·`MotionPreference`·문자열 훅 `UiText`). Avalonia 만 참조한다 |
+| `src/xkxk.frameworks.ui.shell` | net11.0 | 컨트롤 층(명령·상태·뷰모델, Dock 조작, 계측·자동화). axaml 없음. 화면은 `IViewRegistry` 로만 연다 |
+| `src/xkxk.frameworks.ui.views` | net11.0 | 화면 조립 층(axaml·코드비하인드·테마·샘플 문서 3종·벤치·갤러리, 앱 진입점 `PdApp`). 호스트가 참조한다 |
+| `src/xkxk.frameworks.ui.data` | net11.0 | 데이터 층(로깅·저장소·백업 DTO·카탈로그). Avalonia 무참조 |
+| `src/xkxk.frameworks.ui.desktop` | net11.0 | Windows·macOS 호스트(파일 레이아웃 저장소, SDI OS 창) |
+| `src/xkxk.frameworks.ui.browser` | net11.0-browser | WASM 호스트(localStorage 레이아웃 저장소, URL 쿼리 → 자동화 인자) |
+| `src/xkxk.frameworks.ui.android` | net11.0-android | Android 호스트(Debug APK) |
+| `src/xkxk.frameworks.ui` | net11.0 | 순수 UI 층(재사용 컨트롤·스타일·애니메이션·`MotionPreference`·문자열 훅 `UiText`). Avalonia 만 참조한다 |
 
 패키지 버전은 Avalonia 12.1.4, Dock.Avalonia 12.1.0.12 이다(nuget.org 실측 2026-10-28).
 
 ### 계층 규칙(요건 8)
-화면 조립층 `Pd.Ui.Views`·데이터층 `Pd.Client.Data` 는 이동 배치(B7b)에서 생겼고 현재 소스에 있다. 표는 그 구조의 규칙이다.
+화면 조립층 `xkxk.frameworks.ui.views`·데이터층 `xkxk.frameworks.ui.data` 는 이동 배치(B7b)에서 생겼고 현재 소스에 있다. 표는 그 구조의 규칙이다.
 
 | 층 | 참조할 수 있는 것 | 참조하면 안 되는 것 |
 |---|---|---|
 | 호스트(Desktop·Browser·Android) | 아래 전부 | — |
-| `Pd.Ui.Views`(화면 조립: axaml·코드비하인드) | `Pd.Poc.Shell`, `Pd.Ui`, `Pd.Client.Data` | 호스트 |
-| `Pd.Poc.Shell`(컨트롤: 명령·상태·뷰모델) | `Pd.Ui`, `Pd.Client.Data` | `Pd.Ui.Views`, 호스트 |
-| `Pd.Ui`(순수 UI) | Avalonia 패키지만 | `Pd.Poc.Shell`, `Pd.Client.Data`, `Pd.Ui.Views`, 호스트, Dock |
-| `Pd.Client.Data`(DTO·저장소·직렬화) | 비 UI 패키지 | Avalonia, `Pd.Poc.Shell`, `Pd.Ui`, `Pd.Ui.Views`, 호스트 |
+| `xkxk.frameworks.ui.views`(화면 조립: axaml·코드비하인드) | `xkxk.frameworks.ui.shell`, `xkxk.frameworks.ui`, `xkxk.frameworks.ui.data` | 호스트 |
+| `xkxk.frameworks.ui.shell`(컨트롤: 명령·상태·뷰모델) | `xkxk.frameworks.ui`, `xkxk.frameworks.ui.data` | `xkxk.frameworks.ui.views`, 호스트 |
+| `xkxk.frameworks.ui`(순수 UI) | Avalonia 패키지만 | `xkxk.frameworks.ui.shell`, `xkxk.frameworks.ui.data`, `xkxk.frameworks.ui.views`, 호스트, Dock |
+| `xkxk.frameworks.ui.data`(DTO·저장소·직렬화) | 비 UI 패키지 | Avalonia, `xkxk.frameworks.ui.shell`, `xkxk.frameworks.ui`, `xkxk.frameworks.ui.views`, 호스트 |
 
-- `Pd.Ui` 는 상위 층을 모른다. 문자열은 `UiText.Provider`(셸이 `Loc.Tr` 로 연결), 설정은 속성·이벤트로 받는다.
-- 검사: `python3 poc/ui/tools/check_layers.py`(rc=0/1, 마지막 줄 `elapsed_ms=<n>`, 상한 3초). 규칙은 `tools/check_layers_rules.json`, 검사기 자체 확인은 `--self-test`. 층 파일(`Pd.Ui`·`Pd.Ui.Views`·`Pd.Client.Data`)은 300줄 이하에 첫 줄 한국어 헤더 주석을 둔다. 템플릿 부품 이름(`PART_*`)은 Shell 코드에 쓰지 못하고 `Pd.Ui` 의 `TemplateParts` 상수로만 쓴다. `check_layers_parts.py` 가 계약 상수의 실재를 `Pd.Ui.Views` axaml 의 `Name` 정의나 Shell 이 참조한 판본의 Dock DLL 에서 대조하고, DLL 을 못 찾으면 위반으로 친다.
+- `xkxk.frameworks.ui` 는 상위 층을 모른다. 문자열은 `UiText.Provider`(셸이 `Loc.Tr` 로 연결), 설정은 속성·이벤트로 받는다.
+- 검사: `python3 poc/ui/tools/check_layers.py`(rc=0/1, 마지막 줄 `elapsed_ms=<n>`, 상한 3초). 규칙은 `tools/check_layers_rules.json`, 검사기 자체 확인은 `--self-test`. 층 파일(`xkxk.frameworks.ui`·`xkxk.frameworks.ui.views`·`xkxk.frameworks.ui.data`)은 300줄 이하에 첫 줄 한국어 헤더 주석을 둔다. 템플릿 부품 이름(`PART_*`)은 Shell 코드에 쓰지 못하고 `xkxk.frameworks.ui` 의 `TemplateParts` 상수로만 쓴다. `check_layers_parts.py` 가 계약 상수의 실재를 `xkxk.frameworks.ui.views` axaml 의 `Name` 정의나 Shell 이 참조한 판본의 Dock DLL 에서 대조하고, DLL 을 못 찾으면 위반으로 친다.
 
 ## 빌드 (WSL 에서 Windows dotnet.exe 호출)
 
-- 대상은 .NET 11(`net11.0`·`net11.0-browser`·`net11.0-android`)이다(2026-11-12 전환, SDK 11.0.100·런타임 Microsoft.NETCore.App 11.0.0). 워크로드는 `dotnet workload install android wasm-tools` 로 설치한다(android 37.2.31, wasm-tools 11.0.100 — obuild-2 보고). `tools/` 의 `build_android.sh`·`build_browser.sh`·`build_desktop.sh`·`run_desktop_bg.sh`·`serve_browser.sh` 출력 경로는 `net11.0` 이고, `tools/check_layers_rules.json` 의 `dock_tfm` 은 NuGet 패키지 lib 폴더명이라 `net10.0` 그대로다. `poc/ui/global.json` 은 SDK 11.0.100 이상 중 가장 높은 것을 쓰도록 `rollForward: latestMajor` 로 둔다. 실행 쪽은 `poc/ui/Directory.Build.props` 가 `Pd.Poc.Desktop` 에만 `RollForward=LatestMajor` 를 주어, 프레임워크 종속 실행본이 설치된 가장 높은 주 버전 런타임으로 뜬다(runtimeconfig.json 의 rollForward).
+- 대상은 .NET 11(`net11.0`·`net11.0-browser`·`net11.0-android`)이다(2026-11-12 전환, SDK 11.0.100·런타임 Microsoft.NETCore.App 11.0.0). 워크로드는 `dotnet workload install android wasm-tools` 로 설치한다(android 37.2.31, wasm-tools 11.0.100 — obuild-2 보고). `tools/` 의 `build_android.sh`·`build_browser.sh`·`build_desktop.sh`·`run_desktop_bg.sh`·`serve_browser.sh` 출력 경로는 `net11.0` 이고, `tools/check_layers_rules.json` 의 `dock_tfm` 은 NuGet 패키지 lib 폴더명이라 `net10.0` 그대로다. `poc/ui/global.json` 은 SDK 11.0.100 이상 중 가장 높은 것을 쓰도록 `rollForward: latestMajor` 로 둔다. 실행 쪽은 `poc/ui/Directory.Build.props` 가 `xkxk.frameworks.ui.desktop` 에만 `RollForward=LatestMajor` 를 주어, 프레임워크 종속 실행본이 설치된 가장 높은 주 버전 런타임으로 뜬다(runtimeconfig.json 의 rollForward).
 ```bash
 poc/ui/tools/build_desktop.sh --bg      # LOG=…, RC=… 출력 후 즉시 반환
 poc/ui/tools/build_browser.sh --bg      # wasm-tools 워크로드 필요
 cat <RC 파일>                            # 0 이면 성공
 ```
 
-- Android SDK·JDK 경로는 환경변수 `PD_ANDROID_SDK`·`PD_JAVA_SDK`(Windows 경로)로 넘긴다. `Pd.Poc.Android.csproj` 는 이 값이 있으면 쓰고, 없으면 이 PC 의 실측 경로(`C:\Program Files (x86)\Android\android-sdk`, `C:\Program Files\Android\openjdk\jdk-21.0.8`)가 존재할 때 쓴다. `tools/build_android.sh` 는 환경변수가 비어 있을 때만 `%USERPROFILE%\pd-android\{sdk,jdk}` 가 있으면 설정하고 `WSLENV` 로 `dotnet.exe` 에 전달한다. 둘 다 없으면 워크로드 기본 탐색에 맡긴다.
-- Android: `poc/ui/tools/build_android.sh --bg [Debug|Release] [PdDiagnostics=true|false]`(기본 Debug·true). 산출물은 `src/Pd.Poc.Android/bin/<구성>/net11.0-android/com.pd.poc-Signed.apk`.
-- **웹(.NET 11) SkiaSharp 우회**: `Pd.Poc.Browser.csproj` 에만 `SkiaSharp`·`SkiaSharp.NativeAssets.WebAssembly` 4.158.0-preview.2.26560.5 와 `HarfBuzzSharp`·`HarfBuzzSharp.NativeAssets.WebAssembly` 15.0.0-preview.2.26560.5 를 직접 참조하고, `SkiaSharp.dll`·`HarfBuzzSharp.dll` 은 `_AOT_InternalForceInterpretAssemblies`(SDK 내부 항목)로 AOT 에서 뺀다. 원인은 Avalonia.Skia 12.1.4 가 끌어오는 SkiaSharp 3.119 의 wasm 정적 라이브러리가 Emscripten 3.1.56 용이라 .NET 11(Emscripten 6.0.2)에서 `saveSetjmp` 링크 오류가 나는 것이고(근거 https://github.com/AvaloniaUI/Avalonia/issues/21700), 4.x 어셈블리를 Mono AOT 하면 크래시(`sgen-alloc.c:409`)해 해석 실행으로 둔다(크래시 위치는 obuild-2 보고). 위험: Avalonia.Skia 12.1.4 와 SkiaSharp 4.x 프리뷰는 보증된 조합이 아니며 데스크톱·Android 는 3.119 그대로라 판이 다르다. Avalonia 12.2(PR https://github.com/AvaloniaUI/Avalonia/pull/22196)가 NuGet 에 나오면 이 우회를 뺀다.
+- Android SDK·JDK 경로는 환경변수 `PD_ANDROID_SDK`·`PD_JAVA_SDK`(Windows 경로)로 넘긴다. `xkxk.frameworks.ui.android.csproj` 는 이 값이 있으면 쓰고, 없으면 이 PC 의 실측 경로(`C:\Program Files (x86)\Android\android-sdk`, `C:\Program Files\Android\openjdk\jdk-21.0.8`)가 존재할 때 쓴다. `tools/build_android.sh` 는 환경변수가 비어 있을 때만 `%USERPROFILE%\pd-android\{sdk,jdk}` 가 있으면 설정하고 `WSLENV` 로 `dotnet.exe` 에 전달한다. 둘 다 없으면 워크로드 기본 탐색에 맡긴다.
+- Android: `poc/ui/tools/build_android.sh --bg [Debug|Release] [PdDiagnostics=true|false]`(기본 Debug·true). 산출물은 `src/xkxk.frameworks.ui.android/bin/<구성>/net11.0-android/com.pd.poc-Signed.apk`.
+- **웹(.NET 11) SkiaSharp 우회**: `xkxk.frameworks.ui.browser.csproj` 에만 `SkiaSharp`·`SkiaSharp.NativeAssets.WebAssembly` 4.158.0-preview.2.26560.5 와 `HarfBuzzSharp`·`HarfBuzzSharp.NativeAssets.WebAssembly` 15.0.0-preview.2.26560.5 를 직접 참조하고, `SkiaSharp.dll`·`HarfBuzzSharp.dll` 은 `_AOT_InternalForceInterpretAssemblies`(SDK 내부 항목)로 AOT 에서 뺀다. 원인은 Avalonia.Skia 12.1.4 가 끌어오는 SkiaSharp 3.119 의 wasm 정적 라이브러리가 Emscripten 3.1.56 용이라 .NET 11(Emscripten 6.0.2)에서 `saveSetjmp` 링크 오류가 나는 것이고(근거 https://github.com/AvaloniaUI/Avalonia/issues/21700), 4.x 어셈블리를 Mono AOT 하면 크래시(`sgen-alloc.c:409`)해 해석 실행으로 둔다(크래시 위치는 obuild-2 보고). 위험: Avalonia.Skia 12.1.4 와 SkiaSharp 4.x 프리뷰는 보증된 조합이 아니며 데스크톱·Android 는 3.119 그대로라 판이 다르다. Avalonia 12.2(PR https://github.com/AvaloniaUI/Avalonia/pull/22196)가 NuGet 에 나오면 이 우회를 뺀다.
 - **직렬화**: 세 스크립트는 `tools/build_lock.sh` 의 `flock`(`logs/.build_<구성>.lock`)으로 같은 Configuration 빌드를 한 번에 하나만 돌린다. 헤드(Desktop·Browser·Android)·`PdDiagnostics`·`PdChannel` 이 달라도 공유 프로젝트의 `obj/<구성>` 을 같이 쓰므로 겹치면 판본이 섞인다. Desktop 의 Work·Product·R2R 은 Release 잠금을 쓴다. 대기 상한은 `PD_BUILD_LOCK_WAIT`초(기본 1800), 넘기면 rc=75.
-- **웹 프로파일 판(진단 전용, 판정 미사용)**: 브라우저 publish 에 `-p:PdDiagnostics=true -p:PdWasmProfile=true` 를 주면 wasm 함수 이름 맵과 브라우저 프로파일러 C# 구간이 들어간다(`src/Pd.Poc.Browser/Pd.Poc.Browser.csproj` 18~28행). 이 판은 SDK 제약으로 `-p:RunAOTCompilation=false`(비-AOT)라 시간 판정에 쓰지 않고 함수별 상대 몫만 본다. 프로파일 판을 만든 뒤 일반 웹 빌드는 obj 가 프로파일 상태라 `--no-incremental` 로 다시 빌드한다.
+- **웹 프로파일 판(진단 전용, 판정 미사용)**: 브라우저 publish 에 `-p:PdDiagnostics=true -p:PdWasmProfile=true` 를 주면 wasm 함수 이름 맵과 브라우저 프로파일러 C# 구간이 들어간다(`src/xkxk.frameworks.ui.browser/xkxk.frameworks.ui.browser.csproj` 18~28행). 이 판은 SDK 제약으로 `-p:RunAOTCompilation=false`(비-AOT)라 시간 판정에 쓰지 않고 함수별 상대 몫만 본다. 프로파일 판을 만든 뒤 일반 웹 빌드는 obj 가 프로파일 상태라 `--no-incremental` 로 다시 빌드한다.
 - **폐포 검사**: 빌드가 성공하면 끝에서 `tools/check_assembly_closure.py <폴더|apk>` 가 산출물 안 `Pd.*` 어셈블리끼리의 TypeRef·MemberRef 가 모두 정의돼 있는지 정적으로 본다(PE·webcil·APK 어셈블리 스토어 모두 — .NET 10 은 XALZ/LZ4, .NET 11 은 XABA 구조의 XAZS/Zstandard 스토어를 읽는다. Python 3.12 에 zstd 모듈이 없어 순수 Python 복호기를 내장하고, `.r2r.dll` 합성 네이티브 이미지는 메타데이터가 없어 제외한다. 외부 파일 없이 `check_assembly_closure.py --self-test` 로 파서 자가시험을 할 수 있다). 누락이면 스크립트 rc=4. 직접 실행: 누락 없음 rc=0, 누락 rc=1, 대상 없음 rc=2. 층 이동 뒤 한쪽 어셈블리만 낡은 채 묶인 산출물(예: Shell 은 `ProfileStores` 를 참조하는데 Data 에는 없음)을 실행 전에 잡는 용도다.
 
 ## 데스크톱 실행 (비전경)
@@ -269,7 +269,7 @@ Mars 호환 별칭은 `/api/windows`(windows.list), `/api/logs/latest?lines=`(lo
 | 입력폼 | `form.txtTitle`(작업명) · `form.txtOwner`(담당자) · `form.txtClient`(거래처) · `form.txtPlace`(위치) · `form.txtCategory`(분류) · `form.txtBody`(내용) · `form.btnSave` · `form.btnClear` · `form.lblSaved`(저장 결과) |
 
 ## 도움말 카탈로그(투어·단축키·기능 레이어)
-정본은 `src/Pd.Poc.Shell/Tour/tour_catalog.json` 과 사전 `src/Pd.Poc.Shell/Localization/sysview.{ko,en}.json` 이다. 코드 수정 없이 아래를 고칠 수 있다.
+정본은 `src/xkxk.frameworks.ui.shell/Tour/tour_catalog.json` 과 사전 `src/xkxk.frameworks.ui.shell/Localization/sysview.{ko,en}.json` 이다. 코드 수정 없이 아래를 고칠 수 있다.
 
 | 하려는 일 | 고칠 곳 |
 |---|---|
@@ -278,7 +278,7 @@ Mars 호환 별칭은 `/api/windows`(windows.list), `/api/logs/latest?lines=`(lo
 | 문구 변경 | 사전 값(ko·en 함께). 다른 단계 문구를 쓰려면 `"text": "<그 id>"` |
 | 폼팩터 조건 | `modes`(`Mdi`·`Dock`·`Nav`·`Wide`·`All`)·`platforms`(`Desktop`·`Web`·`Android`·`All`), `\|` 로 묶는다 |
 | 조건부 표시 | `requires`: `TourConditions` 의 이름 또는 `permission:<이름>`(권한 체계가 없어 지금은 허용) |
-| 단축키 | `shortcuts` 에 줄 추가. `binding` 은 메인 화면 키 바인딩을 만들고, `handler`(`파일:표식`)는 전용 처리기가 있는 곳을 적는다. 새 명령만 `src/Pd.Ui.Views/Input/ShortcutBindings.cs` 에 한 줄 더한다 |
+| 단축키 | `shortcuts` 에 줄 추가. `binding` 은 메인 화면 키 바인딩을 만들고, `handler`(`파일:표식`)는 전용 처리기가 있는 곳을 적는다. 새 명령만 `src/xkxk.frameworks.ui.views/Input/ShortcutBindings.cs` 에 한 줄 더한다 |
 | 기능 설명 | `features` 에 줄 추가, 사전에 `sysview.tour.feature.<id>.title`·`.body` 추가 |
 | 메뉴 설명 | 고칠 것 없음. 기능 레이어의 메뉴 줄은 `NavMenuCatalog` 에서 만든다 |
 

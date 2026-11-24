@@ -84,7 +84,7 @@ def launch(app, run_dir, work, start, tag):
     """mdi_drag_app.launch 와 같은 격리 기동에 시작 테마 settings.json 을 미리 넣는다. (pid, data 폴더) 를 돌려준다."""
     import subprocess
     run_dir = os.path.abspath(run_dir)
-    exe = os.path.join(run_dir, "Pd.Poc.Desktop.exe")
+    exe = os.path.join(run_dir, "xkxk.frameworks.ui.desktop.exe")
     if "/bin/run/" not in run_dir.replace("\\", "/") or not os.path.exists(exe):
         sys.exit("bin/run 복사본만 실행한다: %s" % run_dir)
     base = os.path.abspath(os.path.join(work, tag))

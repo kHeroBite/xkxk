@@ -1,13 +1,13 @@
 # 빌드 산출물(Desktop exe·APK·웹 publish)에 임시 앱 아이콘이 들어갔는지 파일 검사로만 판정하는 스크립트(앱을 실행하지 않는다)
 """
 사용법(표준 라이브러리만 사용 — python3 -I 로도 동작):
-    python3 tools/check_icons.py --exe <Pd.Poc.Desktop.exe> --apk <com.pd.poc-Signed.apk> --web <publish/wwwroot> [--json 결과.json]
+    python3 tools/check_icons.py --exe <xkxk.frameworks.ui.desktop.exe> --apk <com.pd.poc-Signed.apk> --web <publish/wwwroot> [--json 결과.json]
 세 입력은 각각 생략할 수 있다(생략한 축은 SKIP). rc: 0=전부 PASS, 1=FAIL 있음, 2=입력 오류.
 구조(D-LAYER): 축마다 측정(measure_*) → 판정(judge_*) → 기록(print_*·write_json)을 다른 함수로 나누고 main 은 순서만 정한다.
 
 검사 항목
- ① Desktop: exe 의 PE 리소스 RT_GROUP_ICON 존재·크기 목록 == src/Pd.Poc.Desktop/Assets/pd.ico 크기 목록,
-    exe 와 같은 폴더의 Pd.Poc.Desktop.dll(진입 어셈블리)·Pd.Poc.Shell.dll 중 하나에 !__AvaloniaDefaultWindowIcon 자원 이름 존재
+ ① Desktop: exe 의 PE 리소스 RT_GROUP_ICON 존재·크기 목록 == src/xkxk.frameworks.ui.desktop/Assets/pd.ico 크기 목록,
+    exe 와 같은 폴더의 xkxk.frameworks.ui.desktop.dll(진입 어셈블리)·xkxk.frameworks.ui.shell.dll 중 하나에 !__AvaloniaDefaultWindowIcon 자원 이름 존재
  ② APK: res/mipmap-*/ic_launcher.png·ic_launcher_round.png(5밀도), ic_launcher_foreground.png, mipmap-anydpi-v26/ic_launcher*.xml,
     aapt2 가 있으면 dump badging 의 application icon 참조(없으면 SKIP 으로 적는다)
  ③ 웹: favicon.ico, icons/ 6개, manifest.webmanifest(display=browser, 아이콘 3개 실존), index.html link 4줄
@@ -23,7 +23,7 @@ import sys
 import zipfile
 
 UI_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REF_ICO = os.path.join(UI_DIR, "src", "Pd.Poc.Desktop", "Assets", "pd.ico")
+REF_ICO = os.path.join(UI_DIR, "src", "xkxk.frameworks.ui.desktop", "Assets", "pd.ico")
 DENSITIES = ["mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"]
 WEB_ICONS = ["icon-16.png", "icon-32.png", "icon-192.png", "icon-512.png", "apple-touch-icon.png", "icon-maskable-512.png"]
 WEB_LINKS = [
@@ -138,7 +138,7 @@ def measure_desktop(exe):
     needle8 = b"!__AvaloniaDefaultWindowIcon"
     needle16 = "!__AvaloniaDefaultWindowIcon".encode("utf-16-le")
     hits, looked = [], []
-    for name in ("Pd.Poc.Desktop.dll", "Pd.Poc.Shell.dll"):
+    for name in ("xkxk.frameworks.ui.desktop.dll", "xkxk.frameworks.ui.shell.dll"):
         p = os.path.join(d, name)
         if os.path.isfile(p):
             looked.append(name)
@@ -167,7 +167,7 @@ def judge_desktop(m):
                         f"exe {[s[0] for s in sizes]} / pd.ico {[s[0] for s in ref]}"))
     d, looked, hits = m["dir"], m["looked"], m["hits"]
     if not looked:
-        rows.append(row(ax, "!__AvaloniaDefaultWindowIcon 자원", "FAIL", f"{d} 에 Pd.Poc.Desktop.dll·Pd.Poc.Shell.dll 없음"))
+        rows.append(row(ax, "!__AvaloniaDefaultWindowIcon 자원", "FAIL", f"{d} 에 xkxk.frameworks.ui.desktop.dll·xkxk.frameworks.ui.shell.dll 없음"))
     else:
         rows.append(row(ax, "!__AvaloniaDefaultWindowIcon 자원", "PASS" if hits else "FAIL",
                         f"발견 {hits or '없음'} (검사 {looked})"))

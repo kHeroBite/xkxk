@@ -11,7 +11,7 @@ rc: 원본과 같다(0 통과, 1 위반, 2 판정불가, 3 유휴 대기 초과�
 
 원본과의 차이(11-09, 원본 파일·sha 불변):
 - 원본은 표 회귀에서 grid_initial(첫 화면)·grid_selected(grid.select index=2 뒤) 캡처를 찍지만 '눈 확인' 으로만 두고 측정 이름을 만들지 않았다.
-- 판정 기준(정본 src/Pd.Ui.Views/Documents/PdDataGrid.cs·PdDataGridStyles.axaml, UI-07):
+- 판정 기준(정본 src/xkxk.frameworks.ui.views/Documents/PdDataGrid.cs·PdDataGridStyles.axaml, UI-07):
   grid_row_stripes: 행 바탕이 홀짝으로 두 색(PdBrushBackground·PdBrushGridStripe)을 번갈아 쓴다 → 캡처 각 줄의 최빈색으로 띠를 나눠
       서로 다른 두 색(채널 차 ≥ 5)이 같은 높이(±3px)로 6띠 이상 번갈아 나오면 통과.
   grid_selected_row_line: 선택 행은 위·아래 1px PdBrushSelectionLine 선만, 좌우 선 없음, 바탕은 원래색 그대로 →

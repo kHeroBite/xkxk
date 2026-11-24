@@ -1,4 +1,4 @@
-# Pd.Poc.Desktop 의 모든 최상위 창을 PrintWindow 로 비활성 캡처하고 위치·크기를 남기는 스크립트(실입력 없음)
+# xkxk.frameworks.ui.desktop 의 모든 최상위 창을 PrintWindow 로 비활성 캡처하고 위치·크기를 남기는 스크립트(실입력 없음)
 param([string]$OutDir)
 Add-Type -AssemblyName System.Drawing
 Add-Type @"
@@ -23,7 +23,7 @@ public class W32 {
   }
 }
 "@
-$p = Get-Process Pd.Poc.Desktop -ErrorAction SilentlyContinue | Select-Object -First 1
+$p = Get-Process xkxk.frameworks.ui.desktop -ErrorAction SilentlyContinue | Select-Object -First 1
 if (-not $p) { "NOPROC"; exit 2 }
 $fg = [W32]::GetForegroundWindow()
 $i = 0

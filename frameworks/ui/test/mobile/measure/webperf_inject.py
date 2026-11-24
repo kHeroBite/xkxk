@@ -2,7 +2,7 @@
 """
 webperf_fold5.py 가 --settings-json 을 받거나 --trace 가 있을 때만 부른다. 둘 다 없으면 아무것도 하지 않아 기존 동작과 같다.
   - --settings-json '{"MdiMoveLight":false}': 저장소를 지운 직후(cold·fresh)·탐색 전에 시험 출처 localStorage 'pd-poc-settings' 에 병합한다.
-    키 이름은 앱 설정 DTO(Pd.Poc.Shell/Theming/UiSettingsDto.cs)의 속성 이름이다. 시험 출처(127.0.0.1) 저장소만 만진다.
+    키 이름은 앱 설정 DTO(xkxk.frameworks.ui.shell/Theming/UiSettingsDto.cs)의 속성 이름이다. 시험 출처(127.0.0.1) 저장소만 만진다.
   - --trace(웹): doc·open_* 조작마다 측정 전 Tracing.start, 측정 뒤 Tracing.end 로 모아 trace_<조작>_<mode>_<시행>.json 과 요약(row["trace"])을 남긴다.
     trace 를 켠 시행의 시간 값은 계측 부하가 섞이므로 row["traced"]=True 로 표시한다(공식 값과 섞지 않는다).
 """

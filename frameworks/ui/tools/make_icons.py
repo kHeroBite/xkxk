@@ -121,7 +121,7 @@ def save_png(img, path, written):
 def make_windows(square, written):
     """Desktop 머리: 다중 해상도 .ico — exe(ApplicationIcon)·창(기본 창 아이콘)·트레이가 같이 쓴다."""
     frames = [masked(square, s) for s in ICO_SIZES]
-    path = ensure(os.path.join(SRC_DIR, "Pd.Poc.Desktop", "Assets", "pd.ico"))
+    path = ensure(os.path.join(SRC_DIR, "xkxk.frameworks.ui.desktop", "Assets", "pd.ico"))
     frames[-1].save(path, format="ICO", sizes=[(s, s) for s in ICO_SIZES], append_images=frames[:-1])
     written.append(path)
 
@@ -159,7 +159,7 @@ def make_ios(square, written):
 
 def make_android(square, written):
     """Android 머리 Resources: 밀도별 ic_launcher(둥근 사각)·ic_launcher_round(원) + adaptive(API 26+) 전경 PNG·XML·배경색."""
-    res = os.path.join(SRC_DIR, "Pd.Poc.Android", "Resources")
+    res = os.path.join(SRC_DIR, "xkxk.frameworks.ui.android", "Resources")
     for name, scale in ANDROID_DENSITIES.items():
         d = os.path.join(res, "mipmap-" + name)
         legacy = round(48 * scale)
@@ -198,7 +198,7 @@ def make_android(square, written):
 
 def make_web(square, written):
     """Browser 머리 wwwroot: favicon.ico(16·32·48), PNG(16·32·192·512 둥근 사각), apple-touch-icon 180·maskable 512(불투명 정사각)."""
-    www = os.path.join(SRC_DIR, "Pd.Poc.Browser", "wwwroot")
+    www = os.path.join(SRC_DIR, "xkxk.frameworks.ui.browser", "wwwroot")
     fav = [masked(square, s) for s in (16, 32, 48)]
     p = ensure(os.path.join(www, "favicon.ico"))
     fav[-1].save(p, format="ICO", sizes=[(16, 16), (32, 32), (48, 48)], append_images=fav[:-1])

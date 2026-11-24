@@ -1,0 +1,48 @@
+<!-- PD UI PoC Android 호스트 — xkxk.frameworks.ui.shell 을 단일 뷰로 띄운다(브라우저판과 같은 셸·관리형 창) -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- Avalonia.Android 12.1.4 nuspec 대상 = net10.0-android36.0, 설치 워크로드 android 36.1.43(2026-10-28 실측) -->
+    <TargetFramework>net11.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>24</SupportedOSPlatformVersion>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>xkxk.frameworks.ui.android</RootNamespace>
+    <AssemblyName>xkxk.frameworks.ui.android</AssemblyName>
+    <ApplicationId>com.pd.poc</ApplicationId>
+    <ApplicationTitle>PD UI PoC</ApplicationTitle>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <!-- adb install 로 단독 설치할 수 있게 Debug 에서도 어셈블리를 APK 에 넣는다(Fast Deployment 미사용) -->
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <!-- SDK·JDK 경로: 환경변수 PD_ANDROID_SDK·PD_JAVA_SDK 가 있으면 그 값(tools/build_android.sh 가 후보 경로를 확인해 설정), 없으면 이 PC 의 2026-10-28 실측 경로. 둘 다 없으면 워크로드 기본 탐색에 맡긴다 -->
+    <AndroidSdkDirectory Condition="'$(PD_ANDROID_SDK)' != ''">$(PD_ANDROID_SDK)</AndroidSdkDirectory>
+    <AndroidSdkDirectory Condition="'$(PD_ANDROID_SDK)' == '' and Exists('C:\Program Files (x86)\Android\android-sdk')">C:\Program Files (x86)\Android\android-sdk</AndroidSdkDirectory>
+    <JavaSdkDirectory Condition="'$(PD_JAVA_SDK)' != ''">$(PD_JAVA_SDK)</JavaSdkDirectory>
+    <JavaSdkDirectory Condition="'$(PD_JAVA_SDK)' == '' and Exists('C:\Program Files\Android\openjdk\jdk-21.0.8')">C:\Program Files\Android\openjdk\jdk-21.0.8</JavaSdkDirectory>
+  </PropertyGroup>
+
+  <!-- Release 는 프로필 AOT 대신 전체 AOT(Fold5 실측 첫 프레임 2068→1644ms, APK 34.3→51.5MB). 대조 빌드는 -p:PdFullAot=false -->
+  <PropertyGroup>
+    <PdFullAot Condition="'$(PdFullAot)' == ''">true</PdFullAot>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PdFullAot)' == 'true' and '$(Configuration)' == 'Release'">
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Android" Version="12.1.4" />
+  </ItemGroup>
+
+  <!-- 브라우저판과 같은 임베드 한글 폰트(Noto Sans KR 서브셋, OFL 1.1)를 링크로 공유 — 기기별 시스템 폰트 차이 제거 -->
+  <ItemGroup>
+    <AvaloniaResource Include="..\xkxk.frameworks.ui.browser\Assets\Fonts\*.ttf" Link="Assets\Fonts\%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\xkxk.frameworks.ui.shell\xkxk.frameworks.ui.shell.csproj" />
+    <ProjectReference Include="..\xkxk.frameworks.ui.views\xkxk.frameworks.ui.views.csproj" />
+  </ItemGroup>
+</Project>

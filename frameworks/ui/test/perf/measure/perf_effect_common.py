@@ -52,7 +52,7 @@ def parser(doc):
     ap.add_argument("--away-state", help="pc_away_monitor.py run 이 갱신하는 상태 파일")
     ap.add_argument("--approved", help="기동 보류 해제 근거(누가·언제)")
     ap.add_argument("--out", help="결과 JSON")
-    ap.add_argument("--build-dir", help="실행 폴더(Pd.Ui.Views.dll sha256 기록)")
+    ap.add_argument("--build-dir", help="실행 폴더(xkxk.frameworks.ui.views.dll sha256 기록)")
     return ap
 
 

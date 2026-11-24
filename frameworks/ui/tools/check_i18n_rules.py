@@ -10,12 +10,12 @@ LIST_TAG = re.compile(r"<(ComboBox|ListBox|ItemsControl|ListView)\b([^>]*?)(/?)>
 
 # ④ 허용 목록(lead 02:0x, odev-2 점검): 파일:ItemsSource 단위로만 허용 — 그 밖의 새 경고는 실패로 잡는다
 ITEMTPL_ALLOW = {
-    ("src/Pd.Ui.Views/PdApp.axaml", "{Binding Shell.LogLines}"): "로그 줄은 기록 당시 언어를 유지하는 것이 의도",
+    ("src/xkxk.frameworks.ui.views/PdApp.axaml", "{Binding Shell.LogLines}"): "로그 줄은 기록 당시 언어를 유지하는 것이 의도",
     # 화면 분할로 MainView.axaml → ShellSettingsPanel·ShellStatusBar 로 옮겨져 옛 키가 끊겼다(w14 Q17 오탐 3건, odev-fix) — 같은 3건을 새 위치로 옮긴다
     # 요건 7: 인라인 패널이 통합 설정 창 페이지로 옮겨져 앞 2건의 위치를 따라 옮겼다
-    ("src/Pd.Ui.Views/Settings/LanguagePage.axaml", "{Binding LanguageNames}"): "각 언어의 자기 이름(한국어·English) — 번역 대상 아님",
-    ("src/Pd.Ui.Views/Settings/AppearancePage.axaml", "{Binding FontNames}"): "시스템 글꼴 이름 — 번역 대상 아님",
-    ("src/Pd.Ui.Views/ShellStatusBar.axaml", "{Binding Extras.Projects}"): "프로젝트 이름은 i18n-ok 샘플 데이터 — 번역 대상 아님",
+    ("src/xkxk.frameworks.ui.views/Settings/LanguagePage.axaml", "{Binding LanguageNames}"): "각 언어의 자기 이름(한국어·English) — 번역 대상 아님",
+    ("src/xkxk.frameworks.ui.views/Settings/AppearancePage.axaml", "{Binding FontNames}"): "시스템 글꼴 이름 — 번역 대상 아님",
+    ("src/xkxk.frameworks.ui.views/ShellStatusBar.axaml", "{Binding Extras.Projects}"): "프로젝트 이름은 i18n-ok 샘플 데이터 — 번역 대상 아님",
 }
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# 웹 제품판 두 빌드의 Pd.Fonts wasm sha256·지문 파일명을 실제 파일에서 다시 계산해 P5 결과 JSON 을 쓰는 도구
+# 웹 제품판 두 빌드의 xkxk.frameworks.ui.fonts wasm sha256·지문 파일명을 실제 파일에서 다시 계산해 P5 결과 JSON 을 쓰는 도구
 """사용: python3 -B p5_fonts_determinism.py --run1 <빌드1 bin/run 복사본> --run2 <빌드2 복사본> --built-at-1 <ISO> --built-at-2 <ISO> --writer otest-8"""
 import argparse, glob, hashlib, json, os, sys, time
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -9,9 +9,9 @@ KST = "+09:00"
 
 
 def fonts(run):
-    hits = glob.glob(os.path.join(run, "_framework", "Pd.Fonts.*.wasm"))
+    hits = glob.glob(os.path.join(run, "_framework", "xkxk.frameworks.ui.fonts.*.wasm"))
     if len(hits) != 1:
-        raise SystemExit("Pd.Fonts wasm 이 정확히 1개여야 한다: %s" % hits)
+        raise SystemExit("xkxk.frameworks.ui.fonts wasm 이 정확히 1개여야 한다: %s" % hits)
     with open(hits[0], "rb") as f:
         return os.path.basename(hits[0]), hashlib.sha256(f.read()).hexdigest()
 

@@ -39,8 +39,8 @@ def wait_app_exit(timeout=30):
     import subprocess
     import time
     for _ in range(timeout):
-        out = subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq Pd.Poc.Desktop.exe", "/NH"], capture_output=True).stdout
-        if out.count(b"Pd.Poc.Desktop") == 0:
+        out = subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq xkxk.frameworks.ui.desktop.exe", "/NH", "/FO", "CSV"], capture_output=True).stdout
+        if out.count(b"xkxk.frameworks.ui.desktop") == 0:
             return True
         time.sleep(1)
     return False
@@ -124,20 +124,22 @@ def launched_by(pid, log_name):
 
 def user_pds():
     """
-    사용자 Pd 목록 [(pid, 명령줄|None)]. 사용자 Pd = run_desktop_bg 로 띄우지 않은 Pd.Poc.Desktop 프로세스
+    사용자 Pd 목록 [(pid, 명령줄|None)]. 사용자 Pd = run_desktop_bg 로 띄우지 않은 xkxk.frameworks.ui.desktop 프로세스
     (명령줄에 --remote-control 과 --log …desktop_*.log 가 함께 없음). 명령줄을 못 읽으면 사용자 Pd 로 본다(확인 불가 = 거부).
     """
     import re
     import subprocess
-    out = subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq Pd.Poc.Desktop.exe", "/NH", "/FO", "CSV"], capture_output=True).stdout
     found = []
-    for line in out.decode("utf-8", "replace").splitlines():
-        cols = [c.strip('"') for c in line.strip().split('","')]
-        if len(cols) > 1 and cols[0].lower().startswith("pd.poc.desktop") and cols[1].isdigit():
-            cmd = proc_cmdline(int(cols[1]))
-            tool = cmd and "--remote-control" in cmd and re.search(r"--log\s+\"?[^\"]*desktop_[0-9_]+\.log", cmd)
-            if not tool:
-                found.append((int(cols[1]), cmd))
+    # 새 이름과 옛 이름(LEGACY: 사용자 Pd 앱 Pd.Poc.Desktop.exe)을 모두 조회한다
+    for image in ("xkxk.frameworks.ui.desktop.exe", "Pd.Poc.Desktop.exe"):  # LEGACY
+        out = subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq " + image, "/NH", "/FO", "CSV"], capture_output=True).stdout
+        for line in out.decode("utf-8", "replace").splitlines():
+            cols = [c.strip('"') for c in line.strip().split('","')]
+            if len(cols) > 1 and cols[0].lower().startswith(("xkxk.frameworks.ui.desktop", "pd.poc.desktop")) and cols[1].isdigit():  # LEGACY 옛 이름 pd.poc.desktop 조회
+                cmd = proc_cmdline(int(cols[1]))
+                tool = cmd and "--remote-control" in cmd and re.search(r"--log\s+\"?[^\"]*desktop_[0-9_]+\.log", cmd)
+                if not tool:
+                    found.append((int(cols[1]), cmd))
     return found
 
 
@@ -151,10 +153,10 @@ def relaunch_args(args):
 
 
 def pid_alive(pid):
-    """그 PID 의 Pd.Poc.Desktop 프로세스가 살아 있는가(PID 재사용 오인 방지로 이미지 이름도 본다)."""
+    """그 PID 의 xkxk.frameworks.ui.desktop 프로세스가 살아 있는가(PID 재사용 오인 방지로 이미지 이름도 본다)."""
     import subprocess
     out = subprocess.run(["tasklist.exe", "/FI", "PID eq %d" % int(pid), "/NH", "/FO", "CSV"], capture_output=True).stdout
-    return ('"%d"' % int(pid)).encode() in out and b"Pd.Poc.Desktop" in out
+    return ('"%d"' % int(pid)).encode() in out and b"xkxk.frameworks.ui.desktop" in out
 
 
 def stop_pid(pid, timeout=20):
@@ -170,7 +172,7 @@ def stop_pid(pid, timeout=20):
         if not pid_alive(pid):
             return True
         time.sleep(1)
-    subprocess.run(["taskkill.exe", "/PID", str(int(pid)), "/FI", "IMAGENAME eq Pd.Poc.Desktop.exe", "/F"], capture_output=True)  # PID 재사용 시 다른 프로그램 오종료 방지
+    subprocess.run(["taskkill.exe", "/PID", str(int(pid)), "/FI", "IMAGENAME eq xkxk.frameworks.ui.desktop.exe", "/F"], capture_output=True)  # PID 재사용 시 다른 프로그램 오종료 방지
     for _ in range(10):
         if not pid_alive(pid):
             return True

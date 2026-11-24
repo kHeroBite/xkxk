@@ -898,7 +898,7 @@ def _restart_with_settings(c, **kv):
     c.call("snapflyout.options", snapEnabled="true")
     time.sleep(1.5)
     rig.stop()
-    # 위치: --profile-dir 폴더의 settings.json(Pd.Client.Data/Layout/ProfileStores.cs — layout.json·settings.json·layouts/)
+    # 위치: --profile-dir 폴더의 settings.json(xkxk.frameworks.ui.data/Layout/ProfileStores.cs — layout.json·settings.json·layouts/)
     found = []
     for root in (rig.profile, rig.data):
         for dp, _, fs in os.walk(root):

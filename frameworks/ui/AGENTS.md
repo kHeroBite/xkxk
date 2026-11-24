@@ -27,7 +27,7 @@
   - 브라우저: `bash tools/build_browser.sh --bg [Release]`
   - Android: `bash tools/build_android.sh --bg [Debug|Release]`
 - `--bg` 는 `logs/build_*_<시각>.log` 와 같은 이름 `.rc` 를 남긴다. 성공은 `.rc`=0 이고 로그에 `오류 0개` 또는 `0 Error(s)` 가 있는 것이다.
-- 빌드는 한 번에 한 명만 돌린다(obj 잠금). 실행·포트·프로세스 규칙은 `INFRA.md` 4절을 따른다. 사용자가 쓰는 Pd 앱과 실행 파일 이름(`Pd.Poc.Desktop.exe`)이 같으므로 자기 PID 외 프로세스는 건드리지 않는다.
+- 빌드는 한 번에 한 명만 돌린다(obj 잠금). 실행·포트·프로세스 규칙은 `INFRA.md` 4절을 따른다. 실행 파일 이름은 `xkxk.frameworks.ui.desktop.exe` 로 사용자 Pd 앱의 옛 이름 실행 파일(LEGACY, `Pd.Poc` 접두)과 달라졌지만, 데이터 폴더·단일 인스턴스 이름은 공유하므로(UTODO-0014) 자기 PID 외 프로세스는 건드리지 않는다.
 
 ## 5. 레이어 원칙
 - UI/UX(화면 조립)·컨트롤·데이터 층을 철저히 나눈다. 시험·PoC 코드도 같은 규칙을 따른다.
@@ -35,16 +35,16 @@
 | 층 | 참조할 수 있는 것 | 참조하면 안 되는 것 |
 |---|---|---|
 | 호스트(Desktop·Browser·Android) | 아래 전부 | — |
-| `Pd.Ui.Views`(화면 조립) | `Pd.Poc.Shell`, `Pd.Ui`, `Pd.Client.Data` | 호스트 |
-| `Pd.Poc.Shell`(컨트롤) | `Pd.Ui`, `Pd.Client.Data` | `Pd.Ui.Views`, 호스트 |
-| `Pd.Ui`(순수 UI) | Avalonia 패키지만 | 그 밖 전부, Dock |
-| `Pd.Client.Data`(데이터) | 비 UI 패키지 | Avalonia, 나머지 층 |
+| `xkxk.frameworks.ui.views`(화면 조립) | `xkxk.frameworks.ui.shell`, `xkxk.frameworks.ui`, `xkxk.frameworks.ui.data` | 호스트 |
+| `xkxk.frameworks.ui.shell`(컨트롤) | `xkxk.frameworks.ui`, `xkxk.frameworks.ui.data` | `xkxk.frameworks.ui.views`, 호스트 |
+| `xkxk.frameworks.ui`(순수 UI) | Avalonia 패키지만 | 그 밖 전부, Dock |
+| `xkxk.frameworks.ui.data`(데이터) | 비 UI 패키지 | Avalonia, 나머지 층 |
 
 - 층 정의의 정본은 `plan/04_기술스택/02_소스구조_분할규칙.md` 다.
 - 검사는 `python3 -B tools/check_layers.py`(규칙 `tools/check_layers_rules.json`, 자체 확인 `--self-test`)와 `python3 -B tools/classify_layers.py --check`(LAYERS.md 대조)다.
 - 층 파일은 300줄 이하에 첫 줄 한국어 헤더 주석을 둔다.
 
 ## 6. 알려진 한계
-- 프로젝트·어셈블리 이름은 아직 `Pd.Poc.*` 다(이름 전환은 향후 과제).
+- 프로젝트·어셈블리 이름은 폴더 경로 기준 `xkxk.frameworks.ui.*` 로 전환했다(UTODO-0007, UADR-0002). 단 Android 패키지 `com.pd.poc`(UTODO-0013)와, 사용자 Pd 앱과 공유하는 데이터 폴더 `%LOCALAPPDATA%\PdPoc`·단일 인스턴스 이름 `PdPoc.<채널>.Instance`(UTODO-0014)는 바꾸지 않았다.
 - 일부 시험 스크립트·도구에 Pd 경로가 박혀 있다. 목록과 과제 번호(UTODO-0001)는 `plan/90_결정관리/이전기록_2026-11-24_경로고정목록.md` 에 있다.
 - `plan/09_화면설계/02_메뉴구조.md` 는 Pd 저장소의 `menu_tree.py` 가 만드는 생성물이라 이 영역에서는 재생성할 수 없다.

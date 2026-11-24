@@ -3,11 +3,11 @@ import json
 
 from check_tour_catalog_rules import CATALOG, Source, check
 
-MENU = "src/Pd.Ui.Views/Menus/FileMenu.axaml"
-TITLE = "src/Pd.Ui.Views/MainTitleBar.axaml"
-MAIN = "src/Pd.Ui.Views/MainView.axaml"
-EN = "src/Pd.Poc.Shell/Localization/sysview.en.json"
-WIN_MENU = "src/Pd.Ui.Views/WindowTitleMenu.cs"
+MENU = "src/xkxk.frameworks.ui.views/Menus/FileMenu.axaml"
+TITLE = "src/xkxk.frameworks.ui.views/MainTitleBar.axaml"
+MAIN = "src/xkxk.frameworks.ui.views/MainView.axaml"
+EN = "src/xkxk.frameworks.ui.shell/Localization/sysview.en.json"
+WIN_MENU = "src/xkxk.frameworks.ui.views/WindowTitleMenu.cs"
 NEW_ITEM = '<MenuItem Header="x" AutomationProperties.AutomationId="shell.mnuBrandNew" />\n</MenuItem>'
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # 도움말 카탈로그 플랫폼 측정 — 내장 카탈로그 진행, 파일 카탈로그로 단계 추가·순서 변경·문구 변경, 대상 없음·숨김·조건 건너뛰기, 빈 카탈로그, 생성된 키 바인딩을 값으로 남긴다
 """
-사용: PD_REMOTE_INFO=<임시 data>/remote-control.json python3 -B retest_tour_catalog.py --catalog src/Pd.Poc.Shell/Tour/tour_catalog.json --work <임시 폴더> --out logs/<이름>/<회차>/tour_catalog.json
+사용: PD_REMOTE_INFO=<임시 data>/remote-control.json python3 -B retest_tour_catalog.py --catalog src/xkxk.frameworks.ui.shell/Tour/tour_catalog.json --work <임시 폴더> --out logs/<이름>/<회차>/tour_catalog.json
 앱은 먼저 임시 폴더·화면 밖으로 띄운다:
   run_desktop_bg.sh --conf run/<복사본> --no-kill -- --remote-control --multi-instance on --data-dir <임시> --profile-dir <임시>
       --bg-pos 21500,100 --primary-override 18000,0,6000,1440 --offscreen-guard on

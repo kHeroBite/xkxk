@@ -1,0 +1,38 @@
+<!-- PdDataGrid 스타일 — 머리글·선택 행·행 바탕·셀 글자. 표 자신의 Styles 에 넣어 그 표 안에만 적용된다(GridDocumentView.axaml 에서 옮김) -->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="xkxk.frameworks.ui.views.Documents.PdDataGridStyles">
+  <!-- 그리드 색(UI-07 토큰): 머리글 -->
+  <Style Selector="DataGridColumnHeader">
+    <Setter Property="Background" Value="{DynamicResource PdBrushGridHeader}" />
+    <Setter Property="Foreground" Value="{DynamicResource PdBrushText}" />
+  </Style>
+  <!-- 헤더 아래선(UI-07 PdBrushGridHeaderLine #646464, Mars 실측)은 코드에서 지정한다(GridCellStrokes.HookHeaderSeparator).
+       Fluent 템플릿이 PART_ColumnHeadersAndRowsSeparator 의 Fill 을 템플릿 안에서 직접 주므로(템플릿 우선순위) 스타일 setter 로는 덮이지 않았다(Q11 A1 실측 #CBCBCB). -->
+  <!-- 선택 행(Mars 동일): 위·아래 1px PdBrushSelectionLine 선만, 좌우 선 없음. 바탕은 행 원래색(흰/줄무늬 #F5F5F5) 그대로(Q11 #20, lead 결정 안 ①).
+       DataGridRow Fluent 템플릿의 루트 Border(RowBorder)가 BorderBrush·BorderThickness 를 TemplateBinding 으로 받으므로 요소를 추가하지 않는다.
+       두께는 모든 행에 (0,1,0,1) 로 고정하고 색만 바꾼다 — 선택할 때 행 높이·내용 위치가 흔들리지 않게.
+       선택 안 된 행의 선 붓은 Transparent 가 아니라 null 이다(A15): 두께가 고르지 않아 Border 가 행마다 테두리 경로(DrawGeometry)를 그리는데,
+       Avalonia 는 null 붓만 건너뛰고 투명 붓은 그대로 기록한다(12.1.4 BorderRenderHelper·RenderDataDrawingContext 디컴파일). 보이는 결과는 같다. -->
+  <Style Selector="DataGridRow">
+    <Setter Property="BorderThickness" Value="0,1,0,1" />
+    <Setter Property="BorderBrush" Value="{x:Null}" />
+  </Style>
+  <!-- 행 바탕을 테두리 바깥 끝까지 칠한다. 기본(CenterBorder)은 투명 1px 위·아래 테두리의 바깥 반 화소가 비어 뒤 배경과 섞였다(Q11 A1 행 경계 #FAFAFA) -->
+  <Style Selector="DataGridRow /template/ Border#RowBorder">
+    <Setter Property="BackgroundSizing" Value="OuterBorderEdge" />
+  </Style>
+  <Style Selector="DataGridRow:selected">
+    <Setter Property="BorderBrush" Value="{DynamicResource PdBrushSelectionLine}" />
+  </Style>
+  <!-- 선택 바탕 사각형을 숨긴다(Opacity 0) — 행 원래색 유지. 그리드 안에서만 적용되며 다른 컨트롤 선택색(PdBrushSelection)은 그대로 -->
+  <Style Selector="DataGridRow:selected /template/ Rectangle#BackgroundRectangle">
+    <Setter Property="Opacity" Value="0" />
+  </Style>
+  <!-- 셀 글자: 세로 가운데·말줄임(…). 좁은 폭에서 잘리는 문구를 표시 -->
+  <Style Selector="TextBlock.cell">
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Margin" Value="12,0" />
+    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+  </Style>
+</Styles>

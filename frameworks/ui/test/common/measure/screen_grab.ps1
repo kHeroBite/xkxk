@@ -1,4 +1,4 @@
-# Pd.Poc.Desktop 최상위 창들을 화면 캡처(CopyFromScreen, 실제 화면 합성 결과)로 저장하고 평균 밝기를 남기는 스크립트 — 캡처 방지(⑬) 검증용, 실입력 없음
+# xkxk.frameworks.ui.desktop 최상위 창들을 화면 캡처(CopyFromScreen, 실제 화면 합성 결과)로 저장하고 평균 밝기를 남기는 스크립트 — 캡처 방지(⑬) 검증용, 실입력 없음
 param([string]$OutDir, [string]$Tag)
 Add-Type -AssemblyName System.Drawing
 Add-Type @"
@@ -22,7 +22,7 @@ public class W32G {
   }
 }
 "@
-$proc = Get-Process -Name Pd.Poc.Desktop -ErrorAction SilentlyContinue | Select-Object -First 1
+$proc = Get-Process -Name xkxk.frameworks.ui.desktop -ErrorAction SilentlyContinue | Select-Object -First 1
 if (-not $proc) { "no process"; exit 1 }
 $i = 0
 foreach ($h in [W32G]::ForPid([uint32]$proc.Id)) {

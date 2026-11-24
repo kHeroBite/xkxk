@@ -29,8 +29,8 @@ sys.path.insert(0, HERE)
 sys.path.insert(0, JUDGE)
 import chrome_state_rules as csr  # noqa: E402
 
-THEME_SRC = os.path.join(ROOT, "src/Pd.Poc.Shell/Theming/BuiltinThemes.cs")
-THEME_DEF = os.path.join(ROOT, "src/Pd.Poc.Shell/Theming/ThemeDefinition.cs")
+THEME_SRC = os.path.join(ROOT, "src/xkxk.frameworks.ui.shell/Theming/BuiltinThemes.cs")
+THEME_DEF = os.path.join(ROOT, "src/xkxk.frameworks.ui.shell/Theming/ThemeDefinition.cs")
 STATES_TOOL = os.path.join(JUDGE, "chrome_button_states.py")
 SAFE_MOVE = os.path.join(HERE, "safe_move.ps1")
 BARS = ("active", "pinned", "surface", "main")

@@ -1,0 +1,23 @@
+<!-- 제목줄 '보기' 상위 메뉴 — 배치 프리셋·도구 되돌리기·글자 초기화·테마 빠른 전환·설정 창 열기 -->
+<MenuItem xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:vm="using:xkxk.frameworks.ui.shell.ViewModels"
+          xmlns:loc="using:xkxk.frameworks.ui.shell.Localization"
+          x:Class="xkxk.frameworks.ui.views.Menus.ViewMenu"
+          x:DataType="vm:MainViewModel"
+          Header="{loc:Tr menu.view}" AutomationProperties.AutomationId="shell.mnuView">
+  <MenuItem Header="{loc:Tr menu.view.presetCascade}" Command="{Binding PresetCommand}" CommandParameter="MdiCascade" AutomationProperties.AutomationId="shell.mnuPresetCascade" />
+  <MenuItem Header="{loc:Tr menu.view.presetTabbed}" Command="{Binding PresetCommand}" CommandParameter="Tabbed" AutomationProperties.AutomationId="shell.mnuPresetTabbed" />
+  <MenuItem Header="{loc:Tr menu.view.presetTile}" Command="{Binding PresetCommand}" CommandParameter="MdiTileVertical" AutomationProperties.AutomationId="shell.mnuPresetTile" />
+  <Separator />
+  <!-- 도구 되돌리기: 다른 패널로 옮겨 빈 패널이 접혀도 메뉴로 원래 패널에 되돌린다(로그는 제품 빌드에서 숨김) -->
+  <MenuItem Header="{loc:Tr menu.view.showExplorer}" Command="{Binding WindowMenu.ShowToolCommand}" CommandParameter="Explorer" AutomationProperties.AutomationId="shell.mnuShowExplorer" />
+  <MenuItem Header="{loc:Tr menu.view.showLog}" Command="{Binding WindowMenu.ShowToolCommand}" CommandParameter="Log" IsVisible="{Binding WindowMenu.IsLogToolAvailable}" AutomationProperties.AutomationId="shell.mnuShowLog" />
+  <MenuItem Header="{loc:Tr menu.view.showNotifications}" Command="{Binding WindowMenu.ShowToolCommand}" CommandParameter="Notifications" AutomationProperties.AutomationId="shell.mnuShowNotifications" />
+  <Separator />
+  <!-- 요건 7: UI 형·테마 편집기는 설정 창으로 옮겼다. 빠른 접근용 글자 초기화(Ctrl+0)·라이트/다크 토글·다음 테마는 남긴다 -->
+  <MenuItem x:Name="FontResetItem" Header="{loc:Tr menu.view.fontReset}" Click="OnResetFont" InputGesture="Ctrl+D0" AutomationProperties.AutomationId="shell.mnuFontReset" />
+  <MenuItem Header="{loc:Tr menu.view.toggleTheme}" Command="{Binding SettingsPanel.ToggleThemeCommand}" AutomationProperties.AutomationId="shell.mnuToggleTheme" />
+  <MenuItem Header="{loc:Tr menu.view.settings}" Command="{Binding SystemMenu.SystemViewCommand}" CommandParameter="Settings" AutomationProperties.AutomationId="shell.mnuSettings" />
+  <MenuItem Header="{loc:Tr menu.view.nextTheme}" Click="OnNextTheme" AutomationProperties.AutomationId="shell.mnuNextTheme" />
+</MenuItem>

@@ -1,4 +1,0 @@
-<!-- DataGrid 테마 선택(내장 Avalonia.Controls.DataGrid) — csproj 가 PocGrid≠Pro 일 때 이 파일을 avares://Pd.Ui.Views/Themes/DataGridTheme.axaml 로 링크한다(App.axaml 이 그 경로를 포함) -->
-<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
-</Styles>

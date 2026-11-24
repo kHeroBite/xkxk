@@ -61,8 +61,8 @@ if DRY:
 
 
 def procs():
-    r = subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq Pd.Poc.Desktop.exe", "/NH"], capture_output=True)
-    return r.stdout.decode("cp949", "replace").count("Pd.Poc.Desktop")
+    r = subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq xkxk.frameworks.ui.desktop.exe", "/NH", "/FO", "CSV"], capture_output=True)
+    return r.stdout.decode("cp949", "replace").count("xkxk.frameworks.ui.desktop")
 
 
 def cpu_pct():

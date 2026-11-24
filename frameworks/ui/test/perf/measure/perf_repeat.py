@@ -131,10 +131,10 @@ def win_cpu():
 
 
 def build_sha(build_dir):
-    """--build-dir 안 Pd.Ui.Views.dll 의 sha256(빌드 식별). 없으면 None."""
+    """--build-dir 안 xkxk.frameworks.ui.views.dll 의 sha256(빌드 식별). 없으면 None."""
     if not build_dir:
         return None
-    p = os.path.join(build_dir, "Pd.Ui.Views.dll")
+    p = os.path.join(build_dir, "xkxk.frameworks.ui.views.dll")
     if not os.path.isfile(p):
         return None
     h = hashlib.sha256()
@@ -230,7 +230,7 @@ def main():
     ap.add_argument("--scenario", choices=["grid_open", "move20", "cmd"])
     ap.add_argument("--n", type=int, default=20, help="시행 수(기본 20, 20 미만이면 웜 p95 신뢰 낮음 표시)")
     ap.add_argument("--out", help="결과 JSON 경로")
-    ap.add_argument("--build-dir", help="Pd.Ui.Views.dll 이 있는 실행 폴더(sha256 기록)")
+    ap.add_argument("--build-dir", help="xkxk.frameworks.ui.views.dll 이 있는 실행 폴더(sha256 기록)")
     ap.add_argument("--win-cpu", action="store_true", help="시작·끝에 Windows CPU%% 참고 기록(느림)")
     ap.add_argument("--cmd")
     ap.add_argument("--cmd-args", nargs="*", default=[], help="키=값 목록")

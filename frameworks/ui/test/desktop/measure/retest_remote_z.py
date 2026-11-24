@@ -275,7 +275,7 @@ def restore_user_files(r, backup):
     if alive(r.info) is not None:
         r.call("app.shutdown")
         stop_wait(r)
-    wait_app_exit(30)  # 다른 pid(재기동분)까지 Pd.Poc.Desktop 0개 확인 뒤 복원(02:15 사고)
+    wait_app_exit(30)  # 다른 pid(재기동분)까지 xkxk.frameworks.ui.desktop 0개 확인 뒤 복원(02:15 사고)
     for name, existed in saved.items():
         p = os.path.join(src, name)
         if existed:

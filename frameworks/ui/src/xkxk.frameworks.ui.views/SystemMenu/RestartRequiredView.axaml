@@ -1,0 +1,19 @@
+<!-- '다시 시작해야 적용됩니다' 대화(UI-17 GPU 가속모드) — 재시작 훅이 있으면 [지금 다시 시작]/[나중에], 없으면(Android) '다음 실행부터 적용' 안내와 [확인]. 문구는 system·sysview 사전 키 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:xkxk.frameworks.ui.shell.Localization"
+             x:Class="xkxk.frameworks.ui.views.SystemMenu.RestartRequiredView">
+  <StackPanel Margin="16" Spacing="12">
+    <TextBlock Text="{loc:Tr sys.restartRequired.title}" FontWeight="{DynamicResource PdFontWeightStrong}" FontSize="15" />
+    <TextBlock x:Name="BodyText" Text="{loc:Tr sys.restartRequired.body}" TextWrapping="Wrap"
+               AutomationProperties.AutomationId="sys.restart.lblBody" />
+    <TextBlock x:Name="NextLaunchText" Text="{loc:Tr sysview.restart.nextLaunch}" TextWrapping="Wrap" IsVisible="False"
+               AutomationProperties.AutomationId="sys.restart.lblNextLaunch" />
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="6">
+      <Button x:Name="NowButton" Content="{loc:Tr sys.restartRequired.now}" Click="OnNow" IsDefault="True"
+              AutomationProperties.AutomationId="sys.restart.btnNow" />
+      <Button x:Name="LaterButton" Content="{loc:Tr sys.restartRequired.later}" Click="OnLater" IsCancel="True"
+              AutomationProperties.AutomationId="sys.restart.btnLater" />
+    </StackPanel>
+  </StackPanel>
+</UserControl>

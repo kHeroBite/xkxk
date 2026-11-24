@@ -29,7 +29,7 @@
 ## 3. 경계(루트 대 영역)
 
 - 루트 xkxk(git toplevel)에는 Tier1 링크(CLAUDE·AGENTS·.mcp.json), `README.md`, `INFRA.md`(영역 INFRA 로의 symlink), `docs/`, 빈 영역 자리 README(modules·apps·libraries·tooling), `.claude/`(하네스 링크 + `rules/docs-map.md` + `docs_gate.json` + `archive/` 미추적), `.gitignore`·`.gitattributes` 를 둔다.
-- 영역 frameworks/ui 에는 `AGENTS.md`·`CLAUDE.md`, `.claude/`(링크 + `rules/docs-map.md` + `docs_gate.json`), `plan/`, `src/ test/ tools/ assets/ vendor/ ref/`, `HISTORY.md`·`LESSONS.md`·`INFRA.md`(미추적), PoC 루트 파일(`Pd.Poc.slnx`·`Directory.Build.props`·`global.json`·`LAYERS.md`·`README.md`)을 둔다.
+- 영역 frameworks/ui 에는 `AGENTS.md`·`CLAUDE.md`, `.claude/`(링크 + `rules/docs-map.md` + `docs_gate.json`), `plan/`, `src/ test/ tools/ assets/ vendor/ ref/`, `HISTORY.md`·`LESSONS.md`·`INFRA.md`(미추적), PoC 루트 파일(`xkxk.frameworks.ui.slnx`·`Directory.Build.props`·`global.json`·`LAYERS.md`·`README.md`)을 둔다.
 - 하네스 해석 정합은 이렇다. 정본 루트 해석기 `canon_root.py` 는 위로 올라가며 `.git` 또는 `.claude/` 를 가진 첫 폴더를 프로젝트 루트로 보므로 영역 경로는 `frameworks/ui` 로 풀린다. 문서 갱신 게이트와 ofinish 보관은 git toplevel(xkxk) 기준이라, 루트 `.claude/docs_gate.json` 에 `docs.history="frameworks/ui/HISTORY.md"`, `canon.plan_root="frameworks/ui/plan"`, `canon.test_root="frameworks/ui/test"`, `canon.tools_root="frameworks/ui/tools"` 를 둔다.
 - INFRA 경로는 영역 `frameworks/ui/INFRA.md` 실파일이고, 루트 `INFRA.md` 는 symlink 다. 둘 다 미추적이다. 루트 symlink 는 루트 docs-map 현행 표에 행으로 등재한다(md_audit 가 루트 md 로 수집하기 때문이다).
 - 다중 영역(다음 영역이 생길 때)에서 루트 docs_gate 가 한 영역만 가리키는 한계는 남는다. 하네스 수정은 AI 프로젝트 세션 소관이다.
@@ -46,7 +46,7 @@
 ├── docs/ (README · architecture/overview.md · architecture/source/ · decisions · standards · products · modules)
 ├── frameworks/ui/                         # 별별UI — 세션 홈·하네스 정본 영역
 │   ├── AGENTS.md · CLAUDE.md(@AGENTS.md) · .mcp.json(미추적) · INFRA.md(미추적)
-│   ├── HISTORY.md · LESSONS.md · README.md · LAYERS.md · Pd.Poc.slnx · Directory.Build.props · global.json
+│   ├── HISTORY.md · LESSONS.md · README.md · LAYERS.md · xkxk.frameworks.ui.slnx · Directory.Build.props · global.json
 │   ├── .claude/ (링크 · rules/docs-map.md · docs_gate.json)
 │   ├── plan/ (README.md · index.json · 00·01·04·05·09·90 · _build[menu_icons·menu_icon_data·icon_glyphs·menu_data])
 │   ├── src/ · test/(README.md) · tools/(README.md 신규) · assets/ · vendor/ · ref/README.md
@@ -68,6 +68,6 @@
 
 ## 6. 이번에 하지 않은 것
 
-- `Pd.Poc.*` 이름 전환, NuGet 패키지화, `apps/pd` 이전, 루트 공통 표준 본문 작성은 하지 않았다.
+- `Pd.Poc.*` 이름 전환은 2026-11-24 `xkxk.frameworks.ui.*` 로 했다(UTODO-0007, UADR-0002). NuGet 패키지화, `apps/pd` 이전, 루트 공통 표준 본문 작성은 하지 않았다.
 - 경로가 박힌 시험 스크립트는 고치지 않고 `/mnt/c/DATA/Project/xkxk/frameworks/ui/plan/90_결정관리/이전기록_2026-11-24_경로고정목록.md` 에 UTODO-0001 로 남겼다.
 - `plan/09_화면설계/02_메뉴구조.md` 생성기(`menu_tree.py`)는 옮기지 않았다. 재생성은 Pd 저장소에서 한다.

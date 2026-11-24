@@ -10,10 +10,10 @@ import re
 import sys
 
 SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "src")
-FILES = ["Pd.Ui/Controls/GanttSpinner.cs", "Pd.Ui/Controls/GanttSpinnerVisual.cs", "Pd.Ui/Controls/BusyOverlay.cs", "Pd.Ui/Controls/CursorSpinnerFrames.cs",
-         "Pd.Ui/Controls/PointerFollower.cs", "Pd.Poc.Shell/Busy/BusyCursorDriver.cs", "Pd.Poc.Shell/Busy/BusyService.cs", "Pd.Poc.Shell/Busy/BusyHooks.cs",
-         "Pd.Ui/Controls/PanelCornerButton.cs", "Pd.Ui/Controls/TourOverlay.axaml", "Pd.Ui/Controls/TourOverlay.axaml.cs", "Pd.Ui/Controls/TourCard.axaml", "Pd.Ui/Controls/TourCard.axaml.cs",
-         "Pd.Ui/Controls/ShortcutLayer.axaml", "Pd.Ui/Controls/ShortcutLayer.axaml.cs", "Pd.Ui/Controls/SettingsShell.axaml", "Pd.Ui/Controls/SettingsShell.axaml.cs", "Pd.Ui/Controls/SettingsRow.cs", "Pd.Ui/Styles/PdUiStyles.axaml"]
+FILES = ["xkxk.frameworks.ui/Controls/GanttSpinner.cs", "xkxk.frameworks.ui/Controls/GanttSpinnerVisual.cs", "xkxk.frameworks.ui/Controls/BusyOverlay.cs", "xkxk.frameworks.ui/Controls/CursorSpinnerFrames.cs",
+         "xkxk.frameworks.ui/Controls/PointerFollower.cs", "xkxk.frameworks.ui.shell/Busy/BusyCursorDriver.cs", "xkxk.frameworks.ui.shell/Busy/BusyService.cs", "xkxk.frameworks.ui.shell/Busy/BusyHooks.cs",
+         "xkxk.frameworks.ui/Controls/PanelCornerButton.cs", "xkxk.frameworks.ui/Controls/TourOverlay.axaml", "xkxk.frameworks.ui/Controls/TourOverlay.axaml.cs", "xkxk.frameworks.ui/Controls/TourCard.axaml", "xkxk.frameworks.ui/Controls/TourCard.axaml.cs",
+         "xkxk.frameworks.ui/Controls/ShortcutLayer.axaml", "xkxk.frameworks.ui/Controls/ShortcutLayer.axaml.cs", "xkxk.frameworks.ui/Controls/SettingsShell.axaml", "xkxk.frameworks.ui/Controls/SettingsShell.axaml.cs", "xkxk.frameworks.ui/Controls/SettingsRow.cs", "xkxk.frameworks.ui/Styles/PdUiStyles.axaml"]
 RX = re.compile(r"Color\.Parse|Color\.FromRgb|Color\.FromArgb|new Color\(|#[0-9A-Fa-f]{6,8}\b|Colors\.[A-Z][A-Za-z]+|Brushes\.[A-Z][A-Za-z]+|new SolidColorBrush\(")
 
 

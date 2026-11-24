@@ -1,0 +1,14 @@
+<!-- 대시보드 벤치 화면 — 차트 N개를 격자에 붙여 첫 로딩·창 끌기·크기 변경 프레임을 잰다(원격 bench.dashboard). 열어 두기만 해서는 차트가 없다 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="xkxk.frameworks.ui.views.Documents.Bench.DashboardBenchView">
+  <DockPanel>
+    <Border DockPanel.Dock="Top" Padding="6,4" Background="{DynamicResource PdBrushSurfaceAlt}">
+      <!-- 결과는 2줄까지만 보인다(차트를 밀어내지 않게). 전체 JSON 은 원격 bench.result target=dashboard -->
+      <TextBlock x:Name="ResultText" AutomationProperties.AutomationId="bench.dashboard.result" Foreground="{DynamicResource PdBrushTextMuted}" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" />
+    </Border>
+    <Panel x:Name="Frame" AutomationProperties.AutomationId="bench.dashboard.host">
+      <UniformGrid x:Name="Host" Columns="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+    </Panel>
+  </DockPanel>
+</UserControl>

@@ -242,7 +242,7 @@ def s2(args, root=ri.ROOT):
                                   "launches": pd_sf["user_pd_launches"]}, pd_sf["user_pd_case"] is not None)
     for name, key in (("user_layout_md5_same", "layout.json"), ("user_settings_md5_same", "settings.json")):
         res.add(name, {"before": before["files"].get(key), "after": after["files"].get(key)}, bool(before["files"].get(key)) and before["files"].get(key) == after["files"].get(key))
-    out = subprocess.run(["/mnt/c/Windows/System32/tasklist.exe", "/FI", "IMAGENAME eq Pd.Poc.Desktop.exe", "/NH", "/FO", "CSV"], capture_output=True).stdout.decode("utf-8", "replace")
+    out = subprocess.run(["/mnt/c/Windows/System32/tasklist.exe", "/FI", "IMAGENAME eq xkxk.frameworks.ui.desktop.exe", "/NH", "/FO", "CSV"], capture_output=True).stdout.decode("utf-8", "replace")
     pids = [int(p) for p in ri.re.findall(r'^"[^"]+","(\d+)"', out, ri.re.M)]
     res.add("own_pids_cleaned", {"running": pids, "user_pid": state["user_pid"]}, [p for p in pids if p != state["user_pid"]] == [])
     free = shutil.disk_usage("/mnt/c").free / (1 << 30)

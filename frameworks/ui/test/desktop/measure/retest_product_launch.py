@@ -70,7 +70,7 @@ class Product:
 
     def start(self):
         run_dir = os.path.abspath(self.args.run_dir)
-        exe = os.path.join(run_dir, "Pd.Poc.Desktop.exe")
+        exe = os.path.join(run_dir, "xkxk.frameworks.ui.desktop.exe")
         if "/bin/run/" not in run_dir.replace("\\", "/") or not os.path.exists(exe):
             raise SystemExit("bin/run 복사본만 실행한다: %s" % run_dir)
         stamp = time.strftime("%H%M%S")
@@ -109,7 +109,7 @@ class Product:
         return [ln.strip() for ln in self.log_text().splitlines() if "single-instance" in ln]
 
     def find_pid(self):
-        text = app.ps("(Get-CimInstance Win32_Process -Filter \"Name='Pd.Poc.Desktop.exe'\" | Where-Object { $_.CommandLine -like '*%s*' }).ProcessId" % app.win(self.data))
+        text = app.ps("(Get-CimInstance Win32_Process -Filter \"Name='xkxk.frameworks.ui.desktop.exe'\" | Where-Object { $_.CommandLine -like '*%s*' }).ProcessId" % app.win(self.data))
         ids = [int(v) for v in text.split() if v.isdigit()]
         return ids[0] if len(ids) == 1 and ids[0] != self.args.user_pid else None
 

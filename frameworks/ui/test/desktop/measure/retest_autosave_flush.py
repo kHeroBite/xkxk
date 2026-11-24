@@ -93,7 +93,7 @@ class Host:
     def kill(self, r):
         if self.a.target == "desktop":
             for _ in range(15):  # 메인 창 닫기 = 정상 종료 — 끝날 때까지 기다린다(강제 종료는 하지 않는다: 종료 저장 경로를 보는 시험)
-                if subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq Pd.Poc.Desktop.exe", "/NH"], capture_output=True).stdout.count(b"Pd.Poc.Desktop") == 0:
+                if subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq xkxk.frameworks.ui.desktop.exe", "/NH", "/FO", "CSV"], capture_output=True).stdout.count(b"xkxk.frameworks.ui.desktop") == 0:
                     return
                 time.sleep(1)
             return

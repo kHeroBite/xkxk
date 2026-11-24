@@ -10,7 +10,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
-using Pd.Ui.Views.Depth;
+using xkxk.frameworks.ui.views.Depth;
 
 namespace Pd.Test.SnapshotScale;
 
@@ -32,7 +32,7 @@ internal static class TextCheck
         Dispatcher.UIThread.RunJobs();
         using var frame = window.CaptureRenderedFrame(); // 합성기(실제 화면과 같은 경로) 그림 — 기준
         var size = root.Bounds.Size;
-        var g = new Pd.Ui.Views.Depth.SnapshotGeometry(size, scale);
+        var g = new xkxk.frameworks.ui.views.Depth.SnapshotGeometry(size, scale);
         var px = new PixelSize(Math.Max(1, (int)Math.Round(size.Width * scale)), Math.Max(1, (int)Math.Round(size.Height * scale)));
         using var old = new RenderTargetBitmap(px, new Vector(96 * scale, 96 * scale));
         old.Render(root);

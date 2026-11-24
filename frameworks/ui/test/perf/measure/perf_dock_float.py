@@ -120,7 +120,7 @@ def main():
     ap.add_argument("--self-test", action="store_true")
     ap.add_argument("--n", type=int, default=20, help="시행 수(기본 20, 20 미만이면 웜 p95 신뢰 낮음 표시, PERF-11 판정은 20 이상 필요)")
     ap.add_argument("--out", help="결과 JSON 경로")
-    ap.add_argument("--build-dir", help="Pd.Ui.Views.dll 이 있는 실행 폴더(sha256 기록)")
+    ap.add_argument("--build-dir", help="xkxk.frameworks.ui.views.dll 이 있는 실행 폴더(sha256 기록)")
     ap.add_argument("--win-cpu", action="store_true", help="시작·끝에 Windows CPU%% 참고 기록(느림)")
     a = ap.parse_args()
     if a.self_test:
