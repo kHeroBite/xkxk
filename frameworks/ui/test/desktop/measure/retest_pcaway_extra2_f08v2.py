@@ -7,7 +7,7 @@
   python3 -B retest_pcaway_extra2_f08v2.py --self-test --session <세션 폴더>
 --via app-pointer(11-09): OS 커서 경로는 창 안 제약으로 한계 도달이 수학적으로 불가하다(reach_analysis). 진단 ui.pointerDrag 로 제목 칸을 눌러
   Dock 의 실제 끌기 경로(누름→캡처→DragMove)를 앱 안에서 구동하고, 같은 판정식으로 잰다(OS 입력·전경 변화 없음).
-출력: 원본과 같은 poc/ui/logs/pcaway[/discovery]/extra/F08.measure.json(MeasureOut 재사용). 이어서 pcaway_report.py emit --item F08 --measure-file <그 파일>.
+출력: 원본과 같은 logs/pcaway[/discovery]/extra/F08.measure.json(MeasureOut 재사용). 이어서 pcaway_report.py emit --item F08 --measure-file <그 파일>.
 
 원본과의 차이(11-09 새 판, 원본 파일·sha 불변):
 - 원본은 끝점을 MDI 영역 왼쪽 +8 에 둔다. 잡는 점이 창 왼쪽에서 약 227 DIP 면 창 x 최소가 8−227=−219 라 잔존 421 에서 멈춘다(계산, 원인 미확정).

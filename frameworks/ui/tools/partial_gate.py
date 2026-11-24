@@ -15,7 +15,7 @@ import os
 import re
 import sys
 
-DEFAULT_SRC = "/mnt/c/DATA/Project/pd/poc/ui/src"
+DEFAULT_SRC = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src"))  # 스크립트 위치 기준 영역 루트의 src
 SKIP_DIRS = {"bin", "obj", ".git", "node_modules"}
 SKIP_PREFIXES = ("bin_", "obj_")  # 빌드 출력 폴더(bin_*·obj_*)도 내려가지 않는다
 GENERATED = (".g.cs", ".g.i.cs", ".Designer.cs", ".AssemblyInfo.cs", ".GlobalUsings.g.cs")

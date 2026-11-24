@@ -28,7 +28,7 @@ from motion_nav_fold5_rules import close_point, may_start  # noqa: E402
 
 NOT_CLOSE_PATH = "N/A"
 BACK_CODE = ("뒤로 가기는 열린 메뉴·서랍·시트만 닫고 없으면 기본 동작(앱 이탈)이다 — "
-             "poc/ui/src/Pd.Poc.Android/MainActivity.cs:71(DispatchKeyEvent)·107~115(OnHostBackRequested)·118(DismissTop)")
+             "src/Pd.Poc.Android/MainActivity.cs:71(DispatchKeyEvent)·107~115(OnHostBackRequested)·118(DismissTop)")
 SAMPLE = re.compile(r"^(Grid|Gantt|Form)-\d+$")
 SETTINGS = (("motion", "cinematic"), ("motion.switch", "none"), ("motion.open", "none"), ("motion.close", "fade"))
 SCREENS = {"cover": ("nav", "Nav"), "inner": ("dock", "DockTab")}

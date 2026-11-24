@@ -1,7 +1,7 @@
 # 웹 벤치(b1126 등, PdBench 진단판) 기능 확인 — bench.env·그리드 1만/10만 행 로드·정렬·필터·스크롤·차트 3종 렌더·xlsx 를 원격으로 돌리고 예외·콘솔 오류·캡처를 남긴다(성능 값은 참고)
 # 사용: PD_URL=http://127.0.0.1:5199/ python3 tools/retest_browser18.py [--tag b1126]   (헤드리스 전용)
 """
-절차: poc/ui/logs/odevgc/component_study.md 8-4 기능 부분(lead 11:4x 배정).
+절차: logs/odevgc/component_study.md 8-4 기능 부분(lead 11:4x 배정).
 판정(기능만):
   E  bench.env: 차트 3종 포함·한글 글꼴(has_hangul)·ko-KR collation(ga_lt_na·linguistic_a_lt_B) 값
   G  그리드: 1만·10만 행 load·정렬(ko-KR, head 가나다)·필터(김/개발/"")·스크롤이 예외 없이 결과를 돌려줌 + 캡처

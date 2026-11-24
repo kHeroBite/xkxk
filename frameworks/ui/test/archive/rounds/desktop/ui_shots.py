@@ -1,14 +1,14 @@
 # UI-01·04·06·07 화면 안 스크린샷 쌍을 원격 명령으로 만들고 픽셀 통계(평균색·변경 영역)를 JSON 으로 남기는 스크립트
 import json, os, subprocess, sys, hashlib
-sys.path.insert(0, '/mnt/c/DATA/Project/pd/poc/ui/tools')
-sys.path.insert(0, '/mnt/c/DATA/Project/pd/poc/ui/test/common')  # D-TESTDIR: test/common/_paths.py
+sys.path.insert(0, '/mnt/c/DATA/Project/xkxk/frameworks/ui/tools')
+sys.path.insert(0, '/mnt/c/DATA/Project/xkxk/frameworks/ui/test/common')  # D-TESTDIR: test/common/_paths.py
 import _paths  # noqa: E402
 _paths.add()
 import pdctl
 from retest_remote import shot_dir_ok
 from PIL import Image, ImageChops, ImageStat
 
-OUT = '/mnt/c/DATA/Project/pd/poc/ui/logs/otest/desktop/ui/'
+OUT = '/mnt/c/DATA/Project/xkxk/frameworks/ui/logs/otest/desktop/ui/'
 # 사용: python3 ui_shots.py <이번 실행의 임시 데이터 폴더 Windows 경로>(또는 PD_DATA_DIR). 앱 쪽 캡처 path 는 <폴더>\shots\<이름>.png 로 반드시 준다(D-SHOT1)
 DATA = shot_dir_ok(sys.argv[1] if len(sys.argv) > 1 else os.environ.get('PD_DATA_DIR'))
 if DATA is None:
@@ -25,7 +25,7 @@ def call(cmd, **args):
 def shot(name, **a):
     p = OUT + name + '.png'
     a['path'] = DATA + '\\shots\\' + name + '.png'  # 앱이 이 경로에 쓴 뒤 바이트를 돌려준다(RemoteControlServer screenshot.download)
-    pa = ['python3', '/mnt/c/DATA/Project/pd/poc/ui/tools/pdctl.py', 'screenshot.download', 'out=' + p] + ['%s=%s' % kv for kv in a.items()]
+    pa = ['python3', '/mnt/c/DATA/Project/xkxk/frameworks/ui/tools/pdctl.py', 'screenshot.download', 'out=' + p] + ['%s=%s' % kv for kv in a.items()]
     subprocess.run(pa, capture_output=True, timeout=60)
     return p
 

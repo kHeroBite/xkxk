@@ -16,7 +16,7 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import retest_android_pcaway_lib as L  # noqa: E402
 
-SEARCH_SCOPE = "F09 원문은 HISTORY.md 이월 후보의 '태블릿 m2probe 하위 메뉴 사각형' 이름뿐이다. 찾은 곳: HISTORY.md, session-env plans/handoff_otest-m-1.md, compact_handoff*.md, poc/ui/logs/otest-m-2·3 scripts/m2_probe.py, tablet_m2.json(패널1 로그 하위 메뉴 check=False)."
+SEARCH_SCOPE = "F09 원문은 HISTORY.md 이월 후보의 '태블릿 m2probe 하위 메뉴 사각형' 이름뿐이다. 찾은 곳: HISTORY.md, session-env plans/handoff_otest-m-1.md, compact_handoff*.md, Pd:poc/ui/logs/otest-m-2·3 scripts/m2_probe.py, tablet_m2.json(패널1 로그 하위 메뉴 check=False)."
 
 
 def nodes(txt):

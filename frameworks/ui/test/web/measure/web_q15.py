@@ -4,10 +4,11 @@
 판정 규칙: rules_otest12_web_w3.md. 탭은 panel.tabs 순서와 LeftPane DocumentTabStripItem bounds 순서를 맞춰 문서 Id 로 찾는다.
 """
 import json
+import os
 import sys
 import time
 
-sys.path.insert(0, "/mnt/c/DATA/Project/pd/poc/ui/tools")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # retest_browser 가 이 폴더에 있다
 from playwright.sync_api import sync_playwright  # noqa: E402
 import retest_browser as rb  # noqa: E402
 

@@ -15,8 +15,8 @@ import json
 import sys
 import time
 
-sys.path.insert(0, "/mnt/c/DATA/Project/Pd/poc/ui/test/common/measure")
-sys.path.insert(0, "/mnt/c/DATA/Project/Pd/poc/ui/test/common")
+sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/test/common/measure")
+sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/test/common")
 import _paths  # noqa: E402
 _paths.add()
 from retest_remote import Remote  # noqa: E402
@@ -53,7 +53,7 @@ u1, n1 = user_count(t1)
 sel1 = t1.get("activeThemeId")
 row("T1", "theme.clone → 목록 +1·활성이 복제본", n1 == n0 + 1 and sel1 != sel0, {"before": [u0, n0, sel0], "after": [u1, n1, sel1], "clone": cl})
 WIN_OUT = "C:\\DATA\\Project\\Pd\\poc\\ui\\logs\\otest\\c2\\w\\theme_export_%s.json"
-WSL_OUT = "/mnt/c/DATA/Project/Pd/poc/ui/logs/otest/c2/w/theme_export_%s.json"
+WSL_OUT = "/mnt/c/DATA/Project/xkxk/frameworks/ui/logs/otest/c2/w/theme_export_%s.json"
 
 
 def exported_has(tag, theme_id, needle):

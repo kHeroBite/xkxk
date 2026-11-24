@@ -27,12 +27,12 @@ import sys
 import tempfile
 import time
 
-ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..", ".."))
-SRC = os.path.join(ROOT, "poc/ui/src")
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+SRC = os.path.join(ROOT, "src")
 DOC = os.path.join(ROOT, "plan/09_화면설계/01_화면설계_공통원칙.md")
 LINE_LIMIT = 300
 ROW_MIN, ROW_MAX = -1, 6
-SAFE_WHEEL = os.path.join(ROOT, "poc/ui/test/desktop/measure/safe_wheel.ps1")
+SAFE_WHEEL = os.path.join(ROOT, "test/desktop/measure/safe_wheel.ps1")
 PS = "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
 DRAG_DIP = 80  # 머리글 끌기 폭. MinWidth=Width 라 넓히는 방향만 된다(GridColumnScaler)
 HEADER_GRIP_DIP = 2  # DataGrid 머리글 크기 조절 영역은 오른쪽 끝 5px 안이다(원본 DATAGRIDCOLUMNHEADER_resizeRegionWidth)

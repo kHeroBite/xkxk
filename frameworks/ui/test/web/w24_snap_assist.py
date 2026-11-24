@@ -760,7 +760,7 @@ def self_test():
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--bundle")
-    ap.add_argument("--out", help="결과 폴더(세션 work 폴더 등 — poc/ui/test 아래 금지)")
+    ap.add_argument("--out", help="결과 폴더(세션 work 폴더 등 — test/ 아래 금지)")
     ap.add_argument("--port", type=int, default=5827)
     ap.add_argument("--self-test", action="store_true")
     ap.add_argument("--steps", help="쉼표로 고른 묶음만(예 bleed — 글자 비침 대조군·현행 비교). 생략하면 전부")
@@ -776,8 +776,8 @@ def main():
     if not (a.bundle and a.out):
         ap.error("--bundle 과 --out 이 필요하다")
     out = os.path.abspath(a.out)
-    if "/poc/ui/test/" in out.replace("\\", "/") + "/" or "logs/ui28" in out.replace("\\", "/"):
-        print("거부: 결과는 커밋 폴더(poc/ui/test)·logs/ui28 밖에 쓴다: %s" % out)
+    if "/frameworks/ui/test/" in out.replace("\\", "/") + "/" or "logs/ui28" in out.replace("\\", "/"):
+        print("거부: 결과는 커밋 폴더(frameworks/ui/test)·logs/ui28 밖에 쓴다: %s" % out)
         return 3
     if a.port in USER_PORTS:
         print("거부: 사용자 포트 %d" % a.port)

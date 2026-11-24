@@ -65,6 +65,10 @@ if [ -z "$DRY" ] && [ -f "$UF_DIR/pending" ] && [ "$(proc_count)" -eq 0 ]; then
     echo "사용자 파일 변경 감지 — 직전 제품판 기동($PREV_TS) 전후 md5 불일치. 백업: $UF_DIR/$PREV_TS/ — 확인·복구 후 $UF_DIR/pending 삭제."
     echo "RESULT=USER_FILES_CHANGED"; exit 9
   fi
+elif [ -z "$DRY" ] && [ -f "$UF_DIR/pending" ]; then
+  # 대조 건너뜀 기록 — Pd 가 1개 이상 떠 있으면 사용자 파일 대조(위)를 하지 않는다. 건너뛴 사실을 남겨 빈틈을 눈에 보이게 한다(검출을 늘리는 방향만).
+  echo "사용자 파일 대조 건너뜀: $IMAGE 실행 중($(proc_count)개) — 직전 제품판 기동 $(cat "$UF_DIR/pending") 기준 pending 유지. 앱 종료 후 다음 기동에서 대조된다."
+  echo "$(date '+%Y-%m-%d %H:%M:%S') owner=${PD_SLOT_OWNER:-} conf=$CONF pending=$(cat "$UF_DIR/pending") proc=$(proc_count) 대조 건너뜀" >> "$UF_DIR/skipped_compare.log" 2>/dev/null
 fi
 # ① 사전 확인 — 기본은 실행 중이면 실패(BUSY, 아무것도 죽이지 않음), --kill 은 슬롯 소유자만(위에서 확인) 자기가 기록한 PID 를 종료(①-1)
 if [ -z "$DRY" ] && [ "$KILL" = "check" ] && [ "$(proc_count)" -gt 0 ]; then
@@ -155,8 +159,13 @@ if [ "$HAS_DD" = "1" ]; then
   if [ -z "$DRY" ]; then # 기동 전 사용자 파일 백업·md5(다음 기동 때 자동 대조)
     mkdir -p "$UF_DIR/$TS"; uf_md5 > "$UF_DIR/$TS.md5"; cp -p "$USER_PD"/layout.json "$USER_PD"/settings.json "$UF_DIR/$TS/" 2>/dev/null; [ -d "$USER_PD/layouts" ] && cp -rp "$USER_PD/layouts" "$UF_DIR/$TS/" 2>/dev/null
     # --multi-instance 는 사용자 Pd 와 함께 도는 기동이라 대조 기준(pending)을 덮지 않는다 — 실행 중 저장과 시험 변경을 구분할 수 없고 앞선 기준을 잃는다(team-lead 16:2x)
-    if [ "$HAS_MULTI" -eq 0 ]; then echo "$TS" > "$UF_DIR/pending"; fi
-    echo "사용자 파일 백업: $UF_DIR/$TS/ ($(wc -l < "$UF_DIR/$TS.md5")개) pending=$([ "$HAS_MULTI" -eq 0 ] && echo 갱신 || echo 유지)"
+    #      단 pending 이 아직 없으면 --multi-instance 기동도 기준을 기록한다(없을 때만 — 있으면 덮지 않는다). 기준이 비어 대조 자체가 안 되는 빈틈을 막는다.
+    PEND_STATE="유지"
+    if [ "$HAS_MULTI" -eq 0 ]; then echo "$TS" > "$UF_DIR/pending"; PEND_STATE="갱신"
+    elif [ ! -f "$UF_DIR/pending" ]; then echo "$TS" > "$UF_DIR/pending"; PEND_STATE="신규(없어서 기록)"; fi
+    echo "사용자 파일 백업: $UF_DIR/$TS/ ($(wc -l < "$UF_DIR/$TS.md5")개) pending=$PEND_STATE"
+    # 자기 PID 외 Pd 가 떠 있는데 --data-dir 격리 없이 기동하면 사용자 폴더를 같이 쓰므로 경고한다(경고만, 동작 불변). 이 분기는 --data-dir 지원판만 들어온다.
+    [ "$HAS_MULTI" -eq 1 ] && [ "$(proc_count)" -gt 0 ] && echo "경고: 다른 $IMAGE 가 실행 중인 상태의 --multi-instance 기동 — 사용자 폴더 변경은 이후 대조(pending=$(cat "$UF_DIR/pending" 2>/dev/null))에서 검출된다."
   fi
 fi
 [ "$HAS_EXIT" -eq 1 ] || ARGS+=(--exit-after 30)

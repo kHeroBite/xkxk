@@ -3,7 +3,7 @@
 """
 사용: python3 -B retest_tour.py --out <logs/<에이전트>/<회차>/tour.json>
 앱은 먼저 run_desktop_bg.sh 로 진단 빌드를 임시 --data-dir·--profile-dir 와 --remote-control 로 띄워 둔다.
-격리되지 않은 앱(사용자 폴더 사용)에 붙으면 rc=3 으로 거부한다. poc/ui/logs/ui28/ 에는 쓰지 않는다(otest 전용).
+격리되지 않은 앱(사용자 폴더 사용)에 붙으면 rc=3 으로 거부한다. logs/ui28/ 에는 쓰지 않는다(otest 전용).
 키 주입은 하지 않는다. Esc 등 키는 진단 명령 tour.esc·tour.key 의 라우팅 이벤트(OS 입력 아님)로만 넣는다.
 order 항목은 [ModuleInitializer] 등록 순서 확인이다: 세션 없이 Ctrl+0 이 배율을 되돌리는지(양성 대조)와 세션 중에는 되돌리지 않는지를 함께 잰다.
 종료 코드: 0=측정 완료, 2=연결 실패, 3=실행 거부. PASS/FAIL 은 판정 도구가 낸다.

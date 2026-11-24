@@ -1,8 +1,8 @@
 # 새 PD 로고 원본 한 장으로 전 플랫폼 아이콘(단순화 판·알림 아이콘·제목줄 로고 포함)을 지정한 출력 트리에 만드는 변환 스크립트
 """
-python3 poc/ui/tools/make_logo.py --out <출력폴더> --preview <미리보기폴더> [--src <원본.png>] [--simple-max 40] [--preview-only]
-- 원본 기본값: poc/ui/assets/logo/PD_Dimension_source.png
-- 출력 트리는 poc/ui 아래 상대 경로를 그대로 흉내 낸다(<출력폴더>/poc/ui/...). 기존 tools/make_icons.py 와 같은 규격·파일명을 쓴다.
+python3 tools/make_logo.py --out <출력폴더> --preview <미리보기폴더> [--src <원본.png>] [--simple-max 40] [--preview-only]
+- 원본 기본값: assets/logo/PD_Dimension_source.png
+- 출력 트리는 영역 루트 아래 상대 경로를 그대로 흉내 낸다(<출력폴더>/...). 기존 tools/make_icons.py 와 같은 규격·파일명을 쓴다.
   프로젝트 반영은 출력 트리의 파일을 같은 상대 경로로 복사한다(Android 배경색은 출력의 ANDROID_BG 값으로 values/ic_launcher_background.xml 을 고친다).
 - 작은 크기(<= simple-max, 기본 40)는 퍼즐 선을 지우고 두 색 면 곡선만 남긴 단순화 판을 쓴다. 제목줄 로고(pd-logo-64.png)는 항상 단순화 판이다.
 - Pillow·numpy 필요: python3 -m pip install --user Pillow numpy

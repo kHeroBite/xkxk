@@ -1,14 +1,14 @@
 {
  "AC-5-01": [
   {"file": "plan/09_화면설계/03_데스크톱_화면설계.md", "must": ["Screens.Changed", "창이 열릴 때만", "400ms", "MonitorChangeWatcher"]},
-  {"file": "poc/ui/src/Pd.Poc.Desktop/MonitorChangeWatcher.cs", "must": ["창이 열릴 때만", "가까운 모니터 안"]},
-  {"file": "poc/ui/src/Pd.Poc.Shell/Docking/PlacementRecovery.cs", "must": ["기본 위치"]}
+  {"file": "src/Pd.Poc.Desktop/MonitorChangeWatcher.cs", "must": ["창이 열릴 때만", "가까운 모니터 안"]},
+  {"file": "src/Pd.Poc.Shell/Docking/PlacementRecovery.cs", "must": ["기본 위치"]}
  ],
  "AC-8-01": [
   {"file": "plan/04_기술스택/02_소스구조_분할규칙.md", "must": ["Pd.Ui", "Pd.Ui.Views", "Pd.Client.Data", "check_layers.py", "IViewRegistry"]},
-  {"file": "poc/ui/README.md", "must": ["Pd.Ui", "Pd.Ui.Views", "Pd.Client.Data", "check_layers.py"], "absent": ["이동 배치(B7b)에서 생긴다"]}
+  {"file": "README.md", "must": ["Pd.Ui", "Pd.Ui.Views", "Pd.Client.Data", "check_layers.py"], "absent": ["이동 배치(B7b)에서 생긴다"]}
  ],
  "AC-8-05": [
-  {"file": "poc/ui/LAYERS.md", "must": ["Data", "Control", "Ui", "Host", "Diag"], "absent": ["미분류"]}
+  {"file": "LAYERS.md", "must": ["Data", "Control", "Ui", "Host", "Diag"], "absent": ["미분류"]}
  ]
 }

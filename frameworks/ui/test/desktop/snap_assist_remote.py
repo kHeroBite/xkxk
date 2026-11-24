@@ -595,8 +595,8 @@ def main():
         return 3
     work = os.path.abspath(os.path.join(args.work, args.label))
     norm = work.replace("\\", "/")
-    if "logs/ui28" in norm or "/poc/ui/test/" in norm + "/":
-        print("거부: 결과는 커밋 폴더(poc/ui/test)·logs/ui28 밖에 쓴다: %s" % work)
+    if "logs/ui28" in norm or "/frameworks/ui/test/" in norm + "/":
+        print("거부: 결과는 커밋 폴더(frameworks/ui/test)·logs/ui28 밖에 쓴다: %s" % work)
         return 3
     os.makedirs(work, exist_ok=True)
     raw = {"label": args.label, "mode": "launch" if args.run_dir else "attach", "foreground_needed": FOREGROUND_NEEDED, "checks": []}

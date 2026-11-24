@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # 클라이언트 소스 계층 분류기 — 파일별 using·형식 참조를 분석해 Data/Control/Ui/Views/Host/Diag 로 나누고 LAYERS.md 를 재생성한다
 """
-사용: python3 poc/ui/tools/classify_layers.py [--check] [--json 경로] [--root 저장소]
-  기본: poc/ui/LAYERS.md 재생성. --check: 기록된 분류와 다르면 rc=1. --json: 파일별 근거·참조 간선을 JSON 으로도 쓴다.
+사용: python3 tools/classify_layers.py [--check] [--json 경로] [--root 저장소]
+  기본: LAYERS.md 재생성. --check: 기록된 분류와 다르면 rc=1. --json: 파일별 근거·참조 간선을 JSON 으로도 쓴다.
 분류(먼저 걸린 것): Host 호스트 프로젝트 / Ui Pd.Ui / Views axaml·코드비하인드·Views·Themes·Input·Documents 의 Avalonia 코드·벤치·갤러리 /
   Diag 그 밖의 Diagnostics / Data Avalonia·Dock.Avalonia 무참조이고 참조 형식도 전부 Data(닫힘 계산) / Control 나머지.
 예외는 같은 폴더 classify_layers_overrides.json 에 사유와 함께 둔다. 소스는 읽기만 한다. 형식 참조는 정규식 근사이고 빌드가 최종 판정이다.
@@ -195,7 +195,7 @@ def classify(root):
 
 
 def target_of(rel, layer, overrides):
-    """이동 뒤 경로(poc/ui/src 기준). 그대로면 None."""
+    """이동 뒤 경로(영역 루트의 src 기준). 그대로면 None."""
     key = rel[len(SRC) + 1:]
     if overrides.get(key, {}).get("target"):
         return overrides[key]["target"]

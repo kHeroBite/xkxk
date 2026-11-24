@@ -4,7 +4,7 @@
 사용: PD_REMOTE_INFO=<격리 앱 연결 정보> python3 -B retest_m5_restore.py --out <결과.json> [--mode quickclose|restored] [--rounds 15]
 규칙(결과 보기 전에 고정): quickclose — 매 회 docs.open 직후 docs.close 가 성공하고, 2초 뒤 busy.state.scopes 가 비고 timers(spinner·cursor·service·opening)가 전부 0 이며 log.tail 에 Exception 이 없다.
                       restored — docs.list 의 모든 문서가 visible 이고 grid 문서는 ui.find grid.dgMain 이 찾아지며 busy.state.scopes 가 빈다.
-종료 코드: 0=규칙 참, 1=위반, 2=연결 실패. poc/ui/logs/ui28/ 에는 쓰지 않는다.
+종료 코드: 0=규칙 참, 1=위반, 2=연결 실패. logs/ui28/ 에는 쓰지 않는다.
 """
 import argparse
 import json

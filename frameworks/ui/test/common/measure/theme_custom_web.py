@@ -13,7 +13,7 @@ import sys
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-UI = os.path.abspath(os.path.join(HERE, "..", "..", ".."))  # poc/ui
+UI = os.path.abspath(os.path.join(HERE, "..", "..", ".."))  # 영역 루트
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(UI, "test", "web", "measure"))
 import theme_custom_cases as C  # noqa: E402

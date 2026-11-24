@@ -3,7 +3,7 @@
 """
 사용: PD_REMOTE_INFO=<data-dir>/remote-control.json python3 -B retest_theme_sync.py --out <logs/<에이전트>/<회차>/theme_sync.json> [--rounds 12]
 앱은 먼저 run_desktop_bg.sh 로 진단 빌드를 임시 --data-dir·--profile-dir 와 --remote-control 로 띄워 둔다.
-격리되지 않은 앱(사용자 폴더 사용)에 붙으면 rc=3 으로 거부한다. poc/ui/logs/ui28/ 에는 쓰지 않는다(otest 전용).
+격리되지 않은 앱(사용자 폴더 사용)에 붙으면 rc=3 으로 거부한다. logs/ui28/ 에는 쓰지 않는다(otest 전용).
 키 주입은 하지 않는다. 사용자 테마는 측정 안에서 만들고 지운다.
 값: 각 사례의 consistent=콤보·목록 표시가 적용된 테마와 같은가, nextBurst.deltas=다음 테마 2회 동시 요청이 옮긴 칸 수(2가 정답).
 다음 테마 연속 호출은 HTTP 2건을 동시에 보낸다. 같은 프레임에 겹칠 때만 옛 결함이 드러나므로 --rounds 만큼 반복해 분포를 남긴다.

@@ -5,7 +5,7 @@ set -u
 CONF="$1"
 D="$2"
 FILTER="${3:-}"
-U=/mnt/c/DATA/Project/Pd/poc/ui
+U=/mnt/c/DATA/Project/xkxk/frameworks/ui
 R=$U/tools/run_desktop_bg.sh
 mkdir -p "$D" "$D/prof"
 : > "$D/run.log"

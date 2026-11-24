@@ -7,15 +7,15 @@ import sys
 import time
 import urllib.request
 
-sys.path.insert(0, "/mnt/c/DATA/Project/pd/poc/ui/tools")
-sys.path.insert(0, "/mnt/c/DATA/Project/pd/poc/ui/test/common")  # D-TESTDIR: test/common/_paths.py
+sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/tools")
+sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/test/common")  # D-TESTDIR: test/common/_paths.py
 import _paths  # noqa: E402
 _paths.add()
 from playwright.sync_api import sync_playwright
 from ui20_lib import WebRemote
 
 BASE = os.environ.get("PD_URL", "http://127.0.0.1:5400").rstrip("/")  # i2400rc 는 5400 에 서빙(포트 충돌 시 PD_URL 로 지정)
-OUT = "/mnt/c/DATA/Project/pd/poc/ui/logs/otest_w3/i2400/followup_pw"
+OUT = "/mnt/c/DATA/Project/xkxk/frameworks/ui/logs/otest_w3/i2400/followup_pw"
 WHICH = sys.argv[1] if len(sys.argv) > 1 else "AB"
 res = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "build": "i2400rc"}
 

@@ -1,7 +1,7 @@
 # 데스크톱 i1853gp 측정 스크립트 공용 도우미(원격 명령 호출·유휴 확인·CPU 측정). 실입력·전경 조작 없음
 import json, subprocess, sys, time
 
-sys.path.insert(0, '/mnt/c/DATA/Project/pd/poc/ui/tools')
+sys.path.insert(0, '/mnt/c/DATA/Project/xkxk/frameworks/ui/tools')
 import pdctl
 
 info = pdctl.load_info()

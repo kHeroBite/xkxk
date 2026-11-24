@@ -11,8 +11,8 @@ import json
 import os
 import re
 
-MS = "poc/ui/test/desktop/measure/"
-ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..", ".."))
+MS = "test/desktop/measure/"
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
 IMMEDIATE = ("창 배율", "활성 전환", "배치 ", "전체 최소화", "제목줄 ", "원격 왕복")  # a9 §4.1 즉시(≤ 100ms) 행. 제목줄 새로고침은 perf_ui 묶음에 없다
 OPEN = ("SDI 분리", "레이아웃 ")  # a9 §4.1 창 열기(≤ 500ms) 행
 WIDE = ("글자 크기", "Ctrl+휠", "Ctrl+0", "테마 전환", "폰트 변경")  # a9 §4.1 20창 반영(≤ 300ms) 행
@@ -183,7 +183,7 @@ def d4(raws, ctx):
 
 def ui28_row(ac):
     try:
-        with open(os.path.join(ROOT, "poc", "ui", "logs", "ui28", ac + ".json"), encoding="utf-8") as f:
+        with open(os.path.join(ROOT, "logs", "ui28", ac + ".json"), encoding="utf-8") as f:
             doc = json.load(f)
     except (OSError, ValueError):
         return None
@@ -258,7 +258,7 @@ def g2(raws, ctx):
 
 
 def r1(raws, ctx):
-    folder = os.path.join(ROOT, "poc", "ui", "logs", "ui28")
+    folder = os.path.join(ROOT, "logs", "ui28")
     try:
         names = [n for n in os.listdir(folder) if n.endswith(".json")]
     except OSError:
@@ -270,7 +270,7 @@ def r1(raws, ctx):
     return out
 
 
-REPLAY_JUDGE = os.path.join(ROOT, "poc", "ui", "test", "mobile", "judge", "replay_target_judge.py")
+REPLAY_JUDGE = os.path.join(ROOT, "test", "mobile", "judge", "replay_target_judge.py")
 REPLAY_ROLES = ("android_prod", "android_release")
 REPLAY_MIN_SENT, REPLAY_DOCS = 20, 5  # K7 기준(sent 20 이상, 기본 문서 5개 복원 상태)
 
@@ -317,15 +317,15 @@ MAP = {
     "B2": {"script": MS + "perf_ui.py", "fn": b2, "unsourced": [], "extra2": True},
     "B4": {"script": "test/min_spec/measure_stack.py", "fn": b4, "unsourced": []},
     "B5": {"script": MS + "retest_busy.py", "fn": b5, "unsourced": [], "extra2": True},
-    "C1": {"script": "poc/ui/test/mobile/measure/retest_sdi_join_android.py", "fn": c1, "unsourced": ["cover_state_closed", "tool_error_absent"]},
-    "C3": {"script": "poc/ui/tools/check_product_web.py", "fn": c3, "unsourced": ["apk_channel_prod"]},
-    "D2": {"script": "poc/ui/test/web/measure/ui28_web.py", "fn": d2, "unsourced": []},
+    "C1": {"script": "test/mobile/measure/retest_sdi_join_android.py", "fn": c1, "unsourced": ["cover_state_closed", "tool_error_absent"]},
+    "C3": {"script": "tools/check_product_web.py", "fn": c3, "unsourced": ["apk_channel_prod"]},
+    "D2": {"script": "test/web/measure/ui28_web.py", "fn": d2, "unsourced": []},
     "D3": {"script": None, "fn": d3, "unsourced": ["edge_excluded_recorded"]},
-    "D4": {"script": "poc/ui/tools/check_product_web.py", "fn": d4, "unsourced": []},
+    "D4": {"script": "tools/check_product_web.py", "fn": d4, "unsourced": []},
     "F05": {"script": MS + "win_owner_z.ps1", "fn": f05, "unsourced": []},
     "F08": {"script": None, "fn": f08, "unsourced": ["user_report_listed"], "extra2": True},
     "G1": {"script": MS + "display_topology.ps1", "fn": g1, "unsourced": ["watchdog_restores_after_main_kill"]},
     "G2": {"script": MS + "display_topology.ps1", "fn": g2, "unsourced": ["main_moved_visible", "sdi_moved_visible", "visible_windows_unmoved", "debounce_one_eval"]},
     "R1": {"script": None, "fn": r1, "unsourced": []},
-    "K7": {"script": "poc/ui/test/mobile/measure/retest_android_pcaway_replay.py", "fn": k7, "unsourced": []},
+    "K7": {"script": "test/mobile/measure/retest_android_pcaway_replay.py", "fn": k7, "unsourced": []},
 }

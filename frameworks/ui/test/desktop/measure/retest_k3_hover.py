@@ -23,14 +23,14 @@ import tempfile
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.abspath(os.path.join(HERE, "..", "..", "..", "..", ".."))
+ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 JUDGE = os.path.abspath(os.path.join(HERE, "..", "judge"))
 sys.path.insert(0, HERE)
 sys.path.insert(0, JUDGE)
 import chrome_state_rules as csr  # noqa: E402
 
-THEME_SRC = os.path.join(ROOT, "poc/ui/src/Pd.Poc.Shell/Theming/BuiltinThemes.cs")
-THEME_DEF = os.path.join(ROOT, "poc/ui/src/Pd.Poc.Shell/Theming/ThemeDefinition.cs")
+THEME_SRC = os.path.join(ROOT, "src/Pd.Poc.Shell/Theming/BuiltinThemes.cs")
+THEME_DEF = os.path.join(ROOT, "src/Pd.Poc.Shell/Theming/ThemeDefinition.cs")
 STATES_TOOL = os.path.join(JUDGE, "chrome_button_states.py")
 SAFE_MOVE = os.path.join(HERE, "safe_move.ps1")
 BARS = ("active", "pinned", "surface", "main")

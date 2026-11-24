@@ -17,10 +17,10 @@ import os
 import sys
 import time
 
-ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..", ".."))
-WIDTH_CS = os.path.join(ROOT, "poc/ui/src/Pd.Ui/Controls/TitleTabWidth.cs")
-PANEL_CS = os.path.join(ROOT, "poc/ui/src/Pd.Ui/Controls/TitleTabPanel.cs")
-VIEW = os.path.join(ROOT, "poc/ui/src/Pd.Ui.Views/MainView.axaml")
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+WIDTH_CS = os.path.join(ROOT, "src/Pd.Ui/Controls/TitleTabWidth.cs")
+PANEL_CS = os.path.join(ROOT, "src/Pd.Ui/Controls/TitleTabPanel.cs")
+VIEW = os.path.join(ROOT, "src/Pd.Ui.Views/MainView.axaml")
 MIN, MAX, GAP, TOL = 72.0, 240.0, 2.0, 2.5
 COUNTS = (1, 3, 5, 10, 30)
 TITLES = ("가", "열린 문서 제목 스무 자 정도", "아주 긴 문서 제목 " * 8)  # 짧음·중간·240 초과(말줄임) — 번갈아 쓴다

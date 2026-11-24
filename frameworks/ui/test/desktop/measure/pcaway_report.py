@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# PC 비움 결과 어댑터 — 기존 측정 도구의 원자료를 pcaway_gate 형식 결과(poc/ui/logs/pcaway/<ID>.json)로 옮긴다. 값을 만들거나 기준을 낮추지 않으며 없는 값은 미측정 실패로 남긴다
+# PC 비움 결과 어댑터 — 기존 측정 도구의 원자료를 pcaway_gate 형식 결과(logs/pcaway/<ID>.json)로 옮긴다. 값을 만들거나 기준을 낮추지 않으며 없는 값은 미측정 실패로 남긴다
 """
 사용:
   pcaway_report.py safety-begin --state <상태.json>             측정 직전 사용자 Pd 창·파일 값을 저장(읽기 전용)

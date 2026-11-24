@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-# R1 — 최종 빌드(r2f) 격리 앱에서 다시 잰 데스크톱 원자료를 poc/ui/logs/ui28/<AC>.json 으로 옮기는 재현 가능한 조립기(명시 매핑 표 + 수용 기준 판정)
+# R1 — 최종 빌드(r2f) 격리 앱에서 다시 잰 데스크톱 원자료를 logs/ui28/<AC>.json 으로 옮기는 재현 가능한 조립기(명시 매핑 표 + 수용 기준 판정)
 """
 사용: python3 -B ui28_remap.py --raw-dir <원자료 폴더> --motion-dir <투어 motion 폴더> --runs <run_r1 로그 폴더> [--write] [--check]
   --write 없이 실행하면 계산 결과를 표준출력과 <raw-dir>/ui28_remap_out.json 에만 쓴다(ui28 결과는 건드리지 않는다).
-  --write 는 poc/ui/logs/ui28/<AC>.json 을 덮어쓴다. --check 는 같은 입력으로 두 번 계산해 결과가 같은지(결정성) 확인한다.
+  --write 는 logs/ui28/<AC>.json 을 덮어쓴다. --check 는 같은 입력으로 두 번 계산해 결과가 같은지(결정성) 확인한다.
 판정 원칙(team-lead 00:35·00:5x 조건):
   - 원자료 값은 아래 MAP 의 명시 경로로만 옮긴다(휴리스틱·옛 결과 비교 없음).
   - 판정은 각 AC 수용 기준 문장(acceptance_criteria_prev.json name)에 직접 대어 낸다. 요건 3~7 은 측정 전에 고정된
@@ -19,12 +19,12 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.abspath(os.path.join(HERE, "..", "..", "..", "..", ".."))
+ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 sys.path.insert(0, HERE)
 import ui_req3_8_rules as rules  # noqa: E402
 
-BUILD = "poc/ui/src/Pd.Poc.Desktop/bin/run/pcaway_r2f/Pd.Poc.Desktop.dll"
-M = "poc/ui/test/desktop/measure/"
+BUILD = "src/Pd.Poc.Desktop/bin/run/pcaway_r2f/Pd.Poc.Desktop.dll"
+M = "test/desktop/measure/"
 AC_TEXT = {
     "AC-3-01": "잘림 판정 순수 함수: 좌/하/알림(4방향) 조합 표본에서 잘린 모서리 집합이 기대값과 일치",
     "AC-3-02": "기본 레이아웃에서 하단 패널 양 끝에만 확장 버튼이 보이고 좌·알림 패널에는 없다",
@@ -260,7 +260,7 @@ def compute(args):
                    "measurements": [{"name": k, "value": v} for k, v in m.items()],
                    "criterion": AC_TEXT[ac], "judge": "ui_req3_8_rules.py + ui28_remap.extra_rules" if ac in j else "ui28_remap.extra_rules",
                    "reasons": reasons, "holds": holds,
-                   "remap": {"script": "poc/ui/test/desktop/judge/ui28_remap.py", "sha256": sha(os.path.abspath(__file__))}}
+                   "remap": {"script": "test/desktop/judge/ui28_remap.py", "sha256": sha(os.path.abspath(__file__))}}
     return out
 
 
@@ -284,7 +284,7 @@ def main():
     for ac, d in a.items():
         print(ac, d["verdict"], ("사유 %s" % d["reasons"]) if d["reasons"] else "", ("보류 %s" % d["holds"]) if d["holds"] else "")
         if args.write:
-            p = os.path.join(ROOT, "poc/ui/logs/ui28/%s.json" % ac)
+            p = os.path.join(ROOT, "logs/ui28/%s.json" % ac)
             with open(p + ".tmp", "w", encoding="utf-8") as f:
                 json.dump(d, f, ensure_ascii=False, indent=1)
             os.replace(p + ".tmp", p)

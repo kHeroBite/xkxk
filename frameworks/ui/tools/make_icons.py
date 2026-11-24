@@ -1,9 +1,9 @@
 # 원본 그림 한 장(assets/icon/source.png)으로 Windows·macOS·iOS·Android·웹 앱 아이콘 전체를 다시 만드는 생성 스크립트(임시 아이콘용)
 """
 사용법(WSL·Windows 공통, Python 3 + Pillow):
-    python3 poc/ui/tools/make_icons.py                  # 기본 원본 assets/icon/source.png
-    python3 poc/ui/tools/make_icons.py --source 새그림.png  # 원본 교체(새 그림은 assets/icon/source.png 로 복사된다)
-    python3 poc/ui/tools/make_icons.py --radius 0.2       # 모서리 반경 비율만 바꿔 다시 만들기
+    python3 tools/make_icons.py                  # 기본 원본 assets/icon/source.png
+    python3 tools/make_icons.py --source 새그림.png  # 원본 교체(새 그림은 assets/icon/source.png 로 복사된다)
+    python3 tools/make_icons.py --radius 0.2       # 모서리 반경 비율만 바꿔 다시 만들기
 
 아이콘을 바꿀 때는 원본 한 장만 바꾸고 이 스크립트를 다시 돌린다. 산출물 경로·파일명은 고정이라 csproj·매니페스트·index.html 은 손대지 않아도 된다.
 Pillow 가 없으면: python3 -m pip install --user Pillow (root·apt 불필요)

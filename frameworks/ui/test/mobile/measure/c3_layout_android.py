@@ -204,7 +204,7 @@ def phase_nav(c):
         time.sleep(0.8)
     # 판정기(정적)
     import subprocess
-    ui_root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))  # 이 체크아웃의 poc/ui
+    ui_root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))  # 이 체크아웃의 영역 루트(frameworks/ui)
     judge = os.path.join(ui_root, "test", "common", "judge", "nav_reach_judge.py")
     menu_dir = os.path.join(ui_root, "src", "Pd.Ui.Views", "Menus")
     pr = subprocess.run([sys.executable, "-B", judge, "--menu-dir", menu_dir, "--dump", p], capture_output=True, text=True)

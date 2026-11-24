@@ -4,7 +4,7 @@
 사용: PD_REMOTE_INFO=<격리 앱 연결 정보> python3 -B retest_panel_glyphs.py --out <결과.json>
 규칙(고정): 변이 left/right 인 패널(세로로 서는 패널)의 버튼 글리프는 ∧ 또는 ∨, 변이 top/bottom 인 패널의 버튼 글리프는 < 또는 >.
           모든 버튼은 툴팁이 비어 있지 않고 focusable·tabStop 이 참. 각 방향에서 버튼이 1개 이상 나타나야 한다.
-종료 코드: 0=규칙 전부 참, 1=위반 있음, 2=연결 실패. poc/ui/logs/ui28/ 에는 쓰지 않는다.
+종료 코드: 0=규칙 전부 참, 1=위반 있음, 2=연결 실패. logs/ui28/ 에는 쓰지 않는다.
 """
 import argparse
 import json

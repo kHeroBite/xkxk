@@ -240,7 +240,7 @@ def do_ext(c, act, keep, measure, tap, tap_hold, swipe, fg_guard, find, dump_nod
     raise ValueError(act)
 
 
-# ---------- emit: 원자료 → poc/ui/logs/pcaway/P1~P3.json (pcaway_gate.py 형식) ----------
+# ---------- emit: 원자료 → logs/pcaway/P1~P3.json (pcaway_gate.py 형식) ----------
 def p95(v):
     v = sorted(v)
     return round(v[max(0, math.ceil(0.95 * len(v)) - 1)], 1) if v else None
@@ -370,7 +370,7 @@ def main():
     p = ap.ArgumentParser(description="webperf_startup 보조 명령 — emit(P1~P3.json 생성)·--self-test")
     p.add_argument("--self-test", action="store_true")
     sub = p.add_subparsers(dest="cmd")
-    e = sub.add_parser("emit", help="webperf_fold5 원자료 JSON 에서 poc/ui/logs/pcaway/P1~P3.json 을 만든다")
+    e = sub.add_parser("emit", help="webperf_fold5 원자료 JSON 에서 logs/pcaway/P1~P3.json 을 만든다")
     e.add_argument("--item", required=True, choices=("P1", "P2", "P3"))
     e.add_argument("--raw-open")
     e.add_argument("--raw-closed")
@@ -379,7 +379,7 @@ def main():
     e.add_argument("--build-path", required=True, help="저장소 루트 기준 최종 빌드 산출물 경로")
     e.add_argument("--build-sha", default="")
     e.add_argument("--root", default=".")
-    e.add_argument("--out-dir", default="poc/ui/logs/pcaway")
+    e.add_argument("--out-dir", default="logs/pcaway")
     e.add_argument("--state", help="pcaway_report safety-end 로 만든 상태 파일(결과 safety 블록 원천)")
     e.add_argument("--capture", action="append", help="결과에 넣을 캡처 PNG(반복 지정)")
     e.add_argument("--metric", choices=("settle", "resp"), default="settle", help="열기·탭 본문 시간 기준(settle=화면 안정, resp=첫 반응)")

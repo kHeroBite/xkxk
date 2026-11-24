@@ -1,7 +1,7 @@
 #!/bin/bash
 # Pd.Poc.Desktop 을 Windows dotnet.exe 로 비증분 빌드하는 스크립트 (WSL 에서 실행)
 # 사용: build_desktop.sh [--bg] [Release|Debug|R2R|Work|Product]
-#   진단 기능(PdDiagnostics, poc/ui/Directory.Build.props)은 시험 빌드라 기본 true 다. Product 는 false(제품 확인용, bin/Product).
+#   진단 기능(PdDiagnostics, Directory.Build.props)은 시험 빌드라 기본 true 다. Product 는 false(제품 확인용, bin/Product).
 #   환경변수: PD_OUT_NAME=<bin 하위 폴더>(Work/Product 출력 폴더 이름 바꾸기), PD_EXTRA_PROPS="-p:이름=값 …"(대조 빌드 속성)
 #   Work: Release 최적화로 bin/Work/net11.0 에만 출력(실행 중이거나 판본 고정된 bin/Release·bin/R2R 를 건드리지 않는 작업 빌드). 실행은 run_desktop_bg.sh --conf Work
 #   R2R : Release 를 win-x64 ReadyToRun 으로 게시(bin/R2R/net11.0). 기동 JIT 비용 절감. 실행은 run_desktop_bg.sh --conf R2R

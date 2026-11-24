@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # 다국어(Q17) 정적 검사 — ① 언어별 키 집합 일치 ② 화면에 보이는 하드코딩 한글(axaml·cs) ③ 사용된 키가 사전에 있는지
 """
-사용: python3 tools/check_i18n.py [--root poc/ui] [--report-only] [--json 결과.json] [--remote]
+사용: python3 tools/check_i18n.py [--root .] [--report-only] [--json 결과.json] [--remote]
 --remote: 실행 중 앱(진단 빌드, PD_REMOTE_INFO 또는 기본 연결 정보)의 lang.get keys·languages 와 i18n.missing 을 소스 사전과 대조(사전 실제 로드 확인).
 사전: src/*/Localization/<영역>.<언어>.json (평면 {"키":"값"}, 기본 언어 ko).
 ① 영역마다 ko 키 집합 = 다른 언어 키 집합, 빈 값 없음, 키 접두(첫 마디)가 영역 이름과 같은지(소유 구분, 경고) — 위반 시 실패.
@@ -45,7 +45,7 @@ SKIP_PATHS = ("Pd.Ui.Views/Documents/Bench",)
 
 
 def _skip_path(d, name):
-    """d/name 의 끝부분이 SKIP_PATHS 중 하나와 같으면 제외(walk 의 root 가 poc/ui 든 src 든 같게 동작)."""
+    """d/name 의 끝부분이 SKIP_PATHS 중 하나와 같으면 제외(walk 의 root 가 영역 루트든 src 든 같게 동작)."""
     p = (d.replace(os.sep, "/").rstrip("/") + "/" + name)
     return any(p == s or p.endswith("/" + s) for s in SKIP_PATHS)
 

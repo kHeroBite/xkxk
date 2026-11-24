@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # 도움말 투어 카탈로그 정적 검사(요건 6) — tour_catalog.json 의 형식·사전 키·대상 AutomationId, 코드의 실제 키, 새 메뉴·버튼·명령의 커버리지를 빌드 전에 대조한다
 """
-사용: python3 -I tools/check_tour_catalog.py [--root poc/ui] [--self-test]
+사용: python3 -I tools/check_tour_catalog.py [--root .] [--self-test]
 ① 카탈로그와 Pd.Ui 투어 컨트롤이 쓰는 사전 키가 ko·en 사전에 모두 있다.
 ② 단계의 대상 AutomationId 가 axaml 에 실재한다('@' 앵커는 코드에 정의돼야 한다).
 ③ MainView·메뉴 InputGesture·WindowKeyGestures·EscCloseInput·TabFocusScope·MainTitleBar·SettingsInput·TourInputGate 의 실제 키가 카탈로그에 전부 있다.

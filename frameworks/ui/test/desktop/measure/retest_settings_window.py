@@ -4,7 +4,7 @@
 사용: python3 -B retest_settings_window.py --out <logs/<에이전트>/<회차>/settings.json> [--settings-file <임시 프로필의 settings.json>]
 앱은 먼저 run_desktop_bg.sh 로 진단 빌드를 임시 --data-dir·--profile-dir 와 --remote-control 로 띄워 둔다.
 --settings-file: WSL 경로. 주면 변경 뒤 파일에 저장됐는지도 읽는다(없으면 saved 측정 생략).
-격리되지 않은 앱(사용자 폴더 사용)에 붙으면 rc=3 으로 거부한다. poc/ui/logs/ui28/ 에는 쓰지 않는다(otest 전용).
+격리되지 않은 앱(사용자 폴더 사용)에 붙으면 rc=3 으로 거부한다. logs/ui28/ 에는 쓰지 않는다(otest 전용).
 키 주입은 하지 않는다. Esc 는 진단 명령 settings.esc 가 있을 때만 측정한다.
 종료 코드: 0=측정 완료, 2=연결 실패, 3=실행 거부. PASS/FAIL 은 판정 도구가 낸다.
 """

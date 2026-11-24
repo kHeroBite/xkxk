@@ -5,7 +5,7 @@
   python3 -B theme_custom_check.py --self-test
   python3 -B theme_custom_check.py --target desktop --out feat_desktop.json --exchange-dir <앱이 쓸 수 있는 폴더> \
       [--restart-cmd "<앱 재기동 셸 명령>"] [--settings-file <settings.json>] [--builtin-colors f.json] \
-      [--legacy-fixture f.json --legacy-baseline b.json] [--src-root poc/ui/src]
+      [--legacy-fixture f.json --legacy-baseline b.json] [--src-root src]
   --target web: --url-part 127.0.0.1:5185 (CDP 다리, 재시작 = 페이지 다시 읽기)
   --target android: desktop 과 같은 원격(adb forward 된 pdctl 연결 정보), 재시작은 --restart-cmd
 안전: 사용자 Pd 앱·포트 5180·5220 을 건드리지 않는다. 격리 진단판(임시 --data-dir)에만 연결한다. pkill·taskkill /IM 없음.
@@ -25,7 +25,7 @@ import theme_custom_cases as C  # noqa: E402
 
 
 def src_hash(root):
-    """poc/ui/src 아래(bin·obj 제외) (상대경로, sha256) 목록의 sha256 — 동결 판 식별."""
+    """src 아래(bin·obj 제외) (상대경로, sha256) 목록의 sha256 — 동결 판 식별."""
     items = []
     for d, ds, fs in os.walk(root):
         ds[:] = [x for x in ds if x not in ("bin", "obj")]

@@ -1,4 +1,4 @@
-# 웹 축 raw 측정(ui28_web.py)을 판정 규칙(ui28_web_rules.py)으로 판정해 결과 계약 JSON(poc/ui/logs/ui28/<AC-ID>.json)으로 쓴다
+# 웹 축 raw 측정(ui28_web.py)을 판정 규칙(ui28_web_rules.py)으로 판정해 결과 계약 JSON(logs/ui28/<AC-ID>.json)으로 쓴다
 # 사용: python3 -B ui28_web_emit.py --raw <raw.json> --run-id <id> --build <wasm 경로> --evidence-dir <폴더> [--only AC-2-09,AC-4-05,AC-6-09]
 # AC-2-09 는 '문서 대조'가 합격 조건에 있다 → plan 문서에 웹 포인터 추적·Android·폰 해당 없음·macOS 미검증 서술이 있어야 PASS 다(고정 규칙, 아래 doc_check).
 import argparse
@@ -9,8 +9,8 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-UI = os.path.abspath(os.path.join(HERE, "..", "..", ".."))  # poc/ui
-REPO = os.path.abspath(os.path.join(UI, "..", ".."))
+UI = os.path.abspath(os.path.join(HERE, "..", "..", ".."))  # 영역 루트(frameworks/ui)
+REPO = UI  # 정본 문서(plan/)와 증거 상대 경로의 기준 = 영역 루트
 sys.path.insert(0, HERE)
 import ui28_web_rules as R  # noqa: E402
 

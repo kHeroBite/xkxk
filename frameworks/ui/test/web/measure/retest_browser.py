@@ -9,7 +9,7 @@ from playwright.sync_api import sync_playwright
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "common"))  # D-TESTDIR: test/common/_paths.py
 import _paths  # noqa: E402
 _paths.add()
-HERE = _paths.TOOLS  # 옛 위치(poc/ui/tools) — OUT 기본값(../logs/otest_w2) 기준 그대로
+HERE = _paths.TOOLS  # 옛 위치(Pd 저장소 poc/ui/tools, 이전 전) — OUT 기본값(../logs/otest_w2) 기준 그대로
 import retest_remote as rr  # noqa: E402
 
 URL = os.environ.get("PD_URL", "http://127.0.0.1:5181/")

@@ -18,7 +18,7 @@ import time
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "common"))  # D-TESTDIR: test/common/_paths.py
 import _paths  # noqa: E402
 _paths.add()
-TOOLS = _paths.TOOLS  # 옛 위치(poc/ui/tools) — run_desktop_bg.sh·pdctl.py·logs 경로 기준 그대로
+TOOLS = _paths.TOOLS  # 옛 위치(tools) — run_desktop_bg.sh·pdctl.py·logs 경로 기준 그대로
 ROOT = os.path.dirname(TOOLS)
 sys.path.insert(0, TOOLS)
 import pdctl  # noqa: E402

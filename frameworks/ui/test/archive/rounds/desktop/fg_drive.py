@@ -12,8 +12,8 @@ import sys
 import time
 import types
 
-sys.path.insert(0, "/mnt/c/DATA/Project/pd/poc/ui/tools")
-sys.path.insert(0, "/mnt/c/DATA/Project/pd/poc/ui/test/common")  # D-TESTDIR: test/common/_paths.py
+sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/tools")
+sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/test/common")  # D-TESTDIR: test/common/_paths.py
 import _paths  # noqa: E402
 _paths.add()
 import retest_window_menu as rwm  # noqa: E402

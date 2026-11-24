@@ -6,7 +6,7 @@
   (WSL 환경변수는 WSLENV 에 넣어야 Windows exe 로 넘어간다. 빠지면 가상 모니터가 꺼져 AC-5-03·05 가 거짓 FAIL 이다)
   WSLENV="PD_VIRTUAL_MONITORS:$WSLENV" PD_VIRTUAL_MONITORS=2 run_desktop_bg.sh --conf Work --no-kill -- --remote-control --data-dir <임시> --profile-dir <임시>
       --bg-pos 21500,100 --primary-override 18000,0,6000,1440 --offscreen-guard on
-격리되지 않은 앱에 붙으면 rc=3 으로 거부한다. poc/ui/logs/ui28/ 에는 쓰지 않는다(otest 전용).
+격리되지 않은 앱에 붙으면 rc=3 으로 거부한다. logs/ui28/ 에는 쓰지 않는다(otest 전용).
 종료 코드: 0=측정 완료, 2=연결 실패, 3=실행 거부.
 """
 import argparse

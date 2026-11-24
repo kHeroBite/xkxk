@@ -4,16 +4,15 @@
 사용: python3 -I inspect_text.py <명세.json> [--only <항목 id>]
 명세 형식: {"AC-5-01": [{"file": "저장소 상대 경로", "must": ["문구", ...], "absent": ["문구", ...]}], ...}
 출력: {"<id>": {"verdict": "PASS|FAIL", "reasons": [...]}} / 종료 코드 0=전부 PASS, 1=FAIL 있음, 2=입력 오류
-대조 대상은 저장소 루트(poc/ui 의 두 단계 위가 아니라 --root 기본값 = 이 파일 기준 상위 .claude/worktrees 가 아닌 git 최상위)다. 주석 줄도 포함해 읽는다(문서 대조용이라 코드 심볼 판정과 다르다).
+대조 대상은 영역 루트(frameworks/ui, 이 파일 기준 3단계 위)다. 주석 줄도 포함해 읽는다(문서 대조용이라 코드 심볼 판정과 다르다).
 """
 import json
 import os
-import subprocess
 import sys
 
 
 def root():
-    return subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, cwd=os.path.dirname(os.path.abspath(__file__))).stdout.strip()
+    return os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
 
 
 def main(argv):

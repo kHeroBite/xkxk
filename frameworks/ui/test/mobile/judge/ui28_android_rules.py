@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# UI/UX 요건 2~8 Android 축 판정 규칙(판정 계층) — ui28_android.py 결과(<role>_<build>_ui28.json)로 AC-3-10·6-08·7-06 을 판정해 poc/ui/logs/ui28/<AC>.json 을 쓴다
+# UI/UX 요건 2~8 Android 축 판정 규칙(판정 계층) — ui28_android.py 결과(<role>_<build>_ui28.json)로 AC-3-10·6-08·7-06 을 판정해 logs/ui28/<AC>.json 을 쓴다
 """
 사용: python3 -B ui28_android_rules.py --runs <phone_Debug.json> <tablet_Debug.json> <phone_Release.json> <tablet_Release.json> --writer otest-m-1 --run-id <id> [--dry]
 규칙(측정 전 고정 — 2026-11-04 otest-m-1):
@@ -16,7 +16,7 @@ import json
 import os
 import sys
 
-ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..", ".."))  # 저장소 루트
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))  # 영역 루트(frameworks/ui)
 RULES = {
     "AC-3-10": [("phone_Debug", "AC-3-10", 7), ("tablet_Debug", "AC-3-10", 4)],
     "AC-6-08": [("phone_Debug", "AC-6-08", 14)],
@@ -24,8 +24,8 @@ RULES = {
 }
 CRASH_RUNS = ["phone_Debug", "tablet_Debug"]
 REL_RUNS = ["phone_Release", "tablet_Release"]
-APK = "poc/ui/src/Pd.Poc.Android/bin/Debug/net10.0-android/com.pd.poc-Signed.apk"
-SCRIPT = "poc/ui/test/mobile/measure/ui28_android.py"
+APK = "src/Pd.Poc.Android/bin/Debug/net10.0-android/com.pd.poc-Signed.apk"
+SCRIPT = "test/mobile/measure/ui28_android.py"
 
 
 def sha(p):
@@ -50,7 +50,7 @@ def main():
     for n in REL_RUNS:
         bad = [c["name"] for c in runs[n]["checks"] if not c["pass"] and (c["name"].startswith("REL") or c["name"].startswith("CRASH"))]
         gate_rel.append({"run": n, "fail": bad, "n": len(runs[n]["checks"])})
-    out_dir = os.path.join(ROOT, "poc/ui/logs/ui28")
+    out_dir = os.path.join(ROOT, "logs/ui28")
     os.makedirs(out_dir, exist_ok=True)
     rc = 0
     for ac, parts in RULES.items():

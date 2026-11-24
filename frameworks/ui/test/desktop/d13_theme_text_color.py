@@ -2,7 +2,7 @@
 # D-13 테마 전환 뒤 글자색 시험 — 시작 테마별 새 격리 프로필로 진단판을 띄우고 theme.select 뒤 요소의 실제 글자색이 대상 테마 색과 같은지 본다
 """
 사용:
-  python3 -B d13_theme_text_color.py --run-dir <bin/run/<이름>/net11.0> --work <결과 폴더> --out d13_fix.json [--src-root poc/ui/src] [--src-hash <동결 해시>]
+  python3 -B d13_theme_text_color.py --run-dir <bin/run/<이름>/net11.0> --work <결과 폴더> --out d13_fix.json [--src-root src] [--src-hash <동결 해시>]
   python3 -B d13_theme_text_color.py --run-dir … --work … --out d16_fix.json --d16 [--src-hash …]   (D-16 menuBar 색 지정·대비 경고)
   python3 -B d13_theme_text_color.py --self-test
 사례: 시작 테마 × 대상 테마 × 요소(CASES 표). 사례 하나마다(시작·대상 짝마다) 새 프로필(settings.json 의 ThemeId=시작 테마)로 새로 띄운다.

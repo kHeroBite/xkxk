@@ -1,7 +1,7 @@
 # 웹 두 손가락 핀치 확대/축소 시험 — hasTouch 컨텍스트에서 CDP Input.dispatchTouchEvent 로 벌리기·좁히기를 보내 Ctrl+휠과 같은 두 모드(글자 크기·창 배율) 결과를 원격 조회로 판정한다
 # 사용: PD_URL=http://127.0.0.1:5189/ python3 tools/retest_browser14.py [--probe]   (헤드리스 전용. --probe = 이벤트가 앱 입력 요소에 닿는지만 보는 짧은 확인)
 """
-기준: poc/ui/logs/odev7c/pinch_zoom_draft.md(odev-7c 설계, lead 10:4x 확정)
+기준: logs/odev7c/pinch_zoom_draft.md(odev-7c 설계, lead 10:4x 확정)
   누적 비율 s 를 단계로: n = trunc(ln s ÷ ln 1.10), 단계마다 Ctrl+휠 1칸과 같은 함수(HandleCtrlInput ±1).
   모드 ① FontSize : 기준 글자 크기 ±1pt, 범위 10~24.   모드 ② WindowZoom : 대상 문서 zoom ±0.1, 범위 0.5~2.0.
   대상은 제스처 시작 중점 아래 visual — 문서 창 위가 아니면 무반응(IsInDocument).

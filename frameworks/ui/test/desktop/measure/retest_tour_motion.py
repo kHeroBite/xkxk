@@ -5,7 +5,7 @@
 앱은 임시 --data-dir·--profile-dir, 움직임 줄이기 회차는 --reduced-motion 으로 띄운다.
 규칙(결과 보기 전에 고정): reduced 회차 — 오버레이 IsMotionReduced=true, Transitions 없음, 모든 단계 이동에서 '직후 좌표 == 0.5초 뒤 좌표'.
                          normal 회차(양성 대조) — IsMotionReduced=false 이고 적어도 한 단계 이동에서 '직후 좌표 != 0.5초 뒤 좌표'(전환이 실제로 있음).
-종료 코드: 0=규칙 참, 1=위반, 2=연결 실패. poc/ui/logs/ui28/ 에는 쓰지 않는다.
+종료 코드: 0=규칙 참, 1=위반, 2=연결 실패. logs/ui28/ 에는 쓰지 않는다.
 """
 import argparse
 import json

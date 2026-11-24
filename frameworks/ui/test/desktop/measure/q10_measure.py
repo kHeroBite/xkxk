@@ -13,7 +13,7 @@ extra_env = {}
 if "--env" in sys.argv:
     k, v = sys.argv[sys.argv.index("--env") + 1].split("=", 1)
     extra_env[k] = v
-UI = "/mnt/c/DATA/Project/pd/poc/ui/"
+UI = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..")) + "/"
 OUT = UI + "logs/otest/desktop/rt3/q10_%s/" % tag
 os.makedirs(OUT, exist_ok=True)
 env = dict(os.environ, **extra_env)

@@ -12,7 +12,7 @@ import sys
 import time
 
 EDGE = "/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
-HERE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "tools")  # D-TESTDIR: 옛 위치(poc/ui/tools) 기준 그대로
+HERE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "tools")  # D-TESTDIR: 옛 위치(tools) 기준 그대로
 OUT = os.path.join(HERE, "..", "logs", "otest_w2")
 PROBE_HTML = """<!doctype html><meta charset=utf-8><script>
 try {
@@ -50,7 +50,7 @@ def kill_my_edge(prof_win):
 
 def run_edge(url, secs, tag):
     log = os.path.join(OUT, "edge_%s.log" % tag)
-    prof = "/mnt/c/DATA/Project/pd/poc/ui/logs/otest_w2/edge_profile_%s" % tag
+    prof = "/mnt/c/DATA/Project/xkxk/frameworks/ui/logs/otest_w2/edge_profile_%s" % tag
     os.makedirs(prof, exist_ok=True)
     prof_win = win_path(prof)
     cmd = [EDGE, "--headless=new", "--user-data-dir=" + prof_win, "--use-angle=d3d11", "--ignore-gpu-blocklist",

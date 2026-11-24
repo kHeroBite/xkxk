@@ -5,7 +5,7 @@
   python3 -B retest_pcaway_extra2.py --items B1,B5,A13,F08 --run-dir <bin/run/<복사본>/net10.0> --phase discovery --writer otest-d
   python3 -B retest_pcaway_extra2.py --items S2 --writer otest-d --phase final     (앱을 띄우지 않고 측정 로그만 읽는다)
   python3 -B retest_pcaway_extra2.py --self-test
-출력: poc/ui/logs/pcaway[/discovery]/extra/<ID>.measure.json. 이어서 pcaway_report.py emit --item <ID> --raw ... --measure-file <그 파일> 로 결과를 쓴다(S2 는 pcaway_report.py s2 --measure-file).
+출력: logs/pcaway[/discovery]/extra/<ID>.measure.json. 이어서 pcaway_report.py emit --item <ID> --raw ... --measure-file <그 파일> 로 결과를 쓴다(S2 는 pcaway_report.py s2 --measure-file).
 B1 은 perf_ui.py 를 같은 앱에 돌려 extra/perf_ui.json 원자료와 B1·B2 측정 파일을 함께 남긴다. --items B2 는 없다.
 B2 는 측정 직전에 문서 20개가 모두 보이게 되돌리고(전체 복원+계단 배치, 안 되면 다시 열기) docs.list visible 로 확인한다. 확인 실패면 값은 '측정 무효(절차)'이고 재지 않는다.
 user_report_listed(F08)는 최종 보고 문서의 일이라 여기서 재지 않는다. no_signal_to_user_pd 는 측정 로그의 발신 쪽 값이다. 사용자 Pd 쪽 수신 기록은 파일로 남지 않아(host Log 는 --log 없으면 안 쓴다) 보지 못한다.

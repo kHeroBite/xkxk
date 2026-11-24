@@ -21,7 +21,7 @@ import sys
 import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-UI = os.path.abspath(os.path.join(HERE, "..", "..", ".."))  # poc/ui
+UI = os.path.abspath(os.path.join(HERE, "..", "..", ".."))  # 영역 루트
 sys.path.insert(0, HERE)
 import design_theme_cases as C  # noqa: E402
 import theme_custom_check as T  # noqa: E402  src_hash·RemoteBackend 재사용

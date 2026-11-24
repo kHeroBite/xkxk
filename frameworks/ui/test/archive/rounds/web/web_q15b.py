@@ -7,7 +7,7 @@ import json
 import sys
 import time
 
-sys.path.insert(0, "/mnt/c/DATA/Project/pd/poc/ui/tools")
+sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/tools")
 from playwright.sync_api import sync_playwright  # noqa: E402
 import retest_browser as rb  # noqa: E402
 

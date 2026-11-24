@@ -25,7 +25,7 @@ ISOLATED_GLOB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "
 
 def info_path():
     """연결 정보 파일 우선순위: ① PD_REMOTE_INFO ② 격리 폴더(--data-dir 로 기동한 시험의
-    poc/ui/logs/proddata/*/remote-control.json 중 최신) ③ 사용자 폴더(%LOCALAPPDATA%\\PdPoc, 최신).
+    <영역 루트>/logs/proddata/*/remote-control.json 중 최신) ③ 사용자 폴더(%LOCALAPPDATA%\\PdPoc, 최신).
     격리(--data-dir)로 앱을 띄우는 시험 도구는 반드시 PD_REMOTE_INFO 를 export 해야 한다.
     안 하면 ②에 파일이 아직 없을 때(기동 직후) ③의 사용자 인스턴스에 잘못 붙을 수 있다."""
     if os.environ.get("PD_REMOTE_INFO"):

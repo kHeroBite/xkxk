@@ -5,7 +5,7 @@
   python3 -B retest_real_input.py --items A03,A05 --run-dir <bin/run/<복사본>/net10.0> --phase discovery --writer otest-d
   python3 -B retest_real_input.py --annotate <결과.json> --capture <파일 이름|all> --read-by otest-d --finding '<판독 내용 10자 이상>'
   python3 -B retest_real_input.py --self-test
-결과: --phase final 은 poc/ui/logs/pcaway/<ID>.json(판정기 대상), discovery 는 poc/ui/logs/pcaway/discovery/<ID>.json(판정기 대상 아님). 캡처는 그 아래 shots/<run_id>/.
+결과: --phase final 은 logs/pcaway/<ID>.json(판정기 대상), discovery 는 logs/pcaway/discovery/<ID>.json(판정기 대상 아님). 캡처는 그 아래 shots/<run_id>/.
 캡처의 read_by·finding 은 비워서 쓴다. PNG 를 실제로 읽은 otest 가 --annotate 로 채운다. 그 전에는 판정기가 FAIL 이다.
 안전(계획서 2절): 항목마다 새 임시 data·profile·--multi-instance 로 띄우고 자기 PID 만 종료한다. 조작 앞마다 user_away_guard.check, 입력 직전마다 전경 pid 확인.
 safe_click 은 주입 기록이 없어 호출 앞뒤를 injection 으로 감싼다. 사용자 Pd 로 입력하지 않고, 모니터 경계 100px 안 좌표는 거부한다.

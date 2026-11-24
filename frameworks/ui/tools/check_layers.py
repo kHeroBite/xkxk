@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # 클라이언트 계층 정적 검사 — 프로젝트 참조·패키지·코드 참조 방향과 신규 층 파일의 줄 수·헤더 규칙을 판정한다
 """
-사용: python3 poc/ui/tools/check_layers.py [--root 저장소] [--rules 규칙.json] [--self-test]
+사용: python3 tools/check_layers.py [--root 저장소] [--rules 규칙.json] [--self-test]
 규칙: 같은 폴더 check_layers_rules.json. 주석 안의 언급은 위반으로 치지 않는다.
 출력: 위반 줄(VIOLATION ...), 요약 줄, 마지막 줄 elapsed_ms=<n>. 종료 코드: 0=통과, 1=위반 또는 검사 불가.
 """

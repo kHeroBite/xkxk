@@ -19,7 +19,7 @@ import sys
 from PIL import Image
 
 NEW = sys.argv[1]
-BASE = sys.argv[2] if len(sys.argv) > 2 else "/mnt/c/DATA/Project/Pd/poc/ui/logs/otest/desktop/retest2"
+BASE = sys.argv[2] if len(sys.argv) > 2 else "/mnt/c/DATA/Project/xkxk/frameworks/ui/logs/otest/desktop/retest2"
 OUT = sys.argv[3] if len(sys.argv) > 3 else os.path.join(NEW, "judge.json")
 
 

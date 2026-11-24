@@ -2,7 +2,7 @@
 # 하드코딩 색 정적 검사 — 신규 UI(스피너·바쁨·투어·설정 뼈대·패널 모서리 버튼) 파일에서 색 리터럴·Brushes/Colors 직접 사용을 찾는다(주석 줄 제외). AC-2-10 용
 """
 사용: python3 -I scan_hardcoded_colors.py [--out 결과.json]   종료 코드 0=위반 0, 1=위반 있음, 2=대상 파일 없음
-대상 목록은 아래 FILES(poc/ui/src 기준). 토큰은 PdBrush* 리소스로만 받아야 한다.
+대상 목록은 아래 FILES(src 기준). 토큰은 PdBrush* 리소스로만 받아야 한다.
 """
 import json
 import os
