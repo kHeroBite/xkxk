@@ -16,7 +16,7 @@ namespace xkxk.frameworks.ui.android;
 /// Avalonia 12 Android 진입점(AvaloniaAndroidApplication&lt;App&gt;). 화면은 ISingleViewApplicationLifetime 으로 뜨고,
 /// SDI 는 브라우저처럼 Dock 관리형 창으로 대체한다(Android 에는 OS 다중 창이 없다).
 /// </summary>
-[Application(Label = "PD UI PoC")]
+[Application(Label = "별별UI")]
 public sealed class AndroidApp : AvaloniaAndroidApplication<xkxk.frameworks.ui.views.PdApp>
 {
     // 임베드 한글 폰트(브라우저판 Assets/Fonts 링크, 패밀리명 "Noto Sans KR")

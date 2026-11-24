@@ -13,7 +13,7 @@ namespace xkxk.frameworks.ui.android;
 // ConfigurationChanges: 폴드5 접힘↔펼침(ScreenSize·SmallestScreenSize·ScreenLayout)·회전·다크 모드(UiMode)·밀도 변경을 앱이 직접 처리
 // → 문서·설정 상태가 재생성으로 사라지지 않는다(Avalonia 가 새 크기로 다시 배치).
 [Activity(
-    Label = "PD UI PoC",
+    Label = "별별UI",
     Theme = "@style/PdTheme.NoActionBar",
     MainLauncher = true,
     Exported = true,

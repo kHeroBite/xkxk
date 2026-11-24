@@ -1,6 +1,6 @@
 {
-  "name": "PD UI PoC",
-  "short_name": "PD",
+  "name": "별별UI",
+  "short_name": "별별UI",
   "start_url": "./",
   "display": "browser",
   "background_color": "#1e1e1e",

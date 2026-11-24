@@ -4,6 +4,12 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-24 — 표시 이름 'PD UI PoC'·'PD' → '별별UI'(O2, conv_179552721972)
+- 창 제목(`src/xkxk.frameworks.ui.shell/App.cs`), 트레이 툴팁(`src/xkxk.frameworks.ui.views/PdApp.axaml`), 브라우저 탭·웹 manifest(name·short_name), Android 라벨 4곳(AndroidApp.cs·MainActivity.cs·AndroidManifest.xml·csproj ApplicationTitle), 언어 리소스 4개(shell.{ko,en}.json `app.title`, sysview.{ko,en}.json `sysview.about.product`)를 '별별UI' 로 바꿨다. 번역명은 만들지 않았다.
+- `com.pd.poc`·`PdPoc` 데이터 폴더·단일 인스턴스 이름·AUMID·머리 주석은 그대로 두었다.
+- 빌드 3종 rc=0·오류 0개. 브라우저 산출물 `<title>` 과 Fold5 설치 APK 라벨(aapt) '별별UI' 확인. 데스크톱 실기동 창 제목은 사용자 앱 실행 중이라 미확인(재실행 시 확인).
+- 시험 중 `tools/check_layers.py` rc=1(기존 300줄 초과 5건)을 발견해 다음 사이클로 넘겼다.
+
 ## 2026-11-24 — 프로젝트·어셈블리 이름 전환(Pd.Poc.* → xkxk.frameworks.ui.*, O3, conv_179552317865)
 - 커밋 f93767a. 프로젝트·어셈블리·네임스페이스·실행 파일 이름을 폴더 경로 기준 `xkxk.frameworks.ui.*` 로 바꿨다(UTODO-0007 완료, UADR-0002, AC-019). 이름 대응표와 함정은 `/mnt/c/DATA/Project/xkxk/frameworks/ui/plan/04_기술스택/02_소스구조_분할규칙.md` 에 반영했다.
 - 이름 변경 뒤 조용히 꺼지는 함정 3곳(선택적 연결 `?.`, 접두 검색, 접두 충돌)을 막았고, 검증자가 추가 함정 1건을 더 찾았다.

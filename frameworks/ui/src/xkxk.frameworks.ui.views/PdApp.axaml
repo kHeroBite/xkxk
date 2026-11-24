@@ -203,7 +203,7 @@
        항목 순서는 진단 tray.* 의 이름 순서와 같다(RemoteCommands.Tray.cs TrayItemNames). -->
   <TrayIcon.Icons>
     <TrayIcons>
-      <TrayIcon x:DataType="views:TrayMenuModel" ToolTipText="PD UI PoC" IsVisible="{Binding Visible}" Command="{Binding ShowCommand}">
+      <TrayIcon x:DataType="views:TrayMenuModel" ToolTipText="별별UI" IsVisible="{Binding Visible}" Command="{Binding ShowCommand}">
         <TrayIcon.Menu>
           <NativeMenu>
             <NativeMenuItem Header="{loc:Tr shell.tray.show}" Command="{Binding ShowCommand}" />

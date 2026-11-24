@@ -116,7 +116,7 @@ public class App : Application
         switch (ApplicationLifetime)
         {
             case IClassicDesktopStyleApplicationLifetime desktop:
-                var window = new Window { Title = "PD UI PoC", Width = 1400, Height = 900, Content = view };
+                var window = new Window { Title = "별별UI", Width = 1400, Height = 900, Content = view };
                 ConfigureMainWindow?.Invoke(window);
                 window.Closing += async (_, e) => await ShellExitSave.OnClosingAsync(window, vm, e); // 종료 저장 절차는 Lifecycle/ShellExitSave
                 ShellPlatform.Attach(this, window, vm); // 트레이(데스크톱 전용, 기본 끔). 캡처 방지는 App.WindowHost
