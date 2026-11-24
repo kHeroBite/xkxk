@@ -42,6 +42,21 @@ if ($Action -eq "read") {
 
 
 def run_ps(args):
+    """-Action restore 는 SetCursorPos 로 커서를 옮기므로 user_away_guard 주입 기록(직전 시각·직후 좌표)으로 감싼다(D-9).
+    기록이 없으면 다음 도구의 가드가 '마지막 주입 위치에서 커서 이탈'로 거짓 복귀를 세운다(2026-11-25 실측: 복원 (370,698), 마지막 주입 (989,327))."""
+    if len(args) > 1 and args[0] == "-Action" and args[1] == "restore" and "-X" in args and "-Y" in args:
+        import user_away_guard as guard
+        x, y = int(args[args.index("-X") + 1]), int(args[args.index("-Y") + 1])
+        try:
+            with guard.injection("cursor_restore", x, y):
+                return _run_ps(args)
+        except guard.GuardUnavailable as e:  # 기록을 못 남겨도 사용자 화면 복원은 한다(그 뒤 가드는 안전 쪽으로 복귀 판단할 수 있다)
+            print("주입 기록 불가 — 기록 없이 복원한다:", e, file=sys.stderr)
+            return _run_ps(args)
+    return _run_ps(args)
+
+
+def _run_ps(args):
     with tempfile.NamedTemporaryFile("w", suffix=".ps1", delete=False, encoding="utf-8") as f:
         f.write(PS)
         path = f.name

@@ -93,4 +93,17 @@ public sealed class PocDocument : Document, Dock.Controls.DeferredContentControl
         get => _lastLoadError;
         internal set => SetProperty(ref _lastLoadError, value);
     }
+
+    /// <summary>
+    /// 사람이 읽을 이름(문서 제목, 없으면 Id) — UTODO-0015. 탭 항목·MDI 창 같은 ContentControl 의 접근성 이름은
+    /// AutomationProperties.Name·자식 TextBlock 이 비면 Content.ToString() 으로 넘어간다(Avalonia 12.1.4 ContentControlAutomationPeer.GetNameCore 디컴파일 확인).
+    /// 재정의 전에는 형식 이름(xkxk.frameworks.ui.shell.Docking.PocDocument)이 노출됐다.
+    /// 불러오는 중에는 상태를 덧붙인다(K8·AC-020, 23 §3 '불러오는 중'·지연이면 '오래 걸리는 중'). 창 아이콘이 트리에서 빠지는 자리
+    /// (제목 탭 ListItem·MDI 창)에서도 화면 읽기 사용자가 상태를 듣게 하려는 것이며, 불러오기가 끝나면 제목만 남는다.
+    /// </summary>
+    public override string ToString()
+    {
+        var name = !string.IsNullOrWhiteSpace(Title) ? Title : !string.IsNullOrWhiteSpace(Id) ? Id : base.ToString() ?? nameof(PocDocument);
+        return IsLoading ? name + ", " + xkxk.frameworks.ui.shell.Localization.Loc.Tr(IsLoadSlow ? "shell.icon.loadingSlow" : "shell.icon.loading") : name;
+    }
 }

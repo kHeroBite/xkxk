@@ -111,6 +111,8 @@ public sealed partial class MobileNavViewModel : ObservableObject
         main.WindowMenu.PropertyChanged += OnChildChanged;
         main.SystemMenu.PropertyChanged += OnChildChanged;
         main.PropertyChanged += OnMainChanged;
+        main.OpenDocuments.CollectionChanged += (_, _) => ResyncSelection(); // D-7: 목록이 바뀐 뒤 콤보 선택을 활성 문서에 다시 맞춘다(.Selection.cs)
+        main.Compact.PropertyChanged += OnCompactChanged;
         Refresh();
     }
 

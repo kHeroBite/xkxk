@@ -31,4 +31,16 @@ public sealed partial class MobileNavViewModel
             OnPropertyChanged(nameof(SelectedDocument)); // 값이 같아도 알려 목록 선택을 활성 문서에 맞춘다(MainViewModel.SyncActive 와 같은 규칙)
         }
     }
+
+    // D-7: 콤보 선택은 활성 문서 변경 알림으로만 맞춰져, 목록에 없는 활성이 먼저 왔거나 숨은 동안 선택이 풀리면(selectedIndex -1)
+    // 활성이 그대로인 한 다시 맞춰지지 않았다. PC형 → 모바일형 전환으로 보이게 될 때와 열린 문서 목록이 바뀔 때 한 번 더 알린다.
+    private void OnCompactChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(CompactModeViewModel.IsCompact) && Compact.IsCompact)
+        {
+            ResyncSelection();
+        }
+    }
+
+    private void ResyncSelection() => OnPropertyChanged(nameof(SelectedDocument));
 }

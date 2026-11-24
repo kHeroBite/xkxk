@@ -8,6 +8,7 @@
 
 앱을 띄우거나 끝내지 않는다. 앱은 run_desktop_bg.sh 로만 `--multi-instance on --data-dir <절대경로 격리>`(attach 가 인자·layout-file 확인)·화면 안(승인)에 띄우되 --offscreen-guard 를 붙이지 않는다(붙이면 작업 표시줄 단추가 없다).
 찍기 전 전제: 자기 기동 기록·명령줄 일치, 다른 xkxk.frameworks.ui.*(및 LEGACY 옛 이름 Pd.Poc.*) 0개, pc_away_monitor away, 유휴 300초 이상(찍기 직전 다시 확인).
+  예외는 --user-pid 로 명시한 사용자 앱 1개뿐이다(이름 고정, 입력·조작 없음). 원격 조회·렌더 캡처는 자기 인스턴스 연결 정보로만 한다.
 화면 캡처는 작업 표시줄 띠 영역만이다. 고정된 Pd 단추는 옛 빌드를 띄울 수 있어 누르지 않는다.
 결과는 고정 이름(taskbar.png·main_render.png·app_icon.json)에 덮어쓰고, 이번 시작보다 오래된 파일은 증거로 쓰지 않는다.
 
@@ -78,9 +79,13 @@ def judge(icon):
 def require_away(state):
     if pc_away_monitor.check(argparse.Namespace(state=state, max_age=60)) != 0:
         raise away.UserReturned("pc_away_monitor 가 away 가 아니다")
-    idle = away.read_probe()["idle_ms"] / 1000.0
+    probe = away.read_probe()
+    idle = probe["idle_ms"] / 1000.0
     if idle < MIN_IDLE_S:
-        raise away.UserReturned("유휴 %d초 — %d초 미만이라 찍지 않는다" % (idle, MIN_IDLE_S))
+        ev = away.phantom_ok(probe["win_now_ms"])  # 유령 입력 보조 판정: 데몬(pc_away_monitor)이 5분 이상 정지·키 0·전경 불변으로 away 를 준 경우만 받는다
+        if ev is None:
+            raise away.UserReturned("유휴 %d초 — %d초 미만이라 찍지 않는다" % (idle, MIN_IDLE_S))
+        return {"idle_s": int(idle), "mode": away.PHANTOM_MODE, "clean_ms": ev.get("clean_ms"), "samples": ev.get("samples"), "cursor": ev.get("cursor")}
     return int(idle)
 
 
@@ -135,6 +140,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     for name in ("--info", "--owner", "--away-state", "--out-dir", "--monitor", "--onscreen-approved"):
         p.add_argument(name)
+    p.add_argument("--user-pid", type=int, help="떠 있어도 되는 사용자 앱 PID 1개(drag_shadow_option_input.declare_user 와 같은 규칙)")
     p.add_argument("--self-test", action="store_true")
     args = p.parse_args()
     if args.self_test:
@@ -142,8 +148,8 @@ def main():
     if not all((args.info, args.owner, args.away_state, args.out_dir, args.monitor, args.onscreen_approved)):
         print("거부: --info·--owner·--away-state·--out-dir·--monitor·--onscreen-approved 가 모두 필요하다")
         return 3
-    args.user_pid = None
-    res, code = {"ac": "AC-026", "approved": args.onscreen_approved}, 2
+    # --user-pid 가 있으면 작업 표시줄 띠에 사용자 앱 단추도 함께 찍힌다 — 판독 때 자기 단추를 구분하도록 결과에 남긴다
+    res, code = {"ac": "AC-026", "approved": args.onscreen_approved, "user_pid": args.user_pid}, 2
     try:
         code, res["result"] = measure(args, res)
     except (away.UserReturned, away.GuardUnavailable) as e:

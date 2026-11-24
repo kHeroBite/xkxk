@@ -2,19 +2,22 @@
 # 사용: python3 -u followup_w2.py <A|B|AB>   (A=4b-1 5회, B=PW 진단)
 import hashlib
 import json
+import os
 import sys
 import time
 import urllib.request
 
-sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/tools")
-sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/test/common")  # D-TESTDIR: test/common/_paths.py
+# 영역 루트 = 이 파일 위치(test/archive/rounds/web) 기준 네 단계 위(UTODO-0012)
+UI_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".."))
+sys.path.insert(0, os.path.join(UI_ROOT, "tools"))
+sys.path.insert(0, os.path.join(UI_ROOT, "test", "common"))  # D-TESTDIR: test/common/_paths.py
 import _paths  # noqa: E402
 _paths.add()
 from playwright.sync_api import sync_playwright
 from ui20_lib import WebRemote
 
 BASE = "http://127.0.0.1:5261"
-OUT = "/mnt/c/DATA/Project/xkxk/frameworks/ui/logs/otest_w1/i2000rc/followup_w2"
+OUT = os.path.join(UI_ROOT, "logs", "otest_w1", "i2000rc", "followup_w2")
 WHICH = sys.argv[1] if len(sys.argv) > 1 else "AB"
 res = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "build": "i2000rc"}
 

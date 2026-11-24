@@ -310,7 +310,7 @@ def main():
         if not args.session:
             print("거부: PIPELINE_UUID 또는 --session 필요(PCAWAY_SESSION 도 가능)", file=sys.stderr)
             return 2
-        gate_path = os.path.join(args.session, "pcaway_gate.py")
+        gate_path = ri.gate_file(args.session)  # 세션 판정기가 없으면 저장소 사본 test/desktop/judge/pcaway_gate.py(2026-11-24)
         if not os.path.exists(gate_path):
             print("거부: 판정기 없음 — " + gate_path, file=sys.stderr)
             return 2

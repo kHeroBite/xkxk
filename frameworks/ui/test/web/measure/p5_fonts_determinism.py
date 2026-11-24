@@ -4,7 +4,8 @@
 import argparse, glob, hashlib, json, os, sys, time
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", "..", "..", "..", ".."))
-OUT = os.path.join(ROOT, "poc", "ui", "logs", "pcaway", "P5.json")
+AREA = os.path.abspath(os.path.join(HERE, "..", "..", ".."))  # 영역 루트(frameworks/ui). ROOT 는 저장소 루트 의미 그대로(script.path 상대 기준)
+OUT = os.path.join(AREA, "logs", "pcaway", "P5.json")  # 옛 Pd 레이아웃 ROOT/poc/ui/logs(2026-11-24 수정)
 KST = "+09:00"
 
 

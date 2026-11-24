@@ -12,11 +12,14 @@
 옛 시나리오 원문이 없어(ui_theme_edit.py·dockpin 파일 미발견) 이름과 현재 명령 의미에서 재구성했다 — 판정서에 '재구성 검사'로 표기한다.
 """
 import json
+import os
 import sys
 import time
 
-sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/test/common/measure")
-sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/test/common")
+# 영역 루트 = 이 파일 위치(test/archive/rounds/desktop) 기준 네 단계 위(UTODO-0012)
+UI_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".."))
+sys.path.insert(0, os.path.join(UI_ROOT, "test", "common", "measure"))
+sys.path.insert(0, os.path.join(UI_ROOT, "test", "common"))
 import _paths  # noqa: E402
 _paths.add()
 from retest_remote import Remote  # noqa: E402
@@ -52,8 +55,9 @@ t1 = themes()
 u1, n1 = user_count(t1)
 sel1 = t1.get("activeThemeId")
 row("T1", "theme.clone → 목록 +1·활성이 복제본", n1 == n0 + 1 and sel1 != sel0, {"before": [u0, n0, sel0], "after": [u1, n1, sel1], "clone": cl})
-WIN_OUT = "C:\\DATA\\Project\\Pd\\poc\\ui\\logs\\otest\\c2\\w\\theme_export_%s.json"
-WSL_OUT = "/mnt/c/DATA/Project/xkxk/frameworks/ui/logs/otest/c2/w/theme_export_%s.json"
+WSL_OUT = os.path.join(UI_ROOT, "logs", "otest", "c2", "w", "theme_export_%s.json")
+# 앱(Windows)에 넘길 같은 경로. /mnt/<드라이브>/... → <드라이브>:\...(옛 Pd 절대경로 고정 해소, 2026-11-24)
+WIN_OUT = WSL_OUT[5].upper() + ":" + WSL_OUT[6:].replace("/", "\\")
 
 
 def exported_has(tag, theme_id, needle):

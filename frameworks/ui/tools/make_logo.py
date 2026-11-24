@@ -135,7 +135,7 @@ def save_png(img, path, written):
 
 
 def build(art, src_path, src_img, out, written):
-    ui = os.path.join(out, "poc", "ui")
+    ui = out  # 출력 트리 = 영역 루트 상대 경로 그대로(옛 Pd 레이아웃 <out>/poc/ui 폐지, UTODO-0012)
     srcd = os.path.join(ui, "src")
     asset = os.path.join(ui, "assets", "icon")
     # 원본 사본(바이트 그대로)

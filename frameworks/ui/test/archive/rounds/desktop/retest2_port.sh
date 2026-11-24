@@ -5,7 +5,7 @@ set -u
 CONF="$1"
 D="$2"
 FILTER="${3:-}"
-U=/mnt/c/DATA/Project/xkxk/frameworks/ui
+U=$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/../../../.." && pwd)  # 영역 루트 = 스크립트 위치 기준 네 단계 위(UTODO-0012)
 R=$U/tools/run_desktop_bg.sh
 mkdir -p "$D" "$D/prof"
 : > "$D/run.log"

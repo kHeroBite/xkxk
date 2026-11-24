@@ -1,7 +1,9 @@
 # 데스크톱 i1853gp 측정 스크립트 공용 도우미(원격 명령 호출·유휴 확인·CPU 측정). 실입력·전경 조작 없음
-import json, subprocess, sys, time
+import json, os, subprocess, sys, time
+# 영역 루트 = 이 파일 위치(test/archive/rounds/desktop) 기준 네 단계 위(UTODO-0012)
+UI_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".."))
 
-sys.path.insert(0, '/mnt/c/DATA/Project/xkxk/frameworks/ui/tools')
+sys.path.insert(0, os.path.join(UI_ROOT, 'tools'))
 import pdctl
 
 info = pdctl.load_info()

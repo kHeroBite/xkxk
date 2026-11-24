@@ -13,6 +13,12 @@ namespace xkxk.frameworks.ui.shell.ViewModels;
 public sealed record NotificationItem(DateTime Time, string Category, string Title, string Message)
 {
     public string TimeText => Time.ToString("HH:mm");
+
+    /// <summary>
+    /// 사람이 읽는 이름(제목 — 내용, 분류 시각). 목록 항목(ListBoxItem)의 UIA 이름은 자식이 TextBlock 하나가 아니면
+    /// Content.ToString() 으로 떨어지므로, 레코드 기본 문자열('NotificationItem { Time = … }') 대신 이 값이 읽힌다(PocDocument.ToString 과 같은 원인).
+    /// </summary>
+    public override string ToString() => $"{Title} — {Message} ({Category} {TimeText})";
 }
 
 /// <summary>

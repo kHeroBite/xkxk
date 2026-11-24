@@ -14,6 +14,8 @@
 | `tools/build_lock.sh` | 같은 Configuration 빌드 직렬화 잠금(source 해서 씀) | 빌드 스크립트 3종이 공유 | `source tools/build_lock.sh; pd_build_lock <ROOT> <Configuration> <LOG>` | 경로 문구 없음 |
 | `tools/build_avalonia_browser_pd.sh` | Avalonia.Browser 유휴 rAF 패치판을 로컬 피드로 pack(기본 dry-run) | 패치판 재생성 | `bash tools/build_avalonia_browser_pd.sh` | 경로 문구 없음 |
 | `tools/build_font_subset.py` | 웹·Android 임베드 한글 글꼴 부분집합 재생성 | 글꼴 글자 추가 때 | `python3 -B tools/build_font_subset.py` | 경로 문구 없음 |
+| `tools/check_build_rc.sh` | 최신 빌드 로그의 `<로그>.log.rc` 와 `오류 0개`·`0 Error(s)` 표기로 축별 빌드 성공 판정(UTODO-0016) | 검수 조건이 빌드 rc 를 읽을 때 `.log.rc` 이름을 한곳에서 맞춘다 | `bash tools/check_build_rc.sh [desktop\|browser\|android\|all] [--logs <폴더>]` → 0=모두 PASS·1=FAIL·2=인자 오류 | 2026-11-24 신설 |
+| `tools/safe_click.ps1` | 물리 클릭 전 좌표계·창 소유권(ExpectedProcessId)·DPI 3축을 검증한 뒤에만 클릭·끌기하는 가드 | 실입력 시험(`test/desktop/measure/retest_real_input.py` 의 `SAFE_CLICK`)이 공유하는 클릭 경로 | `retest_real_input.Rig.click` 이 호출(직접 실행 시 `powershell.exe -File tools/safe_click.ps1 -ScreenX <x> -ScreenY <y> -ExpectedProcessId <pid>`) | 2026-11-24 Pd `.claude/scripts/safe_click.ps1`(기준 커밋 867b432)에서 본문 무변경 복사. 그전에는 xkxk 에 없어 실입력 시험이 깨졌다 |
 | `tools/run_desktop_bg.sh` | Desktop 을 비전경·stdio 분리로 기동하고 실존 2회 확인 | 시험 기동 표준 | `bash tools/run_desktop_bg.sh [--conf Debug] -- <앱 인자>` | 경로 문구 없음 |
 | `tools/slot_handoff.sh` | 데스크톱 실행 슬롯 소유자 이관 | 실행 슬롯 교착 방지 | `bash tools/slot_handoff.sh <새 소유자\|없음> [메모]` | 경로 문구 없음 |
 | `tools/serve_browser.sh`·`tools/serve_browser.py` | WASM 번들을 127.0.0.1 에 서빙 | 웹 시험 서버 | `bash tools/serve_browser.sh start [포트] [번들경로]` | 경로 문구 없음 |
@@ -40,6 +42,6 @@
 | 경로 | 용도 | 재사용 이유 | 실행 명령 | 상태 |
 |---|---|---|---|---|
 | `tools/make_icons.py` | 원본 그림 한 장으로 전 플랫폼 앱 아이콘 재생성 | 아이콘 교체 때 | `python3 -B tools/make_icons.py [--source 그림.png]` | 2026-11-24 경로 문구 해소 |
-| `tools/make_logo.py` | 로고 원본으로 전 플랫폼 아이콘 트리 생성 | 로고 교체 때 | `python3 -B tools/make_logo.py --out <폴더> --preview <폴더>` | 출력 트리를 `<out>/poc/ui/...` 구조로 만든다(`make_logo.py` 138행에서 확인). 이 구조를 새 홈 레이아웃으로 바꿀지는 정하지 않았다 |
+| `tools/make_logo.py` | 로고 원본으로 전 플랫폼 아이콘 트리 생성 | 로고 교체 때 | `python3 -B tools/make_logo.py --out <폴더> --preview <폴더>` | 2026-11-24 UTODO-0012 처리로 출력 트리를 영역 루트 상대 경로 그대로(`<out>/src/...`·`<out>/assets/...`) 만든다. 옛 `<out>/poc/ui/...` 구조는 없앴다 |
 | `tools/capture_win_ref.ps1` | Windows 표준 창을 화면 밖 PrintWindow 로 캡처 | 창 크롬 기준 비교 | `powershell.exe -File tools/capture_win_ref.ps1 -OutDir <폴더>` | 경로 문구 없음 |
 | `plan/_build/menu_icons.py`(tools 밖) | 메뉴 ID 별 SVG·axaml·C# 카탈로그 생성 | 메뉴 아이콘 정본 생성 | `python3 -B plan/_build/menu_icons.py --check` | 2026-11-24 출력 경로 2줄을 영역 기준으로 고침. 데이터 `menu_icon_data.py`·`icon_glyphs.py`·`menu_data.py` 동반. `menu_tree.py` 는 옮기지 않았다(02_메뉴구조 재생성은 Pd 에서) |

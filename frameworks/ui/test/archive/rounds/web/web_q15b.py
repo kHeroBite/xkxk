@@ -4,10 +4,13 @@
 판정 규칙: rules_otest12_web_w3.md '추가(18:0x)' 절.
 """
 import json
+import os
 import sys
 import time
 
-sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/tools")
+# 영역 루트 = 이 파일 위치(test/archive/rounds/web) 기준 네 단계 위(UTODO-0012)
+UI_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".."))
+sys.path.insert(0, os.path.join(UI_ROOT, "tools"))
 from playwright.sync_api import sync_playwright  # noqa: E402
 import retest_browser as rb  # noqa: E402
 

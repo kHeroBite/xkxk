@@ -4,6 +4,16 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-25 — 300줄 분할·접근성 이름·PERF-13 첫 프레임 누락 수정·측정보류 재측정(O4, conv_179552725422)
+- 300줄 초과 5파일을 부분 클래스로 나눴다(K1). `PerfProbe`→`PerfProbe.Counters.cs`, `RemoteControlServer`→`RemoteControlServer.Routes.cs`, `WindowMenuOps.Snap`→`WindowMenuOps.Snap.Menu.cs`, `UiStyleViewModel`→`UiStyleViewModel.Options.cs`, `GanttCanvas`→`GanttCanvas.Render.cs`. `tools/check_layers.py` 위반 0.
+- 접근성 이름(K2, UTODO-0015 완료). `PocDocument`·`NotificationPanelViewModel` 의 `ToString` 이 형식 이름 대신 제목·문장을 돌려준다. MDI·독·SDI 의 UIA 이름이 문서 제목으로 나온다.
+- 로딩 접근성 이름(K8, AC-020). `src/xkxk.frameworks.ui.views/WindowIcon.Automation.cs` 를 새로 만들어 창 안 아이콘에 피어를 주고, `PocDocument` 로딩 상태에서 '불러오는 중' 이 UIA 에 나온다. MDI 창 이름은 제목만 나온다.
+- PERF-13 첫 프레임 누락 수정(K4, AC-031). `DocumentViewLocator` 가 내용 정착 뒤 ContextIdle 에서 재생을 시작하게 했다(`WindowTransitions`, 진단 키 `motion_settle_*`). p95 17.28·17.23·17.04ms, 누락 0(이전 26.97~32.20ms). 대신 내용 90% 표시가 약 30ms 늦어졌다(창 첫 화소는 같다).
+- 모바일형 문서 콤보(`shell.cmbDocs`) 선택 재동기화(D-7, `MobileNavViewModel`). 형 전환 뒤 '열린 문서 없음' 이 나오던 결함을 고쳤다.
+- 시험 도구. `tools/check_build_rc.sh`(빌드 rc 판정, K3 / UTODO-0016 완료)·`tools/safe_click.ps1` 신규, `test/desktop/measure/real_drag_perf.py` 시험 자산 승격, `test/desktop/judge/pcaway_gate.py` 신규, 커서 복원 이동도 주입 기록에 남기게 고침(D-9, `retest_maximize_monitor_fg.run_ps`·`drag_shadow_option_input`), 시험 스크립트 상대경로화, `LAYERS.md` 재생성.
+- 문서. UTODO-0002 진행·0015·0016 완료·0017 등재, `plan/04_기술스택/04_판정보고서_부록/a14_움직임효과_검수목록_정의.md` 신규, a10 측정보류 목록 갱신.
+- 시험(K1~K15 PASS). K5 AC-013·K6 AC-014·K7 AC-015·K10 PERF-14(p95 16.93ms)·K11 AC-026·K12 AC-028·K13 PERF-16 PASS. PERF-12 열기 비율은 0.964·0.911·1.337 로 3회 중 1회 FAIL 이며, 이전에도 있던 흔들림이다(D-10). 측정은 60Hz 내장 모니터 1대다.
+
 ## 2026-11-24 — 표시 이름 'PD UI PoC'·'PD' → '별별UI'(O2, conv_179552721972)
 - 창 제목(`src/xkxk.frameworks.ui.shell/App.cs`), 트레이 툴팁(`src/xkxk.frameworks.ui.views/PdApp.axaml`), 브라우저 탭·웹 manifest(name·short_name), Android 라벨 4곳(AndroidApp.cs·MainActivity.cs·AndroidManifest.xml·csproj ApplicationTitle), 언어 리소스 4개(shell.{ko,en}.json `app.title`, sysview.{ko,en}.json `sysview.about.product`)를 '별별UI' 로 바꿨다. 번역명은 만들지 않았다.
 - `com.pd.poc`·`PdPoc` 데이터 폴더·단일 인스턴스 이름·AUMID·머리 주석은 그대로 두었다.

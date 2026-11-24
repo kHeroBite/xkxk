@@ -50,7 +50,9 @@ def kill_my_edge(prof_win):
 
 def run_edge(url, secs, tag):
     log = os.path.join(OUT, "edge_%s.log" % tag)
-    prof = "/mnt/c/DATA/Project/xkxk/frameworks/ui/logs/otest_w2/edge_profile_%s" % tag
+    # 영역 루트 = 이 파일 위치(test/archive/retired/perf/measure) 기준 다섯 단계 위(UTODO-0012)
+    ui_root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..", ".."))
+    prof = os.path.join(ui_root, "logs", "otest_w2", "edge_profile_%s" % tag)
     os.makedirs(prof, exist_ok=True)
     prof_win = win_path(prof)
     cmd = [EDGE, "--headless=new", "--user-data-dir=" + prof_win, "--use-angle=d3d11", "--ignore-gpu-blocklist",

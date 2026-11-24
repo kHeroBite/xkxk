@@ -190,7 +190,7 @@ def before_heights(args):
     """before 높이: --before-strip/--before-tab 이 있으면 그 값, 아니면 discovery/T3.json 의 기록. discovery 단계는 지금 잰 값이 곧 before 다."""
     if args.before_strip and args.before_tab:
         return {"strip": args.before_strip, "tab": args.before_tab, "source": "cli"}
-    path = os.path.join(ri.ROOT, "poc", "ui", "logs", "pcaway", "discovery", "T3.json")
+    path = os.path.join(ri.AREA, "logs", "pcaway", "discovery", "T3.json")  # 옛 Pd 레이아웃 ROOT/poc/ui/logs(2026-11-24 수정)
     try:
         with open(path, encoding="utf-8") as f:
             doc = json.load(f)

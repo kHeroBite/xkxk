@@ -9,6 +9,7 @@
   - 화면 깨우기·잠금 해제·stayon 변경을 하지 않는다. 꺼져 있거나 잠겨 있거나 판독하지 못하면 손대지 않고 WAIT 로 끝낸다.
   - 시작 때 홈 화면·시험 앱이 아닌 앱이 앞에 있으면 사람이 쓰는 것으로 보고 시작하지 않는다.
   - 조작마다 시험 앱 전면·전면 화면 상태·켜짐·잠금 없음을 다시 보고, 어긋나면 사람 흔적으로 보고 그 자리에서 멈춘다.
+  - 측정 중 회전을 세로로 고정하고 끝나면 원래 값으로 되돌린다(motion_nav_fold5_rotation). 캡처가 세로 크기가 아니면 그 사례는 ERROR 다.
 한계: 시험 앱 위에서 사람이 만지는 것은 가리지 못한다. 회전은 간격 캡처 3장, 실제 재생은 전환 직후 자리·불투명도 표본으로 본다(못 잡으면 UNDET).
 adb 는 ADB 환경변수로 지정한다(예 ADB=adb.exe). 기기는 항상 -s 로 고정하고 서버는 끄지 않는다.
 rc 0=전부 PASS 1=FAIL 있음 2=실행 오류 3=대기(미연결·꺼짐·잠김·판 다름) 4=미확인만 남음 5=사람 흔적으로 중단
@@ -20,11 +21,10 @@ import subprocess
 import sys
 import time
 
-from PIL import Image
-
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from motion_nav_fold5_rules import exit_code, expected, may_start, screen_ready, self_test, snapshot  # noqa: E402
+import motion_nav_fold5_rotation as R  # noqa: E402  세로 고정·원복·캡처 크기 검사
 import retest_android_pcaway_lib as L  # noqa: E402  wake·relaunch·set_closed·set_open 은 화면을 깨우므로 부르지 않는다
 
 NAV_EXPECT = (("wipeRight", "fade"), ("tilt3d", "fade"), ("pushLeft", "pushLeft"), ("fade", "fade"))
@@ -32,7 +32,6 @@ SCREEN = "SCR-PRJ-01"
 CHANGED_KEYS = ("motion", "motion.open", "motion.switch", "motion.close")
 EVIDENCE = {"nav_effects": "probe", "drawer_favorite": "touch", "keys": "key", "loading": "inject", "playback": "touch", "close": "row"}  # row=행마다 따로
 EXPECT = {"state": "CLOSED"}  # 안전 확인이 기대하는 화면 상태(닫기 사례의 펼침 구간만 OPENED)
-SPINNER_BOX = (136, 100, 180, 146)  # 전면 화면 904x2316 캡처의 문서 선택 칸 앞 아이콘
 
 
 class Wait(Exception):
@@ -184,9 +183,8 @@ def case_loading(c):
         return {"verdict": "FAIL", "why": "끝나지 않았다", "left": left}
     if not shots:
         return {"verdict": "UNDET", "why": "상태는 켜졌다 꺼짐. 회전 캡처 3장을 못 얻었다"}
-    frames = {Image.open(p).convert("L").crop(SPINNER_BOX).tobytes() for p in shots}
-    verdict = "PASS" if len(frames) == 3 else "FAIL"
-    return {"verdict": verdict, "why": "상태 켜졌다 꺼짐·스피너 칸 서로 다른 그림 %d/3(회전)" % len(frames), "shots": shots}
+    n = R.distinct_spinner_frames(shots)  # 세로 기준 크기가 아니면 RotationError → ERROR
+    return {"verdict": "PASS" if n == 3 else "FAIL", "why": "상태 켜졌다 꺼짐·스피너 칸 서로 다른 그림 %d/3(회전)" % n, "shots": shots}
 
 
 def case_playback(c):
@@ -221,8 +219,9 @@ def run(args, res):
     precheck(args.apk_md5)
     res["state_before"] = L.dev_state()
     c = L.Ctx("fold5", "Debug", args.out_dir)
-    info, saved = None, {}
+    info, saved, rot = None, {}, {}
     try:
+        rot = res["rotation_before"] = R.lock_portrait(L.sh)  # 기기를 가로로 둬도 세로 기준 좌표·칸으로 잰다
         info = start_on_cover(c)
         style = call(c, "ui.style")
         res["style"] = style
@@ -235,7 +234,7 @@ def run(args, res):
                  ("loading", case_loading), ("playback", case_playback), ("close", lambda x: case_close(x, saved, args.apk_md5)))
         for name, fn in [x for x in cases if (x[0] in args.only.split(",") if args.only else x[0] != "close")]:
             try:
-                at = {"ui_style": call(c, "ui.style").get("effective"), "capture": c.shot("case_" + name), "evidence": EVIDENCE[name]}
+                at = {"ui_style": call(c, "ui.style").get("effective"), "capture": R.check_capture(c.shot("case_" + name)), "evidence": EVIDENCE[name]}
                 if str(at["ui_style"]).lower() != "mobile":
                     res["cases"][name] = dict(at, verdict="UNDET", why="INVALID — 기대 배치(모바일형)가 아니다")
                 else:
@@ -264,6 +263,7 @@ def run(args, res):
             L.adb("forward", "--remove", "tcp:%d" % L.ra.HOST_PORT)
             if info:
                 os.remove(info)  # attach 가 만든 토큰 임시 파일
+            res["rotation_restored"] = R.restore(L.sh, rot)  # 받은 회전 설정으로 되돌린다(고정 전 실패면 rot 가 비어 아무것도 안 함)
 
 
 def main():
@@ -274,7 +274,7 @@ def main():
     args = ap.parse_args()
     if args.self_test:
         import motion_nav_fold5_frames as frames  # 화소 판정
-        return self_test() or frames.self_test()
+        return self_test() or frames.self_test() or R.self_test()
     if not (args.apk_md5 and args.out_dir):
         ap.error("--apk-md5 --out-dir 가 필요하다")
     os.makedirs(args.out_dir, exist_ok=True)

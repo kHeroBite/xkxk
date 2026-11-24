@@ -18,7 +18,7 @@ SOURCE_FREE = ("F08", "R1", "D2")  # 원자료 인자 없이 저장소 문서·l
 
 def run(args, report):
     fails = []
-    gate_path = os.path.join(args.session or "", "pcaway_gate.py")
+    gate_path = ri.gate_file(args.session)  # 세션 판정기가 없으면 저장소 사본
     gate = ri.gate_module(args.session)
     if gate is None:
         print("판정기 없음: %s" % gate_path)
@@ -32,9 +32,10 @@ def run(args, report):
     tmp = tempfile.mkdtemp(prefix="pd_rep_")
     try:
         root, sess = os.path.join(tmp, "repo"), os.path.join(tmp, "sess")
-        os.makedirs(os.path.join(root, "poc", "ui", "bin"))
+        area = os.path.join(root, ri.AREA_REL)  # 임시 트리의 영역 루트(옛 Pd 레이아웃 poc/ui 자리, 2026-11-24 frameworks/ui)
+        os.makedirs(os.path.join(area, "bin"))
         os.makedirs(os.path.join(sess, "plans"))
-        tool, bin_file, png = os.path.join(root, "poc", "ui", "t.py"), os.path.join(root, "poc", "ui", "bin", "a.dll"), os.path.join(root, "poc", "ui", "c.png")
+        tool, bin_file, png = os.path.join(area, "t.py"), os.path.join(area, "bin", "a.dll"), os.path.join(area, "c.png")
         for p in (tool, bin_file):
             with open(p, "w", encoding="utf-8") as f:
                 f.write("x\n")
@@ -54,7 +55,7 @@ def run(args, report):
 
         def gate_rc(item="A02"):
             return subprocess.run([sys.executable, "-I", gate_path, "item", item], env=env, capture_output=True, text=True).returncode
-        result = os.path.join(root, "poc", "ui", "logs", "pcaway", "A02.json")
+        result = os.path.join(area, "logs", "pcaway", "A02.json")
         if report.emit(ns(), root) != 0:
             fails.append("정상 원자료가 통과하지 않음")
         if gate_rc() != 1:
@@ -103,7 +104,7 @@ def run(args, report):
             rows = [{"name": n, "value": spec["expect"].get(n, ("", 1))[1], "pass": True, "source": "자가시험"} for n in spec["req"]]
             report.write_json(bad, {"measurements": rows, **window})
             rc = report.emit(ns(item=item, state=back, raw=[], measure_file=bad, capture=[png] * spec["caps"]), root)
-            path = os.path.join(root, "poc", "ui", "logs", "pcaway", item + ".json")
+            path = os.path.join(area, "logs", "pcaway", item + ".json")
             if spec["caps"]:
                 ri.annotate(argparse.Namespace(annotate=path, capture="all", read_by="otest-x", finding="캡처를 읽은 결과 기록"))
             with open(path, encoding="utf-8") as f:
@@ -134,7 +135,7 @@ def run(args, report):
         window.clear()
         window.update(saved_window)
         exempt_case("표지+측정 구간 밖 주입 PASS", "D4", 0)
-        d4_doc = json.load(open(os.path.join(root, "poc", "ui", "logs", "pcaway", "D4.json"), encoding="utf-8"))
+        d4_doc = json.load(open(os.path.join(area, "logs", "pcaway", "D4.json"), encoding="utf-8"))
         if d4_doc.get("measured_started_at") != saved_window["measured_started_at"]:
             fails.append("측정 구간이 결과에 남지 않음 %s" % d4_doc.get("measured_started_at"))
         t = lambda sec: iso_ms(now_ms + sec * 1000)
@@ -158,7 +159,7 @@ def run(args, report):
                 f.write("import sys\nsys.exit(0)\n")
 
         def annotate_item(item):
-            ri.annotate(argparse.Namespace(annotate=os.path.join(root, "poc", "ui", "logs", "pcaway", item + ".json"), capture="all", read_by="otest-x", finding="캡처를 읽은 결과 기록"))
+            ri.annotate(argparse.Namespace(annotate=os.path.join(area, "logs", "pcaway", item + ".json"), capture="all", read_by="otest-x", finding="캡처를 읽은 결과 기록"))
 
         def k6_case(name, mut, want_emit, want_gate):
             spec = gate.SPEC["K6"]

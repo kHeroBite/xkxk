@@ -7,15 +7,17 @@ import sys
 import time
 import urllib.request
 
-sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/tools")
-sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/test/common")  # D-TESTDIR: test/common/_paths.py
+# 영역 루트 = 이 파일 위치(test/archive/rounds/web) 기준 네 단계 위(UTODO-0012)
+UI_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".."))
+sys.path.insert(0, os.path.join(UI_ROOT, "tools"))
+sys.path.insert(0, os.path.join(UI_ROOT, "test", "common"))  # D-TESTDIR: test/common/_paths.py
 import _paths  # noqa: E402
 _paths.add()
 from playwright.sync_api import sync_playwright
 from ui20_lib import WebRemote
 
 BASE = os.environ.get("PD_URL", "http://127.0.0.1:5400").rstrip("/")  # i2400rc 는 5400 에 서빙(포트 충돌 시 PD_URL 로 지정)
-OUT = "/mnt/c/DATA/Project/xkxk/frameworks/ui/logs/otest_w3/i2400/followup_pw"
+OUT = os.path.join(UI_ROOT, "logs", "otest_w3", "i2400", "followup_pw")
 WHICH = sys.argv[1] if len(sys.argv) > 1 else "AB"
 res = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "build": "i2400rc"}
 

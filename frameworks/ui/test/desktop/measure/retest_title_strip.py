@@ -302,7 +302,7 @@ def caption(rig, cid, hwnd, **scope):
 
 
 def before_value(args):
-    path = os.path.join(ri.ROOT, "poc", "ui", "logs", "pcaway", "discovery", "E5.json")
+    path = os.path.join(ri.AREA, "logs", "pcaway", "discovery", "E5.json")  # 옛 Pd 레이아웃 ROOT/poc/ui/logs(2026-11-24 수정)
     try:
         with open(path, encoding="utf-8") as f:
             doc = json.load(f)

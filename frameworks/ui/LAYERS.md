@@ -7,14 +7,14 @@
 
 | 층 | 파일 수 |
 |---|---:|
-| Control | 266 |
+| Control | 268 |
 | Data | 33 |
-| Diag | 86 |
+| Diag | 88 |
 | Host | 72 |
 | Ui | 26 |
-| Views | 235 |
+| Views | 237 |
 
-합계 718개(.cs·.axaml).
+합계 724개(.cs·.axaml).
 
 ## 끊어야 하는 참조(현재 기준 금지 방향)
 
@@ -159,6 +159,7 @@
 | `xkxk.frameworks.ui.shell/Diagnostics/PerfLayoutLog.cs` | Diag |  | 진단 전용 폴더 | O |  | PerfLayoutLog |
 | `xkxk.frameworks.ui.shell/Diagnostics/PerfOpenTracker.cs` | Diag |  | 진단 전용 폴더 | O |  | PerfOpenTracker |
 | `xkxk.frameworks.ui.shell/Diagnostics/PerfOperations.cs` | Diag |  | 진단 전용 폴더 |  |  | PerfOperations |
+| `xkxk.frameworks.ui.shell/Diagnostics/PerfProbe.Counters.cs` | Diag |  | 진단 전용 폴더 |  |  |  |
 | `xkxk.frameworks.ui.shell/Diagnostics/PerfProbe.Product.cs` | Diag |  | 진단 전용 폴더 | O |  |  |
 | `xkxk.frameworks.ui.shell/Diagnostics/PerfProbe.cs` | Diag |  | 진단 전용 폴더 | O |  |  |
 | `xkxk.frameworks.ui.shell/Diagnostics/PerfSampler.cs` | Diag |  | 진단 전용 폴더 | O |  | PerfSampler |
@@ -176,6 +177,7 @@
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteChromeCommands.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteChromeCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteCommandRouter.cs` | Diag |  | 진단 전용 폴더 | O |  |  |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteCommands.cs` | Diag |  | 진단 전용 폴더 |  |  |  |
+| `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteControlServer.Routes.cs` | Diag |  | 진단 전용 폴더 |  |  |  |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteControlServer.cs` | Diag |  | 진단 전용 폴더 |  |  |  |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteDesignThemeCommands.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteDesignThemeCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteDockAccess.cs` | Diag |  | 진단 전용 폴더 | O | O | RemoteDockAccess |
@@ -320,13 +322,13 @@
 | `xkxk.frameworks.ui.shell/Docking/PocDockFactory.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
 | `xkxk.frameworks.ui.shell/Docking/PocDocument.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(ILayoutStore.cs) |  | O |  |
 | `xkxk.frameworks.ui.shell/Docking/RestoreViewDeferral.Idle.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
-| `xkxk.frameworks.ui.shell/Docking/RestoreViewDeferral.Load.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(PerfProbe.Product.cs) |  |  |  |
+| `xkxk.frameworks.ui.shell/Docking/RestoreViewDeferral.Load.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(PerfProbe.Counters.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Docking/RestoreViewDeferral.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
 | `xkxk.frameworks.ui.shell/Docking/SdiPlacement.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O | SdiPlacement |
 | `xkxk.frameworks.ui.shell/Docking/SdiRedockPolicy.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Docking/SdiResetLayout.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Docking/SdiScreenPlacement.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O | SdiScreenPlacement |
-| `xkxk.frameworks.ui.shell/Docking/SidePanelVisibility.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(PerfProbe.Product.cs) |  |  | SidePanelVisibility |
+| `xkxk.frameworks.ui.shell/Docking/SidePanelVisibility.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(PerfProbe.Counters.cs) |  |  | SidePanelVisibility |
 | `xkxk.frameworks.ui.shell/Docking/SnapAssistCandidates.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O | SnapAssistCandidateList, SnapAssistCandidates |
 | `xkxk.frameworks.ui.shell/Docking/SnapAssistHost.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Docking/SnapAssistSession.Diag.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(SnapAssistSession.Flow.cs) |  |  |  |
@@ -356,6 +358,7 @@
 | `xkxk.frameworks.ui.shell/Docking/WindowCommandsPartAttribute.cs` | Control |  | WindowCommands 표식 특성 |  |  | WindowCommandsPartAttribute |
 | `xkxk.frameworks.ui.shell/Docking/WindowLoadState.Query.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(PocDocument.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Docking/WindowLoadState.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
+| `xkxk.frameworks.ui.shell/Docking/WindowMenuOps.Snap.Menu.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
 | `xkxk.frameworks.ui.shell/Docking/WindowMenuOps.Snap.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O | SnapRestoreMemory, ManagedWindowRect |
 | `xkxk.frameworks.ui.shell/Docking/WindowMenuOps.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
 | `xkxk.frameworks.ui.shell/Docking/WindowMinSize.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
@@ -490,6 +493,7 @@
 | `xkxk.frameworks.ui.shell/ViewModels/ThemeEditorViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(Loc.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/ThemeTokenRow.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/TitleStripViewModel.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
+| `xkxk.frameworks.ui.shell/ViewModels/UiStyleViewModel.Options.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/UiStyleViewModel.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/WindowMenuViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/ViewRegistry.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(IViewRegistry.cs) |  |  |  |
@@ -568,6 +572,7 @@
 | `xkxk.frameworks.ui.views/Documents/FormDocumentView.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Documents/FormDocumentView.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Documents/GanttCanvas.Dense.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.views/Documents/GanttCanvas.Render.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Documents/GanttCanvas.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Documents/GanttDocumentView.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Documents/GanttDocumentView.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
@@ -722,6 +727,7 @@
 | `xkxk.frameworks.ui.views/Themes/SdiHostWindowTheme.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Themes/ThinScrollBar.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/UiStyleTransition.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.views/WindowIcon.Automation.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/WindowIcon.Bindings.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/WindowIcon.State.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/WindowIcon.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |

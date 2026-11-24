@@ -10,6 +10,7 @@
 안전 전제(하나라도 어긋나거나 조회에 실패하면 입력하지 않는다)
   1. 대상 PID 는 run_desktop_bg.sh 가 --owner 이름으로 기록한 PID 이고, 인자 값과 앱 로그 layout-file 이 격리 폴더다(perf_effect_common.verify_launch).
   2. 입력 직전마다 자기 PID 를 뺀 xkxk.frameworks.ui.*(및 LEGACY 옛 이름 Pd.Poc.*) 프로세스가 0개다.
+     예외는 --user-pid 로 명시한 사용자 앱 1개뿐이다(시작 때 이미지 이름을 고정하고, 이름이 바뀌면 거부). 입력은 여전히 4 의 전경 게이트·ExpectedProcessId=자기 PID 로만 간다.
   3. 입력 직전마다 pc_away_monitor 가 away 이고 user_away_guard.check 를 통과한다.
   4. 전경 게이트·모니터 경계·safe_click 의 ExpectedProcessId 소유권(시작·끝점)은 retest_real_input.Rig 것을 그대로 쓴다.
   키·이동·터치·휠 입력은 쓰지 않는다(safe_click 왼쪽 끌기만).
@@ -52,13 +53,31 @@ class Precondition(Exception):
     """안전 전제가 깨졌다. 입력을 보내지 않는다."""
 
 
-def other_pd(tasklist_csv, own):
-    """tasklist CSV 에서 자기 PID 를 뺀 xkxk.frameworks.ui.*(및 LEGACY 옛 이름 Pd.Poc.*) PID. 자기 PID 조차 없으면 조회를 믿지 않는다."""
-    pids = [int(r[1]) for r in csv.reader(tasklist_csv.splitlines())
-            if len(r) > 1 and r[0].lower().startswith(("xkxk.frameworks.ui.", "pd.poc")) and r[1].isdigit()]  # "pd.poc" 는 LEGACY(사용자 Pd 앱 Pd.Poc.Desktop.exe) 이름 접두
-    if own not in pids:
+def pd_names(tasklist_csv):
+    """tasklist CSV 의 xkxk.frameworks.ui.*(및 LEGACY 옛 이름 Pd.Poc.*) 프로세스 {PID: 이미지 이름}."""
+    return {int(r[1]): r[0] for r in csv.reader(tasklist_csv.splitlines())
+            if len(r) > 1 and r[0].lower().startswith(("xkxk.frameworks.ui.", "pd.poc")) and r[1].isdigit()}  # "pd.poc" 는 LEGACY(사용자 Pd 앱 Pd.Poc.Desktop.exe) 이름 접두
+
+
+def other_pd(tasklist_csv, own, allowed=None):
+    """자기 PID 와 허용한 사용자 PID(allowed=(PID, 이미지 이름))를 뺀 Pd PID. 자기 PID 조차 없으면 조회를 믿지 않는다.
+    허용 PID 가 다른 이름으로 보이면(PID 재사용 의심) 거부한다. 허용은 사용자가 띄운 앱 1개를 존재만 허락할 뿐 입력 대상이 아니다."""
+    names = pd_names(tasklist_csv)
+    if own not in names:
         raise Precondition("프로세스 목록에 자기 PID %s 가 없다 — 조회를 믿을 수 없다" % own)
-    return [p for p in pids if p != own]
+    if allowed and allowed[0] in names and names[allowed[0]].lower() != allowed[1].lower():
+        raise Precondition("허용한 사용자 PID %s 의 이름이 %s → %s 로 바뀌었다" % (allowed[0], allowed[1], names[allowed[0]]))
+    return [p for p in names if p != own and not (allowed and p == allowed[0])]
+
+
+def declare_user(tasklist_csv, user_pid, own):
+    """--user-pid 로 받은 사용자 앱을 (PID, 이미지 이름)으로 고정한다. 없거나 자기 PID 면 거부한다."""
+    if user_pid is None:
+        return None
+    names = pd_names(tasklist_csv)
+    if user_pid == own or user_pid not in names:
+        raise Precondition("--user-pid %s 는 자기 PID 가 아닌 떠 있는 Pd 프로세스여야 한다(찾은 Pd %s)" % (user_pid, sorted(names)))
+    return user_pid, names[user_pid]
 
 
 def no_shadow(value):
@@ -114,6 +133,7 @@ class OwnRig(real.Rig):
         if problem := perf.verify_launch(self.r, info_path):
             raise Precondition("기동 확인 실패(조작 없음, 종료는 띄운 쪽): " + problem)
         self.pid = int(pid)
+        self.allowed_user = declare_user(self.tasklist(), self.args.user_pid, self.pid)
         self.only_own_pd()
         self.main = app.main_hwnd(self.pid)
         rect, work = (self.win(self.main) or {}).get("rect"), self.monitor["work"]
@@ -121,11 +141,14 @@ class OwnRig(real.Rig):
             raise Precondition("메인 창이 시험 모니터 작업 영역 안이 아니다: %s" % rect)
         return rect
 
-    def only_own_pd(self):
+    def tasklist(self):
         done = subprocess.run(["tasklist.exe", "/FO", "CSV", "/NH"], capture_output=True, timeout=30)
         if done.returncode != 0:
             raise Precondition("프로세스 조회 실패 rc=%d" % done.returncode)
-        others = other_pd(done.stdout.decode("cp949", "replace"), self.pid)
+        return done.stdout.decode("cp949", "replace")
+
+    def only_own_pd(self):
+        others = other_pd(self.tasklist(), self.pid, getattr(self, "allowed_user", None))
         if others:
             raise Precondition("다른 Pd 프로세스가 있다: %s" % others)
 
@@ -252,7 +275,19 @@ def self_test():
         judge("hide", idle, dict(end, shadow="none"), [mid_off])[0] == "FAIL",
         other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"cmd.exe","9"', 7) == [],
         other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"Pd.Poc.Other.exe","8"', 7) == [8],
+        other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"Pd.Poc.Desktop.exe","8"', 7, (8, "Pd.Poc.Desktop.exe")) == [],
+        other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"Pd.Poc.Desktop.exe","8"\n"Pd.Poc.Other.exe","9"', 7, (8, "Pd.Poc.Desktop.exe")) == [9],
+        declare_user('"xkxk.frameworks.ui.desktop.exe","7"\n"Pd.Poc.Desktop.exe","8"', 8, 7) == (8, "Pd.Poc.Desktop.exe"),
+        declare_user("", None, 7) is None,
     ]
+    for bad in (lambda: other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"xkxk.frameworks.ui.desktop.exe","8"', 7, (8, "Pd.Poc.Desktop.exe")),  # PID 재사용 의심
+                lambda: declare_user('"xkxk.frameworks.ui.desktop.exe","7"', 7, 7),  # 자기 PID 허용 금지
+                lambda: declare_user('"xkxk.frameworks.ui.desktop.exe","7"', 8, 7)):  # 없는 PID 허용 금지
+        try:
+            bad()
+            cases.append(False)
+        except Precondition:
+            cases.append(True)
     try:
         other_pd("", 7)
         cases.append(False)
@@ -266,6 +301,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     for name in ("--info", "--owner", "--away-state", "--out", "--monitor", "--onscreen-approved"):
         p.add_argument(name)
+    p.add_argument("--user-pid", type=int, help="떠 있어도 되는 사용자 앱 PID 1개(입력 대상 아님, 전경이 되면 누수로 기록)")
     p.add_argument("--self-test", action="store_true")
     args = p.parse_args()
     if args.self_test:
@@ -273,8 +309,8 @@ def main():
     if not all((args.info, args.owner, args.away_state, args.out, args.monitor, args.onscreen_approved)):
         print("거부: --info·--owner·--away-state·--out·--monitor·--onscreen-approved 가 모두 필요하다")
         return 3
-    args.user_pid = None  # 다른 Pd 는 gate 가 매번 0개로 확인한다(safe_key 는 쓰지 않는다)
-    res, code = {"ac": "AC-028", "approved": args.onscreen_approved, "steps": []}, 2
+    # 다른 Pd 는 gate 가 매번 0개로 확인한다. --user-pid 로 준 1개만 이름 고정으로 존재를 허용하고, Rig 는 그 PID 를 전경 누수·금지 대상으로 쓴다
+    res, code = {"ac": "AC-028", "approved": args.onscreen_approved, "user_pid": args.user_pid, "steps": []}, 2
     try:
         measure(args, res)
         verdicts = [s.get("verdict") for s in res["steps"]]

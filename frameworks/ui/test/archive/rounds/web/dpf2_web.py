@@ -7,12 +7,14 @@ import time
 
 from playwright.sync_api import sync_playwright
 
-sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/tools")
+# 영역 루트 = 이 파일 위치(test/archive/rounds/web) 기준 네 단계 위(UTODO-0012)
+UI_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".."))
+sys.path.insert(0, os.path.join(UI_ROOT, "tools"))
 import retest_browser2 as t  # noqa: E402
 
 URL = os.environ.get("PD_URL", "http://127.0.0.1:5251/")
 t.URL = URL
-OUT = "/mnt/c/DATA/Project/xkxk/frameworks/ui/logs/otest_w1/dpf2"
+OUT = os.path.join(UI_ROOT, "logs", "otest_w1", "dpf2")
 os.makedirs(OUT, exist_ok=True)
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist", "--enable-webgl"]
 PROBE_JS = r"""(() => {

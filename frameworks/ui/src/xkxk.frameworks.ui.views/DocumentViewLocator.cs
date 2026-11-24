@@ -9,6 +9,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Diagnostics;
 using xkxk.frameworks.ui.shell.Docking;
@@ -53,6 +54,102 @@ public sealed class DocumentViewLocator : IDataTemplate
 
     /// <summary>문서별 마지막 host(F1). 키가 약한 참조라 문서가 닫혀 수거되면 항목도 사라진다.</summary>
     private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<PocDocument, Panel> Hosts = new();
+
+    /// <summary>뷰를 만들고 그 첫 배치 프레임까지 그려진 문서(열기 효과 대기 판정, PERF-13). 약한 키.</summary>
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<PocDocument, object> Settled = new();
+
+    /// <summary>뷰 정착을 기다리는 열기 효과 시작 콜백(문서별).</summary>
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<PocDocument, List<Action>> Waiters = new();
+
+    /// <summary>정착 대기 상한(ms). 뷰 생성이 오지 않는 경로(닫힘·화면 밖·진단 지연 실현)에서도 효과가 이 시간 뒤에는 시작한다.</summary>
+    internal const int SettleLimitMs = 400;
+
+    /// <summary>
+    /// 열기 효과 시작을 문서 뷰 정착 뒤로 미룬다(PERF-13). 뷰가 아직 정착하지 않은 문서면 뷰 생성 → 그 첫 배치 프레임 커밋과 뒤처리가 끝난 뒤(또는 SettleLimitMs 뒤) start 를 1회 부르고 true.
+    /// 이미 정착했거나 문서가 아니면 false 이며 호출 쪽이 바로 시작한다. 폼·간트 뷰는 빈 칸·스피너를 먼저 그린 뒤 만들어지므로(요건 2), 재생을 창이 붙는 순간 시작하면 뷰 생성·첫 템플릿·배치 비용이 재생 2~3번째 프레임에 들어간다.
+    /// </summary>
+    internal static bool DeferUntilViewSettled(object? data, Action start)
+    {
+        if (data is not PocDocument doc || Settled.TryGetValue(doc, out _))
+        {
+            PerfProbe.Current.SetText(SettlePathKey, "immediate"); // 진단(K4 ①): 대기 없이 바로 재생
+            return false;
+        }
+
+        var fired = false;
+        void Once()
+        {
+            if (!fired)
+            {
+                fired = true;
+                start();
+            }
+        }
+
+        PerfProbe.Current.SetText(SettlePathKey, "waiting");
+        Waiters.GetOrCreateValue(doc).Add(Once);
+        DispatcherTimer.RunOnce(() =>
+        {
+            if (!fired)
+            {
+                PerfProbe.Current.SetText(SettlePathKey, "timer"); // 상한 폴백으로 시작
+                if (Waiters.TryGetValue(doc, out var pending))
+                {
+                    pending.Remove(Once); // 뒤늦은 정착이 경로 표식을 덮어쓰지 않게
+                }
+            }
+
+            Once();
+        }, TimeSpan.FromMilliseconds(SettleLimitMs));
+        return true;
+    }
+
+    /// <summary>진단 키(제품판 PerfProbe 는 아무것도 하지 않는다): 열기 효과 시작 경로 immediate|waiting|timer|idle|detached, 대기 시간, 시작 직전 배치 비우기 시간.</summary>
+    private const string SettlePathKey = "motion_settle_path";
+
+    /// <summary>
+    /// 뷰를 붙인 직후: 새 뷰를 배치하는 프레임(첫 rAF)이 커밋되고, 뷰 실현이 걸어 둔 뒤처리(UiDeferred — 오버레이 종료·불러오는 중 해제 등)까지 끝난 뒤(ContextIdle)
+    /// 그 뒤처리가 남긴 배치를 지금 비우고 정착으로 표시해 대기자를 부른다. 이렇게 해야 재생 시작 틱에 남은 배치가 들어가 첫 커밋이 vsync 를 놓치지 않는다(K4 누락).
+    /// 화면에 안 붙어 있으면 바로 정착한다.
+    /// </summary>
+    private static void SettleAfterFirstFrame(PocDocument doc, Control anchor)
+    {
+        var clock = System.Diagnostics.Stopwatch.StartNew();
+        void Fire(string path)
+        {
+            if (Settled.TryGetValue(doc, out _))
+            {
+                return;
+            }
+
+            Settled.AddOrUpdate(doc, doc);
+            if (Waiters.TryGetValue(doc, out var list) && list.Count > 0)
+            {
+                Waiters.Remove(doc);
+                PerfProbe.Current.SetText(SettlePathKey, path);
+                PerfProbe.Current.SetMetric("motion_settle_ms", clock.Elapsed.TotalMilliseconds);
+                foreach (var start in list)
+                {
+                    start();
+                }
+            }
+        }
+
+        if (TopLevel.GetTopLevel(anchor) is { } top)
+        {
+            top.RequestAnimationFrame(_ => Dispatcher.UIThread.Post(() =>
+            {
+                var before = clock.Elapsed.TotalMilliseconds;
+                top.UpdateLayout(); // 뒤처리가 무효화한 배치를 재생 시작 전에 끝낸다(이미 깨끗하면 비용 없음)
+                PerfProbe.Current.SetMetric("motion_settle_flush_ms", clock.Elapsed.TotalMilliseconds - before);
+                Fire("idle");
+            }, DispatcherPriority.ContextIdle));
+        }
+        else
+        {
+            Fire("detached");
+        }
+    }
 
     /// <summary>
     /// host 를 지금 부모에서 떼어 낸다(공개 API 만 — Dock ControlRecycling 의 떼어 내기와 같은 규칙).
@@ -140,6 +237,7 @@ public sealed class DocumentViewLocator : IDataTemplate
                 }
 
                 xkxk.frameworks.ui.shell.Busy.BusyHooks.DocumentRealized(doc.Id);
+                SettleAfterFirstFrame(doc, frame); // 열기 효과 대기 해제(PERF-13) — 닫혀 건너뛴 경우도 대기자를 풀어 준다
             }
 
             // 복원 지연(B5): 안 보이는 복원 문서는 빈 칸으로 두고 만들 때를 컨트롤 층(RestoreViewDeferral)이 정한다.

@@ -13,7 +13,8 @@ extra_env = {}
 if "--env" in sys.argv:
     k, v = sys.argv[sys.argv.index("--env") + 1].split("=", 1)
     extra_env[k] = v
-UI = "/mnt/c/DATA/Project/xkxk/frameworks/ui/"
+# 영역 루트 = 이 파일 위치(test/archive/rounds/desktop) 기준 네 단계 위, 끝 구분자 유지(UTODO-0012)
+UI = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..")) + "/"
 OUT = UI + "logs/otest/desktop/rt3/q10_%s/" % tag
 os.makedirs(OUT, exist_ok=True)
 env = dict(os.environ, **extra_env)

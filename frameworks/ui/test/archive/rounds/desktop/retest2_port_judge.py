@@ -19,7 +19,9 @@ import sys
 from PIL import Image
 
 NEW = sys.argv[1]
-BASE = sys.argv[2] if len(sys.argv) > 2 else "/mnt/c/DATA/Project/xkxk/frameworks/ui/logs/otest/desktop/retest2"
+# 영역 루트 = 이 파일 위치(test/archive/rounds/desktop) 기준 네 단계 위(UTODO-0012)
+UI_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".."))
+BASE = sys.argv[2] if len(sys.argv) > 2 else os.path.join(UI_ROOT, "logs", "otest", "desktop", "retest2")
 OUT = sys.argv[3] if len(sys.argv) > 3 else os.path.join(NEW, "judge.json")
 
 

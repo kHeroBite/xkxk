@@ -23,7 +23,7 @@ namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 /// 경로: POST /api/cmd {"cmd","args"} 또는 /api/{영역}/{동작}(쿼리·JSON 본문이 인자). GET /api/screenshot/download 는 PNG 바이트.
 /// 개발·시험 전용. 운영 배포 빌드에서는 켜지 않는다(README 보안 주의).
 /// </summary>
-public sealed class RemoteControlServer : IDisposable
+public sealed partial class RemoteControlServer : IDisposable
 {
     public const int DefaultPort = 5960; // Mars(5959) 와 동시 실행해도 겹치지 않게 +1
     public const string EnvName = "PD_REMOTE_CONTROL";
@@ -213,78 +213,7 @@ public sealed class RemoteControlServer : IDisposable
         }
     }
 
-    private async Task<(int Status, string ContentType, byte[] Body)> HandleAsync(RemoteHttpRequest req, long received)
-    {
-        var path = req.Path.Trim('/');
-        if (!path.StartsWith("api", StringComparison.OrdinalIgnoreCase))
-        {
-            return Json(404, RemoteProtocol.Error(path, "경로는 /api/... 입니다(GET /api/help)."));
-        }
-
-        var cmd = path.Length > 3 ? path[4..].Replace('/', '.') : "help";
-        if (cmd.Equals("health", StringComparison.OrdinalIgnoreCase))
-        {
-            var (ready, reason) = await VisualTreeInspector.ReadyAsync(); // ready=TopLevel·뷰모델·셸 모두 있음, 아니면 reason=첫 결핍(lead 02:5x)
-            return Json(200, RemoteProtocol.Ok("health", new JsonObject { ["app"] = "Pd.Poc", ["pid"] = Environment.ProcessId, ["ready"] = ready, ["reason"] = reason, ["restore"] = RemoteCommands.StartupRestore }, 0)); // restore=기동 복원 결과(odev-2 RestoreResult)
-        }
-
-        if (!Authorized(req))
-        {
-            return Json(401, RemoteProtocol.Error(cmd, $"토큰이 필요합니다(X-Pd-Token). 연결 정보: {InfoFilePath}"));
-        }
-
-        var args = ReadArgs(req);
-        if (cmd.Equals("cmd", StringComparison.OrdinalIgnoreCase))
-        {
-            cmd = args.ReqStr("cmd");
-            args = args["args"] is JsonObject inner ? (JsonObject)inner.DeepClone() : new JsonObject();
-        }
-
-        if (Aliases.TryGetValue(cmd, out var alias)) { cmd = alias; }
-        if (cmd.Equals("screenshot.download", StringComparison.OrdinalIgnoreCase))
-        {
-            // screenshot 명령으로 PNG 를 만든 뒤 바이트를 그대로 돌려준다(Mars 동명 경로 호환)
-            var shot = await _router.InvokeAsync("screenshot", args, received);
-            var file = (JsonNode.Parse(shot)?["result"] as JsonObject)?.Str("path");
-            return file is not null && File.Exists(file) ? (200, "image/png", await File.ReadAllBytesAsync(file)) : Json(400, shot);
-        }
-
-        var json = await _router.InvokeAsync(cmd, args, received);
-        return Json(json.Contains("\"ok\": true", StringComparison.Ordinal) ? 200 : 400, json);
-    }
-
-    private static (int, string, byte[]) Json(int status, string json) => (status, "application/json; charset=utf-8", Encoding.UTF8.GetBytes(json));
-
-    private static Task SendAsync(Stream s, int status, string json, CancellationToken ct) =>
-        RemoteHttp.WriteAsync(s, status, "application/json; charset=utf-8", Encoding.UTF8.GetBytes(json), ct);
-
-    private bool Authorized(RemoteHttpRequest req)
-    {
-        var given = req.Headers.GetValueOrDefault("X-Pd-Token")
-            ?? (req.Headers.GetValueOrDefault("Authorization") is { } auth && auth.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase) ? auth[7..].Trim() : null)
-            ?? req.Query.GetValueOrDefault("token");
-        return given is not null && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(given), Encoding.UTF8.GetBytes(Token));
-    }
-
-    /// <summary>쿼리 문자열(token 제외) + JSON 본문(객체)을 합친 인자. 본문 값이 우선한다.</summary>
-    private static JsonObject ReadArgs(RemoteHttpRequest req)
-    {
-        var args = new JsonObject();
-        foreach (var (k, v) in req.Query)
-        {
-            if (k != "token") { args[k] = v; }
-        }
-
-        if (!string.IsNullOrWhiteSpace(req.Body))
-        {
-            foreach (var (k, v) in RemoteProtocol.ParseObject(req.Body).ToList())
-            {
-                args[k] = v?.DeepClone();
-            }
-        }
-
-        return args;
-    }
+    // 경로 분기(HandleAsync)·응답 헬퍼(Json·SendAsync)·토큰 확인(Authorized)·인자 읽기(ReadArgs)는 RemoteControlServer.Routes.cs
 
     /// <summary>서버 중지 + 연결 정보 파일 삭제(앱 종료 시 호스트가 호출).</summary>
     public void Dispose()

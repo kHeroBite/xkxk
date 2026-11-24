@@ -37,7 +37,9 @@ import retest_panel_title_drag as drag_lib  # noqa: E402
 import user_away_guard as away  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(HERE, "..", "..", "..", "..", ".."))
-SAFE_CLICK = os.path.join(ROOT, ".claude", "scripts", "safe_click.ps1")
+AREA = os.path.abspath(os.path.join(HERE, "..", "..", ".."))  # 영역 루트(frameworks/ui). ROOT 는 저장소 루트 의미 그대로 둔다
+AREA_REL = os.path.relpath(AREA, ROOT)  # 저장소 루트 기준 영역 상대경로("frameworks/ui"). 옛 Pd 레이아웃의 "poc/ui" 자리(자기시험 임시 트리도 이 구조를 흉내 낸다)
+SAFE_CLICK = os.path.abspath(os.path.join(HERE, "..", "..", "..", "tools", "safe_click.ps1"))  # 영역 tools/ 사본(옛 Pd:.claude/scripts, 2026-11-24 이전)
 SAFE_KEY = os.path.join(HERE, "safe_key.ps1")
 FG_INFO = os.path.join(HERE, "..", "..", "common", "measure", "fg_info.ps1")
 GRAB = os.path.join(HERE, "..", "..", "common", "measure", "screen_grab_client.ps1")
@@ -441,7 +443,7 @@ class Result:
         self.started_at = now_iso()
         self.script, self.build = script, build
         sub = "" if args.phase == "final" else "discovery"
-        self.dir = out_dir or os.path.join(root, "poc", "ui", "logs", "pcaway", sub)
+        self.dir = out_dir or os.path.join(root, AREA_REL, "logs", "pcaway", sub)  # root 기본값 ROOT 면 AREA/logs/pcaway
         self.shots = os.path.join(self.dir, "shots", self.run_id)
         self.safety = {"user_pd_untouched": False, "user_files_same": False, "input_leak": True, "user_returned": away.user_returned()}
         self.expect = gate_expect(getattr(args, "session", None), ac)
@@ -1275,8 +1277,17 @@ def drive(args, table, req, role, script, human=None, result_cls=None):
     return code
 
 
-def gate_module(session):
+GATE_REPO = os.path.join(AREA, "test", "desktop", "judge", "pcaway_gate.py")  # 저장소 사본(2026-11-24 Pd 보관본에서 복원)
+
+
+def gate_file(session):
+    """세션 폴더의 pcaway_gate.py 가 있으면 그것, 없으면 저장소 사본(test/desktop/judge/pcaway_gate.py)."""
     path = os.path.join(session or "", "pcaway_gate.py")
+    return path if os.path.exists(path) else GATE_REPO
+
+
+def gate_module(session):
+    path = gate_file(session)
     if not os.path.exists(path):
         return None
     spec = importlib.util.spec_from_file_location("pcaway_gate_probe", path)
@@ -1301,7 +1312,7 @@ def _good_value(rule):
 
 def self_test_gate(req, session, build_role, items, human=None):
     """임시 트리에서 Result 로 쓴 결과를 실제 판정기에 넘긴다: 판독 전 FAIL, 판독 후 PASS, 측정 실패·복귀·미측정 FAIL. 앱·입력은 쓰지 않는다."""
-    gate_path = os.path.join(session or "", "pcaway_gate.py")
+    gate_path = gate_file(session)
     if not os.path.exists(gate_path):
         print("SKIP 판정기 왕복(판정기 없음): %s" % gate_path)
         return []
@@ -1309,9 +1320,9 @@ def self_test_gate(req, session, build_role, items, human=None):
     tmp = tempfile.mkdtemp(prefix="pd_ri_")
     try:
         root, sess = os.path.join(tmp, "repo"), os.path.join(tmp, "sess")
-        os.makedirs(os.path.join(root, "poc", "ui", "bin"))
+        os.makedirs(os.path.join(root, AREA_REL, "bin"))
         os.makedirs(os.path.join(sess, "plans"))
-        tool, bin_file = os.path.join(root, "poc", "ui", "tool.py"), os.path.join(root, "poc", "ui", "bin", "app.dll")
+        tool, bin_file = os.path.join(root, AREA_REL, "tool.py"), os.path.join(root, AREA_REL, "bin", "app.dll")
         for p in (tool, bin_file):
             with open(p, "w", encoding="utf-8") as f:
                 f.write("x\n")

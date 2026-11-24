@@ -1,6 +1,6 @@
 #!/bin/bash
 # 데스크톱 측정 래퍼 공용 함수(기동·PID·종료·부하 게이트·전경 감시·사용자 파일 md5). 실입력 없음, 항상 --offscreen-guard on
-U=/mnt/c/DATA/Project/xkxk/frameworks/ui
+U=$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/../../../.." && pwd)  # 영역 루트 = 이 파일 위치 기준 네 단계 위, source 해도 BASH_SOURCE 로 판정(UTODO-0012)
 O=$U/logs/otest/desktop/i2400
 FG=$U/test/common/measure/fgwatch2.ps1  # D-TESTDIR: 옛 logs/otest/desktop/i1835rc/fgwatch2.ps1
 CONF=${CONF:-i2400rc_diag}   # 환경변수 CONF 로 판 지정(사본 없이 확장). 기본 i2400rc_diag

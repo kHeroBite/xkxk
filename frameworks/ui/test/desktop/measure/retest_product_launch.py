@@ -29,7 +29,7 @@ REQ = {
     "F11": ["product_log_panel_hidden", "view_menu_consistent", "doc_03_records_exception"],
 }
 UIA = os.path.join(HERE, "uia_invoke.ps1")
-DOC_03 = os.path.join(ri.ROOT, "plan", "09_화면설계", "03_데스크톱_화면설계.md")
+DOC_03 = os.path.join(ri.AREA, "plan", "09_화면설계", "03_데스크톱_화면설계.md")  # 영역 plan(저장소 루트 plan 아님, 2026-11-24 수정)
 ALIVE_WAIT_S = 8
 CLOSE_WAIT_S = 20
 LOG_NAMES = "'로그','Log'"

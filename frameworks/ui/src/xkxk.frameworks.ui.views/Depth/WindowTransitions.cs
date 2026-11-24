@@ -56,8 +56,10 @@ public static partial class WindowTransitions
     }
 
     /// <summary>MDI 문서 창이 처음 화면에 붙음(DepthTransitions.Open 의 처음-붙음 판정 뒤). 최대화면 최대화 행, 아니면 겹침 행의 열기 효과.</summary>
+    // 창은 지금 시작 상태로 두고, 문서 뷰 생성이 미뤄진 문서면 진행(시계·구간 표식)은 뷰 정착 뒤 시작한다(PERF-13, 상한 DocumentViewLocator.SettleLimitMs).
     internal static void OnWindowOpened(MdiDocumentWindow window) =>
-        Play(window, MotionDirection.Enter, DesignThemeResolver.OpenEffect(MdiPlacement(window)), null, null);
+        Play(window, MotionDirection.Enter, DesignThemeResolver.OpenEffect(MdiPlacement(window)), null, null,
+            start => DocumentViewLocator.DeferUntilViewSettled(window.DataContext, start));
 
     /// <summary>MDI 겹침 열기 효과가 3D 기울기인가(DepthPrewarm 이 예열 여부를 같은 판단으로 정한다).</summary>
     internal static bool TiltOpenAllowed() =>
@@ -159,8 +161,11 @@ public static partial class WindowTransitions
         return Enum.GetValues<MotionSwitchSources>().Where(f => f != MotionSwitchSources.None && flags.HasFlag(f)).Select(f => UiKeyNames.Of(f)).ToArray();
     }
 
-    /// <summary>효과를 시작해 화면 프레임마다 진행한다. 효과 없음·시간 0·화면 밖·합성 불가면 onEnd 만 바로 부른다.</summary>
-    private static void Play(Control target, MotionDirection direction, string id, double? startOpacity, Action? onEnd)
+    /// <summary>
+    /// 효과를 시작해 화면 프레임마다 진행한다. 효과 없음·시간 0·화면 밖·합성 불가면 onEnd 만 바로 부른다.
+    /// gate = 진행 시작을 미룰 대기(시작 콜백을 받아 미뤘으면 true). 미루는 동안 대상은 시작 상태(Step(0))로 그려진다.
+    /// </summary>
+    private static void Play(Control target, MotionDirection direction, string id, double? startOpacity, Action? onEnd, Func<Action, bool>? gate = null)
     {
         var effect = MotionEffects.Find(direction, id);
         var ms = (double)DesignThemeResolver.MotionMs();
@@ -192,8 +197,23 @@ public static partial class WindowTransitions
             top.RequestAnimationFrame(Frame);
         }
 
-        playback.MarkStart(); // 진단 구간 motion.play(PERF-13)
-        top.RequestAnimationFrame(Frame);
+        void Start()
+        {
+            if (playback.Done)
+            {
+                onEnd?.Invoke(); // 대기 중 중단(끌기 시작 등)
+                return;
+            }
+
+            clock.Restart();
+            playback.MarkStart(); // 진단 구간 motion.play(PERF-13)
+            top.RequestAnimationFrame(Frame);
+        }
+
+        if (gate is null || !gate(Start))
+        {
+            Start();
+        }
     }
 
     /// <summary>

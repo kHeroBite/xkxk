@@ -8,12 +8,15 @@
 판정 규칙: rules_otest12.md(결과 보기 전 고정).
 """
 import json
+import os
 import sys
 import time
 import types
 
-sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/tools")
-sys.path.insert(0, "/mnt/c/DATA/Project/xkxk/frameworks/ui/test/common")  # D-TESTDIR: test/common/_paths.py
+# 영역 루트 = 이 파일 위치(test/archive/rounds/desktop) 기준 네 단계 위(UTODO-0012)
+UI_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".."))
+sys.path.insert(0, os.path.join(UI_ROOT, "tools"))
+sys.path.insert(0, os.path.join(UI_ROOT, "test", "common"))  # D-TESTDIR: test/common/_paths.py
 import _paths  # noqa: E402
 _paths.add()
 import retest_window_menu as rwm  # noqa: E402
