@@ -240,8 +240,8 @@ def stats_block(layers):
 def render(infos, layers, cross, targets):
     counts = stats_block(layers)
     splits = partial_splits(infos, layers)
-    lines = ["# poc/ui 소스 계층 분류표", "",
-             "> 자동 생성물 — 고치지 말고 `python3 poc/ui/tools/classify_layers.py` 로 재생성한다. 예외는 `tools/classify_layers_overrides.json`(사유 필수).",
+    lines = ["# frameworks/ui 소스 계층 분류표", "",
+             "> 자동 생성물 — 고치지 말고 `python3 -B tools/classify_layers.py`(영역 루트 `frameworks/ui` 기준) 로 재생성한다. 예외는 `tools/classify_layers_overrides.json`(사유 필수).",
              "> 층 정의와 참조 규칙의 정본은 `plan/04_기술스택/02_소스구조_분할규칙.md`, 강제는 `tools/check_layers.py` 다. 형식 참조는 정규식 근사이고 빌드가 최종 판정이다.", "",
              "## 분류별 파일 수", "", "| 층 | 파일 수 |", "|---|---:|"]
     lines += [f"| {k} | {counts[k]} |" for k in sorted(counts)]

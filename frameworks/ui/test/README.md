@@ -1,4 +1,4 @@
-# PD UI 시험 도구 (poc/ui/test)
+# PD UI 시험 도구 (frameworks/ui/test)
 
 다음 사이클에도 그대로 쓰는 시험 도구 모음이다. 판정 규칙·결과·증거는 각 회차의 `logs/<에이전트>/<회차>/` 에 남고, 여기에는 도구만 둔다. 2026-10-31 D-TESTDIR 로 tools/·logs/ 에서 옮겨 모았다.
 
@@ -197,7 +197,7 @@
 ## 그림자 측정(Q2 #16)
 측정과 판정은 두 단계로 나뉜다. 대상 창은 시험이 직접 띄운 프로세스여야 하고(사용자 Pd·사용자 메모장 금지), 그 PID 를 모두 `--own-pid` 로 준다.
 ```bash
-cd /mnt/c/DATA/Project/Pd/poc/ui
+cd /mnt/c/DATA/Project/xkxk/frameworks/ui
 python3 -B test/desktop/measure/shadow_q16.py --target-hwnd <SDI hwnd> --target-pid <pid> --bg-hwnd <같은 Pd 메인 hwnd> --bg-pid <pid> --own-pid <pid> --out-dir logs/<에이전트>/<회차>/q16 --label pd
 python3 -B test/desktop/judge/shadow_q16_judge.py --dir logs/<에이전트>/<회차>/q16 --label pd     # rc 0=A0~A4 PASS, 1=FAIL, 2=A0 판정 불가
 ```
@@ -215,7 +215,7 @@ _paths.add()
 ```
 - archive 회차본은 내용을 바꾸지 않았으므로 PYTHONPATH 로 공용 라이브러리 위치를 알려 준다.
 ```bash
-cd /mnt/c/DATA/Project/pd/poc/ui
+cd /mnt/c/DATA/Project/xkxk/frameworks/ui
 PYTHONPATH=test/web/measure:test/common/measure:test/desktop/measure:tools python3 -B test/archive/rounds/web/retest_browser18.py
 PYTHONPATH=test/mobile/measure:test/common/measure:test/web/measure:tools python3 -B test/archive/rounds/mobile/retest_android_i2400rc.py
 ```
@@ -223,7 +223,7 @@ PYTHONPATH=test/mobile/measure:test/common/measure:test/web/measure:tools python
 ```bash
 PYTHONPATH=test/common:test/web/measure:test/common/measure:test/desktop/measure:tools python3 -B test/archive/rounds/web/retest_web_i1505_base.py --url-part <주소> --tag F --out <폴더>
 ```
-- 절대경로가 박힌 스크립트는 원본 체크아웃(`/mnt/c/DATA/Project/pd/poc/ui` 또는 `.../Pd/poc/ui`)을 그대로 가리킨다. `fg_input.sh` 의 `c()` 는 옛 자리 `test/desktop/measure/fg_drive.py` 를 부르므로 옮긴 뒤에는 그대로 실행되지 않는다. 내용은 고치지 않았다.
+- `test/archive/` 의 옮겨 온 스크립트 14개는 2026-11-24 UTODO-0001 처리(커밋 11e47c3)로 새 홈 절대경로(`/mnt/c/DATA/Project/xkxk/frameworks/ui`)를 가리킨다(목록은 `plan/90_결정관리/이전기록_2026-11-24_경로고정목록.md` §5). 영역 위치가 바뀌면 다시 고쳐야 한다(UTODO-0001 후속 행). `fg_input.sh` 의 `c()` 는 옛 자리 `test/desktop/measure/fg_drive.py` 를 부르므로 옮긴 뒤에는 그대로 실행되지 않는다. 내용은 고치지 않았다.
 
 ## 안전 규칙 (모든 도구 공통)
 1. 사용자 파일(layout.json·settings.json)은 건드리지 않는다. 임시 프로필(`--profile-dir` 빈 새 폴더)이나 `--fresh` 로 띄우고, 시험 전후 md5 를 결과에 남긴다(common/measure/retest_user_files.py).
