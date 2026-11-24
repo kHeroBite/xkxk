@@ -17,6 +17,7 @@ import judge_session as session
 HELD_MIN = 0.05   # 멈춘 화면이 정지 화면과 달라야 하는 화소 비율
 SAME_MAX = 0.005  # 복원 뒤 정지 화면과 달라도 되는 화소 비율(캐럿·시각 표시)
 PIXEL = 30
+PIXEL_LOW = 12    # 어두운 테마처럼 창과 뒤 배경의 밝기차가 작을 때만 쓰는 낮은 색차 기준(HELD_MIN 문턱은 그대로)
 
 
 def verdict(problems, why, **data):
@@ -52,11 +53,19 @@ def judge_interrupt(held, left, changed, after):
     return verdict(bad, "남은 전환 0·원래 값 복원", changed=changed, after=after)
 
 
-def ratio(a, b, box):
+def ratio(a, b, box, pixel=PIXEL):
     from PIL import ImageChops
 
-    diff = ImageChops.difference(a.crop(box), b.crop(box)).convert("L").point(lambda v: 255 if v > PIXEL else 0)
+    diff = ImageChops.difference(a.crop(box), b.crop(box)).convert("L").point(lambda v: 255 if v > pixel else 0)
     return diff.histogram()[255] / float(max(1, diff.width * diff.height))
+
+
+def held_changed(strict, low, noise):
+    """멈춘 화면 변화 비율. 기본 색차(PIXEL) 값이 문턱 미만이어도, 같은 정지 화면끼리의 낮은 색차 잡음(noise)이
+    SAME_MAX 이하라 낮은 색차 값을 믿을 수 있으면 낮은 색차 값을 쓴다(밝은 테마처럼 strict 가 문턱 이상이면 그대로)."""
+    if strict >= HELD_MIN or noise is None or noise > SAME_MAX:
+        return strict
+    return max(strict, low)
 
 
 def judge(s):
@@ -84,10 +93,13 @@ def judge(s):
         box = (max(0, int(x) + 4), max(0, int(y) + 4),
                min(still.width, int(x + bounds["w"] * scale) - 4), min(still.height, int(y + bounds["h"] * scale) - 4))
 
+        noise = ratio(still, s.capture("motion_still_again")[0], box, PIXEL_LOW)  # 낮은 색차 기준의 잡음 바닥
+
         def hold(effect, name):
             held = s.call("motion.probe", effect=effect, hold="0.3")
             time.sleep(0.6)
-            return held, ratio(still, s.capture(name)[0], box)
+            shot = s.capture(name)[0]
+            return held, held_changed(ratio(still, shot, box), ratio(still, shot, box, PIXEL_LOW), noise)
 
         held, changed = hold("wipeRight", "motion_held_press")
         s.call("ui.pointerDrag", id="PART_Grid", doc=doc, dx=0, dy=0, steps=1)  # 끌기 시작 = 누름(이동 0)
@@ -133,6 +145,11 @@ def self_test():
         ("안 그려짐 INVALID", judge_interrupt(held, left, 0.0, 0.0)["verdict"] == "INVALID"),
         ("멈춤 실패 INVALID", judge_interrupt({"held": None}, left, 0.4, 0.0)["verdict"] == "INVALID"),
         ("닫기 PASS", judge_interrupt(held, left, 0.4, None)["verdict"] == "PASS"),
+        ("밝은 테마 변화 그대로", held_changed(0.4, 0.5, 0.0) == 0.4),
+        ("어두운 테마 0.0489 보정", held_changed(0.0489, 0.12, 0.0) == 0.12),
+        ("보정 후 문턱 통과", judge_interrupt(held, left, held_changed(0.0489, 0.12, 0.0), 0.0)["verdict"] == "PASS"),
+        ("잡음 큼 보정 안 함", held_changed(0.0489, 0.12, 0.02) == 0.0489),
+        ("진짜 안 그려짐 INVALID", judge_interrupt(held, left, held_changed(0.0, 0.001, 0.0), 0.0)["verdict"] == "INVALID"),
     ])
 
 
