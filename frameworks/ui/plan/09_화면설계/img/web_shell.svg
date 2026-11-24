@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" width="1280" height="800" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="13">
+  <!-- 웹(PC 브라우저) 셸 와이어프레임 (04_웹_화면설계.md §1) -->
+  <rect x="0" y="0" width="1280" height="800" fill="#DADDE3"/>
+  <rect x="0" y="0" width="1280" height="72" fill="#E8EAED"/>
+  <rect x="10" y="8" width="220" height="28" rx="6" fill="#FFFFFF"/><text x="22" y="27">Pd — 이슈 목록</text>
+  <text x="1150" y="27" fill="#444">—   ☐   ✕</text>
+  <text x="980" y="27" fill="#8A93A6" font-size="11">브라우저 캡션 버튼(W-01)</text>
+  <rect x="10" y="40" width="1260" height="26" rx="13" fill="#FFFFFF"/>
+  <text x="24" y="58" fill="#444">←  →  ⟳   https://(서버군 호스트)/app/scr-iss-01   ← 딥링크(제안, W-05)</text>
+  <rect x="0" y="72" width="1280" height="32" fill="#22325A"/>
+  <rect x="10" y="79" width="18" height="18" rx="4" fill="#7FA7FF"/>
+  <text x="44" y="93" fill="#FFFFFF">파일(F)   창(W)   보기(V)   시스템(Y)</text>
+  <text x="760" y="93" fill="#FFFFFF">[전체화면] [사용자]</text>
+  <!-- 오른쪽 도구(사용자 지시 2026-11-07, 01 §2-1·04 W-01): 웹은 캡션 버튼이 없어 테마 아이콘이 오른쪽 끝, 그 왼쪽에 UI 방식 4칸. [전체화면]·[사용자]와의 좌우 순서는 웹 실측 뒤 확정 -->
+  <rect x="930" y="79" width="58" height="18" rx="3" fill="#2E4170" stroke="#7FA7FF"/><text x="938" y="93" fill="#FFFFFF" font-size="11">[자동]</text>
+  <rect x="992" y="79" width="50" height="18" rx="3" fill="#7FA7FF"/><text x="1000" y="93" fill="#22325A" font-size="11">PC형</text>
+  <rect x="1046" y="79" width="58" height="18" rx="3" fill="#2E4170"/><text x="1052" y="93" fill="#FFFFFF" font-size="11">태블릿형</text>
+  <rect x="1108" y="79" width="58" height="18" rx="3" fill="#2E4170"/><text x="1114" y="93" fill="#FFFFFF" font-size="11">모바일형</text>
+  <text x="1250" y="93" fill="#FFFFFF">☀</text>
+  <rect x="0" y="104" width="1280" height="26" fill="#E4E8F0"/><text x="220" y="122">[홈 대시보드] [이슈 목록 ✓] [위키]</text>
+  <!-- 제목 줄 오른쪽 끝 관리형 독립 창 아이콘(04 W-18) -->
+  <rect x="1256" y="109" width="16" height="16" rx="3" fill="#22325A"/>
+  <rect x="0" y="130" width="210" height="670" fill="#FFFFFF" stroke="#C5CBD8"/><text x="10" y="150">탐색기 (패널·서랍)</text>
+  <rect x="1060" y="130" width="220" height="670" fill="#FFFFFF" stroke="#C5CBD8"/><text x="1070" y="150">알림 서랍</text>
+  <rect x="210" y="130" width="850" height="670" fill="#EEF0F4"/>
+  <text x="230" y="154" fill="#8A93A6">MDI 문서 영역 — 독립 창은 관리형 창(앱 화면 안)으로 대체 (W-02)</text>
+  <rect x="280" y="190" width="600" height="380" rx="8" fill="#FFFFFF" stroke="#22325A"/>
+  <rect x="280" y="190" width="600" height="32" rx="8" fill="#22325A"/>
+  <text x="292" y="211" fill="#FFFFFF">이슈 목록</text><text x="760" y="211" fill="#FFFFFF">📌  ⤒  —  ☐  ✕</text>
+  <text x="296" y="250">필터 · 그리드 (데스크톱과 같은 Shell 화면)</text>
+  <rect x="560" y="420" width="440" height="230" rx="8" fill="#FFFFFF" stroke="#8C9BBE"/>
+  <rect x="560" y="420" width="440" height="32" rx="8" fill="#DCE3F2"/>
+  <text x="572" y="441">관리형 창 — 이슈 상세 (분리 대신)</text>
+  <text x="572" y="490" fill="#555">파일 첨부: 올리기 · 내려받기 (W-06)</text>
+  <text x="572" y="514" fill="#555">Ctrl+Tab·Ctrl+W 는 브라우저 예약 → 창 메뉴·탭으로 (W-04)</text>
+  <text x="230" y="780" fill="#555">앱 화면 폭 &lt; 600dp → 스마트폰 NAV 자동 전환 · 높이 변화로는 바꾸지 않음</text>
+</svg>

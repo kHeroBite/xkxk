@@ -1,0 +1,16 @@
+<!-- macOS 신호등(닫기·최소화·확대) 색·기호 토큰 — 색은 PD 설계값이며 공식값이 아니다(Apple HIG 는 key 창 컬러·비활성 회색만 규정). Mac 실측 과제. 기호는 PD 가 직접 그린 벡터(Apple 자산 복제 아님). CaptionLayout 이 macOS 스타일일 때 별칭으로 건다 -->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <SolidColorBrush x:Key="PdBrushMacCapClose" Color="#FF5F57" />
+  <SolidColorBrush x:Key="PdBrushMacCapMin" Color="#FEBC2E" />
+  <SolidColorBrush x:Key="PdBrushMacCapMax" Color="#28C840" />
+  <SolidColorBrush x:Key="PdBrushMacCapClosePressed" Color="#BF4943" />
+  <SolidColorBrush x:Key="PdBrushMacCapMinPressed" Color="#BF8E22" />
+  <SolidColorBrush x:Key="PdBrushMacCapMaxPressed" Color="#1E9631" />
+  <SolidColorBrush x:Key="PdBrushMacCapInactive" Color="#CDCDCD" /><!-- HIG: inactive·non-key main 창은 gray -->
+  <SolidColorBrush x:Key="PdBrushMacCapGlyph" Color="#99000000" />
+  <!-- 기호(10×10 격자): 닫기 ×, 최소화 −, 확대(전체화면) 삼각형 2개 -->
+  <StreamGeometry x:Key="PdMacGlyphClose">M1,0 L5,4 L9,0 L10,1 L6,5 L10,9 L9,10 L5,6 L1,10 L0,9 L4,5 L0,1 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdMacGlyphMinimize">M0,4.2 H10 V5.8 H0 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdMacGlyphZoom">M1,1 H7 L1,7 Z M9,9 H3 L9,3 Z</StreamGeometry>
+</ResourceDictionary>

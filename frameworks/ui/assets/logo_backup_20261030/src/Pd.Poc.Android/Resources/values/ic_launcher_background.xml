@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- adaptive 아이콘 배경색 — tools/make_icons.py 가 원본 왼쪽 가장자리 색으로 생성 -->
+<resources>
+  <color name="ic_launcher_background">#215F9A</color>
+</resources>

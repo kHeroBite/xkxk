@@ -1,0 +1,177 @@
+<!-- 설정 창 '창' 페이지(요건 7) — 창 스타일·그림자·항상 메인 창 위·자석·Esc·탭 더블클릭·자동 저장·캡처 방지·트레이·화면 방식. 값은 WindowPageViewModel, 이 파일에 로직 없음 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Pd.Poc.Shell.ViewModels"
+             xmlns:vms="using:Pd.Poc.Shell.ViewModels.Settings"
+             xmlns:loc="using:Pd.Poc.Shell.Localization"
+             xmlns:views="using:Pd.Poc.Shell.Platform"
+             xmlns:ui="using:Pd.Ui.Controls"
+             x:Class="Pd.Ui.Views.Settings.WindowPage"
+             x:DataType="vms:WindowPageViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="OptionTemplate" x:DataType="vm:LocalizedOption">
+      <TextBlock Text="{Binding Text}" />
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel>
+    <ui:SettingsRow SettingId="windowStyle" Label="{loc:Tr settings.windowStyle}">
+      <ComboBox ItemsSource="{Binding WindowStyleNames}" ItemTemplate="{StaticResource OptionTemplate}" SelectedIndex="{Binding WindowStyleIndex, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="shell.cmbWindowStyle" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="shadow" Label="{loc:Tr settings.shadow}">
+      <CheckBox IsChecked="{Binding WindowShadow, Mode=TwoWay}" AutomationProperties.AutomationId="shell.chkWindowShadow" />
+    </ui:SettingsRow>
+    <!-- 결정 143(09/22·23, 01a §2): 제목 탭 표시·메뉴 아이콘·즐겨찾기·불러오는 중·끌기 중 그림자 — 값은 WindowPageViewModel.Shell -->
+    <ui:SettingsRow SettingId="moveShadow" Label="{loc:Tr settings.moveShadow}" ToolTip.Tip="{loc:Tr settings.moveShadow.tip}">
+      <ComboBox ItemsSource="{Binding MoveShadowNames}" ItemTemplate="{StaticResource OptionTemplate}" SelectedIndex="{Binding MoveShadowIndex, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="settings.cmbMoveShadow" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="switchSources" Label="{loc:Tr settings.switchSources}" IsEnabled="{Binding SwitchSourcesEditable}" ToolTip.Tip="{Binding SwitchSourcesTip}" ToolTip.ShowOnDisabled="True">
+      <CheckBox Content="{loc:Tr settings.switchSources.keyboard}" IsChecked="{Binding SwitchByKeyboard, Mode=TwoWay}" Margin="0,0,12,0" AutomationProperties.AutomationId="settings.chkSwitchKeyboard" />
+      <CheckBox Content="{loc:Tr settings.switchSources.titleTab}" IsChecked="{Binding SwitchByTitleTab, Mode=TwoWay}" Margin="0,0,12,0" AutomationProperties.AutomationId="settings.chkSwitchTitleTab" />
+      <CheckBox Content="{loc:Tr settings.switchSources.windowList}" IsChecked="{Binding SwitchByWindowList, Mode=TwoWay}" Margin="0,0,12,0" AutomationProperties.AutomationId="settings.chkSwitchWindowList" />
+      <CheckBox Content="{loc:Tr settings.switchSources.bodyClick}" IsChecked="{Binding SwitchByBodyClick, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkSwitchBodyClick" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="titleTabDisplay" Label="{loc:Tr settings.titleTabDisplay}" ToolTip.Tip="{loc:Tr settings.titleTabDisplay.tip}">
+      <ComboBox ItemsSource="{Binding TitleTabDisplayNames}" ItemTemplate="{StaticResource OptionTemplate}" SelectedIndex="{Binding TitleTabDisplayIndex, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="settings.cmbTitleTabDisplay" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="menuIcon" Label="{loc:Tr settings.menuIcon}" ToolTip.Tip="{loc:Tr settings.menuIcon.tip}">
+      <CheckBox IsChecked="{Binding MenuIconVisible, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkMenuIcon" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="favoriteBar" Label="{loc:Tr settings.favoriteBar}" ToolTip.Tip="{loc:Tr settings.favoriteBar.tip}">
+      <CheckBox IsChecked="{Binding FavoriteBarVisible, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkFavoriteBar" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="favoritePosition" Label="{loc:Tr settings.favoritePosition}" IsEnabled="{Binding FavoriteBarVisible}">
+      <ComboBox ItemsSource="{Binding FavoritePositionNames}" ItemTemplate="{StaticResource OptionTemplate}" SelectedIndex="{Binding FavoritePositionIndex, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="settings.cmbFavoritePosition" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="favoriteClick" Label="{loc:Tr settings.favoriteClick}" IsEnabled="{Binding FavoriteBarVisible}">
+      <ComboBox ItemsSource="{Binding FavoriteClickNames}" ItemTemplate="{StaticResource OptionTemplate}" SelectedIndex="{Binding FavoriteClickIndex, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="settings.cmbFavoriteClick" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="busyIcon" Label="{loc:Tr settings.busyIcon}" ToolTip.Tip="{loc:Tr settings.busyIcon.tip}">
+      <CheckBox IsChecked="{Binding BusyIconEnabled, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkBusyIcon" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="busyTitleOnly" Label="{loc:Tr settings.busyTitleOnly}" IsEnabled="{Binding BusyTitleOnlyAvailable}">
+      <ComboBox ItemsSource="{Binding BusyTitleOnlyNames}" ItemTemplate="{StaticResource OptionTemplate}" SelectedIndex="{Binding BusyTitleOnlyIndex, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="settings.cmbBusyTitleOnly" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="sdiAboveMain" Label="{loc:Tr settings.sdiAboveMain}" IsEnabled="{x:Static views:ShellPlatform.IsSdiWindowSupported}" ToolTip.Tip="{loc:Tr settings.sdiAboveMain.tip}">
+      <CheckBox IsChecked="{Binding SdiAboveMain, Mode=TwoWay}" AutomationProperties.AutomationId="shell.chkSdiAboveMain" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="magnet" Label="{loc:Tr menu.ws.magnet}" ToolTip.Tip="{loc:Tr menu.ws.magnet.tip}">
+      <CheckBox IsChecked="{Binding MagnetEnabled, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkMagnet" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="magnetRange" Label="{loc:Tr settings.magnetRange}" IsEnabled="{Binding MagnetEnabled}" ToolTip.Tip="{loc:Tr menu.ws.magnetRange.tip}">
+      <Slider Minimum="{Binding MinMagnetRange}" Maximum="{Binding MaxMagnetRange}" SmallChange="{Binding MagnetRangeStep}" TickFrequency="{Binding MagnetRangeStep}" IsSnapToTickEnabled="True" Width="180"
+              Value="{Binding MagnetRange, Mode=TwoWay}" AutomationProperties.AutomationId="settings.sldMagnetRange" />
+      <TextBlock Text="{Binding MagnetRangeText}" VerticalAlignment="Center" Margin="8,0,0,0" AutomationProperties.AutomationId="settings.txtMagnetRange" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="snapEnabled" Label="{loc:Tr settings.snapEnabled}" ToolTip.Tip="{loc:Tr settings.snapEnabled.tip}">
+      <CheckBox IsChecked="{Binding SnapEnabled, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkSnapEnabled" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="snapLayouts" Label="{loc:Tr settings.snapLayouts}" IsEnabled="{Binding SnapEnabled}" ToolTip.Tip="{loc:Tr settings.snapLayouts.tip}">
+      <TextBox Text="{Binding SnapLayouts, Mode=TwoWay}" MinWidth="240" AutomationProperties.AutomationId="settings.txtSnapLayouts" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="snapEdgeDistance" Label="{loc:Tr settings.snapEdgeDistance}" IsEnabled="{Binding SnapEnabled}" ToolTip.Tip="{loc:Tr settings.snapEdgeDistance.tip}">
+      <Slider Minimum="{Binding MinSnapEdgeDistance}" Maximum="{Binding MaxSnapEdgeDistance}" SmallChange="2" TickFrequency="2" IsSnapToTickEnabled="True" Width="180"
+              Value="{Binding SnapEdgeDistance, Mode=TwoWay}" AutomationProperties.AutomationId="settings.sldSnapEdgeDistance" />
+      <TextBlock Text="{Binding SnapEdgeDistanceText}" VerticalAlignment="Center" Margin="8,0,0,0" AutomationProperties.AutomationId="settings.txtSnapEdgeDistance" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="snapBarDelay" Label="{loc:Tr settings.snapBarDelay}" IsEnabled="{Binding SnapEnabled}" ToolTip.Tip="{loc:Tr settings.snapBarDelay.tip}">
+      <NumericUpDown Value="{Binding SnapBarDelayMs, Mode=TwoWay}" Minimum="0" Maximum="1000" Increment="50" FormatString="0" MinWidth="140"
+                     AutomationProperties.AutomationId="settings.numSnapBarDelay" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="snapEdge" Label="{loc:Tr settings.snapEdge}" IsEnabled="{Binding SnapEnabled}" ToolTip.Tip="{loc:Tr settings.snapEdge.tip}">
+      <CheckBox IsChecked="{Binding SnapEdgeEnabled, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkSnapEdge" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="snapTopEdgeMaximize" Label="{loc:Tr settings.snapTopEdgeMaximize}" IsEnabled="{Binding SnapEnabled}" ToolTip.Tip="{loc:Tr settings.snapTopEdgeMaximize.tip}">
+      <CheckBox IsChecked="{Binding SnapTopEdgeMaximize, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkSnapTopEdgeMaximize" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="snapKeyboard" Label="{loc:Tr settings.snapKeyboard}" IsEnabled="{Binding SnapEnabled}" ToolTip.Tip="{loc:Tr settings.snapKeyboard.tip}">
+      <CheckBox IsChecked="{Binding SnapKeyboard, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkSnapKeyboard" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="snapFlyout" Label="{loc:Tr settings.snapFlyout}" IsEnabled="{Binding SnapEnabled}" ToolTip.Tip="{loc:Tr settings.snapFlyout.tip}">
+      <CheckBox IsChecked="{Binding SnapFlyoutEnabled, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkSnapFlyout" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="snapFlyoutDelay" Label="{loc:Tr settings.snapFlyoutDelay}" IsEnabled="{Binding SnapEnabled}" ToolTip.Tip="{loc:Tr settings.snapFlyoutDelay.tip}">
+      <NumericUpDown Value="{Binding SnapFlyoutDelayMs, Mode=TwoWay}" Minimum="0" Maximum="3000" Increment="100" FormatString="0" MinWidth="140"
+                     IsEnabled="{Binding SnapFlyoutEnabled}" AutomationProperties.AutomationId="settings.numSnapFlyoutDelay" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="snapSdiMode" Label="{loc:Tr settings.snapSdiMode}" IsVisible="{Binding SnapSdiAvailable}" IsEnabled="{Binding SnapEnabled}" ToolTip.Tip="{loc:Tr settings.snapSdiMode.tip}">
+      <ComboBox ItemsSource="{Binding SnapSdiNames}" ItemTemplate="{StaticResource OptionTemplate}" SelectedIndex="{Binding SnapSdiModeIndex, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="settings.cmbSnapSdiMode" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="snapAssist" Label="{loc:Tr settings.snapAssist}" IsEnabled="{Binding SnapEnabled}" ToolTip.Tip="{loc:Tr settings.snapAssist.tip}">
+      <CheckBox IsChecked="{Binding SnapAssistEnabled, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkSnapAssist" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="snapAssistOnEdge" Label="{loc:Tr settings.snapAssistOnEdge}" IsEnabled="{Binding SnapEnabled}" ToolTip.Tip="{loc:Tr settings.snapAssistOnEdge.tip}">
+      <CheckBox IsChecked="{Binding SnapAssistOnEdge, Mode=TwoWay}" IsEnabled="{Binding SnapAssistEnabled}" AutomationProperties.AutomationId="settings.chkSnapAssistOnEdge" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="snapAssistThumbnails" Label="{loc:Tr settings.snapAssistThumbnails}" IsEnabled="{Binding SnapEnabled}" ToolTip.Tip="{loc:Tr settings.snapAssistThumbnails.tip}">
+      <CheckBox IsChecked="{Binding SnapAssistThumbnails, Mode=TwoWay}" IsEnabled="{Binding SnapAssistEnabled}" AutomationProperties.AutomationId="settings.chkSnapAssistThumbnails" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="snapAssistSdiGrace" Label="{loc:Tr settings.snapAssistSdiGrace}" IsVisible="{Binding SnapSdiAvailable}" IsEnabled="{Binding SnapEnabled}" ToolTip.Tip="{loc:Tr settings.snapAssistSdiGrace.tip}">
+      <NumericUpDown Value="{Binding SnapAssistSdiGraceMs, Mode=TwoWay}" Minimum="100" Maximum="2000" Increment="100" FormatString="0" MinWidth="140"
+                     IsEnabled="{Binding SnapAssistEnabled}" AutomationProperties.AutomationId="settings.numSnapAssistSdiGrace" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="escClose" Label="{loc:Tr menu.ws.escClose}" ToolTip.Tip="{loc:Tr menu.ws.escClose.tip}">
+      <CheckBox IsChecked="{Binding EscClose, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkEscClose" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="dblClose" Label="{loc:Tr menu.window.dblClose}">
+      <CheckBox IsChecked="{Binding DoubleClickClose, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkDblClose" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="autosave" Label="{loc:Tr menu.ws.autosave}" ToolTip.Tip="{loc:Tr menu.ws.autosave.tip}">
+      <CheckBox IsChecked="{Binding WindowAutoSave, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkAutoSave" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="capture" Label="{loc:Tr menu.ws.capture}" ToolTip.Tip="{loc:Tr menu.ws.capture.tip}">
+      <CheckBox IsChecked="{Binding CaptureProtection, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkCapture" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="tray" Label="{loc:Tr menu.window.tray}" IsEnabled="{Binding TrayAvailable}">
+      <CheckBox IsChecked="{Binding TrayEnabled, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkTray" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="uiStyle" Label="{loc:Tr menu.view.uiStyle}" IsEnabled="{Binding UiStyleSelectable}">
+      <ComboBox ItemsSource="{Binding UiStyleNames}" ItemTemplate="{StaticResource OptionTemplate}" SelectedIndex="{Binding UiStyleIndex, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="settings.cmbUiStyle" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="tabletMode" Label="{loc:Tr settings.tabletMode}" IsEnabled="False" ToolTip.Tip="{loc:Tr settings.tabletMode.tip}" ToolTip.ShowOnDisabled="True">
+      <ComboBox ItemsSource="{Binding TabletModeNames}" ItemTemplate="{StaticResource OptionTemplate}" SelectedIndex="{Binding TabletModeIndex, Mode=OneWay}" MinWidth="200"
+                AutomationProperties.AutomationId="settings.cmbTabletMode" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="panelFeature" Label="{loc:Tr settings.panelFeature}" ToolTip.Tip="{loc:Tr settings.panelFeature.tip}">
+      <ComboBox ItemsSource="{Binding PanelFeatureNames}" ItemTemplate="{StaticResource OptionTemplate}" SelectedIndex="{Binding PanelFeatureIndex, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="settings.cmbPanelFeature" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="compactWindowKeepsTablet" Label="{loc:Tr settings.compactWindowKeepsTablet}" ToolTip.Tip="{loc:Tr settings.compactWindowKeepsTablet.tip}">
+      <CheckBox IsChecked="{Binding CompactWindowKeepsTablet, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkCompactWindowKeepsTablet" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="busyDelay" Label="{loc:Tr settings.busyDelay}" ToolTip.Tip="{loc:Tr settings.busyDelay.tip}">
+      <NumericUpDown Value="{Binding BusyShowDelayMs, Mode=TwoWay}" Minimum="0" Maximum="5000" Increment="50" FormatString="0" MinWidth="140"
+                     AutomationProperties.AutomationId="settings.numBusyDelay" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="busyMinVisible" Label="{loc:Tr settings.busyMinVisible}" ToolTip.Tip="{loc:Tr settings.busyMinVisible.tip}">
+      <NumericUpDown Value="{Binding BusyMinVisibleMs, Mode=TwoWay}" Minimum="0" Maximum="5000" Increment="50" FormatString="0" MinWidth="140"
+                     AutomationProperties.AutomationId="settings.numBusyMinVisible" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="prewarmViews" Label="{loc:Tr settings.prewarmViews}" ToolTip.Tip="{loc:Tr settings.prewarmViews.tip}">
+      <CheckBox IsChecked="{Binding PrewarmViews, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkPrewarmViews" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="gridDeferCells" Label="{loc:Tr settings.gridDeferCells}" ToolTip.Tip="{loc:Tr settings.gridDeferCells.tip}">
+      <CheckBox IsChecked="{Binding GridDeferOffscreenCells, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkGridDeferCells" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="gridCompactCells" Label="{loc:Tr settings.gridCompactCells}" ToolTip.Tip="{loc:Tr settings.gridCompactCells.tip}">
+      <CheckBox IsChecked="{Binding GridCompactCells, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkGridCompactCells" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="gridDrawnCellText" Label="{loc:Tr settings.gridDrawnCellText}" ToolTip.Tip="{loc:Tr settings.gridDrawnCellText.tip}">
+      <CheckBox IsChecked="{Binding GridDrawnCellText, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkGridDrawnCellText" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="gridViewPool" Label="{loc:Tr settings.gridViewPool}" ToolTip.Tip="{loc:Tr settings.gridViewPool.tip}">
+      <CheckBox IsChecked="{Binding GridViewPool, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkGridViewPool" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="restoreViews" Label="{loc:Tr settings.restoreViews}" ToolTip.Tip="{loc:Tr settings.restoreViews.tip}">
+      <ComboBox ItemsSource="{Binding RestoreViewNames}" ItemTemplate="{StaticResource OptionTemplate}" SelectedIndex="{Binding RestoreViewIndex, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="settings.cmbRestoreViews" />
+    </ui:SettingsRow>
+  </StackPanel>
+</UserControl>

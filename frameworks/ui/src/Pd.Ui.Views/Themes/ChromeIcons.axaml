@@ -1,0 +1,59 @@
+<!-- 창 크롬 벡터 아이콘(U10) — PD 가 직접 그린 PathGeometry(외부 아이콘·글꼴 복사 없음). MdiChrome.axaml 이 ChromeResources 뒤에 병합한다.
+     같은 키(Dock*Geometry)를 여기서 다시 정의해 Dock 기본 기호(최소·최대·복원·닫기·핀·메뉴)도 PD 아이콘으로 바꾼다(MdiChrome 이 DockFluentTheme 뒤라 이긴다).
+     격자: 캡션 3버튼 10×10, 나머지 16×16. 모든 기호에 격자 두 모서리 점(면적 0 에 가까운 삼각형)을 넣어 Stretch=Uniform 이 기호 범위가 아니라 격자 전체를 기준으로 맞추게 한다
+     — 범위만 쓰면 최소화 '_' 처럼 낮은 기호가 위로 붙고(U6) 기호마다 배율이 달라진다 -->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- 캡션 3버튼(10×10). 최소화는 기준선(아래 1px) 막대, 최대화·복원은 모서리 1.5 둥근 사각 외곽선(Win11 E922·E923 의 둥근 모서리 특징만 따름) -->
+  <StreamGeometry x:Key="PdGlyphMinimize">M0,0 L0.01,0 L0,0.01 Z M0,9 H10 V10 H0 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdGlyphMaximize">F0 M1.5,0 H8.5 A1.5,1.5 0 0 1 10,1.5 V8.5 A1.5,1.5 0 0 1 8.5,10 H1.5 A1.5,1.5 0 0 1 0,8.5 V1.5 A1.5,1.5 0 0 1 1.5,0 Z M1.5,1 A0.5,0.5 0 0 0 1,1.5 V8.5 A0.5,0.5 0 0 0 1.5,9 H8.5 A0.5,0.5 0 0 0 9,8.5 V1.5 A0.5,0.5 0 0 0 8.5,1 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdGlyphRestore">F0 M1.5,2 H6.5 A1.5,1.5 0 0 1 8,3.5 V8.5 A1.5,1.5 0 0 1 6.5,10 H1.5 A1.5,1.5 0 0 1 0,8.5 V3.5 A1.5,1.5 0 0 1 1.5,2 Z M1.5,3 A0.5,0.5 0 0 0 1,3.5 V8.5 A0.5,0.5 0 0 0 1.5,9 H6.5 A0.5,0.5 0 0 0 7,8.5 V3.5 A0.5,0.5 0 0 0 6.5,3 Z M3.5,0 H8.5 A1.5,1.5 0 0 1 10,1.5 V6.5 A1.5,1.5 0 0 1 8.5,8 V7 A0.5,0.5 0 0 0 9,6.5 V1.5 A0.5,0.5 0 0 0 8.5,1 H3.5 A0.5,0.5 0 0 0 3,1.5 H2 A1.5,1.5 0 0 1 3.5,0 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdGlyphClose">M0.75,0 L5,4.25 L9.25,0 L10,0.75 L5.75,5 L10,9.25 L9.25,10 L5,5.75 L0.75,10 L0,9.25 L4.25,5 L0,0.75 Z</StreamGeometry>
+
+  <!-- 기능 버튼(16×16) -->
+  <!-- 항상 위: 비스듬한 압정 -->
+  <StreamGeometry x:Key="PdIconPin">M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M9.6,1 L15,6.4 L13.7,7.1 L11.8,6.8 L9,9.6 L9.3,12.5 L8.1,13.7 L5.5,11.1 L2,14.6 L1.4,14 L4.9,10.5 L2.3,7.9 L3.5,6.7 L6.4,7 L9.2,4.2 L8.9,2.3 Z</StreamGeometry>
+  <!-- 위치 고정·도구 패널 핀: 꺼짐 = 세운 압정 외곽선, 켜짐 = 속을 채운 압정 -->
+  <!-- 2026-11-11 사용자 지시 '깔끔하고 심플하게': 머리 막대 + 속 빈 몸통 + 바늘, 선 굵기 1.3 으로 정리 -->
+  <StreamGeometry x:Key="PdIconPosLock">F0 M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M4.5,1.5 H11.5 V2.8 H10.3 V7.2 L12.2,9.4 V10.5 H8.65 V14.8 H7.35 V10.5 H3.8 V9.4 L5.7,7.2 V2.8 H4.5 Z M7,2.8 V7.7 L5.6,9.2 H10.4 L9,7.7 V2.8 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdIconPosLockOn">M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M4.5,1.5 H11.5 V2.8 H10.3 V7.2 L12.2,9.4 V10.5 H8.65 V14.8 H7.35 V10.5 H3.8 V9.4 L5.7,7.2 V2.8 H4.5 Z</StreamGeometry>
+  <!-- MDI(틀 안 창) / SDI(떨어진 두 창). 창 전환(MDI)은 2026-11-11 단순화: 제목 띠가 있는 틀 + 속을 채운 작은 창 -->
+  <StreamGeometry x:Key="PdIconMdiMode">F0 M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M1.5,2 H14.5 V14 H1.5 Z M2.8,5 V12.7 H13.2 V5 Z M5,7 H11 V11 H5 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdIconSdi">F0 M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M1,6 H11 V15 H1 Z M2.2,8.4 V13.8 H9.8 V8.4 Z M5,1 H15 V10 H12.2 V8.8 H13.8 V3.4 H6.2 V4.8 H5 Z</StreamGeometry>
+  <!-- 동기화: 이어진 고리 / 끊긴 고리 -->
+  <StreamGeometry x:Key="PdIconLink">M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M6,5 H3.5 A3,3 0 0 0 3.5,11 H6 V9.6 H3.5 A1.6,1.6 0 0 1 3.5,6.4 H6 Z M10,5 H12.5 A3,3 0 0 1 12.5,11 H10 V9.6 H12.5 A1.6,1.6 0 0 0 12.5,6.4 H10 Z M5,7.3 H11 V8.7 H5 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdIconLinkBroken">M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M6,5 H3.5 A3,3 0 0 0 3.5,11 H6 V9.6 H3.5 A1.6,1.6 0 0 1 3.5,6.4 H6 Z M10,5 H12.5 A3,3 0 0 1 12.5,11 H10 V9.6 H12.5 A1.6,1.6 0 0 0 12.5,6.4 H10 Z M7.3,1.5 H8.7 V4 H7.3 Z M7.3,12 H8.7 V14.5 H7.3 Z</StreamGeometry>
+  <!-- 중복 허용: 꺼짐 = 잠긴 자물쇠, 켜짐 = 열린 자물쇠 -->
+  <StreamGeometry x:Key="PdIconLock">F0 M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M3,7 H13 V15 H3 Z M7.3,9.5 V12.5 H8.7 V9.5 Z M4.6,7 V5 A3.4,3.4 0 0 1 11.4,5 V7 H10 V5 A2,2 0 0 0 6,5 V7 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdIconUnlock">F0 M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M3,7 H13 V15 H3 Z M7.3,9.5 V12.5 H8.7 V9.5 Z M4.6,7 V5 A3.4,3.4 0 0 1 11.4,5 V5.6 H10 V5 A2,2 0 0 0 6,5 V7 Z</StreamGeometry>
+  <!-- 새로고침(캐시): 2026-11-11 단순화 — 마주 도는 두 화살표 대신 한 바퀴(300°) 고리 + 끝 화살촉 하나, 고리 굵기 1.3 -->
+  <StreamGeometry x:Key="PdIconCache">M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M13.2,5 A6,6 0 1 1 8,2 V3.3 A4.7,4.7 0 1 0 12.07,5.65 Z M7.4,0 L11.8,2.65 L7.4,5.3 Z</StreamGeometry>
+  <!-- 도움말: 원 안 물음표 -->
+  <StreamGeometry x:Key="PdIconHelp">F0 M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M8,1 A7,7 0 1 1 7.99,1 Z M8,2.3 A5.7,5.7 0 1 0 8.01,2.3 Z M5.6,6.3 A2.4,2.4 0 1 1 9.2,8.4 C8.6,8.8 8.6,9.1 8.6,9.8 H7.3 C7.3,8.8 7.6,8 8.5,7.28 A1.1,1.1 0 1 0 6.9,6.3 Z M7.25,10.8 H8.65 V12.2 H7.25 Z</StreamGeometry>
+  <!-- 도구 창 메뉴: 아래 꺾쇠 -->
+  <StreamGeometry x:Key="PdIconMenu">M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M3,6 L4,5 L8,9 L12,5 L13,6 L8,11 Z</StreamGeometry>
+  <!-- MDI 자식 창 제목줄 기호(U12): 귀퉁이 접힌 문서 -->
+  <StreamGeometry x:Key="PdIconDocument">F0 M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M3,1 H10 L13,4 V15 H3 Z M4.2,2.2 V13.8 H11.8 V4.6 H9.4 V2.2 Z M5.5,7 H10.5 V8 H5.5 Z M5.5,9.5 H10.5 V10.5 H5.5 Z M5.5,12 H9 V13 H5.5 Z</StreamGeometry>
+  <!-- 패널·서랍용(odev-tabs 등이 쓸 수 있게 제공): 알림 종 / 도킹(왼쪽 패널이 붙은 창) / 분리(창에서 나가는 화살표) -->
+  <StreamGeometry x:Key="PdIconBell">M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M8,1.5 A1,1 0 0 1 9,2.5 V3 A4.5,4.5 0 0 1 12.5,7.4 V10.5 L14,12.5 H2 L3.5,10.5 V7.4 A4.5,4.5 0 0 1 7,3 V2.5 A1,1 0 0 1 8,1.5 Z M6.3,13.5 H9.7 A1.7,1.7 0 0 1 6.3,13.5 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdIconDock">F0 M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M1,2 H15 V14 H1 Z M6.5,3.2 V12.8 H13.8 V3.2 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdIconDetach">M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M1,4 H9 V5.2 H2.2 V13.8 H10.8 V7 H12 V15 H1 Z M9,1 H15 V7 H13.8 V3 L8.2,8.6 L7.4,7.8 L13,2.2 H9 Z</StreamGeometry>
+
+  <!-- 제목줄 도구 아이콘(16×16): UI 형 4칸(자동 A / PC 모니터 / 태블릿 가로 / 폰 세로)과 테마(해 / 달) -->
+  <StreamGeometry x:Key="PdIconUiAuto">F0 M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M7.1,2 H8.9 L14,14 H12.2 L11.1,11.2 H4.9 L3.8,14 H2 Z M8,4.6 L5.6,9.6 H10.4 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdIconUiPc">F0 M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M1,2 H15 V11 H1 Z M2.2,3.2 V9.8 H13.8 V3.2 Z M7.2,11 H8.8 V13 H7.2 Z M4.5,13 H11.5 V14.2 H4.5 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdIconUiTablet">F0 M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M1,2.5 H15 V13.5 H1 Z M2.2,3.7 V12.3 H12.6 V3.7 Z M13.4,7.3 H14.2 V8.7 H13.4 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdIconUiMobile">F0 M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M4.5,1 H11.5 V15 H4.5 Z M5.7,2.4 V12.6 H10.3 V2.4 Z M7.3,13.4 H8.7 V14.2 H7.3 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdIconThemeSun">M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M8,5 A3,3 0 1 1 7.99,5 Z M7.3,0.8 H8.7 V3 H7.3 Z M7.3,13 H8.7 V15.2 H7.3 Z M0.8,7.3 H3 V8.7 H0.8 Z M13,7.3 H15.2 V8.7 H13 Z M3,3.9 L3.9,3 L5.1,4.2 L4.2,5.1 Z M13,3.9 L12.1,3 L10.9,4.2 L11.8,5.1 Z M3,12.1 L3.9,13 L5.1,11.8 L4.2,10.9 Z M13,12.1 L12.1,13 L10.9,11.8 L11.8,10.9 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdIconThemeMoon">M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M10.5,1.5 A6.5,6.5 0 1 0 14.5,10.5 A5,5 0 0 1 10.5,1.5 Z</StreamGeometry>
+
+  <!-- Dock 기본 기호 키 덮어쓰기(메인 제목줄·도구 패널·탭 등 Dock·다른 템플릿이 이 키를 쓰는 곳도 PD 아이콘이 된다) -->
+  <StaticResource x:Key="DockIconMinimizeGeometry" ResourceKey="PdGlyphMinimize" />
+  <StaticResource x:Key="DockIconMaximizeGeometry" ResourceKey="PdGlyphMaximize" />
+  <StaticResource x:Key="DockIconRestoreGeometry" ResourceKey="PdGlyphRestore" />
+  <StaticResource x:Key="DockToolIconCloseGeometry" ResourceKey="PdGlyphClose" />
+  <StaticResource x:Key="DockIconCloseGeometry" ResourceKey="PdGlyphClose" />
+  <StaticResource x:Key="DockIconPinGeometry" ResourceKey="PdIconPosLock" />
+  <StaticResource x:Key="DockIconPinnedGeometry" ResourceKey="PdIconPosLockOn" />
+  <StaticResource x:Key="DockIconMenuGeometry" ResourceKey="PdIconMenu" />
+</ResourceDictionary>

@@ -1,0 +1,7 @@
+{
+  "host.loading": "불러오는 중…",
+  "host.startFailed": "앱을 시작하지 못했습니다. 페이지를 새로 고쳐 주세요.",
+  "host.instance.busy": "PD 가 다른 탭에서 열려 있습니다.",
+  "host.instance.useHere": "여기서 사용",
+  "host.instance.moved": "PD 를 다른 탭에서 쓰기 시작해 이 탭은 멈췄습니다."
+}

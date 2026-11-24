@@ -1,0 +1,44 @@
+<!-- PoC 공유 Avalonia Shell 라이브러리(Dock 기반 MDI/SDI·문서·계측) — 데스크톱/브라우저 호스트가 참조 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>Pd.Poc.Shell</RootNamespace>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <!-- 버전 출처: api.nuget.org v3-flatcontainer 실측(2026-10-28). Dock 12.1.0.12 nuspec 의 Avalonia 의존 = 12.1.4 -->
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="12.1.2" Condition="'$(PocGrid)' != 'Pro'" />
+    <!-- UI-07 IDE식 색 편집: nuget 12.1.4(MIT, 의존 Avalonia 12.1.4) 확인 2026-10-28 -->
+    <PackageReference Include="Avalonia.Controls.ColorPicker" Version="12.1.4" />
+    <PackageReference Include="Dock.Avalonia" Version="12.1.0.12" />
+    <PackageReference Include="Dock.Avalonia.Themes.Fluent" Version="12.1.0.12" />
+    <PackageReference Include="Dock.Model.Mvvm" Version="12.1.0.12" />
+    <PackageReference Include="Dock.Settings" Version="12.1.0.12" />
+  </ItemGroup>
+
+  <!-- 순수 UI 층(컨트롤·스타일·애니메이션). 호스트는 셸 경유 전이 참조로 이 타입을 본다 -->
+  <ItemGroup>
+    <ProjectReference Include="..\Pd.Ui\Pd.Ui.csproj" />
+    <ProjectReference Include="..\Pd.Client.Data\Pd.Client.Data.csproj" />
+  </ItemGroup>
+
+  <!-- 다국어 사전(Q17): Localization/<영역>.<언어>.json 을 내장 리소스로 — 이름 Pd.Poc.Shell.Localization.<영역>.<언어>.json(Loc 가 읽음) -->
+  <ItemGroup>
+    <!-- WithCulture=false: *.ko.json·*.en.json 이 문화권 위성 어셈블리(ko/·en/*.resources.dll)로 빠지지 않고 주 어셈블리에 들어가게 한다(00:28 기동 실패 원인) -->
+    <EmbeddedResource Include="Localization\*.json" WithCulture="false" />
+    <!-- 도움말 카탈로그(요건 6): 내용만 바꾸면 코드 수정 없이 빌드로 반영된다. 이름은 EmbeddedTourCatalogSource.ResourceName -->
+    <EmbeddedResource Include="Tour\tour_catalog.json" WithCulture="false" LogicalName="Pd.Poc.Shell.Tour.tour_catalog.json" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(PocGrid)' == 'Pro'">
+    <PackageReference Include="ProDataGrid" Version="12.1.0.6" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,63 @@
+<!-- 문서 창 제목줄의 Mars 버튼 묶음(독립·항상 위·위치 고정·동기화·중복 허용·새로고침(캐시)·도움말) — MDI 창 템플릿과 SDI 제목줄이 함께 쓴다 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:Pd.Poc.Shell.Localization"
+             x:Class="Pd.Ui.Views.ChromeButtons"
+             VerticalAlignment="Center">
+  <StackPanel Orientation="Horizontal">
+    <ToggleButton x:Name="BtnSdi" Classes="pdChrome" Click="OnSdi" AutomationProperties.AutomationId="chrome.btnSdi">
+      <Grid>
+        <PathIcon x:Name="IconSdi" Data="{DynamicResource PdIconMdiMode}" />
+        <Ellipse Classes="pdChromeDot" Width="{DynamicResource PdChromeCheckedDotSize}" Height="{DynamicResource PdChromeCheckedDotSize}"
+                 HorizontalAlignment="Center" VerticalAlignment="Bottom" IsHitTestVisible="False"
+                 IsVisible="{Binding $parent[ToggleButton].IsChecked}" Fill="{Binding $parent[ToggleButton].Foreground}" />
+      </Grid>
+    </ToggleButton>
+    <ToggleButton x:Name="BtnPin" Classes="pdChrome" Click="OnPin" AutomationProperties.AutomationId="chrome.btnPin">
+      <Grid>
+        <PathIcon Data="{DynamicResource PdIconPin}" />
+        <Ellipse Classes="pdChromeDot" Width="{DynamicResource PdChromeCheckedDotSize}" Height="{DynamicResource PdChromeCheckedDotSize}"
+                 HorizontalAlignment="Center" VerticalAlignment="Bottom" IsHitTestVisible="False"
+                 IsVisible="{Binding $parent[ToggleButton].IsChecked}" Fill="{Binding $parent[ToggleButton].Foreground}" />
+      </Grid>
+    </ToggleButton>
+    <ToggleButton x:Name="BtnLock" Classes="pdChrome" Click="OnLock" AutomationProperties.AutomationId="chrome.btnLock">
+      <Grid>
+        <PathIcon x:Name="IconLock" Data="{DynamicResource DockIconPinGeometry}" />
+        <Ellipse Classes="pdChromeDot" Width="{DynamicResource PdChromeCheckedDotSize}" Height="{DynamicResource PdChromeCheckedDotSize}"
+                 HorizontalAlignment="Center" VerticalAlignment="Bottom" IsHitTestVisible="False"
+                 IsVisible="{Binding $parent[ToggleButton].IsChecked}" Fill="{Binding $parent[ToggleButton].Foreground}" />
+      </Grid>
+    </ToggleButton>
+    <ToggleButton x:Name="BtnSync" Classes="pdChrome" Click="OnSync" AutomationProperties.AutomationId="chrome.btnSync">
+      <Grid>
+        <PathIcon x:Name="IconSync" Data="{DynamicResource PdIconLink}" />
+        <Ellipse Classes="pdChromeDot" Width="{DynamicResource PdChromeCheckedDotSize}" Height="{DynamicResource PdChromeCheckedDotSize}"
+                 HorizontalAlignment="Center" VerticalAlignment="Bottom" IsHitTestVisible="False"
+                 IsVisible="{Binding $parent[ToggleButton].IsChecked}" Fill="{Binding $parent[ToggleButton].Foreground}" />
+      </Grid>
+    </ToggleButton>
+    <ToggleButton x:Name="BtnDup" Classes="pdChrome" Click="OnDup" AutomationProperties.AutomationId="chrome.btnDup">
+      <Grid>
+        <PathIcon x:Name="IconDup" Data="{DynamicResource PdIconLock}" />
+        <Ellipse Classes="pdChromeDot" Width="{DynamicResource PdChromeCheckedDotSize}" Height="{DynamicResource PdChromeCheckedDotSize}"
+                 HorizontalAlignment="Center" VerticalAlignment="Bottom" IsHitTestVisible="False"
+                 IsVisible="{Binding $parent[ToggleButton].IsChecked}" Fill="{Binding $parent[ToggleButton].Foreground}" />
+      </Grid>
+    </ToggleButton>
+    <Button x:Name="BtnRefresh" Classes="pdChrome" Click="OnRefresh" AutomationProperties.AutomationId="chrome.btnCache">
+      <PathIcon Data="{DynamicResource PdIconCache}" />
+    </Button>
+    <!-- 새로고침 확인(Mars 확인창 대응): 팝업 대신 제목줄 안에 펼친다 — 화면 밖(bg-pos 인자)·원격 트리 탐색에서도 보이게 -->
+    <StackPanel x:Name="RefreshConfirm" Orientation="Horizontal" Spacing="2" IsVisible="False" VerticalAlignment="Center">
+      <TextBlock Text="{loc:Tr chrome.confirm.refresh}" VerticalAlignment="Center" Margin="4,0,2,0" Foreground="{DynamicResource PdChromeTitleText}" />
+      <Button Classes="pdChrome" Width="NaN" Padding="4,0" Content="{loc:Tr common.ok}" Click="OnRefreshConfirm"
+              Foreground="{DynamicResource PdChromeTitleText}" AutomationProperties.AutomationId="chrome.refreshOk" />
+      <Button Classes="pdChrome" Width="NaN" Padding="4,0" Content="{loc:Tr common.cancel}" Click="OnRefreshCancel"
+              Foreground="{DynamicResource PdChromeTitleText}" AutomationProperties.AutomationId="chrome.refreshCancel" />
+    </StackPanel>
+    <Button x:Name="BtnHelp" Classes="pdChrome" Click="OnHelp" AutomationProperties.AutomationId="chrome.btnHelp" ToolTip.Tip="{loc:Tr chrome.tip.help}">
+      <PathIcon Data="{DynamicResource PdIconHelp}" />
+    </Button>
+  </StackPanel>
+</UserControl>

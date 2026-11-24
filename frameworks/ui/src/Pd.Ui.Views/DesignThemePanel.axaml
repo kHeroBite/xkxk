@@ -1,0 +1,226 @@
+<!-- 디자인 테마 탭(REQ-104, 18 문서 §화면) — 프리셋 카드 5종(정적 미리보기)·움직임 수준·추천 색 1클릭·폴백 안내 | 효과 행(값 선택·되돌리기)·효과 전체 되돌리기, 회사 잠금 표시.
+     넓은 폭 2열, 좁은 폭(태블릿형 좁은 창·모바일형) 1열 — 코드비하인드가 칸 배치만 바꾼다. 문구는 Loc 키만, 색·크기는 토큰·리소스만 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Pd.Poc.Shell.ViewModels"
+             xmlns:loc="using:Pd.Poc.Shell.Localization"
+             x:Class="Pd.Ui.Views.DesignThemePanel"
+             x:DataType="vm:DesignThemeViewModel"
+             AutomationProperties.AutomationId="designTheme.panel">
+
+  <UserControl.Resources>
+    <!-- 이 폭보다 좁으면 1열(카드 열 + 효과 열이 한 줄에 들어가지 않는다) -->
+    <x:Double x:Key="DesignNarrowWidth">640</x:Double>
+    <x:Double x:Key="DesignTouchTarget">44</x:Double>
+    <x:Double x:Key="DesignCardWidth">200</x:Double>
+    <x:Double x:Key="DesignPreviewHeight">56</x:Double>
+    <x:Double x:Key="DesignEffectEditorWidth">170</x:Double>
+    <!-- 디자인 테마가 모서리를 정하지 않은 카드(클래식)의 미리보기 모서리 — 현재 화면 표본과 같은 값 -->
+    <CornerRadius x:Key="DesignPreviewDefaultCorner">4</CornerRadius>
+    <StreamGeometry x:Key="DesignLockGeometry">M4,7 L4,5 C4,2.8 5.8,1 8,1 C10.2,1 12,2.8 12,5 L12,7 L13,7 L13,15 L3,15 L3,7 Z M6,7 L10,7 L10,5 C10,3.9 9.1,3 8,3 C6.9,3 6,3.9 6,5 Z</StreamGeometry>
+  </UserControl.Resources>
+
+  <UserControl.Styles>
+    <Style Selector="TextBlock.caption">
+      <Setter Property="FontSize" Value="{DynamicResource PdFontCaption}" />
+      <Setter Property="Foreground" Value="{DynamicResource PdBrushTextMuted}" />
+    </Style>
+    <Style Selector="TextBlock.section">
+      <Setter Property="FontSize" Value="{DynamicResource PdFontSubtitle}" />
+      <Setter Property="FontWeight" Value="{DynamicResource PdFontWeightStrong}" />
+    </Style>
+    <Style Selector="TextBlock.warn">
+      <Setter Property="Foreground" Value="{DynamicResource PdBrushWarning}" />
+    </Style>
+    <Style Selector="ListBox.cards ListBoxItem">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Margin" Value="0,0,8,8" />
+    </Style>
+    <!-- 1열(좁은 폭): 터치 대상 44 이상 -->
+    <Style Selector="UserControl.narrow ListBoxItem, UserControl.narrow Button, UserControl.narrow ComboBox">
+      <Setter Property="MinHeight" Value="{StaticResource DesignTouchTarget}" />
+    </Style>
+  </UserControl.Styles>
+
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+    <Grid x:Name="PanelGrid" ColumnDefinitions="*,12,*" RowDefinitions="Auto,Auto">
+      <!-- 왼쪽(1열이면 위): 프리셋 카드·움직임 수준·추천 색·폴백 -->
+      <StackPanel x:Name="PresetPane" Grid.Column="0" Grid.Row="0" Spacing="8">
+        <TextBlock Text="{loc:Tr theme.style.section}" Classes="section" />
+        <TextBlock Text="{loc:Tr theme.style.hint}" Classes="caption" TextWrapping="Wrap" />
+        <!-- 회사 잠금(theme.style.locked) 표시 -->
+        <Border AutomationProperties.AutomationId="designTheme.lblLocked" IsVisible="{Binding IsLocked}" Padding="8" CornerRadius="4"
+                BorderBrush="{DynamicResource PdBrushBorder}" BorderThickness="1" Background="{DynamicResource PdBrushSurfaceAlt}">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Path Data="{StaticResource DesignLockGeometry}" Width="12" Height="12" Stretch="Uniform" VerticalAlignment="Center" Fill="{DynamicResource PdBrushTextMuted}" />
+            <TextBlock Text="{loc:Tr theme.style.locked}" TextWrapping="Wrap" VerticalAlignment="Center" />
+          </StackPanel>
+        </Border>
+
+        <ListBox Classes="cards" AutomationProperties.AutomationId="designTheme.lstPresets" AutomationProperties.Name="{loc:Tr theme.style.preset}"
+                 ItemsSource="{Binding Cards}" SelectedItem="{Binding SelectedCard, Mode=TwoWay}" IsEnabled="{Binding IsEditable}"
+                 Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+          <ListBox.ItemsPanel>
+            <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+          </ListBox.ItemsPanel>
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:DesignThemeCard">
+              <Border Width="{StaticResource DesignCardWidth}" Padding="8" CornerRadius="4" BorderThickness="1" BorderBrush="{DynamicResource PdBrushBorder}"
+                      AutomationProperties.AutomationId="{Binding Id, StringFormat='designTheme.card.{0}'}" AutomationProperties.Name="{Binding Name}"
+                      AutomationProperties.HelpText="{Binding Description}">
+                <StackPanel Spacing="4">
+                  <!-- 정적 미리보기 표본: 모서리·그림자는 이 디자인 테마 값(효과 표 설정 키), 색은 현재 색 테마 토큰 -->
+                  <Border Height="{StaticResource DesignPreviewHeight}" Margin="4" IsHitTestVisible="False"
+                          CornerRadius="{Binding PreviewCorner, TargetNullValue={StaticResource DesignPreviewDefaultCorner}}" BoxShadow="{Binding PreviewShadow}"
+                          Background="{DynamicResource PdBrushSurface}" BorderBrush="{DynamicResource PdBrushBorder}" BorderThickness="1"
+                          AutomationProperties.AutomationId="{Binding Id, StringFormat='designTheme.preview.{0}'}">
+                    <DockPanel>
+                      <Border DockPanel.Dock="Top" Height="12" Background="{DynamicResource PdBrushAccent}"
+                              CornerRadius="{Binding PreviewCorner, TargetNullValue={StaticResource DesignPreviewDefaultCorner}}" />
+                      <Border Margin="8" Width="48" Height="14" HorizontalAlignment="Left" VerticalAlignment="Top" BorderThickness="1"
+                              BorderBrush="{DynamicResource PdBrushBorder}" Background="{DynamicResource PdBrushSurfaceAlt}"
+                              CornerRadius="{Binding PreviewCorner, TargetNullValue={StaticResource DesignPreviewDefaultCorner}}" />
+                    </DockPanel>
+                  </Border>
+                  <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Grid.Column="0" Text="{Binding Name}" Classes="section" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Grid.Column="1" Text="{loc:Tr theme.style.selected}" Classes="caption" VerticalAlignment="Center"
+                               IsVisible="{Binding $parent[ListBoxItem].IsSelected}"
+                               AutomationProperties.AutomationId="{Binding Id, StringFormat='designTheme.selected.{0}'}" />
+                  </Grid>
+                  <TextBlock Text="{Binding Description}" Classes="caption" TextWrapping="Wrap" />
+                  <TextBlock Text="{Binding Summary}" Classes="caption" TextWrapping="Wrap" />
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- 움직임 수준(접근성 축 — 회사 잠금과 무관) -->
+        <TextBlock Text="{loc:Tr theme.style.motionLevel}" />
+        <ComboBox AutomationProperties.AutomationId="designTheme.cmbMotionLevel" AutomationProperties.Name="{loc:Tr theme.style.motionLevel}"
+                  ItemsSource="{Binding MotionLevels}" SelectedItem="{Binding SelectedMotionLevel, Mode=TwoWay}" HorizontalAlignment="Stretch">
+          <ComboBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:DesignChoice"><TextBlock Text="{Binding Text}" /></DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <!-- 추천 색 1클릭 제안(D-375 — 강제 없음) -->
+        <Border AutomationProperties.AutomationId="designTheme.suggest" IsVisible="{Binding HasSuggestion}" Padding="8" CornerRadius="4"
+                BorderBrush="{DynamicResource PdBrushAccent}" BorderThickness="1" Background="{DynamicResource PdBrushSurfaceAlt}">
+          <StackPanel Spacing="6">
+            <TextBlock AutomationProperties.AutomationId="designTheme.lblSuggest" Text="{Binding SuggestionText}" TextWrapping="Wrap" />
+            <WrapPanel>
+              <Button AutomationProperties.AutomationId="designTheme.btnSuggestApply" Content="{loc:Tr theme.style.suggestColor.apply}"
+                      Command="{Binding ApplySuggestionCommand}" Margin="0,0,6,0" />
+              <Button AutomationProperties.AutomationId="designTheme.btnSuggestKeep" Content="{loc:Tr theme.style.suggestColor.keep}"
+                      Command="{Binding KeepColorCommand}" />
+            </WrapPanel>
+          </StackPanel>
+        </Border>
+
+        <!-- 폴백 안내(소프트웨어 렌더·움직임 줄이기·창 수 초과 — 저장값은 보존) -->
+        <TextBlock AutomationProperties.AutomationId="designTheme.lblFallback" Text="{Binding FallbackText}" Classes="caption warn"
+                   IsVisible="{Binding HasFallback}" TextWrapping="Wrap" />
+      </StackPanel>
+
+      <!-- 오른쪽(1열이면 아래): 효과 행 -->
+      <StackPanel x:Name="EffectPane" Grid.Column="2" Grid.Row="0" Spacing="6">
+        <!-- 효과 단계(21 §5.3): 높음·중간(권장)·낮음·테마 기본 4칸, 상태('높음 + 사용자 지정 N개')·설명·움직임 줄이기 낮춤·단계 기본으로 되돌리기 -->
+        <TextBlock Text="{loc:Tr theme.style.level}" Classes="section" />
+        <ListBox AutomationProperties.AutomationId="designTheme.lstLevels" AutomationProperties.Name="{loc:Tr theme.style.level}"
+                 ItemsSource="{Binding EffectLevels}" SelectedItem="{Binding SelectedEffectLevel, Mode=TwoWay}" IsEnabled="{Binding IsEditable}"
+                 Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+          <ListBox.ItemsPanel>
+            <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+          </ListBox.ItemsPanel>
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:DesignChoice">
+              <TextBlock Text="{Binding Text}" AutomationProperties.AutomationId="{Binding Value, StringFormat='designTheme.level.{0}'}" />
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBlock AutomationProperties.AutomationId="designTheme.lblLevel" Text="{Binding LevelText}" />
+        <TextBlock AutomationProperties.AutomationId="designTheme.lblLevelDesc" Text="{Binding LevelDescription}" Classes="caption" TextWrapping="Wrap" />
+        <TextBlock AutomationProperties.AutomationId="designTheme.lblLevelReduced" Text="{Binding LevelReducedText}" Classes="caption warn"
+                   IsVisible="{Binding IsLevelReduced}" TextWrapping="Wrap" />
+        <WrapPanel>
+          <Button AutomationProperties.AutomationId="designTheme.btnResetLevel" Content="{loc:Tr theme.style.level.reset}"
+                  Command="{Binding ResetLevelCommand}" IsEnabled="{Binding IsEditable}" />
+        </WrapPanel>
+
+        <TextBlock Text="{loc:Tr theme.style.effects}" Classes="section" Margin="0,8,0,0" />
+        <TextBlock Text="{loc:Tr theme.style.switchSources.hint}" Classes="caption" TextWrapping="Wrap" AutomationProperties.AutomationId="designTheme.lblSwitchSourcesHint" />
+        <ItemsControl AutomationProperties.AutomationId="designTheme.lstEffects" ItemsSource="{Binding Effects}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:DesignEffectRow">
+              <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,3" AutomationProperties.AutomationId="{Binding Key, StringFormat='designTheme.row.{0}'}">
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,8,0">
+                  <StackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
+                    <Ellipse Width="8" Height="8" VerticalAlignment="Center" Fill="{DynamicResource PdBrushAccent}" IsVisible="{Binding IsOverridden}"
+                             ToolTip.Tip="{loc:Tr theme.style.overridden.tooltip}"
+                             AutomationProperties.AutomationId="{Binding Key, StringFormat='designTheme.overridden.{0}'}" />
+                    <Path Data="{StaticResource DesignLockGeometry}" Width="12" Height="12" Stretch="Uniform" VerticalAlignment="Center"
+                          Fill="{DynamicResource PdBrushTextMuted}" IsVisible="{Binding !IsEnabled}" ToolTip.Tip="{loc:Tr theme.style.locked}" />
+                  </StackPanel>
+                  <!-- 폴백이 낮춘 실효값(낮추지 않았으면 숨김) -->
+                  <TextBlock Text="{Binding LoweredText}" Classes="caption warn" IsVisible="{Binding IsLowered}" TextTrimming="CharacterEllipsis"
+                             AutomationProperties.AutomationId="{Binding Key, StringFormat='designTheme.lowered.{0}'}" />
+                </StackPanel>
+                <ComboBox Grid.Column="1" Width="{StaticResource DesignEffectEditorWidth}" VerticalAlignment="Center"
+                          ItemsSource="{Binding Options}" SelectedItem="{Binding SelectedOption, Mode=TwoWay}" IsEnabled="{Binding IsEnabled}"
+                          AutomationProperties.AutomationId="{Binding Key, StringFormat='designTheme.effect.{0}'}" AutomationProperties.Name="{Binding Label}">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:DesignChoice"><TextBlock Text="{Binding Text}" /></DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button Grid.Column="2" Content="{loc:Tr theme.design.reset.prop}" Command="{Binding ResetCommand}" IsEnabled="{Binding IsOverridden}"
+                        Margin="6,0,0,0" VerticalAlignment="Center" AutomationProperties.AutomationId="{Binding Key, StringFormat='designTheme.reset.{0}'}" />
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <WrapPanel>
+          <Button AutomationProperties.AutomationId="designTheme.btnResetAll" Content="{loc:Tr theme.style.reset}"
+                  Command="{Binding ResetAllCommand}" IsEnabled="{Binding HasOverrides}" />
+        </WrapPanel>
+
+        <!-- 배경(21 §6): 장식이 image 일 때 이미지 고르기·지우기·맞춤·불투명도·어둡게. 미리보기는 지금 적용된 장식 브러시(PdStyleDecor) -->
+        <TextBlock Text="{loc:Tr theme.style.bg}" Classes="section" Margin="0,8,0,0" />
+        <TextBlock Text="{loc:Tr theme.style.bg.hint}" Classes="caption" TextWrapping="Wrap" />
+        <StackPanel Spacing="6" IsVisible="{Binding IsImageDecor}" AutomationProperties.AutomationId="designTheme.bgImage">
+          <WrapPanel>
+            <Button x:Name="PickBackgroundButton" AutomationProperties.AutomationId="designTheme.btnBgPick" Content="{loc:Tr theme.style.bg.pick}"
+                    Click="OnPickBackground" IsEnabled="{Binding IsEditable}" Margin="0,0,6,0" />
+            <Button AutomationProperties.AutomationId="designTheme.btnBgClear" Content="{loc:Tr theme.style.bg.clear}"
+                    Command="{Binding ClearBackgroundCommand}" IsEnabled="{Binding HasBackgroundImage}" />
+          </WrapPanel>
+          <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+            <TextBlock Grid.Row="0" Text="{loc:Tr theme.style.bg.fit}" VerticalAlignment="Center" />
+            <ComboBox Grid.Row="0" Grid.Column="1" Width="{StaticResource DesignEffectEditorWidth}" AutomationProperties.AutomationId="designTheme.cmbBgFit"
+                      AutomationProperties.Name="{loc:Tr theme.style.bg.fit}" ItemsSource="{Binding BackgroundFits}" SelectedItem="{Binding SelectedBackgroundFit, Mode=TwoWay}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:DesignChoice"><TextBlock Text="{Binding Text}" /></DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Grid.Row="1" Text="{loc:Tr theme.style.bg.opacity}" VerticalAlignment="Center" />
+            <Slider Grid.Row="1" Grid.Column="1" Width="{StaticResource DesignEffectEditorWidth}" Minimum="0" Maximum="1" SmallChange="0.05" LargeChange="0.1"
+                    Value="{Binding BackgroundOpacity, Mode=TwoWay}" AutomationProperties.AutomationId="designTheme.sldBgOpacity" AutomationProperties.Name="{loc:Tr theme.style.bg.opacity}" />
+            <TextBlock Grid.Row="2" Text="{loc:Tr theme.style.bg.dim}" VerticalAlignment="Center" />
+            <Slider Grid.Row="2" Grid.Column="1" Width="{StaticResource DesignEffectEditorWidth}" Minimum="0" Maximum="{Binding MaxBackgroundDim}" SmallChange="0.05" LargeChange="0.1"
+                    Value="{Binding BackgroundDim, Mode=TwoWay}" AutomationProperties.AutomationId="designTheme.sldBgDim" AutomationProperties.Name="{loc:Tr theme.style.bg.dim}" />
+          </Grid>
+        </StackPanel>
+        <TextBlock AutomationProperties.AutomationId="designTheme.lblBgStatus" Text="{Binding BackgroundStatus}" Classes="caption warn"
+                   IsVisible="{Binding HasBackgroundStatus}" TextWrapping="Wrap" />
+        <TextBlock Text="{loc:Tr theme.style.bg.preview}" Classes="caption" />
+        <Border AutomationProperties.AutomationId="designTheme.bgPreview" Height="{StaticResource DesignPreviewHeight}" CornerRadius="4" ClipToBounds="True"
+                BorderBrush="{DynamicResource PdBrushBorder}" BorderThickness="1" Background="{DynamicResource PdBrushMdiBackground}" IsHitTestVisible="False">
+          <Border Background="{DynamicResource PdStyleDecor}" />
+        </Border>
+        <TextBlock AutomationProperties.AutomationId="designTheme.lblStatus" Text="{Binding Status}" Classes="caption" TextWrapping="Wrap" />
+      </StackPanel>
+    </Grid>
+  </ScrollViewer>
+</UserControl>

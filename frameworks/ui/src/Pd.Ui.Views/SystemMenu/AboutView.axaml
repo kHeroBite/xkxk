@@ -1,0 +1,33 @@
+<!-- 프로그램 정보 화면(UI-17) — 제품명·버전·채널·빌드 시각·플랫폼·OS·런타임·UI 라이브러리·렌더러·오픈소스 고지. 문자열은 다국어 사전 키 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Pd.Poc.Shell.ViewModels.SystemMenu"
+             xmlns:loc="using:Pd.Poc.Shell.Localization"
+             x:Class="Pd.Ui.Views.SystemMenu.AboutView"
+             x:DataType="vm:AboutViewModel">
+  <ScrollViewer>
+    <StackPanel Margin="14" Spacing="8">
+      <TextBlock Text="{loc:Tr sysview.about.product}" FontSize="18" FontWeight="{DynamicResource PdFontWeightStrong}" />
+      <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="16" RowSpacing="4">
+        <TextBlock Grid.Row="0" Text="{loc:Tr sysview.about.version}" />
+        <SelectableTextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Version}" AutomationProperties.AutomationId="sys.about.version" />
+        <TextBlock Grid.Row="1" Text="{loc:Tr sysview.about.channel}" />
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Channel}" AutomationProperties.AutomationId="sys.about.channel" />
+        <TextBlock Grid.Row="2" Text="{loc:Tr sysview.about.buildTime}" />
+        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding BuildTime}" AutomationProperties.AutomationId="sys.about.buildTime" />
+        <TextBlock Grid.Row="3" Text="{loc:Tr sysview.about.platform}" />
+        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Platform}" />
+        <TextBlock Grid.Row="4" Text="{loc:Tr sysview.about.os}" />
+        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Os}" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="5" Text="{loc:Tr sysview.about.runtime}" />
+        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Runtime}" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="6" Text="{loc:Tr sysview.about.libraries}" />
+        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Libraries}" TextWrapping="Wrap" />
+        <TextBlock Grid.Row="7" Text="{loc:Tr sysview.about.renderer}" />
+        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Renderer}" TextWrapping="Wrap" AutomationProperties.AutomationId="sys.about.renderer" />
+      </Grid>
+      <TextBlock Text="{loc:Tr sysview.about.licenses.title}" FontWeight="{DynamicResource PdFontWeightStrong}" Margin="0,6,0,0" />
+      <TextBlock Text="{loc:Tr sysview.about.licenses.body}" TextWrapping="Wrap" Opacity="0.85" />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

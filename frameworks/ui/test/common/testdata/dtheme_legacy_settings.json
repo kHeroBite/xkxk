@@ -1,0 +1,7 @@
+{
+  "Theme": "Light",
+  "ThemeId": "user-dtheme01",
+  "SystemLightThemeId": "pd-light",
+  "SystemDarkThemeId": "pd-dark",
+  "UserThemesJson": "[{\"Id\":\"user-dtheme01\",\"Name\":\"시험 요소별 테마\",\"Base\":\"Light\",\"BaseTemplateId\":\"pd-light\",\"Colors\":{\"PdBrushBackground\":\"#FAF0E6\",\"PdBrushAccent\":\"#7A1F8E\",\"PdBrushText\":\"#1B1B1B\"},\"Design\":{\"app.fontSize\":\"1\",\"button.cornerRadius\":\"6\",\"button.borderThickness\":\"1\",\"button.padding\":\"6 12\",\"input.cornerRadius\":\"4\",\"gridHeader.fontWeight\":\"SemiBold\",\"gridCell.padding\":\"2 6\",\"statusBar.padding\":\"2 8\"}}]"
+}

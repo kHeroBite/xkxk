@@ -1,0 +1,52 @@
+<!-- Window 가 없는 플랫폼(Android·웹 브라우저) 전용 PinnedDockControl 테마 — 원본의 $parent[Window] 바인딩만 $parent[TopLevel] 로 바꾼 사본(Ancestor not found 바인딩 오류 제거, D-C3-14 후속)
+     출처: Dock.Avalonia.Themes.Fluent 12.1.0.12 Controls/PinnedDockControl.axaml (https://github.com/wieslawsoltes/Dock, MIT License, Copyright (c) Wiesław Šoltés).
+     변경점: Background 바인딩 3곳의 $parent[Window] → $parent[TopLevel] (Background·TransparencyBackgroundFallback 은 TopLevel 에도 있다), Design.PreviewWith 삭제. 그 밖은 원본 그대로다.
+     Dock 업그레이드 때 원본과 대조해 갱신한다. 데스크톱 헤드에는 적용하지 않는다(SingleWindowPlatformFix 를 Android·웹 헤드만 부른다).
+     로드: x:Class 생성자(AvaloniaXamlLoader.Load(this))로만 만든다. avares URI 런타임 로드는 웹 트리밍이 !XamlLoader 를 지워 실패한다(c3dev_f "No precompiled XAML found"). -->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="Pd.Ui.Views.Themes.PinnedDockNoWindowTheme"
+                    xmlns:dmc="clr-namespace:Dock.Model.Controls;assembly=Dock.Model"
+                    xmlns:core="clr-namespace:Dock.Model.Core;assembly=Dock.Model"
+                    x:DataType="dmc:IRootDock"
+                    x:CompileBindings="True">
+
+  <ControlTheme x:Key="{x:Type PinnedDockControl}" TargetType="PinnedDockControl">
+
+    <Setter Property="(AutomationProperties.AutomationId)" Value="{Binding Id}" />
+    <Setter Property="(AutomationProperties.Name)" Value="{Binding Title}" />
+
+    <Setter Property="(DockProperties.IsDragEnabled)" Value="{Binding CanDrag}" />
+    <Setter Property="(DockProperties.IsDropEnabled)" Value="{Binding CanDrop}" />
+    <Setter Property="(DockProperties.DockGroup)" Value="{Binding DockGroup}" />
+
+    <Setter Property="PinnedDockAlignment" Value="{Binding PinnedDock?.Alignment, TargetNullValue={x:Static core:Alignment.Unset}, FallbackValue={x:Static core:Alignment.Unset}}" />
+    <Setter Property="PinnedDockDisplayMode" Value="{Binding PinnedDockDisplayMode, FallbackValue={x:Static core:PinnedDockDisplayMode.Overlay}}" />
+
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid Name="PART_PinnedDockGrid"
+              IsVisible="{Binding !!PinnedDock?.VisibleDockables?.Count, TargetNullValue={x:False}, FallbackValue={x:False}}">
+          <DeferredContentControl Content="{Binding PinnedDock}" Name="PART_PinnedDock">
+            <DeferredContentControl.Styles>
+              <Style Selector="ToolDockControl">
+                <Setter Property="Background">
+                  <MultiBinding Converter="{x:Static EitherNotNullConverter.Instance}">
+                    <Binding Path="$parent[TopLevel].Background" />
+                    <Binding Path="$parent[TopLevel].TransparencyBackgroundFallback" />
+                  </MultiBinding>
+                </Setter>
+              </Style>
+              <Style Selector="ToolControl">
+                <Setter Property="IsHitTestVisible" Value="{Binding !$parent[DockControl].IsDraggingDock}" />
+              </Style>
+            </DeferredContentControl.Styles>
+          </DeferredContentControl>
+          <GridSplitter Name="PART_PinnedDockSplitter"
+                        Grid.Column="1" Grid.Row="1"
+                        Background="{Binding $parent[TopLevel].Background, TargetNullValue={x:Static Brushes.Transparent}}" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>

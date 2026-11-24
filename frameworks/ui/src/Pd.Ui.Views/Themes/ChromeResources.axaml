@@ -1,0 +1,125 @@
+<!-- 문서 창 크롬 리소스 — 테마 토큰 기본값(fallback)·크롬 스타일 별칭/수치 기본값·기호 상태 색·탭 상태 색(MdiChrome.axaml 이 병합, 벡터 아이콘은 ChromeIcons.axaml) -->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- 테마 토큰 기본값: ThemeApplier 가 Application.Resources 에 같은 키를 쓰면 그 값이 우선한다 -->
+  <SolidColorBrush x:Key="PdBrushWindowBorderActive" Color="#7988AF" />
+  <SolidColorBrush x:Key="PdBrushWindowBorderInactive" Color="#5A5A5A" />
+  <SolidColorBrush x:Key="PdBrushWindowShadow" Color="#70000000" />
+  <SolidColorBrush x:Key="PdBrushMdiTitleButtonHover" Color="#33FFFFFF" />
+  <SolidColorBrush x:Key="PdBrushMdiTitleButtonChecked" Color="#59FFFFFF" />
+  <SolidColorBrush x:Key="PdBrushMdiTitleBarPinned" Color="#800000" />
+  <SolidColorBrush x:Key="PdBrushChromeGlyph" Color="#C0C0C0" />
+  <SolidColorBrush x:Key="PdBrushChromePinOn" Color="#FF4500" />
+  <SolidColorBrush x:Key="PdBrushChromeLockOn" Color="#00BFFF" />
+  <SolidColorBrush x:Key="PdBrushCacheLow" Color="#FFFFE0" />
+  <SolidColorBrush x:Key="PdBrushCacheHigh" Color="#FFD700" />
+  <SolidColorBrush x:Key="PdBrushCacheFull" Color="#FFA500" />
+  <SolidColorBrush x:Key="PdBrushWindowHairlineActive" Color="#4D000000" />
+  <SolidColorBrush x:Key="PdBrushWindowHairlineInactive" Color="#26000000" />
+  <SolidColorBrush x:Key="PdBrushCaptionHover" Color="#1A000000" />
+  <SolidColorBrush x:Key="PdBrushCaptionPressed" Color="#33000000" />
+  <SolidColorBrush x:Key="PdBrushCaptionCloseHover" Color="#C42B1C" />
+  <!-- 닫기 누름(D-CLOSE-PRESSED): hover 와 같은 출처 Windows Terminal MinMaxCloseControl.xaml(microsoft/terminal 8d94edd7, Light·Dark 같음) —
+       CloseButtonBackgroundPressed = #C42B1C Opacity 0.9, CloseButtonForegroundPressed = White Opacity 0.7. OS 가 그리는 Win11 값은 공식 문서에 없다 -->
+  <SolidColorBrush x:Key="PdBrushCaptionClosePressed" Color="#E6C42B1C" />
+  <SolidColorBrush x:Key="PdBrushCaptionClosePressedGlyph" Color="#B3FFFFFF" />
+  <!-- 옛 MDI 닫기 누름 바탕 #B02719(D-F3-PRESS-CONTRAST)는 U6(문서 창 버튼은 바탕 대신 기호 색)으로 쓰지 않게 되어 지웠다 — 근거·경위는 05_창크롬 문서 §2.6 -->
+  <SolidColorBrush x:Key="PdBrushWindowHighlight" Color="#99FFFFFF" />
+  <SolidColorBrush x:Key="PdBrushMdiBackground" Color="#778899" />
+  <Thickness x:Key="PdChromeHighlightThickness">0</Thickness>
+
+  <!-- 크롬 스타일 별칭·수치 기본값(Windows 11 풍). 실제 값은 WindowCommands.ApplyShadow 가 스타일(Windows/MarsClassic)에 따라 앱 리소스에 다시 건다 -->
+  <SolidColorBrush x:Key="PdChromeTitleActive" Color="#40568D" />
+  <SolidColorBrush x:Key="PdChromeTitleInactive" Color="#808080" />
+  <SolidColorBrush x:Key="PdChromeTitleText" Color="#FFFFFF" />
+  <SolidColorBrush x:Key="PdChromeGlyph" Color="#FFFFFF" />
+  <SolidColorBrush x:Key="PdChromeBorderActive" Color="#4D000000" />
+  <SolidColorBrush x:Key="PdChromeBorderInactive" Color="#26000000" />
+  <SolidColorBrush x:Key="PdChromeHover" Color="#1A000000" />
+  <SolidColorBrush x:Key="PdChromePressed" Color="#33000000" />
+  <BoxShadows x:Key="PdMdiShadow">0 1 3 0 #20000000, 0 4 12 0 #30000000</BoxShadows>
+  <BoxShadows x:Key="PdMdiShadowInactive">0 1 3 0 #20000000, 0 3 8 0 #18000000</BoxShadows>
+  <!-- 이동 중 그림자(.pdMoving, MdiDocumentWindowTheme). 기본 없음 — 흐림 반경이 있는 그림자는 이동 1회당 렌더 약 29ms(odebug-perf2 실측). 싼 그림자가 필요하면 흐림 0 값으로 바꾼다 -->
+  <BoxShadows x:Key="PdMdiShadowMoving">none</BoxShadows>
+  <!-- SDI(OS 창) 바깥 그림자 모양(Q2 #16, PD 설계값) — "진하기(0~1),감쇠 폭 τ(px),여백(px),아래 이동(px)" 96DPI 기준. Desktop SdiShadowWindow 가 읽는다 -->
+  <x:String x:Key="PdSdiShadowActive">0.26,15,40,3</x:String>
+  <x:String x:Key="PdSdiShadowInactive">0.15,7.5,24,2</x:String>
+  <x:Double x:Key="PdLogoWidth">48</x:Double>
+  <x:Double x:Key="PdLogoIconSize">16</x:Double>
+  <x:Double x:Key="PdChromeInactiveOpacity">0.75</x:Double>
+  <CornerRadius x:Key="PdChromeCorner">8</CornerRadius>
+  <CornerRadius x:Key="PdChromeInnerCorner">7</CornerRadius>
+  <CornerRadius x:Key="PdChromeContentCorner">0</CornerRadius><!-- C3 본문 반경 0 — 곡선은 잘라냄(MDI 7·SDI DWM 8) 한 곳만(WindowChromeStyle 이 스타일별로 다시 건다) -->
+  <Thickness x:Key="PdSdiFrameThickness">0</Thickness>
+  <CornerRadius x:Key="PdChromeButtonCorner">4</CornerRadius>
+  <Thickness x:Key="PdChromeFramePadding">0</Thickness><!-- C3: Windows 액자 띠 0(Mars 클래식 2,3,2,3 은 WindowChromeStyle 이 건다) -->
+  <x:Double x:Key="PdMdiTitleHeight">32</x:Double>
+  <x:Double x:Key="PdCaptionButtonWidth">46</x:Double>
+  <x:Double x:Key="PdChromeButtonWidth">30</x:Double>
+  <x:Double x:Key="PdChromeButtonHeight">32</x:Double>
+  <x:Double x:Key="PdChromeIconSize">12</x:Double>
+  <x:Double x:Key="PdCaptionGlyphSize">10</x:Double>
+  <x:Double x:Key="PdWindowMinWidth">0</x:Double><!-- SDI 창 최소 크기 기본값 — Docking/WindowMinSize.cs(odev-ux)가 실제 값을 덮어쓴다 -->
+  <x:Double x:Key="PdWindowMinHeight">0</x:Double>
+
+  <!-- 캡션 3버튼(최소·최대·닫기) 별칭 기본값(Windows). 실제 값은 CaptionLayout.Apply 가 스타일에 따라 다시 건다(macOS 색·기호는 MacCaptionResources.axaml) -->
+  <x:Int32 x:Key="PdCaptionColumn">5</x:Int32>
+  <x:Int32 x:Key="PdCapMinColumn">0</x:Int32>
+  <x:Int32 x:Key="PdCapMaxColumn">1</x:Int32>
+  <x:Int32 x:Key="PdCapCloseColumn">2</x:Int32>
+  <x:Boolean x:Key="PdLogoVisible">True</x:Boolean>
+  <x:Double x:Key="PdCapWidth">46</x:Double>
+  <x:Double x:Key="PdCapHeight">32</x:Double>
+  <x:Double x:Key="PdCapGlyphSize">10</x:Double>
+  <x:Double x:Key="PdCapGlyphRestOpacity">1</x:Double>
+  <x:Double x:Key="PdCapOpsInactiveOpacity">0.75</x:Double>
+  <CornerRadius x:Key="PdCapCorner">0</CornerRadius>
+  <Thickness x:Key="PdCapMargin">0</Thickness>
+  <Thickness x:Key="PdCaptionOpsMargin">0</Thickness>
+  <Thickness x:Key="PdCaptionReserve">0,0,108,0</Thickness>
+  <Thickness x:Key="PdTitleMinReserve">30,0,0,0</Thickness><!-- 제목 최소 칸 기본값 — CaptionLayout 이 "W…"+8 측정값으로 다시 건다 --><!-- MDI 머리줄 캡션 자리·정렬(PdCaptionAlign)은 CaptionLayout 이 스타일별로 건다 -->
+  <SolidColorBrush x:Key="PdBrushTransparent" Color="Transparent" />
+  <SolidColorBrush x:Key="PdBrushWhiteGlyph" Color="White" />
+
+  <!-- 캡션·기능 버튼 기호 색(U6 — hover·누름·켜짐은 바탕 대신 기호 색으로 표시). CaptionLayout 이 제목줄 종류(강조 띠/표면색)에 따라 PdChromeGlyph* 별칭으로 건다.
+       PD 설계값: 강조 띠(남색) 위 hover 호박색·누름 진한 갈색(2026-11-12 누름 기호 대 hover 바탕 3:1 이상, 이전 호박 FFA928 은 2.29)·켜짐 하늘색, 표면색 위 파랑 계열. F3 누름≠hover 채널합 차 ≥ 10 — 갈색 75 vs 호박 573, 닫기 487 vs 354 -->
+  <SolidColorBrush x:Key="PdBrushChromeGlyphHoverOnAccent" Color="#FFF4CC" />
+  <SolidColorBrush x:Key="PdBrushChromeGlyphPressedOnAccent" Color="#2E1D00" />
+  <SolidColorBrush x:Key="PdBrushChromeGlyphCheckedOnAccent" Color="#FFFFFF" />
+  <SolidColorBrush x:Key="PdBrushChromeCloseGlyphHoverOnAccent" Color="#FF7A6E" />
+  <SolidColorBrush x:Key="PdBrushChromeCloseGlyphPressedOnAccent" Color="#E0483A" />
+  <SolidColorBrush x:Key="PdBrushChromeGlyphHoverOnSurface" Color="#2F6FD6" />
+  <SolidColorBrush x:Key="PdBrushChromeGlyphPressedOnSurface" Color="#163F86" />
+  <SolidColorBrush x:Key="PdBrushChromeGlyphCheckedOnSurface" Color="#2F6FD6" />
+  <SolidColorBrush x:Key="PdBrushChromeCloseGlyphHoverOnSurface" Color="#C42B1C" />
+  <SolidColorBrush x:Key="PdBrushChromeCloseGlyphPressedOnSurface" Color="#8E1F14" />
+  <SolidColorBrush x:Key="PdChromeGlyphHover" Color="#FFF4CC" />
+  <SolidColorBrush x:Key="PdChromeGlyphPressed" Color="#2E1D00" />
+  <SolidColorBrush x:Key="PdChromeGlyphChecked" Color="#FFFFFF" />
+  <!-- 켜짐/꺼짐 4단계 토큰(켜짐=강조색 기호 1.0, 꺼짐=쉬는 기호색×PdChromeToggleOffOpacity, 사용 불가=PdChromeDisabledOpacity, 켜짐 점=PdChromeCheckedDotSize·0 이면 숨김).
+       꺼짐 0.85 는 내장 테마 7종 메인·문서 제목줄(강조 띠 글자색) 모두 꺼짐 합성 기호 대 바탕 대비 ≥ 3:1 을 맞추는 값이다. 계산 최저 ember 문서 제목줄 3.55:1.
+       0.75 는 계산 3.37 인데 다크 문서 제목줄 실측이 2.96 이었다(12px 기호 가장자리 앤티앨리어싱으로 실측 ≈ 계산×0.88). 그래서 계산 3.41 이상이 되는 값에 여유를 두었다(odev-11 재계산표). 허용 범위 0.82~0.9 -->
+  <x:Double x:Key="PdChromeToggleOffOpacity">0.85</x:Double>
+  <x:Double x:Key="PdChromeDisabledOpacity">0.3</x:Double>
+  <x:Double x:Key="PdChromeCheckedDotSize">0</x:Double>
+  <!-- UI 형 스위치의 자동 판정 칸 표시 점 지름(MainTitleBar Ellipse.pdUiAutoDot). 0 이면 숨김. 선택 칸(노랑)·꺼짐 칸(0.85)과 자동 판정 칸(1.0)을 모양으로도 구분한다 -->
+  <x:Double x:Key="PdUiAutoDotSize">3</x:Double>
+  <SolidColorBrush x:Key="PdChromeCloseGlyphHover" Color="#FF7A6E" />
+  <SolidColorBrush x:Key="PdChromeCloseGlyphPressed" Color="#E0483A" />
+
+  <!-- 탭 상태 색(U7·U19, odev-tabs 사용). 기본값이며 CaptionLayout 이 테마 토큰 별칭으로 다시 건다(활성·패널 선택 = 창 제목줄과 같은 반전) -->
+  <SolidColorBrush x:Key="PdChromeTabActiveBackground" Color="#40568D" />
+  <SolidColorBrush x:Key="PdChromeTabActiveText" Color="#FFFFFF" />
+  <SolidColorBrush x:Key="PdChromeTabInactiveBackground" Color="#E6E6E6" />
+  <SolidColorBrush x:Key="PdChromeTabInactiveText" Color="#1F1F1F" />
+  <SolidColorBrush x:Key="PdChromeTabMinimizedBackground" Color="Transparent" />
+  <SolidColorBrush x:Key="PdChromeTabMinimizedText" Color="#808080" />
+  <SolidColorBrush x:Key="PdChromeTabHoverBackground" Color="#1A000000" />
+  <SolidColorBrush x:Key="PdChromePanelTabSelectedBackground" Color="#40568D" />
+  <SolidColorBrush x:Key="PdChromePanelTabSelectedText" Color="#FFFFFF" />
+
+  <!-- 벡터 아이콘은 Themes/ChromeIcons.axaml(U10). 앱 아이콘만 여기 둔다. 폰트 문자·이모지 금지(☰ 두부 사고 재발 방지) -->
+  <!-- 창 탭 합류 아이콘(01 §4.4, MdiDocumentWindowTheme PART_TabJoinIcon): 탭 달린 창 테두리 + 가운데 더하기. 짝수-홀수 채움(F0), 첫 두 점은 16×16 기준 상자 고정용 -->
+  <StreamGeometry x:Key="PdIconTabJoin">F0 M0,0 L0.01,0 L0,0.01 Z M16,16 L15.99,16 L16,15.99 Z M1,3 H7 V1.5 H15 V14.5 H1 Z M2.3,5 H13.7 V13.2 H2.3 Z M7.4,6.4 H8.6 V8.5 H10.7 V9.7 H8.6 V11.8 H7.4 V9.7 H5.3 V8.5 H7.4 Z</StreamGeometry>
+  <StreamGeometry x:Key="PdIconApp">M1,2 H15 V14 H1 Z M2.5,5.5 V12.5 H13.5 V5.5 Z M3.5,7 H7.5 V11 H3.5 Z M8.5,7 H12.5 V8.3 H8.5 Z M8.5,9.7 H12.5 V11 H8.5 Z</StreamGeometry>
+</ResourceDictionary>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PD UI PoC Android 매니페스트 — 원격 제어 서버(기기 안 localhost 소켓) 사용을 위해 INTERNET 권한만 요청 -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto">
+  <uses-permission android:name="android.permission.INTERNET" />
+  <!-- 임시 앱 아이콘(tools/make_icons.py 생성): Resources/mipmap-*(48dp 둥근 사각·원) + mipmap-anydpi-v26(adaptive, API 26+) -->
+  <application android:label="PD UI PoC" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:allowBackup="false" android:supportsRtl="true" />
+</manifest>

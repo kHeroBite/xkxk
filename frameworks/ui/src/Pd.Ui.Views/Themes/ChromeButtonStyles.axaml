@@ -1,0 +1,117 @@
+<!-- 제목줄 버튼 공통 스타일(UI-09) — 기능 버튼(pdChrome)·로고(pdLogo)·캡션(pdOp)의 크기·모서리·색·hover·누름·켜짐. 크기·색은 스타일 별칭. 캡션 3버튼 전용은 CaptionButtons.axaml -->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:Dock.Avalonia.Controls"
+        xmlns:views="using:Pd.Ui.Views">
+  <!-- 제목줄 버튼: 크기·모서리·색은 스타일 별칭(Windows: 기능 30×32·캡션 46×32 full-bleed, Mars: 16×22·18×22). hover·pressed·켜짐 상태, 닫기 hover 빨강+흰 아이콘 -->
+  <Style Selector="Button.pdChrome, ToggleButton.pdChrome">
+    <Setter Property="Width" Value="{DynamicResource PdChromeButtonWidth}" />
+    <Setter Property="Height" Value="{DynamicResource PdChromeButtonHeight}" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="MinWidth" Value="0" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="CornerRadius" Value="{DynamicResource PdChromeButtonCorner}" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource PdChromeGlyph}" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <!-- 이월 3(AC-202): Tab 으로 닿는다. 키보드 포커스 링은 FocusVisual.axaml(2px). Tab 순서는 Input/TabFocusScope 가 정한다 -->
+    <Setter Property="Focusable" Value="True" />
+  </Style>
+  <Style Selector="Button.pdChrome.pdOp">
+    <Setter Property="Width" Value="{DynamicResource PdCaptionButtonWidth}" />
+    <Setter Property="CornerRadius" Value="0" />
+  </Style>
+  <Style Selector="Button.pdChrome.pdLogo"><Setter Property="Foreground" Value="{DynamicResource PdChromeTitleText}" /><Setter Property="Width" Value="{DynamicResource PdLogoWidth}" /></Style>
+  <Style Selector="Button.pdChrome.pdLogo PathIcon"><Setter Property="Width" Value="{DynamicResource PdLogoIconSize}" /><Setter Property="Height" Value="{DynamicResource PdLogoIconSize}" /></Style>
+  <Style Selector="Button.pdChrome PathIcon, ToggleButton.pdChrome PathIcon">
+    <Setter Property="Width" Value="{DynamicResource PdChromeIconSize}" />
+    <Setter Property="Height" Value="{DynamicResource PdChromeIconSize}" />
+  </Style>
+  <Style Selector="Button.pdChrome /template/ ContentPresenter#PART_ContentPresenter, ToggleButton.pdChrome /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{Binding $parent[Button].Foreground}" />
+  </Style>
+  <Style Selector="Button.pdChrome:pointerover /template/ ContentPresenter#PART_ContentPresenter, ToggleButton.pdChrome:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource PdChromeHover}" />
+  </Style>
+  <Style Selector="Button.pdChrome:pressed /template/ ContentPresenter#PART_ContentPresenter, ToggleButton.pdChrome:pressed /template/ ContentPresenter#PART_ContentPresenter, ToggleButton.pdChrome:checked /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource PdChromePressed}" />
+  </Style>
+  <Style Selector="ToggleButton.pdChrome.pinOn"><Setter Property="Foreground" Value="{DynamicResource PdBrushChromePinOn}" /></Style>
+  <Style Selector="ToggleButton.pdChrome.lockOn"><Setter Property="Foreground" Value="{DynamicResource PdBrushChromeLockOn}" /></Style>
+  <Style Selector="Button.pdChrome.pdClose:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource PdBrushCaptionCloseHover}" />
+  </Style>
+  <Style Selector="Button.pdChrome.pdClose:pointerover"><Setter Property="Foreground" Value="White" /></Style>
+  <!-- 누름은 hover 와 다른 상태(05 문서 24행 5상태 반응) — hover 뒤에 둬야 누름이 이긴다 -->
+  <Style Selector="Button.pdChrome.pdClose:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource PdBrushCaptionClosePressed}" />
+  </Style>
+  <Style Selector="Button.pdChrome.pdClose:pressed"><Setter Property="Foreground" Value="{DynamicResource PdBrushCaptionClosePressedGlyph}" /></Style>
+
+  <!-- 문서 창(MDI·SDI) 로고: hover·누름은 바탕 없이 기호 색. 위 전역 바탕 규칙은 메인 제목줄(MainTitleBar)이 그대로 쓴다 -->
+  <Style Selector="controls|MdiDocumentWindow /template/ :is(Button).pdChrome /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="controls|MdiDocumentWindow /template/ :is(Button)#PdLogo:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource PdChromeGlyphHover}" />
+  </Style>
+  <Style Selector="controls|MdiDocumentWindow /template/ :is(Button)#PdLogo:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource PdChromeGlyphPressed}" />
+  </Style>
+  <!-- 기능 버튼 7개 상태(사용자 지시 2026-11-05 — U6 의 기호 색 표현을 대체, 표는 공통원칙 §4.2). 호버 = 옅은 채움+테두리, 켜짐 = 그림색 채움+반전 그림, 켜짐+호버 = 안쪽 테두리, 누름 = 켜짐과 같은 반전+안쪽 테두리.
+       순서 = 켜짐 → hover → 켜짐+hover → 누름(뒤가 이긴다). 항상 위·위치 고정도 같은 켜짐 표현을 쓴다(색만으로 켜짐을 나타내지 않는다).
+       테두리는 늘 1 로 두고 평소 투명이라 크기가 흔들리지 않는다. 전환 애니메이션은 없다(즉시 전환이라 동작 줄이기 설정과 충돌하지 않는다).
+       기호 색은 ContentPresenter 에 건다 — 캐시 버튼은 코드가 버튼 Foreground 에 적중률 색을 넣어 버튼 단위 스타일로는 덮이지 않는다 -->
+  <Style Selector="views|ChromeButtons :is(Button).pdChrome /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Margin" Value="{DynamicResource PdChromeStateMargin}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+  </Style>
+  <!-- 켜짐·누름(사용자 지시 2026-11-11 — 위 반전 채움을 대체, 표는 공통원칙 §4.2): 바탕은 그대로 두고 기호만 켜짐 색(PdChromeGlyphChecked) + 1.15배로 굵게 보이게,
+       누름은 누름 기호 색(PdChromeGlyphPressed). 켜짐+호버는 호버 채움·테두리 위에 켜짐 기호. 캡션 3버튼(CaptionButtons.axaml)은 바꾸지 않는다 -->
+  <Style Selector="views|ChromeButtons ToggleButton.pdChrome:checked /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Foreground" Value="{DynamicResource PdChromeGlyphChecked}" />
+  </Style>
+  <Style Selector="views|ChromeButtons ToggleButton.pdChrome:checked PathIcon">
+    <Setter Property="RenderTransform" Value="scale(1.15)" />
+  </Style>
+  <!-- 꺼진 토글 기호는 흐리게(사용자 지시 2026-11-11 — 켜짐과 구분). 켜짐·hover 는 1.0, 사용 불가는 PdChromeDisabledOpacity. 바탕 채움은 쓰지 않는다 -->
+  <Style Selector="views|ChromeButtons ToggleButton.pdChrome:not(:checked) PathIcon">
+    <Setter Property="Opacity" Value="{DynamicResource PdChromeToggleOffOpacity}" />
+  </Style>
+  <Style Selector="views|ChromeButtons ToggleButton.pdChrome:not(:checked):pointerover PathIcon">
+    <Setter Property="Opacity" Value="1" />
+  </Style>
+  <Style Selector="views|ChromeButtons ToggleButton.pdChrome:disabled PathIcon">
+    <Setter Property="Opacity" Value="{DynamicResource PdChromeDisabledOpacity}" />
+  </Style>
+  <Style Selector="views|ChromeButtons :is(Button).pdChrome:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource PdChromeStateHoverFill}" />
+    <Setter Property="Foreground" Value="{DynamicResource PdChromeStateGlyph}" />
+  </Style>
+  <!-- 비활성 문서 창 호버 바탕(01 §4.2 PdBrushChromeHoverInactive): 기본(Opacity 방식)에서는 ChromeInactive.axaml 이 붙지 않으므로 여기서 건다. 단추 줄 전체 흐림(0.75)을 거친 값이 3:1 이 되도록 토큰을 잡았다 -->
+  <Style Selector="controls|MdiDocumentWindow:not(:active) /template/ StackPanel#PdCaptionStrip views|ChromeButtons :is(Button).pdChrome:not(.pdClose):pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource PdChromeHoverInactive}" />
+  </Style>
+  <Style Selector="views|ChromeButtons ToggleButton.pdChrome:checked:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Foreground" Value="{DynamicResource PdChromeGlyphChecked}" />
+  </Style>
+  <Style Selector="views|ChromeButtons :is(Button).pdChrome:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource PdChromeStateHoverFill}" />
+    <Setter Property="Foreground" Value="{DynamicResource PdChromeGlyphPressed}" />
+  </Style>
+  <!-- MDI 도구 창 버튼(메뉴·핀·닫기 — 템플릿 Path Fill) -->
+  <Style Selector="controls|MdiDocumentWindow /template/ StackPanel#PART_ToolButtons Button:pointerover /template/ ContentPresenter#PART_ContentPresenter, controls|MdiDocumentWindow /template/ StackPanel#PART_ToolButtons Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="controls|MdiDocumentWindow /template/ StackPanel#PART_ToolButtons Button:pointerover Path"><Setter Property="Fill" Value="{DynamicResource PdChromeGlyphHover}" /></Style>
+  <Style Selector="controls|MdiDocumentWindow /template/ StackPanel#PART_ToolButtons Button:pressed Path"><Setter Property="Fill" Value="{DynamicResource PdChromeGlyphPressed}" /></Style>
+  <Style Selector="controls|MdiDocumentWindow /template/ Button#PART_ToolCloseButton:pointerover Path"><Setter Property="Fill" Value="{DynamicResource PdChromeCloseGlyphHover}" /></Style>
+  <Style Selector="controls|MdiDocumentWindow /template/ Button#PART_ToolCloseButton:pressed Path"><Setter Property="Fill" Value="{DynamicResource PdChromeCloseGlyphPressed}" /></Style>
+</Styles>

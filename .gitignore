@@ -1,0 +1,132 @@
+# XKXK 모노레포 제외 목록 — Pd 저장소 .gitignore(커밋 157403c)를 기준으로 poc/ui/ 접두를 frameworks/ui/ 로 바꿔 옮겼다(2026-11-24)
+
+# 자격증명·로컬 실행 환경(커밋 금지 — CLAUDE.md 문서 체계 규칙)
+/INFRA.md
+frameworks/ui/INFRA.md
+*.pfx
+*.p12
+*.keystore
+*.jks
+.env
+.env.*
+**/secrets*.json
+
+# 공용 하네스 symlink(저장소 밖 파일을 가리킨다 — .mcp.json 에는 MCP 접속 정보가 들어갈 수 있다)
+/CLAUDE.md
+/.mcp.json
+/.claude/settings.local.json
+frameworks/ui/.mcp.json
+frameworks/ui/.claude/settings.local.json
+
+# .NET 빌드 산출물
+bin/
+obj/
+bin_*/
+publish/
+*.user
+*.suo
+.vs/
+**/wwwroot/_framework/
+
+# Avalonia 원본 소스(73M) — 저장소에 넣지 않는다(Pd lead 결정 2026-10-29). 태그 12.1.4·커밋 2d79ba5 에서 다시 받는다(Pd ADR-044, vendor/NOTICE-pd.md).
+# patches·feed(빌드 필수 nupkg)·NOTICE-pd.md 는 저장소에 넣는다
+frameworks/ui/vendor/avalonia-12.1.4/
+
+# 모바일 패키지
+*.apk
+*.aab
+*.ipa
+
+# PoC 시험 산출물 — 빌드 스냅숏·바이너리·대용량 캡처(판정 근거 md/json 은 남긴다)
+frameworks/ui/logs/odev4b/snap/
+frameworks/ui/logs/**/*.dll
+frameworks/ui/logs/**/*.exe
+frameworks/ui/logs/**/*.pdb
+frameworks/ui/logs/**/*.zip
+frameworks/ui/logs/**/*.mp4
+frameworks/ui/logs/**/*.etl
+frameworks/ui/logs/*.log
+frameworks/ui/logs/desktop_*_stdio.log
+# 사용자 개인 설정·레이아웃 사본(%LOCALAPPDATA% 에서 떠 둔 것). 시험 고정값 파일은 남긴다
+frameworks/ui/logs/user_files/
+frameworks/ui/logs/**/*.json.backup/
+
+# Mars 자료(읽기 전용 참고 대상 — 화면 캡처·캡처 스크립트를 저장소에 넣지 않는다, Pd ADR-036 원칙 4)
+frameworks/ui/logs/odev1/mars_capture/
+frameworks/ui/logs/odev4b/mars_ref/
+**/*mars*.png
+**/*Mars*.png
+
+# 편집기·OS
+*.swp
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+
+# 저장소 밖을 가리키는 symlink(공용 하네스)와 세션 런타임 상태 — 루트와 영역(frameworks/ui) 둘 다
+/CLAUDE.md
+/AGENTS.md
+/.mcp.json
+/.claude/archive/
+/.claude/locks/
+/.claude/hooks
+/.claude/skills
+/.claude/commands
+/.claude/settings.json
+/.claude/settings.local.json
+frameworks/ui/.claude/archive/
+frameworks/ui/.claude/locks/
+frameworks/ui/.claude/hooks
+frameworks/ui/.claude/skills
+frameworks/ui/.claude/commands
+frameworks/ui/.claude/settings.json
+frameworks/ui/.claude/settings.local.json
+
+# 시험 런타임 산출물(비어 있는 런타임 폴더)과 PoC 시험 로그 전체 — 루트 고정 패턴과 영역 판을 함께 둔다
+/device_lease/
+/otest_mobile_out/
+/logs/
+frameworks/ui/device_lease/
+frameworks/ui/otest_mobile_out/
+frameworks/ui/logs/
+**/pd_away_ps_*/
+
+# 측정 산출물 이미지(측정·결과·출력 경로만 — 시험 고정 이미지·픽스처는 추가할 수 있게 test 전체는 막지 않는다)
+frameworks/ui/test/**/measure/**/*.png
+frameworks/ui/test/**/results/**/*.png
+frameworks/ui/test/**/out/**/*.png
+frameworks/ui/test/**/measure/**/*.jpg
+frameworks/ui/test/**/results/**/*.jpg
+frameworks/ui/test/**/out/**/*.jpg
+frameworks/ui/test/**/measure/**/*.jpeg
+frameworks/ui/test/**/results/**/*.jpeg
+frameworks/ui/test/**/out/**/*.jpeg
+frameworks/ui/test/**/measure/**/*.gif
+frameworks/ui/test/**/results/**/*.gif
+frameworks/ui/test/**/out/**/*.gif
+frameworks/ui/test/**/measure/**/*.webp
+frameworks/ui/test/**/results/**/*.webp
+frameworks/ui/test/**/out/**/*.webp
+
+# 빌드 산출물·대용량 바이너리·로그
+bin/
+obj/
+*.so
+*.pdb
+*.etl
+*.log
+
+# 비밀값
+*.key
+*.pem
+*.pfx
+*credential*
+id_rsa*
+.env*
+node_modules/
+
+# 참조 소스 원본 편의 링크(원본은 저장소 밖 REF_STORE 에 둔다)
+/ref/src
+frameworks/ui/ref/src
+frameworks/ui/test/desktop/logs/odev6r/shots/focus_124_*.png

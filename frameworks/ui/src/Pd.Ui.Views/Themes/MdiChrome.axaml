@@ -1,0 +1,57 @@
+<!-- 문서 창 크롬 진입점(UI-09·UI-10) — 크롬 리소스·창 테마(MDI·SDI)·제목줄 버튼 스타일을 모으고 MDI 영역 바탕·자석·SDI 틀 색을 정한다. 스타일(자동·Windows·macOS·Mars) 차이는 리소스 별칭 -->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:Dock.Avalonia.Controls"
+        xmlns:deferred="using:Dock.Controls.DeferredContentControl"
+        xmlns:docking="using:Pd.Poc.Shell.Docking">
+
+  <Styles.Resources>
+   <ResourceDictionary>
+    <!-- 토큰 기본값·스타일 별칭·크기·아이콘은 ChromeResources.axaml. 스타일(Windows/MarsClassic) 차이는 WindowCommands.ApplyShadow 가 별칭·수치로 바꾼다 -->
+    <ResourceDictionary.MergedDictionaries>
+      <ResourceInclude Source="avares://Pd.Ui.Views/Themes/ChromeResources.axaml" />
+      <ResourceInclude Source="avares://Pd.Ui.Views/Themes/ChromeIcons.axaml" /><!-- U10 PD 벡터 아이콘 + Dock 기본 기호 키 덮어쓰기 -->
+      <ResourceInclude Source="avares://Pd.Ui.Views/Themes/DocumentDockMode.axaml" /><!-- D-2 예비안 B(odev-2r): LayoutMode 에 맞는 쪽만 생성 -->
+      <ResourceInclude Source="avares://Pd.Ui.Views/Themes/MdiWindowMenu.axaml" /><!-- MDI 창 우클릭 메뉴: 고정 영어 4항목 다국어화 -->
+      <ResourceInclude Source="avares://Pd.Ui.Views/Themes/MacCaptionResources.axaml" /><!-- macOS 신호등 색·기호(PD 설계값) -->
+      <ResourceInclude Source="avares://Pd.Ui.Views/Themes/MdiDocumentWindowTheme.axaml" /><!-- MDI 문서 창 테마 -->
+      <ResourceInclude Source="avares://Pd.Ui.Views/Themes/SdiHostWindowTheme.axaml" /><!-- SDI 호스트 창 테마 -->
+    </ResourceDictionary.MergedDictionaries>
+   </ResourceDictionary>
+  </Styles.Resources>
+
+  <!-- UI-12 자석(odev-2 MagnetMdiLayoutManager): MDI 문서 영역과 웹 관리형 창 레이어(같은 MdiLayoutPanel 경로 — Dock 원본 ManagedWindowLayer.axaml 25행) 모두 적용 -->
+  <Style Selector="controls|MdiDocumentControl"><Setter Property="LayoutManager" Value="{x:Static docking:MagnetMdiLayoutManager.Instance}" /></Style>
+  <!-- MDI 영역 바탕(문서 창 뒤): Mars 입체감의 첫 단(중간 톤 배경 → 진한 띠 → 흰 본문, odev-1 판정) — 원본 템플릿의 투명 바탕을 토큰으로 덮는다 -->
+  <Style Selector="controls|MdiDocumentControl /template/ Border#PART_Root"><Setter Property="Background" Value="{DynamicResource PdBrushMdiBackground}" /></Style>
+  <!-- 위 PART_Root 설정은 원본 템플릿의 Background="Transparent"(템플릿 값)에 막혀 흰색으로 보였다(Q11 1회차). 배경 지정이 없는 직속 Grid 에 칠한다.
+       위 줄은 원인 확정용으로 남긴다: tree.get 에서 PART_Root=Transparent, Grid=토큰색이면 템플릿 우선순위가 원인으로 확정 -->
+  <Style Selector="controls|MdiDocumentControl /template/ Border#PART_Root > Grid"><Setter Property="Background" Value="{DynamicResource PdBrushMdiBackground}" /></Style>
+  <Style Selector="controls|ManagedWindowLayer"><Setter Property="LayoutManager" Value="{x:Static docking:MagnetMdiLayoutManager.Instance}" /></Style>
+  <!-- U15: 웹·Android 분리 창 안 DockControl 의 내용은 레이어 전체 크기로 측정돼 창보다 크게 배치된다(실측 창 본문 386 안에 1013, 칸으로 나뉘면 아래 칸이 창 밖으로 잘림). 창 본문 크기로 제한한다 -->
+  <Style Selector="controls|MdiDocumentWindow controls|DockControl /template/ deferred|DeferredContentPresenter#PART_ContentControl">
+    <Setter Property="MaxWidth" Value="{CompiledBinding $parent[controls:DockControl].Bounds.Width}" /><!-- 리플렉션 바인딩은 실행 중 형식을 못 찾아 앱이 죽는다(실측 Android FATAL) — 컴파일 바인딩만 쓴다 -->
+    <Setter Property="MaxHeight" Value="{CompiledBinding $parent[controls:DockControl].Bounds.Height}" />
+  </Style>
+
+  <!-- SDI 틀(Mars 클래식만 띠·외곽선이 보인다): 비활성 → 활성(.active) → 항상 위(.pinned). 제목줄 바탕은 SdiTitleBar 가 같은 별칭으로 칠한다 -->
+  <Style Selector="Border.pdSdiFrame">
+    <Setter Property="Background" Value="{DynamicResource PdChromeTitleInactive}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource PdChromeBorderInactive}" />
+  </Style>
+  <Style Selector="Border.pdSdiFrame.active"><Setter Property="Background" Value="{DynamicResource PdChromeTitleActive}" /><Setter Property="BorderBrush" Value="{DynamicResource PdChromeBorderActive}" /></Style>
+  <Style Selector="Border.pdSdiFrame.pinned"><Setter Property="Background" Value="{DynamicResource PdBrushMdiTitleBarPinned}" /></Style>
+  <!-- U8: 최대화 SDI 는 OS 가 모서리를 둥글리지 않으므로 본문 모서리도 0 -->
+  <Style Selector="HostWindow[WindowState=Maximized] Border.pdSdiContent"><Setter Property="CornerRadius" Value="0" /></Style><!-- ClipBorder 의 스타일 키는 Border -->
+  <!-- C3 B1: Windows 스타일 SDI 는 외곽선을 OS DWM 테두리 1px(r=8)만 쓴다 — Dock DocumentControl 본문 테두리(PART_Border, DockDocumentContentBorderBrush)가 그 안쪽에 1px 를 더 그려 2px 가 되던 것을 0 으로(.pdWinChrome 은 SdiTitleBar 가 건다) -->
+  <Style Selector="Border.pdSdiFrame.pdWinChrome controls|DocumentControl /template/ Border#PART_Border"><Setter Property="BorderThickness" Value="0" /></Style>
+
+
+  <StyleInclude Source="avares://Pd.Ui.Views/Themes/ChromeButtonStyles.axaml" /><!-- 제목줄 버튼 공통(pdChrome·pdLogo·pdOp) -->
+
+  <!-- UI-15 드롭 대상 강조는 별도 파일(300줄 제한 분할, lead 지시) — 이 Styles 에 함께 포함되므로 App.axaml 은 바꾸지 않는다 -->
+  <StyleInclude Source="avares://Pd.Ui.Views/Themes/DockJoinTarget.axaml" />
+  <StyleInclude Source="avares://Pd.Ui.Views/Themes/NarrowToolChrome.axaml" /><!-- Android·웹 좁은 패널 머리줄 버튼 축소(제목 확보) -->
+  <StyleInclude Source="avares://Pd.Ui.Views/Themes/CaptionButtons.axaml" /><!-- 캡션 3버튼(pdCap): Windows 넓은 버튼 / macOS 신호등 — 위 pdChrome 스타일보다 뒤 -->
+  <!-- Q5 비활성 흐림(브러시 방식) 스타일 ChromeInactive.axaml 은 여기서 포함하지 않는다 — 브러시 방식일 때만 WindowCommands.ApplyShadow 가 앱 스타일 맨 끝에 붙인다(M1) -->
+</Styles>

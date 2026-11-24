@@ -1,0 +1,225 @@
+<!-- PoC 셸 Application — 테마(Fluent·Dock·DataGrid)와 문서/도구 패널 DataTemplate 선언 -->
+<shell:App xmlns="https://github.com/avaloniaui"
+             xmlns:shell="using:Pd.Poc.Shell"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dockTheme="using:Dock.Avalonia.Themes.Fluent"
+             xmlns:local="using:Pd.Ui.Views"
+             xmlns:vm="using:Pd.Poc.Shell.ViewModels"
+             xmlns:loc="using:Pd.Poc.Shell.Localization"
+             xmlns:views="using:Pd.Poc.Shell.Platform"
+             xmlns:theming="using:Pd.Poc.Shell.Theming"
+             x:Class="Pd.Ui.Views.PdApp"
+             RequestedThemeVariant="Default">
+
+  <Application.DataTemplates>
+    <!-- 문서(PocDocument) → App.DocumentViews 가 종류별 뷰 생성. 플로팅 창에서도 쓰이도록 Application 수준에 둔다. -->
+    <local:DocumentViewLocator />
+
+    <DataTemplate DataType="vm:ExplorerTool">
+      <!-- 가로 스크롤 끔 + 버튼·제목 글자 줄바꿈: 패널 폭이 좁거나(Fold5 펼침) 영어처럼 글이 길어도 잘리지 않고 두 줄로 내려간다.
+           실행 버튼은 이름 전체가 보여야 하므로 말줄임표 대신 줄바꿈을 택했다. 한국어처럼 한 줄에 들어가면 배치는 그대로다 -->
+      <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="8" Spacing="4">
+          <StackPanel.Styles>
+            <Style Selector="Button /template/ ContentPresenter#PART_ContentPresenter">
+              <Setter Property="TextWrapping" Value="Wrap" />
+            </Style>
+            <Style Selector="TextBlock">
+              <Setter Property="TextWrapping" Value="Wrap" />
+            </Style>
+          </StackPanel.Styles>
+          <local:FavoriteListView DataContext="{Binding Shell.FavoriteBar}" />
+          <TextBlock Text="{loc:Tr shell.explorer.newMdi}" FontWeight="{DynamicResource PdFontWeightStrong}" />
+          <Grid ColumnDefinitions="*,Auto">
+            <Button Command="{Binding Shell.OpenCommand}" CommandParameter="Grid" HorizontalAlignment="Stretch" AutomationProperties.Name="{loc:Tr shell.explorer.grid}">
+              <WrapPanel>
+                <local:WindowIcon Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center"
+                                  IconKey="{Binding Source=Grid, Converter={x:Static local:WindowIcon.KindIconKey}}"
+                                  AutomationProperties.AutomationId="shell.explorer.icon.Grid"
+                                  IsVisible="{Binding MenuIconVisible, Source={x:Static theming:UiSettings.Current}}" />
+                <TextBlock Text="{loc:Tr shell.explorer.grid}" VerticalAlignment="Center" />
+              </WrapPanel>
+            </Button>
+            <Button Grid.Column="1" Classes="explorerStar" Command="{Binding ToggleFavoriteCommand}" CommandParameter="Grid"
+                    Padding="4,6" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Background="Transparent"
+                    ToolTip.Tip="{loc:Tr favorite.toggle}" AutomationProperties.Name="{loc:Tr favorite.toggle}" AutomationProperties.AutomationId="shell.explorer.star.Grid">
+              <local:WindowIcon IconKey="PdShellIconFavorite" Width="16" Height="16">
+                <local:WindowIcon.Opacity>
+                  <MultiBinding Converter="{x:Static local:WindowIcon.FavoriteStarOpacity}" ConverterParameter="Grid">
+                    <Binding Path="Shell.FavoriteBar" />
+                    <Binding Path="Shell.FavoriteBar.Items.Count" />
+                  </MultiBinding>
+                </local:WindowIcon.Opacity>
+              </local:WindowIcon>
+            </Button>
+          </Grid>
+          <Grid ColumnDefinitions="*,Auto">
+            <Button Command="{Binding Shell.OpenCommand}" CommandParameter="Gantt" HorizontalAlignment="Stretch" AutomationProperties.Name="{loc:Tr shell.explorer.gantt}">
+              <WrapPanel>
+                <local:WindowIcon Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center"
+                                  IconKey="{Binding Source=Gantt, Converter={x:Static local:WindowIcon.KindIconKey}}"
+                                  AutomationProperties.AutomationId="shell.explorer.icon.Gantt"
+                                  IsVisible="{Binding MenuIconVisible, Source={x:Static theming:UiSettings.Current}}" />
+                <TextBlock Text="{loc:Tr shell.explorer.gantt}" VerticalAlignment="Center" />
+              </WrapPanel>
+            </Button>
+            <Button Grid.Column="1" Classes="explorerStar" Command="{Binding ToggleFavoriteCommand}" CommandParameter="Gantt"
+                    Padding="4,6" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Background="Transparent"
+                    ToolTip.Tip="{loc:Tr favorite.toggle}" AutomationProperties.Name="{loc:Tr favorite.toggle}" AutomationProperties.AutomationId="shell.explorer.star.Gantt">
+              <local:WindowIcon IconKey="PdShellIconFavorite" Width="16" Height="16">
+                <local:WindowIcon.Opacity>
+                  <MultiBinding Converter="{x:Static local:WindowIcon.FavoriteStarOpacity}" ConverterParameter="Gantt">
+                    <Binding Path="Shell.FavoriteBar" />
+                    <Binding Path="Shell.FavoriteBar.Items.Count" />
+                  </MultiBinding>
+                </local:WindowIcon.Opacity>
+              </local:WindowIcon>
+            </Button>
+          </Grid>
+          <Grid ColumnDefinitions="*,Auto">
+            <Button Command="{Binding Shell.OpenCommand}" CommandParameter="Form" HorizontalAlignment="Stretch" AutomationProperties.Name="{loc:Tr shell.explorer.form}">
+              <WrapPanel>
+                <local:WindowIcon Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center"
+                                  IconKey="{Binding Source=Form, Converter={x:Static local:WindowIcon.KindIconKey}}"
+                                  AutomationProperties.AutomationId="shell.explorer.icon.Form"
+                                  IsVisible="{Binding MenuIconVisible, Source={x:Static theming:UiSettings.Current}}" />
+                <TextBlock Text="{loc:Tr shell.explorer.form}" VerticalAlignment="Center" />
+              </WrapPanel>
+            </Button>
+            <Button Grid.Column="1" Classes="explorerStar" Command="{Binding ToggleFavoriteCommand}" CommandParameter="Form"
+                    Padding="4,6" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Background="Transparent"
+                    ToolTip.Tip="{loc:Tr favorite.toggle}" AutomationProperties.Name="{loc:Tr favorite.toggle}" AutomationProperties.AutomationId="shell.explorer.star.Form">
+              <local:WindowIcon IconKey="PdShellIconFavorite" Width="16" Height="16">
+                <local:WindowIcon.Opacity>
+                  <MultiBinding Converter="{x:Static local:WindowIcon.FavoriteStarOpacity}" ConverterParameter="Form">
+                    <Binding Path="Shell.FavoriteBar" />
+                    <Binding Path="Shell.FavoriteBar.Items.Count" />
+                  </MultiBinding>
+                </local:WindowIcon.Opacity>
+              </local:WindowIcon>
+            </Button>
+          </Grid>
+          <TextBlock Text="{loc:Tr shell.explorer.newSdi}" FontWeight="{DynamicResource PdFontWeightStrong}" Margin="0,8,0,0" />
+          <Button Command="{Binding Shell.OpenSdiCommand}" CommandParameter="Grid" HorizontalAlignment="Stretch" AutomationProperties.Name="{loc:Tr shell.explorer.gridSdi}">
+              <DockPanel>
+                <local:WindowIcon DockPanel.Dock="Left" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center"
+                                  IconKey="{Binding Source=Grid, Converter={x:Static local:WindowIcon.KindIconKey}}"
+                                  IsVisible="{Binding MenuIconVisible, Source={x:Static theming:UiSettings.Current}}" />
+                <TextBlock Text="{loc:Tr shell.explorer.gridSdi}" VerticalAlignment="Center" />
+              </DockPanel>
+          </Button>
+          <Button Command="{Binding Shell.OpenSdiCommand}" CommandParameter="Gantt" HorizontalAlignment="Stretch" AutomationProperties.Name="{loc:Tr shell.explorer.ganttSdi}">
+              <DockPanel>
+                <local:WindowIcon DockPanel.Dock="Left" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center"
+                                  IconKey="{Binding Source=Gantt, Converter={x:Static local:WindowIcon.KindIconKey}}"
+                                  IsVisible="{Binding MenuIconVisible, Source={x:Static theming:UiSettings.Current}}" />
+                <TextBlock Text="{loc:Tr shell.explorer.ganttSdi}" VerticalAlignment="Center" />
+              </DockPanel>
+          </Button>
+          <Button Command="{Binding Shell.OpenSdiCommand}" CommandParameter="Form" HorizontalAlignment="Stretch" AutomationProperties.Name="{loc:Tr shell.explorer.formSdi}">
+              <DockPanel>
+                <local:WindowIcon DockPanel.Dock="Left" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center"
+                                  IconKey="{Binding Source=Form, Converter={x:Static local:WindowIcon.KindIconKey}}"
+                                  IsVisible="{Binding MenuIconVisible, Source={x:Static theming:UiSettings.Current}}" />
+                <TextBlock Text="{loc:Tr shell.explorer.formSdi}" VerticalAlignment="Center" />
+              </DockPanel>
+          </Button>
+          <TextBlock Text="{loc:Tr shell.explorer.presets}" FontWeight="{DynamicResource PdFontWeightStrong}" Margin="0,8,0,0" />
+          <Button Content="{loc:Tr layout.tpl.mdiCascade}" Command="{Binding Shell.PresetCommand}" CommandParameter="MdiCascade" HorizontalAlignment="Stretch" />
+          <Button Content="{loc:Tr layout.tpl.tabbed}" Command="{Binding Shell.PresetCommand}" CommandParameter="Tabbed" HorizontalAlignment="Stretch" />
+          <Button Content="{loc:Tr layout.tpl.mdiTileV}" Command="{Binding Shell.PresetCommand}" CommandParameter="MdiTileVertical" HorizontalAlignment="Stretch" />
+        </StackPanel>
+      </ScrollViewer>
+    </DataTemplate>
+
+    <DataTemplate DataType="vm:LogTool">
+      <ListBox ItemsSource="{Binding Shell.LogLines}" FontSize="{DynamicResource PdFontCaption}" />
+    </DataTemplate>
+  </Application.DataTemplates>
+
+  <!-- 글자 크기 토큰: 여기 값은 시스템(셸) 글자 기본값 — 2026-11-11 부터 설정 UiSettings.ShellFontSize 가 UiSettingsApplier.ApplyShell 로 덮어쓴다(이전 '메인창은 조절불가' 를 사용자 지시로 대체, 01 §5.2).
+       문서 창은 래퍼(ZoomDecorator)가 같은 키를 로컬 리소스로 재정의(UiSettings.ApplyDocumentScope)하므로 반드시 DynamicResource 로 참조.
+       PdFontFamily 는 UiSettings.Apply 가 전역으로 덮어씀(폰트 종류는 셸도 따름) -->
+  <Application.Resources>
+    <ResourceDictionary>
+    <ResourceDictionary.MergedDictionaries>
+      <ResourceInclude Source="avares://Pd.Ui.Views/Themes/ThinScrollBar.axaml" /><!-- U4 얇은 스크롤 막대 테마(PdThinScrollBar) — 상단 창 제목 탭 띠 -->
+      <ResourceInclude Source="avares://Pd.Ui.Views/Themes/MenuIcons.axaml" /><!-- 메뉴·셸 아이콘(22 §2.1 생성물) — WindowIcon 이 키로 찾는다 -->
+    </ResourceDictionary.MergedDictionaries>
+    <x:Double x:Key="PdFontBase">14</x:Double>
+    <x:Double x:Key="PdFontTitle">18</x:Double>
+    <x:Double x:Key="PdFontSubtitle">16</x:Double>
+    <x:Double x:Key="PdFontBody">14</x:Double>
+    <x:Double x:Key="PdFontDetail">13</x:Double>
+    <x:Double x:Key="PdFontCaption">12</x:Double>
+    <FontFamily x:Key="PdFontFamily">Noto Sans KR</FontFamily>
+    <!-- 제목 줄·제목 탭 높이(공통원칙 §2-1, 2026-11-11 기본 38·32 — 설정 UiSettings.ShellTabStripHeight 가 UiSettingsApplier.ApplyShell 로 덮어씀) -->
+    <x:Double x:Key="PdTitleStripHeight">38</x:Double>
+    <x:Double x:Key="PdTitleTabHeight">32</x:Double>
+    <!-- 강조 글자 굵기(8번): SemiBold 서체가 없는 폰트는 SemiBold 를 합성 굵게(FontSimulations.Bold)로 그려 번진다.
+         UiSettingsApplier 가 폰트를 바꿀 때 실재 서체를 조회해 합성이 안 되는 가장 가까운 굵기로 덮어쓴다(폰트 이름 분기 없음) -->
+    <FontWeight x:Key="PdFontWeightStrong">SemiBold</FontWeight>
+    <FontWeight x:Key="PdFontWeightBold">Bold</FontWeight>
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+    <dockTheme:DockFluentTheme />
+    <!-- DataGrid 테마: csproj 가 PocGrid 에 따라 Builtin(Fluent.xaml)/Pro(Fluent.v2.xaml) 파일을 이 경로로 링크(기본·본판·제품은 Builtin — 지금과 같은 Fluent.xaml) -->
+    <StyleInclude Source="avares://Pd.Ui.Views/Themes/DataGridTheme.axaml" />
+    <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
+    <!-- 문서 창 크롬(UI-09 Mars 제목줄 버튼·UI-10 입체 외곽선·그림자, odev-7c) — Dock 테마보다 뒤여야 ControlTheme 재정의가 우선 -->
+    <StyleInclude Source="avares://Pd.Ui.Views/Themes/MdiChrome.axaml" />
+
+    <!-- 모든 창(메인·SDI 실 창)의 상속 글자 크기(셸 고정 토큰)·폰트 연결. 문서 창 안은 래퍼가 상속 크기를 다시 설정한다 -->
+    <Style Selector=":is(TopLevel)">
+      <Setter Property="FontSize" Value="{DynamicResource PdFontBody}" />
+      <Setter Property="FontFamily" Value="{DynamicResource PdFontFamily}" />
+    </Style>
+    <!-- 테마 컨트롤 템플릿이 자체 크기를 지정하는 경우에도 본문 크기를 따르게 한다(Fluent·Dock 탭·메뉴 항목 등) -->
+    <Style Selector=":is(TemplatedControl)">
+      <Setter Property="FontFamily" Value="{DynamicResource PdFontFamily}" />
+    </Style>
+    <Style Selector="MenuItem, TabItem, ListBoxItem, ComboBoxItem, Button, TextBox, ComboBox, DataGridCell, DataGridColumnHeader">
+      <Setter Property="FontSize" Value="{DynamicResource PdFontBody}" />
+    </Style>
+    <!-- 요소별 디자인(REQ-101) 슬롯 — 처음엔 비어 있고(Setter 0개 = 지금 화면), ThemeDesignApplier 가 지정된 요소·속성만으로 만든 Styles 로 이 칸을 교체한다.
+         위 상속 글꼴·크기 스타일보다 뒤, 포커스 표시 앞이어야 한다. 표식 키는 ThemeElements.StylesSlotKey 와 같아야 한다 -->
+    <Styles>
+      <Styles.Resources>
+        <x:Boolean x:Key="PdDesignStylesSlot">True</x:Boolean>
+      </Styles.Resources>
+    </Styles>
+    <!-- 디자인 테마 효과 스타일(REQ-104) — 요소별 디자인 슬롯 다음. 값은 PdStyle* 리소스(DesignEffectsApplier) -->
+    <StyleInclude Source="avares://Pd.Ui.Views/Themes/DesignEffects.axaml" />
+    <!-- U21 키보드 포커스 표시: 테마색 1px 둥근 사각형(Fluent 굵은 검정 대체) — Fluent·Dock 테마보다 뒤 -->
+    <StyleInclude Source="avares://Pd.Ui.Views/Themes/FocusVisual.axaml" />
+    <StyleInclude Source="avares://Pd.Ui/Styles/PdUiStyles.axaml" /><!-- 순수 UI 층 컨트롤 스타일 -->
+  </Application.Styles>
+
+  <!-- 시스템 트레이(MDI-21 + Mars 트레이 항목 참고, plan/05_아키텍처/05_제품구성_시스템메뉴.md §5). Android·웹은 플랫폼 구현이 없어 무동작.
+       바인딩 원본은 ShellPlatform.Attach 가 넣는 Application.DataContext(TrayMenuModel), 아이콘도 ShellPlatform 이 넣는다.
+       항목 순서는 진단 tray.* 의 이름 순서와 같다(RemoteCommands.Tray.cs TrayItemNames). -->
+  <TrayIcon.Icons>
+    <TrayIcons>
+      <TrayIcon x:DataType="views:TrayMenuModel" ToolTipText="PD UI PoC" IsVisible="{Binding Visible}" Command="{Binding ShowCommand}">
+        <TrayIcon.Menu>
+          <NativeMenu>
+            <NativeMenuItem Header="{loc:Tr shell.tray.show}" Command="{Binding ShowCommand}" />
+            <NativeMenuItem Header="{loc:Tr shell.tray.hide}" Command="{Binding HideCommand}" />
+            <NativeMenuItemSeparator />
+            <NativeMenuItem Header="{loc:Tr menu.ws.resetMain}" Command="{Binding Vm.WindowMenu.WindowMenuCommand}" CommandParameter="ResetMainWindow" />
+            <NativeMenuItem Header="{loc:Tr menu.ws.singleMonitor}" Command="{Binding Vm.WindowMenu.WindowMenuCommand}" CommandParameter="FitSingleMonitor" />
+            <NativeMenuItem Header="{loc:Tr menu.ws.multiMonitor}" Command="{Binding Vm.WindowMenu.WindowMenuCommand}" CommandParameter="FitMultiMonitor" />
+            <NativeMenuItemSeparator />
+            <NativeMenuItem Header="{loc:Tr menu.sys.help}" Command="{Binding Vm.SystemMenu.SystemViewCommand}" CommandParameter="Help" />
+            <NativeMenuItem Header="{loc:Tr menu.sys.about}" Command="{Binding Vm.SystemMenu.SystemViewCommand}" CommandParameter="About" />
+            <NativeMenuItemSeparator />
+            <NativeMenuItem Header="{loc:Tr shell.tray.exit}" Command="{Binding ExitCommand}" />
+          </NativeMenu>
+        </TrayIcon.Menu>
+      </TrayIcon>
+    </TrayIcons>
+  </TrayIcon.Icons>
+</shell:App>

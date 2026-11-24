@@ -1,0 +1,50 @@
+<!-- 전체 백업·복원 영역(윈도우 메뉴 ⑫) — 설정·자동 저장 슬롯·개인 레이아웃 묶음을 이름 붙여 백업, 복원 전 현재 상태 자동 백업. 문자열은 다국어 사전 키 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Pd.Poc.Shell.ViewModels"
+             xmlns:docking="using:Pd.Client.Data.Layout"
+             xmlns:loc="using:Pd.Poc.Shell.Localization"
+             x:Class="Pd.Ui.Views.LayoutBackupView"
+             x:DataType="vm:LayoutBackupViewModel">
+  <StackPanel Spacing="4">
+    <TextBlock Text="{loc:Tr layout.backup.title}" FontWeight="{DynamicResource PdFontWeightStrong}" ToolTip.Tip="{loc:Tr layout.backup.title.tip}" />
+    <StackPanel Orientation="Horizontal" Spacing="6">
+      <TextBox Text="{Binding Name, Mode=TwoWay}" Width="220" AutomationProperties.AutomationId="shell.backup.txtName" />
+      <Button Content="{loc:Tr layout.backup.create}" Command="{Binding BackupCommand}" AutomationProperties.AutomationId="shell.backup.btnCreate" />
+      <Button Content="{loc:Tr layout.overwrite}" Command="{Binding ConfirmOverwriteCommand}" IsVisible="{Binding ConfirmOverwrite}"
+              AutomationProperties.AutomationId="shell.backup.btnOverwrite" />
+    </StackPanel>
+    <ListBox ItemsSource="{Binding Items}" SelectedItem="{Binding Selected, Mode=TwoWay}" MaxHeight="160" MinHeight="60"
+             AutomationProperties.AutomationId="shell.backup.list">
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="docking:BackupEntry">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="{Binding Name}" />
+            <TextBlock Text="{loc:Tr layout.backup.auto}" Opacity="0.7" IsVisible="{Binding IsAuto}" />
+            <TextBlock Text="{Binding LayoutCount, StringFormat='({0})'}" Opacity="0.7" />
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+    <StackPanel Orientation="Horizontal" Spacing="6">
+      <Button Content="{loc:Tr layout.backup.restore}" Command="{Binding RestoreCommand}" IsEnabled="{Binding HasSelection}"
+              AutomationProperties.AutomationId="shell.backup.btnRestore" />
+      <Button Content="{loc:Tr common.delete}" Command="{Binding DeleteCommand}" IsEnabled="{Binding HasSelection}"
+              AutomationProperties.AutomationId="shell.backup.btnDelete" />
+      <!-- 확인 단계 버튼(질문 문구는 관리 창 아래 안내 줄에 표시) -->
+      <Button Content="{loc:Tr layout.backup.restore}" Command="{Binding ConfirmRestoreCommand}" IsVisible="{Binding ConfirmRestore}"
+              Classes="accent" AutomationProperties.AutomationId="shell.backup.btnRestoreYes" />
+      <Button Content="{loc:Tr common.delete}" Command="{Binding ConfirmDeleteCommand}" IsVisible="{Binding ConfirmDelete}"
+              AutomationProperties.AutomationId="shell.backup.btnDeleteYes" />
+      <Button Content="{loc:Tr common.no}" Command="{Binding CancelCommand}" AutomationProperties.AutomationId="shell.backup.btnNo">
+        <Button.IsVisible>
+          <MultiBinding Converter="{x:Static BoolConverters.Or}">
+            <Binding Path="ConfirmRestore" />
+            <Binding Path="ConfirmDelete" />
+            <Binding Path="ConfirmOverwrite" />
+          </MultiBinding>
+        </Button.IsVisible>
+      </Button>
+    </StackPanel>
+  </StackPanel>
+</UserControl>

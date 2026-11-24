@@ -1,0 +1,4 @@
+{
+  "docs": {"history": "frameworks/ui/HISTORY.md"},
+  "canon": {"plan_root": "frameworks/ui/plan", "test_root": "frameworks/ui/test", "tools_root": "frameworks/ui/tools"}
+}

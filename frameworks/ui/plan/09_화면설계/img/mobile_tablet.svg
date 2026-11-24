@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" width="1280" height="800" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-size="14">
+  <!-- 태블릿(펼친 폴드 포함) DOCK 기본 와이어프레임 (06_모바일_화면설계.md §3) -->
+  <rect x="0" y="0" width="1280" height="800" rx="24" fill="#1E1E1E"/>
+  <rect x="14" y="14" width="1252" height="772" rx="16" fill="#F3F4F7"/>
+  <rect x="14" y="14" width="1252" height="44" fill="#22325A"/>
+  <rect x="26" y="24" width="24" height="24" rx="5" fill="#7FA7FF"/>
+  <text x="64" y="42" fill="#FFFFFF">파일   창   보기   시스템</text><text x="1100" y="42" fill="#FFFFFF">🔔   ⋮</text>
+  <rect x="14" y="58" width="1252" height="40" fill="#E4E8F0"/>
+  <rect x="270" y="62" width="160" height="32" rx="4" fill="#22325A"/><text x="284" y="83" fill="#FFFFFF">이슈 목록 ✓</text>
+  <rect x="436" y="62" width="160" height="32" rx="4" fill="#FFFFFF" stroke="#C5CBD8"/><text x="450" y="83">프로젝트 상세</text>
+  <text x="620" y="83" fill="#8A93A6" font-size="12">DOCK — 가운데 문서 탭 (탭 높이·버튼 ≥ 48dp 잠정)</text>
+  <rect x="14" y="98" width="250" height="688" fill="#FFFFFF" stroke="#C5CBD8"/>
+  <rect x="14" y="98" width="250" height="40" fill="#22325A"/><text x="26" y="124" fill="#FFFFFF">탐색기 (단일 탭 패널)</text>
+  <text x="30" y="166">홈</text><text x="30" y="204">프로젝트</text><text x="30" y="242" fill="#22325A" font-weight="bold">이슈</text>
+  <text x="30" y="280">공수·근태</text><text x="30" y="318">협업</text><text x="30" y="356">보고·AI</text>
+  <rect x="264" y="98" width="400" height="688" fill="#FFFFFF" stroke="#C5CBD8"/>
+  <text x="280" y="126" fill="#8A93A6" font-size="12">목록 (마스터)</text>
+  <rect x="276" y="140" width="376" height="64" rx="6" fill="#DCE3F2"/><text x="290" y="168">PD-12 로그인 오류 수정</text><text x="290" y="190" fill="#555" font-size="12">진행 · 김</text>
+  <rect x="276" y="212" width="376" height="64" rx="6" fill="#FFFFFF" stroke="#D6DAE3"/><text x="290" y="240">PD-15 간트 확대 깨짐</text>
+  <rect x="276" y="284" width="376" height="64" rx="6" fill="#FFFFFF" stroke="#D6DAE3"/><text x="290" y="312">PD-21 주간보고 내보내기</text>
+  <rect x="664" y="98" width="12" height="688" fill="#E4E8F0"/><rect x="666" y="420" width="8" height="60" rx="4" fill="#9AA3B5"/>
+  <rect x="676" y="98" width="590" height="688" fill="#FFFFFF" stroke="#C5CBD8"/>
+  <text x="692" y="126" fill="#8A93A6" font-size="12">상세 (디테일) — 문서 창 안 핀치 확대</text>
+  <text x="692" y="166" font-size="18">PD-12 로그인 오류 수정</text>
+  <text x="692" y="200" fill="#555">상태 [진행 ▾]   담당 김   마감 오늘</text>
+  <rect x="692" y="220" width="558" height="200" fill="#F3F4F7"/><text x="704" y="246" fill="#555">설명 · 첨부(사진 촬영) · 링크된 이슈</text>
+  <rect x="692" y="440" width="558" height="160" fill="#F3F4F7"/><text x="704" y="466" fill="#555">댓글 · @멘션</text>
+  <text x="692" y="760" fill="#8A93A6" font-size="12">분할선은 안쪽 손잡이로 잡는다 · 화면 분할로 폭 &lt; 600dp 이면 스마트폰 NAV 로 자동 전환</text>
+</svg>

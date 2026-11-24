@@ -1,0 +1,21 @@
+{
+  "lang.self": "한국어",
+  "lang.label": "언어",
+  "common.ok": "확인",
+  "common.cancel": "취소",
+  "common.close": "닫기",
+  "common.save": "저장",
+  "common.load": "불러오기",
+  "common.delete": "삭제",
+  "common.rename": "이름 변경",
+  "common.apply": "적용",
+  "common.reset": "초기화",
+  "common.yes": "예",
+  "common.no": "아니요",
+  "common.on": "켜짐",
+  "common.off": "꺼짐",
+  "common.default": "기본값",
+  "common.name": "이름",
+  "common.confirmDelete": "'{0}' 을(를) 삭제할까요?",
+  "common.confirmOverwrite": "같은 이름 '{0}' 이(가) 있습니다. 덮어쓸까요?"
+}

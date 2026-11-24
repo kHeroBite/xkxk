@@ -1,0 +1,13 @@
+{
+  "name": "PD UI PoC",
+  "short_name": "PD",
+  "start_url": "./",
+  "display": "browser",
+  "background_color": "#1e1e1e",
+  "theme_color": "#215F9A",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

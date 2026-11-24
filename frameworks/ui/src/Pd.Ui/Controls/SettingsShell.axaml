@@ -1,0 +1,26 @@
+<!-- 설정 창 뼈대(요건 7) — 위 검색창, 왼쪽 범주 목록, 오른쪽 페이지, 아래 버튼 칸. 내용은 상위 층이 속성으로 넣고 이 컨트롤은 설정·사전을 모른다. 색은 테마 토큰만 쓴다 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Pd.Ui.Controls.SettingsShell"
+             x:Name="Root"
+             Background="{DynamicResource PdBrushBackground}">
+  <DockPanel>
+    <TextBox x:Name="SearchBox" DockPanel.Dock="Top" Margin="12,12,12,8"
+             Text="{Binding #Root.SearchText, Mode=TwoWay}" Watermark="{Binding #Root.SearchWatermark}"
+             AutomationProperties.AutomationId="settings.search" />
+    <ContentControl DockPanel.Dock="Bottom" Margin="12,8,12,12" Content="{Binding #Root.Footer}" />
+    <ListBox x:Name="CategoryList" DockPanel.Dock="Left" Width="168" Margin="12,0,0,0"
+             Background="Transparent" BorderBrush="{DynamicResource PdBrushBorder}" BorderThickness="0,0,1,0"
+             ItemsSource="{Binding #Root.Categories}" SelectedItem="{Binding #Root.SelectedCategory, Mode=TwoWay}"
+             ItemTemplate="{Binding #Root.CategoryTemplate}"
+             AutomationProperties.AutomationId="settings.categories" />
+    <Panel>
+      <ScrollViewer HorizontalScrollBarVisibility="Disabled" Padding="16,4,12,4">
+        <ContentControl Content="{Binding #Root.PageContent}" AutomationProperties.AutomationId="settings.page" />
+      </ScrollViewer>
+      <TextBlock Text="{Binding #Root.EmptyText}" IsVisible="{Binding #Root.IsEmpty}" Margin="16,8"
+                 Foreground="{DynamicResource PdBrushTextMuted}" TextWrapping="Wrap"
+                 AutomationProperties.AutomationId="settings.empty" />
+    </Panel>
+  </DockPanel>
+</UserControl>

@@ -1,0 +1,60 @@
+<!-- 얇은 스크롤 막대 테마(U4): 화살표·바탕 없이 2px 선 하나, 포인터를 올리면 4px. 제목 줄의 제목 탭(MainView TaskbarTabs)처럼 고른 곳에만 Theme 로 단다.
+     막대 자리는 늘 4px 로 고정해 hover 때 굵어져도 탭 줄 높이가 흔들리지 않게 한다. 연결: App.axaml Application.Resources 에서 ResourceInclude -->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <ControlTheme x:Key="PdThinScrollBarThumb" TargetType="Thumb">
+    <Setter Property="Background" Value="{DynamicResource PdBrushTextMuted}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" CornerRadius="1" />
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="PdThinScrollBar" TargetType="ScrollBar">
+    <Setter Property="MinWidth" Value="0" />
+    <Setter Property="MinHeight" Value="0" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}">
+          <Track Name="PART_Track"
+                 Minimum="{TemplateBinding Minimum}"
+                 Maximum="{TemplateBinding Maximum}"
+                 Value="{TemplateBinding Value, Mode=TwoWay}"
+                 ViewportSize="{TemplateBinding ViewportSize}"
+                 Orientation="{TemplateBinding Orientation}">
+            <Thumb Name="PART_Thumb" Theme="{StaticResource PdThinScrollBarThumb}" />
+          </Track>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+
+    <!-- 가로: 자리 4px, 선 2px(아래에 붙임) → hover 4px -->
+    <Style Selector="^:horizontal">
+      <Setter Property="Height" Value="4" />
+      <Style Selector="^ /template/ Thumb#PART_Thumb">
+        <Setter Property="Height" Value="2" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+      </Style>
+      <Style Selector="^:pointerover /template/ Thumb#PART_Thumb">
+        <Setter Property="Height" Value="4" />
+      </Style>
+    </Style>
+    <!-- 세로: 자리 4px, 선 2px(오른쪽에 붙임) → hover 4px -->
+    <Style Selector="^:vertical">
+      <Setter Property="Width" Value="4" />
+      <Style Selector="^ /template/ Thumb#PART_Thumb">
+        <Setter Property="Width" Value="2" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+      </Style>
+      <Style Selector="^:pointerover /template/ Thumb#PART_Thumb">
+        <Setter Property="Width" Value="4" />
+      </Style>
+    </Style>
+    <Style Selector="^:pointerover /template/ Thumb#PART_Thumb">
+      <Setter Property="Background" Value="{DynamicResource PdBrushText}" />
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

@@ -1,0 +1,21 @@
+{
+  "lang.self": "English",
+  "lang.label": "Language",
+  "common.ok": "OK",
+  "common.cancel": "Cancel",
+  "common.close": "Close",
+  "common.save": "Save",
+  "common.load": "Load",
+  "common.delete": "Delete",
+  "common.rename": "Rename",
+  "common.apply": "Apply",
+  "common.reset": "Reset",
+  "common.yes": "Yes",
+  "common.no": "No",
+  "common.on": "On",
+  "common.off": "Off",
+  "common.default": "Default",
+  "common.name": "Name",
+  "common.confirmDelete": "Delete '{0}'?",
+  "common.confirmOverwrite": "'{0}' already exists. Overwrite it?"
+}

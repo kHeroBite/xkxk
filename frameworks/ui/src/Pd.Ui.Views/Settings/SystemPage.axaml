@@ -1,0 +1,49 @@
+<!-- 설정 창 '시스템' 페이지(요건 7) — GPU(재시작 필요 사유)·중복 실행·모니터·디버그모드·로그 수준. 값은 SystemPageViewModel, 이 파일에 로직 없음 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Pd.Poc.Shell.ViewModels"
+             xmlns:vms="using:Pd.Poc.Shell.ViewModels.Settings"
+             xmlns:loc="using:Pd.Poc.Shell.Localization"
+             xmlns:ui="using:Pd.Ui.Controls"
+             x:Class="Pd.Ui.Views.Settings.SystemPage"
+             x:DataType="vms:SystemPageViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="OptionTemplate" x:DataType="vm:LocalizedOption">
+      <TextBlock Text="{Binding Text}" />
+    </DataTemplate>
+    <DataTemplate x:Key="MonitorTemplate" x:DataType="vm:MonitorItemViewModel">
+      <TextBlock Text="{Binding Header}" />
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel>
+    <ui:SettingsRow SettingId="gpu" Label="{loc:Tr menu.sys.gpu}">
+      <CheckBox IsChecked="{Binding GpuEnabled, Mode=TwoWay}" AutomationProperties.AutomationId="shell.chkGpu" />
+      <TextBlock Text="{Binding GpuCurrent}" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{DynamicResource PdBrushTextMuted}"
+                 AutomationProperties.AutomationId="settings.txtGpuCurrent" />
+      <TextBlock Text="{loc:Tr sys.restartRequired.title}" IsVisible="{Binding GpuRestartPending}" VerticalAlignment="Center" Margin="8,0,0,0" TextWrapping="Wrap"
+                 Foreground="{DynamicResource PdBrushWarning}" AutomationProperties.AutomationId="shell.txtGpuRestart" />
+      <Button Content="{loc:Tr settings.gpu.restartNow}" IsVisible="{Binding GpuRestartPending}" Command="{Binding ShowRestartCommand}" Margin="8,0,0,0"
+              AutomationProperties.AutomationId="settings.btnGpuRestart" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="duplicate" Label="{loc:Tr menu.sys.duplicate}" IsEnabled="{Binding DuplicateAvailable}" ToolTip.Tip="{Binding DuplicateTip}" ToolTip.ShowOnDisabled="True">
+      <CheckBox IsChecked="{Binding AllowDuplicate, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkDuplicate" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="monitor" Label="{loc:Tr settings.monitor}" IsEnabled="{Binding HasMonitors}">
+      <ComboBox ItemsSource="{Binding Monitors}" ItemTemplate="{StaticResource MonitorTemplate}" SelectedItem="{Binding SelectedMonitor, Mode=TwoWay}" MinWidth="200"
+                PlaceholderText="{loc:Tr menu.monitor.none}" AutomationProperties.AutomationId="settings.cmbMonitor" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="fastDocSwitch" Label="{loc:Tr settings.fastDocSwitch}" ToolTip.Tip="{loc:Tr settings.fastDocSwitch.tip}">
+      <CheckBox IsChecked="{Binding FastDocumentSwitch, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkFastDocSwitch" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="tabHeaderFirst" Label="{loc:Tr settings.tabHeaderFirst}" ToolTip.Tip="{loc:Tr settings.tabHeaderFirst.tip}">
+      <CheckBox IsChecked="{Binding TabHeaderFirst, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkTabHeaderFirst" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="debug" Label="{loc:Tr menu.sys.debug}">
+      <CheckBox IsChecked="{Binding DebugMode, Mode=TwoWay}" AutomationProperties.AutomationId="settings.chkDebug" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="logLevel" Label="{loc:Tr menu.sys.log.level}">
+      <ComboBox ItemsSource="{Binding LogLevelNames}" ItemTemplate="{StaticResource OptionTemplate}" SelectedIndex="{Binding LogLevelIndex, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="settings.cmbLogLevel" />
+    </ui:SettingsRow>
+  </StackPanel>
+</UserControl>

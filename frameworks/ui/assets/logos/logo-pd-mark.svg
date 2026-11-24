@@ -1,0 +1,20 @@
+<!-- Pd 앱 로고 원본(둥근 사각 + 왼쪽 파랑·오른쪽 주황 두 면) — 기존 pd-logo-64.png 모양을 따라 새로 그렸다. tools/make_icons.py 가 이 파일을 읽어 ico·png 를 만든다(id·속성 이름을 바꾸지 않는다) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="pd-right-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F6E08E"/>
+      <stop offset="1" stop-color="#C9562B"/>
+    </linearGradient>
+    <linearGradient id="pd-left-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6CC6CF"/>
+      <stop offset="1" stop-color="#1F477A"/>
+    </linearGradient>
+    <clipPath id="pd-clip">
+      <rect id="pd-frame" x="0" y="0" width="256" height="256" rx="56" ry="56"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#pd-clip)">
+    <rect id="pd-right" x="0" y="0" width="256" height="256" fill="url(#pd-right-fill)"/>
+    <path id="pd-left" fill="url(#pd-left-fill)" d="M0,0 H113 C150,0 172,22 168,52 C164,86 136,104 112,118 C86,133 78,160 84,190 C90,222 104,244 122,256 H0 Z"/>
+  </g>
+</svg>

@@ -1,0 +1,63 @@
+<!-- poc/ui 모든 프로젝트(Shell·Desktop·Browser·Android) 공통: 진단 기능 빌드 속성 PdDiagnostics(기본 false) → true 면 PD_DIAGNOSTICS 정의 -->
+<Project>
+  <!--
+    PdDiagnostics=false(제품 기본): 자동화 인자(AutomationBridge)·PerfProbe 상시 계측·FPS 표시·웹 자동화 브리지(diag.js)가 빠진다.
+    PdDiagnostics=true(시험 빌드): dotnet build/publish -p:PdDiagnostics=true 로 켠다. 시험 스크립트(tools/*.sh)가 넘긴다.
+  -->
+  <PropertyGroup>
+    <PdDiagnostics Condition="'$(PdDiagnostics)' == ''">false</PdDiagnostics>
+    <!-- 배포 채널(UI-17): dev|staging|qa|prod, 기본 dev. -p:PdChannel=prod 로 지정. PdDiagnostics 와 직교(진단 기능을 켜지 않는다).
+         어셈블리 메타데이터 PdChannel 로 들어가 Shell AppChannel 이 읽는다(디버그모드 기본값 = prod 가 아니면 켬). DefineConstants 는 쓰지 않는다. -->
+    <PdChannel Condition="'$(PdChannel)' == ''">dev</PdChannel>
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyMetadata Include="PdChannel" Value="$(PdChannel)" />
+  </ItemGroup>
+  <!-- Avalonia.Browser 유휴 rAF 패치판(Q9 ⑤, lead 10:4x 승인 (나)). 기본 끔 = NuGet 원본 12.1.4.
+       -p:PdAvaloniaBrowserPatch=true 면 로컬 피드 vendor/feed 의 12.1.4-pd.1(패치: vendor/patches/avalonia-browser-12.1.4-idle-raf.pd.1.patch)을 쓴다.
+       웹 프로젝트가 PackageReference Version="$(PdAvaloniaBrowserVersion)" 로 읽는다. 패키지는 tools/build_avalonia_browser_pd.sh 로 만든다. -->
+  <PropertyGroup>
+    <!-- lead 결정(11:4x): PoC 웹 본판 기본은 패치판(Q9 ⑤). 원본 대조 빌드는 -p:PdAvaloniaBrowserPatch=false. 데스크톱·Android 는 Avalonia.Browser 를 참조하지 않아 영향 없음 -->
+    <PdAvaloniaBrowserPatch Condition="'$(PdAvaloniaBrowserPatch)' == ''">true</PdAvaloniaBrowserPatch>
+    <PdAvaloniaBrowserVersion>12.1.4</PdAvaloniaBrowserVersion>
+    <PdAvaloniaBrowserVersion Condition="'$(PdAvaloniaBrowserPatch)' == 'true'">12.1.4-pd.1</PdAvaloniaBrowserVersion>
+    <RestoreAdditionalProjectSources Condition="'$(PdAvaloniaBrowserPatch)' == 'true' and '$(MSBuildProjectName)' == 'Pd.Poc.Browser'">$(RestoreAdditionalProjectSources);$(MSBuildThisFileDirectory)vendor/feed</RestoreAdditionalProjectSources>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PdDiagnostics)' == 'true'">
+    <DefineConstants>$(DefineConstants);PD_DIAGNOSTICS</DefineConstants>
+  </PropertyGroup>
+  <!-- 런타임 여러 개면 최신 선택(사용자 지시 2026-11-12 ".NET 이 여러 개 있을 때 최신 버전을 택하도록"): 프레임워크 종속 실행본이 설치된 가장 높은 주 버전 런타임으로 뜬다.
+       runtimeconfig.json 의 rollForward 로 들어간다. 근거 https://learn.microsoft.com/en-us/dotnet/core/versions/selection (LatestMajor). 데스크톱 실행 프로젝트만 대상 -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Pd.Poc.Desktop'">
+    <RollForward>LatestMajor</RollForward>
+  </PropertyGroup>
+  <!-- 성능 대조 빌드 전용(기본 꺼짐): 그리드 열을 이전 방식(DataGridTextColumn+ReflectionBinding)으로 바꿔 열기 회귀를 판별한다. -p:PdGridTextColumns=true -->
+  <PropertyGroup Condition="'$(PdGridTextColumns)' == 'true'">
+    <DefineConstants>$(DefineConstants);PD_GRID_TEXTCOLUMNS</DefineConstants>
+  </PropertyGroup>
+  <!-- 성능 대조 빌드 전용(기본 꺼짐): ZoomDecorator 의 Arrange 안 즉시 재측정을 끈다(테마·레이아웃 회귀 판별). -p:PdZoomNoRemeasure=true -->
+  <PropertyGroup Condition="'$(PdZoomNoRemeasure)' == 'true'">
+    <DefineConstants>$(DefineConstants);PD_ZOOM_NO_REMEASURE</DefineConstants>
+  </PropertyGroup>
+  <!-- 그리드·차트 벤치(odev-gc, 2026-10-29). 기본값 = 제품 경로 불변(Builtin 그리드, 벤치·xlsx 미포함).
+       -p:PocGrid=Pro → ProDataGrid(공식 DataGrid 와 어셈블리 이름이 같아 교체형) / -p:PdBench=true → 벤치 문서·차트 패키지 포함
+       -p:PocCharts=ScottPlot;ProCharts;LiveCharts (PdBench=true 기본 셋 다, 크기 비교 때 하나만) / -p:PocXlsx=true → ClosedXML
+       OxyPlot(D-50 실측 후보, odev-gd v46 허용)은 기본값에 넣지 않는다 — 켤 때만 -p:PocCharts=ScottPlot;ProCharts;LiveCharts;OxyPlot 로 명시 -->
+  <PropertyGroup>
+    <PocGrid Condition="'$(PocGrid)' == ''">Builtin</PocGrid>
+    <PdBench Condition="'$(PdBench)' == ''">false</PdBench>
+    <PocXlsx Condition="'$(PocXlsx)' == ''">false</PocXlsx>
+    <PocCharts Condition="'$(PocCharts)' == '' and '$(PdBench)' == 'true'">ScottPlot;ProCharts;LiveCharts</PocCharts>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PocGrid)' == 'Pro'"><DefineConstants>$(DefineConstants);PD_GRID_PRO</DefineConstants></PropertyGroup>
+  <PropertyGroup Condition="'$(PdBench)' == 'true' and '$(PdDiagnostics)' == 'true'"><DefineConstants>$(DefineConstants);PD_BENCH</DefineConstants></PropertyGroup>
+  <PropertyGroup Condition="'$(PdBench)' == 'true' and '$(PdDiagnostics)' == 'true' and $(PocCharts.Contains('ScottPlot'))"><DefineConstants>$(DefineConstants);PD_CHART_SCOTTPLOT</DefineConstants></PropertyGroup>
+  <PropertyGroup Condition="'$(PdBench)' == 'true' and '$(PdDiagnostics)' == 'true' and $(PocCharts.Contains('ProCharts'))"><DefineConstants>$(DefineConstants);PD_CHART_PROCHARTS</DefineConstants></PropertyGroup>
+  <PropertyGroup Condition="'$(PdBench)' == 'true' and '$(PdDiagnostics)' == 'true' and $(PocCharts.Contains('LiveCharts'))"><DefineConstants>$(DefineConstants);PD_CHART_LIVECHARTS</DefineConstants></PropertyGroup>
+  <PropertyGroup Condition="'$(PdBench)' == 'true' and '$(PdDiagnostics)' == 'true' and $(PocCharts.Contains('OxyPlot'))"><DefineConstants>$(DefineConstants);PD_CHART_OXYPLOT</DefineConstants></PropertyGroup>
+  <!-- D-50 U4~U6(odev-gh, team-lead 승인 2026-10-30): TheOne.Avalonia 는 두 번째 라이브러리 후보다. 기본값에 넣지 않고 -p:PocCharts=ScottPlot;LiveCharts;TheOne 처럼 명시할 때만 켠다 -->
+  <PropertyGroup Condition="'$(PdBench)' == 'true' and '$(PdDiagnostics)' == 'true' and $(PocCharts.Contains('TheOne'))"><DefineConstants>$(DefineConstants);PD_CHART_THEONE</DefineConstants></PropertyGroup>
+  <!-- D-50(odev-ge, team-lead 승인·v52): OxyPlot 테마는 런타임 Uri(StyleInclude)로만 읽혀 웹 트리머가 컴파일된 XAML 을 지운다(XamlLoadException) — OxyPlot 이 들어갈 때 어셈블리 전체를 남긴다. 제품 웹에도 같은 조건이라 벤치 조건·플랫폼 조건을 두지 않는다 -->
+  <ItemGroup Condition="$(PocCharts.Contains('OxyPlot'))"><TrimmerRootAssembly Include="OxyPlot.Avalonia" /></ItemGroup>
+  <PropertyGroup Condition="'$(PdBench)' == 'true' and '$(PdDiagnostics)' == 'true' and '$(PocXlsx)' == 'true'"><DefineConstants>$(DefineConstants);PD_XLSX</DefineConstants></PropertyGroup>
+</Project>

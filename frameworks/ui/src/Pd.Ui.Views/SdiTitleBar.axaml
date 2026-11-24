@@ -1,0 +1,54 @@
+<!-- SDI(분리) 창 제목줄 — MDI 창과 같은 모양(로고·제목·Mars 9버튼), 끌어서 이동·더블클릭 최대화·로고/우클릭 창 메뉴 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="using:Pd.Ui.Views"
+             xmlns:loc="using:Pd.Poc.Shell.Localization"
+             xmlns:snap="using:Pd.Ui.Views.Snap"
+             x:Class="Pd.Ui.Views.SdiTitleBar" Classes="pdTitleBar pdSdiTitleBar">
+  <Border x:Name="Bar" Height="{DynamicResource PdMdiTitleHeight}" Background="Transparent"
+          TextElement.Foreground="{DynamicResource PdChromeTitleText}">
+    <Border.ContextMenu>
+      <!-- 창 항목은 공통 컴포넌트(WindowTitleMenu), 그 아래 SDI 전용 항목 -->
+      <ContextMenu x:Name="SdiSystemMenu" views:WindowTitleMenu.Kind="Sdi">
+        <MenuItem Header="{loc:Tr chrome.menu.redock}" Click="OnRedock" AutomationProperties.AutomationId="chrome.sdiSysRedock" />
+      </ContextMenu>
+    </Border.ContextMenu>
+    <!-- 열: 0 macOS 신호등 | 1 로고 | 2 제목(끌기) | 3 기능 버튼 | 4 Windows 캡션. 캡션 3버튼의 열·순서·모양은 별칭(Docking/CaptionLayout.cs, Themes/CaptionButtons.axaml).
+         macOS 실행이면 OS 신호등을 쓰고 CaptionOps 를 숨긴 뒤 왼쪽 여백을 둔다(MacNativeCaption) -->
+    <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
+      <views:ChromeLogo Grid.Column="1" Classes="pdChrome pdLogo" IsVisible="{DynamicResource PdLogoVisible}" AutomationProperties.AutomationId="chrome.logo" ToolTip.Tip="{loc:Tr chrome.tip.logo}">
+        <!-- 창 탭 합류(01 §4.4 4항): 다른 독립 창을 끄는 동안(.pdTabJoinArmed) 로고 대신 같은 중심에 20×20 합치기 아이콘을 보인다(스타일 Themes/DockJoinTarget.axaml).
+             기본 숨김도 그 스타일이 맡는다 — 여기 IsVisible 로컬 값을 두면 스타일 Setter 보다 우선해 아이콘이 끝내 보이지 않는다 -->
+        <Panel>
+          <Image Classes="pdSdiLogoImage" Source="avares://Pd.Ui.Views/Assets/Logo/pd-logo-64.png" Width="{DynamicResource PdLogoIconSize}" Height="{DynamicResource PdLogoIconSize}" RenderOptions.BitmapInterpolationMode="HighQuality" />
+          <Border Classes="pdSdiTabJoinIcon" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="4" BorderThickness="1"
+                  AutomationProperties.AutomationId="chrome.tabJoin">
+            <PathIcon Data="{DynamicResource PdIconTabJoin}" Width="14" Height="14" />
+          </Border>
+        </Panel>
+      </views:ChromeLogo>
+      <Border x:Name="DragArea" Grid.Column="2" Background="Transparent" Padding="4,0"
+              PointerPressed="OnDragPressed" DoubleTapped="OnDoubleTapped">
+        <DockPanel HorizontalAlignment="{DynamicResource PdTitleAlignment}">
+          <!-- 창 아이콘(22 §2.3): 로고는 그대로 두고 제목 앞에 보인다. 끌기를 가리지 않게 누름을 받지 않고, 아이콘 없는 스타일(macOS)은 로고와 같이 숨긴다 -->
+          <Panel DockPanel.Dock="Left" IsHitTestVisible="False" IsVisible="{DynamicResource PdLogoVisible}">
+            <views:WindowIcon x:Name="DocIcon" IsVisible="False" Width="{DynamicResource PdLogoIconSize}" Height="{DynamicResource PdLogoIconSize}" Margin="0,0,6,0" VerticalAlignment="Center" />
+          </Panel>
+          <TextBlock x:Name="TitleText" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" AutomationProperties.AutomationId="chrome.title" />
+        </DockPanel>
+      </Border>
+      <views:ChromeButtons x:Name="Buttons" Grid.Column="3" IsSdiHost="True" VerticalAlignment="Center" />
+      <Grid x:Name="CaptionOps" Grid.Column="{DynamicResource PdCaptionColumn}" Classes="pdCapOps" ColumnDefinitions="Auto,Auto,Auto" VerticalAlignment="Center" Margin="{DynamicResource PdCaptionOpsMargin}">
+        <Button x:Name="BtnMin" Grid.Column="{DynamicResource PdCapMinColumn}" Classes="pdChrome pdOp pdCap pdCapMin" Click="OnMin" AutomationProperties.AutomationId="chrome.btnMin" ToolTip.Tip="{loc:Tr chrome.tip.minimize}">
+          <PathIcon Data="{DynamicResource PdCapMinGeometry}" />
+        </Button>
+        <Button x:Name="BtnMax" Grid.Column="{DynamicResource PdCapMaxColumn}" Classes="pdChrome pdOp pdCap pdCapMax" Click="OnMax" AutomationProperties.AutomationId="chrome.btnMax" ToolTip.Tip="{loc:Tr chrome.tip.maximize}" snap:SnapFlyoutHover.Enabled="True">
+          <PathIcon x:Name="MaxIcon" Data="{DynamicResource PdCapMaxGeometry}" />
+        </Button>
+        <Button x:Name="BtnClose" Grid.Column="{DynamicResource PdCapCloseColumn}" Classes="pdChrome pdOp pdCap pdClose" Click="OnClose" AutomationProperties.AutomationId="chrome.btnClose" ToolTip.Tip="{loc:Tr common.close}">
+          <PathIcon Data="{DynamicResource PdCapCloseGeometry}" />
+        </Button>
+      </Grid>
+    </Grid>
+  </Border>
+</UserControl>

@@ -1,0 +1,33 @@
+<!-- 덮개 그림 배율 단위 시험(앱 없음) — 제품 Depth/Snapshot*.cs 3개를 그대로 링크해 Avalonia.Headless + Skia 로 실제 찍기·합성·표시를 화소로 비교한다 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>Pd.Test.SnapshotScale</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Skia" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Headless" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Android·웹과 같은 한글 글꼴 파일(사본 없이 링크) -->
+    <AvaloniaResource Include="../../../src/Pd.Poc.Browser/Assets/Fonts/*.ttf" Link="Assets/Fonts/%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="../../../src/Pd.Ui.Views/Depth/SnapshotGeometry.cs" Link="Product/SnapshotGeometry.cs" />
+    <Compile Include="../../../src/Pd.Ui.Views/Depth/SnapshotRenderer.cs" Link="Product/SnapshotRenderer.cs" />
+    <Compile Include="../../../src/Pd.Ui.Views/Depth/SnapshotPicture.cs" Link="Product/SnapshotPicture.cs" />
+    <Compile Include="../../../src/Pd.Ui.Views/Depth/SnapshotBackdrop.cs" Link="Product/SnapshotBackdrop.cs" />
+  </ItemGroup>
+
+</Project>

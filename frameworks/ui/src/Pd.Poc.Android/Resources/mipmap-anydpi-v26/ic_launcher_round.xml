@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 임시 앱 아이콘(adaptive, API 26+) — tools/make_icons.py 가 생성. 전경이 불투명 전체 그림이라 배경색은 가장자리 보정용 -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+  <background android:drawable="@color/ic_launcher_background" />
+  <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+</adaptive-icon>

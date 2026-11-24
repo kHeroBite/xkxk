@@ -1,0 +1,138 @@
+<!-- 제목줄 '창' 상위 메뉴(U16 — 옛 '윈도우' 메뉴 통합) — 정렬·창 상태·이동·독립 창·모니터·메인 창 초기화·닫기·주의 환기. Mars 윈도우 메뉴 13항목(Q6) 중 값 설정은 설정 창으로 옮겼고(요건 7) 나머지는 여기와 파일 메뉴에 남는다 -->
+<MenuItem xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:vm="using:Pd.Poc.Shell.ViewModels"
+          xmlns:loc="using:Pd.Poc.Shell.Localization"
+          x:Class="Pd.Ui.Views.Menus.WindowMenu"
+          x:DataType="vm:MainViewModel"
+          Header="{loc:Tr menu.window}" AutomationProperties.AutomationId="shell.mnuWindow">
+  <MenuItem Header="{loc:Tr menu.window.cascade}" Command="{Binding ArrangeCommand}" CommandParameter="Cascade" AutomationProperties.AutomationId="shell.mnuArrangeCascade" />
+  <MenuItem Header="{loc:Tr menu.window.tileH}" Command="{Binding ArrangeCommand}" CommandParameter="TileHorizontal" AutomationProperties.AutomationId="shell.mnuArrangeTileH" />
+  <MenuItem Header="{loc:Tr menu.window.tileV}" Command="{Binding ArrangeCommand}" CommandParameter="TileVertical" AutomationProperties.AutomationId="shell.mnuArrangeTile" />
+  <MenuItem Header="{loc:Tr menu.window.tabbed}" Command="{Binding ArrangeCommand}" CommandParameter="Tabbed" AutomationProperties.AutomationId="shell.mnuArrangeTabbed" />
+  <!-- 배치(창 배치 칸): 칸 종류 6개 × 칸. 보일 칸 종류·활성은 코드 비하인드가 열 때 옵션(SnapEnabled·SnapLayouts)과 CanApplyCell 로 갱신한다. 문구 키 snap.layout.* -->
+  <MenuItem x:Name="SnapMenu" Header="{loc:Tr menu.window.snap}" ToolTip.Tip="{loc:Tr menu.window.snap.tip}" ToolTip.ShowOnDisabled="True" AutomationProperties.AutomationId="shell.mnuWinSnap">
+    <MenuItem Header="{loc:Tr snap.layout.max}" Tag="max" AutomationProperties.AutomationId="shell.mnuWinSnapMax">
+      <MenuItem Header="1" Tag="max|0" Click="OnSnapCellClick" AutomationProperties.AutomationId="shell.mnuWinSnapMax1" />
+    </MenuItem>
+    <MenuItem Header="{loc:Tr snap.layout.half}" Tag="half" AutomationProperties.AutomationId="shell.mnuWinSnapHalf">
+      <MenuItem Header="1" Tag="half|0" Click="OnSnapCellClick" AutomationProperties.AutomationId="shell.mnuWinSnapHalf1" />
+      <MenuItem Header="2" Tag="half|1" Click="OnSnapCellClick" AutomationProperties.AutomationId="shell.mnuWinSnapHalf2" />
+    </MenuItem>
+    <MenuItem Header="{loc:Tr snap.layout.twothird}" Tag="twothird" AutomationProperties.AutomationId="shell.mnuWinSnapTwoThird">
+      <MenuItem Header="1" Tag="twothird|0" Click="OnSnapCellClick" AutomationProperties.AutomationId="shell.mnuWinSnapTwoThird1" />
+      <MenuItem Header="2" Tag="twothird|1" Click="OnSnapCellClick" AutomationProperties.AutomationId="shell.mnuWinSnapTwoThird2" />
+    </MenuItem>
+    <MenuItem Header="{loc:Tr snap.layout.thirds}" Tag="thirds" AutomationProperties.AutomationId="shell.mnuWinSnapThirds">
+      <MenuItem Header="1" Tag="thirds|0" Click="OnSnapCellClick" AutomationProperties.AutomationId="shell.mnuWinSnapThirds1" />
+      <MenuItem Header="2" Tag="thirds|1" Click="OnSnapCellClick" AutomationProperties.AutomationId="shell.mnuWinSnapThirds2" />
+      <MenuItem Header="3" Tag="thirds|2" Click="OnSnapCellClick" AutomationProperties.AutomationId="shell.mnuWinSnapThirds3" />
+    </MenuItem>
+    <MenuItem Header="{loc:Tr snap.layout.leftsplit}" Tag="leftsplit" AutomationProperties.AutomationId="shell.mnuWinSnapLeftSplit">
+      <MenuItem Header="1" Tag="leftsplit|0" Click="OnSnapCellClick" AutomationProperties.AutomationId="shell.mnuWinSnapLeftSplit1" />
+      <MenuItem Header="2" Tag="leftsplit|1" Click="OnSnapCellClick" AutomationProperties.AutomationId="shell.mnuWinSnapLeftSplit2" />
+      <MenuItem Header="3" Tag="leftsplit|2" Click="OnSnapCellClick" AutomationProperties.AutomationId="shell.mnuWinSnapLeftSplit3" />
+    </MenuItem>
+    <MenuItem Header="{loc:Tr snap.layout.quad}" Tag="quad" AutomationProperties.AutomationId="shell.mnuWinSnapQuad">
+      <MenuItem Header="1" Tag="quad|0" Click="OnSnapCellClick" AutomationProperties.AutomationId="shell.mnuWinSnapQuad1" />
+      <MenuItem Header="2" Tag="quad|1" Click="OnSnapCellClick" AutomationProperties.AutomationId="shell.mnuWinSnapQuad2" />
+      <MenuItem Header="3" Tag="quad|2" Click="OnSnapCellClick" AutomationProperties.AutomationId="shell.mnuWinSnapQuad3" />
+      <MenuItem Header="4" Tag="quad|3" Click="OnSnapCellClick" AutomationProperties.AutomationId="shell.mnuWinSnapQuad4" />
+    </MenuItem>
+  </MenuItem>
+  <Separator />
+  <MenuItem Header="{loc:Tr menu.window.minimize}" Command="{Binding MinimizeCommand}" AutomationProperties.AutomationId="shell.mnuMinimize" />
+  <MenuItem Header="{loc:Tr menu.window.maximizeToggle}" Command="{Binding MaximizeToggleCommand}" AutomationProperties.AutomationId="shell.mnuMaximize" />
+  <MenuItem Header="{loc:Tr menu.window.restore}" Command="{Binding RestoreCommand}" AutomationProperties.AutomationId="shell.mnuRestore" />
+  <MenuItem Header="{loc:Tr menu.window.pin}" Command="{Binding PinCommand}" AutomationProperties.AutomationId="shell.mnuPin" />
+  <MenuItem Header="{loc:Tr menu.window.rename}" Command="{Binding BeginRenameCommand}" AutomationProperties.AutomationId="shell.mnuRename" />
+  <MenuItem Header="{loc:Tr favorite.toggle}" Command="{Binding FavoriteBar.ToggleCommand}" AutomationProperties.AutomationId="shell.mnuFavoriteToggle" />
+  <MenuItem Header="{loc:Tr menu.window.resetLayout}" Command="{Binding ResetLayoutCommand}" AutomationProperties.AutomationId="shell.mnuResetLayout" />
+  <Separator />
+  <MenuItem Header="{loc:Tr menu.window.minimizeAll}" Command="{Binding MinimizeAllCommand}" AutomationProperties.AutomationId="shell.mnuMinimizeAll" />
+  <MenuItem Header="{loc:Tr menu.window.restoreAll}" Command="{Binding RestoreAllCommand}" AutomationProperties.AutomationId="shell.mnuRestoreAll" />
+  <MenuItem Header="{loc:Tr menu.window.restoreLastMin}" Command="{Binding RestoreLastMinimizedCommand}" AutomationProperties.AutomationId="shell.mnuRestoreLastMin" />
+  <Separator />
+  <MenuItem Header="{loc:Tr menu.window.next}" Command="{Binding NextCommand}" InputGesture="Ctrl+Tab" AutomationProperties.AutomationId="shell.mnuNext" />
+  <MenuItem Header="{loc:Tr menu.window.prev}" Command="{Binding PreviousCommand}" InputGesture="Ctrl+Shift+Tab" AutomationProperties.AutomationId="shell.mnuPrev" />
+  <Separator />
+  <!-- 독립 창(SDI) 묶음 — 옛 '창'의 전환·분리·재결합 + 옛 '윈도우'의 독립모드 일괄 명령(명령·AutomationId 그대로) -->
+  <MenuItem Header="{loc:Tr menu.window.sdiGroup}" AutomationProperties.AutomationId="shell.mnuSdiGroup">
+    <MenuItem Header="{loc:Tr menu.window.toggleSdi}" Command="{Binding ToggleSdiCommand}" AutomationProperties.AutomationId="shell.mnuToggleSdi" />
+    <MenuItem Header="{loc:Tr menu.window.float}" Command="{Binding FloatCommand}" AutomationProperties.AutomationId="shell.mnuFloat" />
+    <MenuItem Header="{loc:Tr menu.window.redock}" Command="{Binding RedockCommand}" AutomationProperties.AutomationId="shell.mnuRedock" />
+    <Separator />
+    <MenuItem Header="{loc:Tr menu.ws.sdiResetPos}" Command="{Binding WindowMenu.WindowMenuCommand}" CommandParameter="ResetSdiPositions" AutomationProperties.AutomationId="shell.mnuSdiResetPos" />
+    <MenuItem Header="{loc:Tr menu.ws.sdiMinimize}" Command="{Binding WindowMenu.WindowMenuCommand}" CommandParameter="MinimizeAllSdi" AutomationProperties.AutomationId="shell.mnuSdiMinimize" />
+    <MenuItem Header="{loc:Tr menu.ws.sdiRestore}" Command="{Binding WindowMenu.WindowMenuCommand}" CommandParameter="RestoreAllSdi" AutomationProperties.AutomationId="shell.mnuSdiRestore" />
+    <MenuItem Header="{loc:Tr menu.ws.sdiCloseAll}" Command="{Binding WindowMenu.WindowMenuCommand}" CommandParameter="CloseAllSdi" AutomationProperties.AutomationId="shell.mnuSdiCloseAll" />
+  </MenuItem>
+  <!-- 모니터(U20) — 단일 모니터 / 멀티 모니터 ▸ 모니터 목록(라디오, 선택 저장) / 선택한 모니터로 최대화. 목록 데이터는 MonitorMenuViewModel(odev-monitor).
+       옛 FitMultiMonitor 명령은 트레이·원격 호환으로 남고 메뉴에서만 빠졌다 -->
+  <MenuItem Header="{loc:Tr menu.window.monitor}" AutomationProperties.AutomationId="shell.mnuMonitor">
+    <MenuItem Header="{loc:Tr menu.ws.singleMonitor}" Command="{Binding WindowMenu.WindowMenuCommand}" CommandParameter="FitSingleMonitor"
+              ToolTip.Tip="{Binding WindowMenu.SingleMonitorTip}" ToolTip.ShowOnDisabled="True" AutomationProperties.AutomationId="shell.mnuWinSingleMonitor" />
+    <MenuItem x:Name="MonitorMenu" Header="{loc:Tr menu.ws.multiMonitor}" IsVisible="{Binding HasMonitors, Source={x:Static vm:MonitorMenuViewModel.Instance}}"
+              ItemsSource="{Binding Items, Source={x:Static vm:MonitorMenuViewModel.Instance}}" AutomationProperties.AutomationId="shell.mnuWinMultiMonitor">
+      <MenuItem.Styles>
+        <!-- 목록이 만든 항목(모니터 1개 = 라디오 1개). '>' 는 논리 트리 직계 자식이라 이 메뉴 자신에는 걸리지 않는다 -->
+        <Style Selector="MenuItem#MonitorMenu > MenuItem" x:DataType="vm:MonitorItemViewModel">
+          <Setter Property="Header" Value="{Binding Header}" />
+          <Setter Property="ToggleType" Value="Radio" />
+          <Setter Property="GroupName" Value="pd.monitor" />
+          <Setter Property="IsChecked" Value="{Binding IsSelected}" />
+          <Setter Property="Command" Value="{Binding SelectCommand}" />
+          <Setter Property="AutomationProperties.AutomationId" Value="{Binding AutomationId}" />
+        </Style>
+      </MenuItem.Styles>
+    </MenuItem>
+    <!-- 모니터 목록을 못 얻은 경우(웹·정보 없음) 안내 1줄 -->
+    <MenuItem Header="{loc:Tr menu.monitor.none}" IsEnabled="False" IsVisible="{Binding !HasMonitors, Source={x:Static vm:MonitorMenuViewModel.Instance}}"
+              AutomationProperties.AutomationId="shell.mnuWinMonitorNone" />
+    <Separator />
+    <MenuItem Header="{loc:Tr menu.monitor.maximize}" Command="{Binding WindowMenu.WindowMenuCommand}" CommandParameter="MaximizeOnSelectedMonitor"
+              ToolTip.Tip="{Binding WindowMenu.MonitorMaximizeTip}" ToolTip.ShowOnDisabled="True" AutomationProperties.AutomationId="shell.mnuWinMonitorMaximize" />
+  </MenuItem>
+  <MenuItem Header="{loc:Tr menu.ws.resetMain}" Command="{Binding WindowMenu.WindowMenuCommand}" CommandParameter="ResetMainWindow"
+            ToolTip.Tip="{Binding WindowMenu.ResetMainTip}" ToolTip.ShowOnDisabled="True" AutomationProperties.AutomationId="shell.mnuWinResetMain" />
+  <Separator />
+  <MenuItem Header="{loc:Tr menu.window.overview}" Click="OnOverviewClick" AutomationProperties.AutomationId="shell.mnuOverview" />
+  <MenuItem Header="{loc:Tr menu.window.close}" Command="{Binding CloseCommand}" InputGesture="Ctrl+F4" AutomationProperties.AutomationId="shell.mnuClose" />
+  <MenuItem Header="{loc:Tr menu.window.closeOthers}" Command="{Binding CloseOthersCommand}" AutomationProperties.AutomationId="shell.mnuCloseOthers" />
+  <MenuItem Header="{loc:Tr menu.window.closeAll}" Command="{Binding CloseAllCommand}" AutomationProperties.AutomationId="shell.mnuCloseAll" />
+  <Separator />
+  <!-- 요건 7: 자동 저장·Esc 닫기·자석(범위)·탭 더블클릭 닫기·트레이 값은 설정 창(창 범주)으로 옮겼다. 주의 환기는 값이 아니라 동작이라 여기 남는다 -->
+  <MenuItem Header="{loc:Tr menu.window.flash}" Command="{Binding Extras.FlashCommand}" AutomationProperties.AutomationId="shell.mnuFlash" />
+  <!-- 열린 창 목록 1~9(MDI 관례): 열린 순서, 활성 창에 ✓, 고르면 활성화(최소화면 복원). 칸 9개 고정 배치, 내용은 WindowMenu.OpenWindows 가 채운다 -->
+  <Separator IsVisible="{Binding WindowMenu.OpenWindows.HasAny}" />
+  <MenuItem Header="{Binding WindowMenu.OpenWindows.Slots[0].Header}" IsVisible="{Binding WindowMenu.OpenWindows.Slots[0].IsVisible}" Command="{Binding WindowMenu.OpenWindows.SelectCommand}" CommandParameter="{Binding WindowMenu.OpenWindows.Slots[0]}" AutomationProperties.AutomationId="shell.mnuWinList1">
+    <MenuItem.Icon><TextBlock Text="✓" IsVisible="{Binding WindowMenu.OpenWindows.Slots[0].IsActive}" HorizontalAlignment="Center" VerticalAlignment="Center" /></MenuItem.Icon>
+  </MenuItem>
+  <MenuItem Header="{Binding WindowMenu.OpenWindows.Slots[1].Header}" IsVisible="{Binding WindowMenu.OpenWindows.Slots[1].IsVisible}" Command="{Binding WindowMenu.OpenWindows.SelectCommand}" CommandParameter="{Binding WindowMenu.OpenWindows.Slots[1]}" AutomationProperties.AutomationId="shell.mnuWinList2">
+    <MenuItem.Icon><TextBlock Text="✓" IsVisible="{Binding WindowMenu.OpenWindows.Slots[1].IsActive}" HorizontalAlignment="Center" VerticalAlignment="Center" /></MenuItem.Icon>
+  </MenuItem>
+  <MenuItem Header="{Binding WindowMenu.OpenWindows.Slots[2].Header}" IsVisible="{Binding WindowMenu.OpenWindows.Slots[2].IsVisible}" Command="{Binding WindowMenu.OpenWindows.SelectCommand}" CommandParameter="{Binding WindowMenu.OpenWindows.Slots[2]}" AutomationProperties.AutomationId="shell.mnuWinList3">
+    <MenuItem.Icon><TextBlock Text="✓" IsVisible="{Binding WindowMenu.OpenWindows.Slots[2].IsActive}" HorizontalAlignment="Center" VerticalAlignment="Center" /></MenuItem.Icon>
+  </MenuItem>
+  <MenuItem Header="{Binding WindowMenu.OpenWindows.Slots[3].Header}" IsVisible="{Binding WindowMenu.OpenWindows.Slots[3].IsVisible}" Command="{Binding WindowMenu.OpenWindows.SelectCommand}" CommandParameter="{Binding WindowMenu.OpenWindows.Slots[3]}" AutomationProperties.AutomationId="shell.mnuWinList4">
+    <MenuItem.Icon><TextBlock Text="✓" IsVisible="{Binding WindowMenu.OpenWindows.Slots[3].IsActive}" HorizontalAlignment="Center" VerticalAlignment="Center" /></MenuItem.Icon>
+  </MenuItem>
+  <MenuItem Header="{Binding WindowMenu.OpenWindows.Slots[4].Header}" IsVisible="{Binding WindowMenu.OpenWindows.Slots[4].IsVisible}" Command="{Binding WindowMenu.OpenWindows.SelectCommand}" CommandParameter="{Binding WindowMenu.OpenWindows.Slots[4]}" AutomationProperties.AutomationId="shell.mnuWinList5">
+    <MenuItem.Icon><TextBlock Text="✓" IsVisible="{Binding WindowMenu.OpenWindows.Slots[4].IsActive}" HorizontalAlignment="Center" VerticalAlignment="Center" /></MenuItem.Icon>
+  </MenuItem>
+  <MenuItem Header="{Binding WindowMenu.OpenWindows.Slots[5].Header}" IsVisible="{Binding WindowMenu.OpenWindows.Slots[5].IsVisible}" Command="{Binding WindowMenu.OpenWindows.SelectCommand}" CommandParameter="{Binding WindowMenu.OpenWindows.Slots[5]}" AutomationProperties.AutomationId="shell.mnuWinList6">
+    <MenuItem.Icon><TextBlock Text="✓" IsVisible="{Binding WindowMenu.OpenWindows.Slots[5].IsActive}" HorizontalAlignment="Center" VerticalAlignment="Center" /></MenuItem.Icon>
+  </MenuItem>
+  <MenuItem Header="{Binding WindowMenu.OpenWindows.Slots[6].Header}" IsVisible="{Binding WindowMenu.OpenWindows.Slots[6].IsVisible}" Command="{Binding WindowMenu.OpenWindows.SelectCommand}" CommandParameter="{Binding WindowMenu.OpenWindows.Slots[6]}" AutomationProperties.AutomationId="shell.mnuWinList7">
+    <MenuItem.Icon><TextBlock Text="✓" IsVisible="{Binding WindowMenu.OpenWindows.Slots[6].IsActive}" HorizontalAlignment="Center" VerticalAlignment="Center" /></MenuItem.Icon>
+  </MenuItem>
+  <MenuItem Header="{Binding WindowMenu.OpenWindows.Slots[7].Header}" IsVisible="{Binding WindowMenu.OpenWindows.Slots[7].IsVisible}" Command="{Binding WindowMenu.OpenWindows.SelectCommand}" CommandParameter="{Binding WindowMenu.OpenWindows.Slots[7]}" AutomationProperties.AutomationId="shell.mnuWinList8">
+    <MenuItem.Icon><TextBlock Text="✓" IsVisible="{Binding WindowMenu.OpenWindows.Slots[7].IsActive}" HorizontalAlignment="Center" VerticalAlignment="Center" /></MenuItem.Icon>
+  </MenuItem>
+  <MenuItem Header="{Binding WindowMenu.OpenWindows.Slots[8].Header}" IsVisible="{Binding WindowMenu.OpenWindows.Slots[8].IsVisible}" Command="{Binding WindowMenu.OpenWindows.SelectCommand}" CommandParameter="{Binding WindowMenu.OpenWindows.Slots[8]}" AutomationProperties.AutomationId="shell.mnuWinList9">
+    <MenuItem.Icon><TextBlock Text="✓" IsVisible="{Binding WindowMenu.OpenWindows.Slots[8].IsActive}" HorizontalAlignment="Center" VerticalAlignment="Center" /></MenuItem.Icon>
+  </MenuItem>
+  <!-- 10개 이상이면 '창 더 보기…' — 전체 목록 대화상자(Views/MoreWindowsView, MainTitleBar 의 Popup) -->
+  <MenuItem Header="{loc:Tr menu.window.more}" IsVisible="{Binding WindowMenu.OpenWindows.HasMore}" Command="{Binding WindowMenu.OpenWindows.OpenMoreCommand}"
+            AutomationProperties.AutomationId="shell.mnuWinListMore" />
+</MenuItem>

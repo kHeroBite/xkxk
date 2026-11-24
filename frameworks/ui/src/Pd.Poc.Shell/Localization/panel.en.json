@@ -1,0 +1,11 @@
+{
+  "panel.explorer": "Explorer",
+  "panel.log": "Log",
+  "panel.documents": "Documents",
+  "panel.documents.empty": "No documents are open",
+  "panel.pos.panel": "Panel position",
+  "panel.pos.tab": "Move this tab to",
+  "panel.pos.dest": "{0} panel",
+  "panel.pos.destNamed": "{0} panel: {1}",
+  "panel.pos.documents": "Document area"
+}

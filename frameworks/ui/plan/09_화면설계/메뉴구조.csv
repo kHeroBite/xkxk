@@ -1,0 +1,253 @@
+﻿메뉴ID,화면ID,화면명,메뉴그룹,프로그램,이용 구분,소유 모듈,기여 모듈,데스크톱 열림,D,W,M,화면릴리스,기능ID,기능명,기능 영역,개인용,기업용,기능릴리스
+1001,SCR-IAM-01,로그인·가입·추가 인증,(진입),pd,사용자,auth,,전용 창,○,○,○,M1,IAM-01,이메일/비밀번호 로그인,인증·권한,Free,Basic,M1
+1001,SCR-IAM-01,로그인·가입·추가 인증,(진입),pd,사용자,auth,,전용 창,○,○,○,M1,IAM-10,가입·본인 인증 정책,인증·권한,Free,Basic,M3
+1001,SCR-IAM-01,로그인·가입·추가 인증,(진입),pd,사용자,auth,,전용 창,○,○,○,M1,IAM-02,MFA,인증·권한,Free,Basic,M4
+1002,SCR-IAM-02,역할·권한,설정(업체관리),pd,회사 관리,iam,,MDI,○,○,✕,M1,IAM-04,역할(Role) 관리,인증·권한,—,Basic,M1
+1002,SCR-IAM-02,역할·권한,설정(업체관리),pd,회사 관리,iam,,MDI,○,○,✕,M1,IAM-05,직군(JobFamily)별 권한 템플릿,인증·권한,—,Basic,M1
+1002,SCR-IAM-02,역할·권한,설정(업체관리),pd,회사 관리,iam,,MDI,○,○,✕,M1,IAM-06,데이터 범위(Scope) 권한,인증·권한,—,Basic,M1
+1002,SCR-IAM-02,역할·권한,설정(업체관리),pd,회사 관리,iam,,MDI,○,○,✕,M1,IAM-07,필드 단위 권한,인증·권한,—,Business,M2
+1002,SCR-IAM-02,역할·권한,설정(업체관리),pd,회사 관리,iam,,MDI,○,○,✕,M1,IAM-08,메뉴 R/W 권한,인증·권한,—,Basic,M1
+1002,SCR-IAM-02,역할·권한,설정(업체관리),pd,회사 관리,iam,,MDI,○,○,✕,M1,IAM-12,조직 상하관계 권한(관리 계통 권한),인증·권한,—,Basic,M2
+1002,SCR-IAM-02,역할·권한,설정(업체관리),pd,회사 관리,iam,,MDI,○,○,✕,M1,IAM-13,역할 지정 대상 확장(역할 바인딩),인증·권한,—,Basic,M2
+1002,SCR-IAM-02,역할·권한,설정(업체관리),pd,회사 관리,iam,,MDI,○,○,✕,M1,IAM-14,게스트 공간·게스트 계정 관리,인증·권한,—,Basic,M2
+1003,SCR-IAM-03,SSO·프로비저닝,설정(업체관리),pd,회사 관리,auth,,MDI,○,○,✕,M4,IAM-03,SSO(OIDC/SAML),인증·권한,—,Enterprise,M4
+1003,SCR-IAM-03,SSO·프로비저닝,설정(업체관리),pd,회사 관리,auth,,MDI,○,○,✕,M4,IAM-11,SCIM 사용자 프로비저닝,인증·권한,Professional,Enterprise,M4
+1004,SCR-IAM-04,감사 로그,설정(업체관리),pd,회사 관리,iam,,MDI,○,○,✕,M2,IAM-09,감사로그,인증·권한,—,Business,M2
+1005,SCR-ORG-01,조직도,조직·인사,pd,사용자,org,,MDI,○,○,△,M1,ORG-01,조직도 트리 관리,조직도,—,Basic,M1
+1005,SCR-ORG-01,조직도,조직·인사,pd,사용자,org,,MDI,○,○,△,M1,ORG-04,조직도 시각화,조직도,—,Basic,M1
+1005,SCR-ORG-01,조직도,조직·인사,pd,사용자,org,,MDI,○,○,△,M1,ORG-03,조직 이력(유효기간),조직도,—,Enterprise,M4
+1005,SCR-ORG-01,조직도,조직·인사,pd,사용자,org,,MDI,○,○,△,M1,ORG-06,조직 배치 필수·부서장 명단,조직도,—,Basic,M2
+1006,SCR-ORG-02,구성원·투입 직군,조직·인사,pd,회사 관리,org,,MDI,○,○,△,M1,ORG-02,구성원 관리,조직도,—,Basic,M1
+1006,SCR-ORG-02,구성원·투입 직군,조직·인사,pd,회사 관리,org,,MDI,○,○,△,M1,ORG-05,투입 직군·등급 체계,조직도,—,Basic,M2
+1007,SCR-HRS-01,인사 정보·단가,조직·인사,pd,회사 관리,hrs,vault,MDI,○,○,✕,M2,HRS-01,인사 기본정보,인사·보안,—,Basic,M2
+1007,SCR-HRS-01,인사 정보·단가,조직·인사,pd,회사 관리,hrs,vault,MDI,○,○,✕,M2,HRS-02,연봉·단가 관리,인사·보안,—,Enterprise,M2
+1007,SCR-HRS-01,인사 정보·단가,조직·인사,pd,회사 관리,hrs,vault,MDI,○,○,✕,M2,HRS-03,민감정보 암호화,인사·보안,—,Enterprise,M2
+1007,SCR-HRS-01,인사 정보·단가,조직·인사,pd,회사 관리,hrs,vault,MDI,○,○,✕,M2,HRS-05,인건비 단가 공개 수준,인사·보안,—,Basic,M2
+1008,SCR-HRS-02,민감정보 열람 승인,조직·인사,pd,회사 관리,hrs,,모달,○,○,✕,M4,HRS-04,민감정보 열람 승인·감사,인사·보안,—,Enterprise,M4
+1009,SCR-PRJ-01,프로젝트 목록·등록,프로젝트,pd,사용자,prj,,MDI,○,○,○,M1,PRJ-01,프로젝트 등록·수정,프로젝트·계약,Free,Basic,M1
+1009,SCR-PRJ-01,프로젝트 목록·등록,프로젝트,pd,사용자,prj,,MDI,○,○,○,M1,PRJ-07,업종별 프로젝트 유형 팩,프로젝트·계약,Free,Basic,M1
+1009,SCR-PRJ-01,프로젝트 목록·등록,프로젝트,pd,사용자,prj,,MDI,○,○,○,M1,PRJ-03,프로젝트 템플릿,프로젝트·계약,Professional,Basic,M4
+1010,SCR-PRJ-02,프로젝트 상세(개요·생애주기),프로젝트,pd,사용자,prj,eva,MDI,○,○,○,M1,PRJ-12,생애주기 단계·전이,프로젝트·계약,Free,Basic,M1
+1010,SCR-PRJ-02,프로젝트 상세(개요·생애주기),프로젝트,pd,사용자,prj,eva,MDI,○,○,○,M1,PRJ-13,하자보수 기간 관리,프로젝트·계약,Free,Basic,M1
+1010,SCR-PRJ-02,프로젝트 상세(개요·생애주기),프로젝트,pd,사용자,prj,eva,MDI,○,○,○,M1,PRJ-14,유지보수·운영 차수,프로젝트·계약,Free,Basic,M2
+1010,SCR-PRJ-02,프로젝트 상세(개요·생애주기),프로젝트,pd,사용자,prj,eva,MDI,○,○,○,M1,PRJ-16,프로젝트 히스토리 타임라인,프로젝트·계약,Free,Basic,M2
+1010,SCR-PRJ-02,프로젝트 상세(개요·생애주기),프로젝트,pd,사용자,prj,eva,MDI,○,○,○,M1,PRJ-08,사용자 정의 필드·상태,프로젝트·계약,Free,Basic,M1
+1011,SCR-PRJ-03,계약·고객사,프로젝트,pd,사용자,party,prj·contact,MDI,○,○,△,M1,PRJ-02,계약·재계약 관리,프로젝트·계약,Free,Basic,M1
+1011,SCR-PRJ-03,계약·고객사,프로젝트,pd,사용자,party,prj·contact,MDI,○,○,△,M1,PRJ-05,고객사·파트너 관리,프로젝트·계약,Free,Basic,M1
+1011,SCR-PRJ-03,계약·고객사,프로젝트,pd,사용자,party,prj·contact,MDI,○,○,△,M1,PRJ-17,법인 검색·선택·등록 요청,프로젝트·계약,Free,Basic,M1
+1011,SCR-PRJ-03,계약·고객사,프로젝트,pd,사용자,party,prj·contact,MDI,○,○,△,M1,PRJ-18,기존 거래처 이관·중복 병합,프로젝트·계약,—,Basic,M2
+1012,SCR-PRJ-04,산출물·첨부,프로젝트,pd,사용자,prj,plt,MDI,○,○,○,M1,PRJ-06,산출물·첨부 관리,프로젝트·계약,Free,Basic,M1
+1013,SCR-PRJ-05,포트폴리오·OKR,프로젝트,pd,사용자,prj,goal,MDI,○,○,△,M2,PRJ-04,포트폴리오/프로그램,프로젝트·계약,—,Business,M2
+1013,SCR-PRJ-05,포트폴리오·OKR,프로젝트,pd,사용자,prj,goal,MDI,○,○,△,M2,PRJ-09,목표·OKR,프로젝트·계약,Free,Basic,M2
+1013,SCR-PRJ-05,포트폴리오·OKR,프로젝트,pd,사용자,prj,goal,MDI,○,○,△,M2,PRJ-10,프로젝트 우선순위 점수,프로젝트·계약,Professional,Basic,M2
+1013,SCR-PRJ-05,포트폴리오·OKR,프로젝트,pd,사용자,prj,goal,MDI,○,○,△,M2,PRJ-11,포트폴리오 시나리오(what-if),프로젝트·계약,Professional,Enterprise,M2
+1014,SCR-PRJ-06,보존·파기,설정(업체관리),pd,회사 관리,prj,,MDI,○,○,✕,M4,PRJ-15,소멸·보존·파기,프로젝트·계약,Professional,Enterprise,M4
+1015,SCR-SCH-01,WBS·간트,일정,pd,사용자,sch,,MDI,○,○,△,M1,SCH-01,WBS 작업 분해,일정·간트,Free,Basic,M1
+1015,SCR-SCH-01,WBS·간트,일정,pd,사용자,sch,,MDI,○,○,△,M1,SCH-02,간트차트,일정·간트,Free,Basic,M1
+1015,SCR-SCH-01,WBS·간트,일정,pd,사용자,sch,,MDI,○,○,△,M1,SCH-03,작업 종속성·중요경로,일정·간트,Professional,Basic,M2
+1015,SCR-SCH-01,WBS·간트,일정,pd,사용자,sch,,MDI,○,○,△,M1,SCH-04,기준선(Baseline),일정·간트,Professional,Basic,M4
+1015,SCR-SCH-01,WBS·간트,일정,pd,사용자,sch,,MDI,○,○,△,M1,SCH-11,공정률 자동 갱신 규칙,일정·간트,Free,Basic,M2
+1016,SCR-SCH-02,마일스톤·보드·캘린더 뷰,일정,pd,사용자,sch,wcal,MDI,○,○,○,M1,SCH-05,마일스톤·캘린더,일정·간트,Free,Basic,M1
+1016,SCR-SCH-02,마일스톤·보드·캘린더 뷰,일정,pd,사용자,sch,wcal,MDI,○,○,○,M1,SCH-07,칸반·리스트·캘린더 뷰,일정·간트,Free,Basic,M1
+1017,SCR-SCH-03,자원 배정,일정,pd,사용자,sch,wcal,MDI,○,○,✕,M4,SCH-06,자원 배정·가동률,일정·간트,Professional,Basic,M4
+1017,SCR-SCH-03,자원 배정,일정,pd,사용자,sch,wcal,MDI,○,○,✕,M4,SCH-08,스킬 기반 배정 추천,일정·간트,Free,Basic,M4
+1017,SCR-SCH-03,자원 배정,일정,pd,사용자,sch,wcal,MDI,○,○,✕,M4,SCH-09,자원 평준화 제안,일정·간트,Free,Basic,M4
+1018,SCR-ISS-01,이슈 목록·검색,이슈,pd,사용자,iss,,MDI,○,○,○,M1,ISS-01,이슈/요청(티켓),이슈·버그·스프린트(Jira급),Free,Basic,M1
+1018,SCR-ISS-01,이슈 목록·검색,이슈,pd,사용자,iss,,MDI,○,○,○,M1,ISS-04,이슈 키·유형 체계,이슈·버그·스프린트(Jira급),Free,Basic,M1
+1018,SCR-ISS-01,이슈 목록·검색,이슈,pd,사용자,iss,,MDI,○,○,○,M1,ISS-05,버그 트래커,이슈·버그·스프린트(Jira급),Free,Basic,M1
+1018,SCR-ISS-01,이슈 목록·검색,이슈,pd,사용자,iss,,MDI,○,○,○,M1,ISS-12,고급 검색·저장 필터,이슈·버그·스프린트(Jira급),Free,Basic,M1
+1019,SCR-ISS-02,이슈 상세,이슈,pd,사용자,iss,crm,MDI,○,○,○,M1,ISS-06,이슈 계층·링크,이슈·버그·스프린트(Jira급),Free,Basic,M1
+1020,SCR-ISS-03,백로그·스프린트·칸반,이슈,pd,사용자,iss,,MDI,○,○,△,M1,ISS-08,백로그·스프린트(스크럼),이슈·버그·스프린트(Jira급),Free,Basic,M1
+1020,SCR-ISS-03,백로그·스프린트·칸반,이슈,pd,사용자,iss,,MDI,○,○,△,M1,ISS-09,칸반 보드,이슈·버그·스프린트(Jira급),Free,Basic,M1
+1020,SCR-ISS-03,백로그·스프린트·칸반,이슈,pd,사용자,iss,,MDI,○,○,△,M1,ISS-10,애자일 리포트,이슈·버그·스프린트(Jira급),Free,Basic,M1
+1021,SCR-ISS-04,리스크·변경요청,이슈,pd,사용자,iss,,MDI,○,○,△,M1,ISS-02,리스크 등록부,이슈·버그·스프린트(Jira급),Free,Basic,M1
+1021,SCR-ISS-04,리스크·변경요청,이슈,pd,사용자,iss,,MDI,○,○,△,M1,ISS-03,변경요청 관리,이슈·버그·스프린트(Jira급),Professional,Basic,M4
+1022,SCR-ISS-05,워크플로·자동화 규칙,설정(업체관리),pd,회사 관리,iss,orc,MDI,○,○,✕,M1,ISS-07,커스텀 워크플로 엔진,이슈·버그·스프린트(Jira급),Free,Basic,M1
+1022,SCR-ISS-05,워크플로·자동화 규칙,설정(업체관리),pd,회사 관리,iss,orc,MDI,○,○,✕,M1,ISS-13,자동화 규칙,이슈·버그·스프린트(Jira급),Professional,Basic,M4
+1023,SCR-ISS-06,릴리스·Git 연동,이슈,pd,사용자,iss,,MDI,○,○,✕,M4,ISS-11,버전·릴리스 관리,이슈·버그·스프린트(Jira급),Professional,Basic,M4
+1023,SCR-ISS-06,릴리스·Git 연동,이슈,pd,사용자,iss,,MDI,○,○,✕,M4,ISS-14,Git 연동,이슈·버그·스프린트(Jira급),Professional,Basic,M4
+1024,SCR-ISS-07,메일 수신·유지보수 큐,이슈,pd,사용자,iss,iss_sla·mal·kms·wiki,MDI,○,○,△,M1,ISS-15,종료 후 유지보수 전환,이슈·버그·스프린트(Jira급),Free,Basic,M1
+1024,SCR-ISS-07,메일 수신·유지보수 큐,이슈,pd,사용자,iss,iss_sla·mal·kms·wiki,MDI,○,○,△,M1,ISS-17,메일 → 이슈 자동 등록(필수),이슈·버그·스프린트(Jira급),Free,Basic,M4
+1024,SCR-ISS-07,메일 수신·유지보수 큐,이슈,pd,사용자,iss,iss_sla·mal·kms·wiki,MDI,○,○,△,M1,ISS-18,외부 메일함 연동,이슈·버그·스프린트(Jira급),Free,Basic,M4
+1024,SCR-ISS-07,메일 수신·유지보수 큐,이슈,pd,사용자,iss,iss_sla·mal·kms·wiki,MDI,○,○,△,M1,ISS-16,SLA·서비스 요청 큐,이슈·버그·스프린트(Jira급),—,Enterprise,M3
+1025,SCR-TIM-01,공수 기록·주간 타임시트,공수·근태,pd,사용자,tim,,MDI,○,○,○,M1,TIM-01,공수(작업) 기록,공수·타임시트,Free,Basic,M1
+1025,SCR-TIM-01,공수 기록·주간 타임시트,공수·근태,pd,사용자,tim,,MDI,○,○,○,M1,TIM-02,주간 타임시트·승인,공수·타임시트,—,Basic,M1
+1025,SCR-TIM-01,공수 기록·주간 타임시트,공수·근태,pd,사용자,tim,,MDI,○,○,○,M1,TIM-03,유상/무상 구분,공수·타임시트,Free,Basic,M1
+1025,SCR-TIM-01,공수 기록·주간 타임시트,공수·근태,pd,사용자,tim,,MDI,○,○,○,M1,TIM-07,한 줄 업무 등록·업무일지,공수·타임시트,Free,Basic,M2
+1026,SCR-TIM-02,근태·휴가,공수·근태,pd,사용자,hrs_att,wcal,MDI,○,○,○,M2,TIM-04,근태 관리,공수·타임시트,—,Basic,M2
+1026,SCR-TIM-02,근태·휴가,공수·근태,pd,사용자,hrs_att,wcal,MDI,○,○,○,M2,TIM-05,연차·휴가 관리,공수·타임시트,—,Basic,M2
+1026,SCR-TIM-02,근태·휴가,공수·근태,pd,사용자,hrs_att,wcal,MDI,○,○,○,M2,TIM-06,휴가·공휴일 가용성 반영,공수·타임시트,Free,Basic,M2
+1027,SCR-FIN-01,예산·원가,재무,pd,사용자,fin,,MDI,○,○,✕,M2,FIN-01,프로젝트 예산,원가·손익·ROI,Professional,Basic,M2
+1027,SCR-FIN-01,예산·원가,재무,pd,사용자,fin,,MDI,○,○,✕,M2,FIN-02,실적 원가 자동 집계,원가·손익·ROI,Professional,Basic,M2
+1027,SCR-FIN-01,예산·원가,재무,pd,사용자,fin,,MDI,○,○,✕,M2,FIN-05,표준 지표 계층,원가·손익·ROI,Free,Basic,M2
+1027,SCR-FIN-01,예산·원가,재무,pd,사용자,fin,,MDI,○,○,✕,M2,FIN-06,간접비 배부,원가·손익·ROI,Professional,Enterprise,M4
+1027,SCR-FIN-01,예산·원가,재무,pd,사용자,fin,,MDI,○,○,✕,M2,FIN-20,CapEx/OpEx 분류·집계,원가·손익·ROI,Professional,Enterprise,M2
+1028,SCR-FIN-02,손익·EVM·견적 대비 실적,재무,pd,사용자,fin,,MDI,○,○,△,M2,FIN-03,손익·이익률·ROI,원가·손익·ROI,Professional,Basic,M2
+1028,SCR-FIN-02,손익·EVM·견적 대비 실적,재무,pd,사용자,fin,,MDI,○,○,△,M2,FIN-04,EAC/ETC·EVM,원가·손익·ROI,—,Enterprise,M4
+1028,SCR-FIN-02,손익·EVM·견적 대비 실적,재무,pd,사용자,fin,,MDI,○,○,△,M2,FIN-17,견적 대비 실적 분석,원가·손익·ROI,—,Basic,M2
+1029,SCR-FIN-03,견적,재무,pd,사용자,fin,,MDI,○,○,✕,M2,FIN-07,견적서,원가·손익·ROI,Professional,Basic,M2
+1029,SCR-FIN-03,견적,재무,pd,사용자,fin,,MDI,○,○,✕,M2,FIN-13,단가표(Rate Card),원가·손익·ROI,Professional,Basic,M2
+1029,SCR-FIN-03,견적,재무,pd,사용자,fin,,MDI,○,○,✕,M2,FIN-14,원가 견적 계산,원가·손익·ROI,Professional,Basic,M2
+1029,SCR-FIN-03,견적,재무,pd,사용자,fin,,MDI,○,○,✕,M2,FIN-15,견적 시나리오 비교,원가·손익·ROI,Professional,Basic,M2
+1029,SCR-FIN-03,견적,재무,pd,사용자,fin,,MDI,○,○,✕,M2,FIN-16,견적 버전 이력·차이,원가·손익·ROI,Professional,Basic,M2
+1029,SCR-FIN-03,견적,재무,pd,사용자,fin,,MDI,○,○,✕,M2,FIN-18,이익률 정책,원가·손익·ROI,Professional,Basic,M2
+1029,SCR-FIN-03,견적,재무,pd,사용자,fin,,MDI,○,○,✕,M2,FIN-19,공공 단가 가져오기,원가·손익·ROI,—,Basic,M2
+1029,SCR-FIN-03,견적,재무,pd,사용자,fin,,MDI,○,○,✕,M2,FIN-21,법정 사용자 부담금 원가,원가·손익·ROI,Free,Basic,M4
+1030,SCR-FIN-04,청구·수금,재무,pd,사용자,fin,money,MDI,○,○,△,M2,FIN-08,청구 일정·인보이스,원가·손익·ROI,Professional,Basic,M2
+1030,SCR-FIN-04,청구·수금,재무,pd,사용자,fin,money,MDI,○,○,△,M2,FIN-09,수금·미수 관리,원가·손익·ROI,Professional,Basic,M2
+1030,SCR-FIN-04,청구·수금,재무,pd,사용자,fin,money,MDI,○,○,△,M2,FIN-11,전자 인보이스·회계 연동,원가·손익·ROI,Professional,Enterprise,X
+1030,SCR-FIN-04,청구·수금,재무,pd,사용자,fin,money,MDI,○,○,△,M2,FIN-12,다중 통화,원가·손익·ROI,Free,Basic,M2
+1031,SCR-FIN-05,경비,재무,pd,사용자,fin,,MDI,○,○,○,M2,FIN-10,프로젝트 경비,원가·손익·ROI,Professional,Basic,M2
+1032,SCR-EVA-01,프로젝트·개인·조직 평가,조직·인사,pd,사용자,eva,appraisal,MDI,○,○,△,M2,EVA-01,프로젝트 평가,평가·KPI,—,Enterprise,M2
+1032,SCR-EVA-01,프로젝트·개인·조직 평가,조직·인사,pd,사용자,eva,appraisal,MDI,○,○,△,M2,EVA-03,조직 평가,평가·KPI,—,Enterprise,M4
+1033,SCR-EVA-02,KPI 정의,설정(업체관리),pd,회사 관리,eva,,MDI,○,○,✕,M4,EVA-04,KPI 정의 빌더,평가·KPI,—,Enterprise,M4
+1033,SCR-EVA-02,KPI 정의,설정(업체관리),pd,회사 관리,eva,,MDI,○,○,✕,M4,EVA-06,평가 정책 템플릿·범위별 기준 지정,평가·KPI,—,Enterprise,M4
+1034,SCR-DSH-01,홈 대시보드(내 작업·위젯),홈,pd,사용자,rpt,,MDI,○,○,○,M1,DSH-01,위젯 대시보드,대시보드·리포트,Free,Basic,M1
+1035,SCR-DSH-02,포트폴리오 대시보드,PMO,pd,사용자,rpt,,MDI,○,○,△,M2,DSH-02,포트폴리오 대시보드,대시보드·리포트,—,Business,M2
+1036,SCR-DSH-03,주간보고·내보내기,보고·AI,pd,사용자,rpt,tim,MDI,○,○,△,M1,DSH-03,주간보고,대시보드·리포트,—,Basic,M1
+1036,SCR-DSH-03,주간보고·내보내기,보고·AI,pd,사용자,rpt,tim,MDI,○,○,△,M1,DSH-04,보고서 내보내기,대시보드·리포트,Professional,Basic,M2
+1037,SCR-AIN-01,AI 리포트·위기 탐지,보고·AI,pd,사용자,ain,aip,MDI,○,○,○,M3,AIN-01,AI 주간/월간 리포트,AI 인사이트,Professional,Basic,M3
+1037,SCR-AIN-01,AI 리포트·위기 탐지,보고·AI,pd,사용자,ain,aip,MDI,○,○,○,M3,AIN-02,위기·이슈 탐지,AI 인사이트,Professional,Basic,M3
+1037,SCR-AIN-01,AI 리포트·위기 탐지,보고·AI,pd,사용자,ain,aip,MDI,○,○,○,M3,AIN-03,위기 원인 설명·조치 제안,AI 인사이트,Professional,Basic,M4
+1037,SCR-AIN-01,AI 리포트·위기 탐지,보고·AI,pd,사용자,ain,aip,MDI,○,○,○,M3,AIP-19,운영 피드백 수집,AI 플랫폼,Free,Basic,M3
+1038,SCR-AIN-02,자연어 질의,보고·AI,pd,사용자,ain,,MDI,○,○,○,M4,AIN-04,자연어 질의(NL2SQL),AI 인사이트,Professional,Enterprise,M4
+1039,SCR-AIN-03,계약서·문서 분석,보고·AI,pd,사용자,ain,,MDI,○,○,✕,M4,AIN-07,계약서·문서 분석,AI 인사이트,Professional,Enterprise,M4
+1040,SCR-IMP-01,조직도 동기화,설정(업체관리),pd,회사 관리,imp,,MDI,○,○,✕,M1,IMP-01,조직도 엑셀 업로드,가져오기·동기화,—,Basic,M1
+1040,SCR-IMP-01,조직도 동기화,설정(업체관리),pd,회사 관리,imp,,MDI,○,○,✕,M1,IMP-02,조직도 Push 수신 API,가져오기·동기화,—,Enterprise,M1
+1040,SCR-IMP-01,조직도 동기화,설정(업체관리),pd,회사 관리,imp,,MDI,○,○,✕,M1,IMP-03,조직도 Polling 커넥터,가져오기·동기화,—,Enterprise,M4
+1040,SCR-IMP-01,조직도 동기화,설정(업체관리),pd,회사 관리,imp,,MDI,○,○,✕,M1,IMP-04,전체 덮어쓰기/변경분 반영 모드,가져오기·동기화,—,Basic,M1
+1040,SCR-IMP-01,조직도 동기화,설정(업체관리),pd,회사 관리,imp,,MDI,○,○,✕,M1,IMP-05,동기화 이력·롤백,가져오기·동기화,—,Basic,M4
+1041,SCR-IMP-02,프로젝트 가져오기,프로젝트,pd,사용자,imp,,모달,○,○,✕,M1,IMP-06,프로젝트 엑셀 이관,가져오기·동기화,Free,Basic,M1
+1041,SCR-IMP-02,프로젝트 가져오기,프로젝트,pd,사용자,imp,,모달,○,○,✕,M1,IMP-07,MS Project/Jira 가져오기,가져오기·동기화,Professional,Basic,M4
+1041,SCR-IMP-02,프로젝트 가져오기,프로젝트,pd,사용자,imp,,모달,○,○,✕,M1,IMP-10,Jira 읽기 전용 동기화,가져오기·동기화,—,Basic,M4
+a1001,SCR-IMP-03,Mars 이관 시험 하네스,운영 콘솔(pd-admin),pd-admin,운영사,imp,,MDI,pd-admin,pd-admin,✕,M1,IMP-08,Mars 이관 테스트 하네스(내부),가져오기·동기화,내부,내부,M1
+1042,SCR-LIC-01,회사·요금제·AI 크레딧,설정(업체관리),pd,회사 관리,lic,aip,MDI,○,○,△,M1,LIC-01,테넌트(회사) 관리,테넌트·요금제·라이선스,Free,Basic,M1
+1042,SCR-LIC-01,회사·요금제·AI 크레딧,설정(업체관리),pd,회사 관리,lic,aip,MDI,○,○,△,M1,LIC-09,테넌트 유형·개인→기업 전환,테넌트·요금제·라이선스,Free,Basic,M1
+1042,SCR-LIC-01,회사·요금제·AI 크레딧,설정(업체관리),pd,회사 관리,lic,aip,MDI,○,○,△,M1,LIC-05,좌석·한도 계량,테넌트·요금제·라이선스,Free,Basic,M3
+1042,SCR-LIC-01,회사·요금제·AI 크레딧,설정(업체관리),pd,회사 관리,lic,aip,MDI,○,○,△,M1,LIC-06,다운그레이드 정책,테넌트·요금제·라이선스,Free,Basic,M4
+1042,SCR-LIC-01,회사·요금제·AI 크레딧,설정(업체관리),pd,회사 관리,lic,aip,MDI,○,○,△,M1,LIC-08,AI 크레딧 지갑,테넌트·요금제·라이선스,Free,Basic,M3
+1042,SCR-LIC-01,회사·요금제·AI 크레딧,설정(업체관리),pd,회사 관리,lic,aip,MDI,○,○,△,M1,LIC-10,제품 구독·모듈 허용 판정,테넌트·요금제·라이선스,Free,Basic,M1
+a1002,SCR-LIC-02,요금제·빌링 운영,운영 콘솔(pd-admin),pd-admin,운영사,lic,,MDI,pd-admin,pd-admin,✕,M3,LIC-02,요금제·기능 매트릭스,테넌트·요금제·라이선스,Free,Basic,M3
+a1002,SCR-LIC-02,요금제·빌링 운영,운영 콘솔(pd-admin),pd-admin,운영사,lic,,MDI,pd-admin,pd-admin,✕,M3,LIC-03,빌링 Webhook 수신,테넌트·요금제·라이선스,Free,Basic,M3
+a1002,SCR-LIC-02,요금제·빌링 운영,운영 콘솔(pd-admin),pd-admin,운영사,lic,,MDI,pd-admin,pd-admin,✕,M3,LIC-04,실시간 권리(Entitlement) 캐시,테넌트·요금제·라이선스,Free,Basic,M3
+1043,SCR-APR-01,결재함,결재·공유,pd,사용자,apr,,MDI,○,○,○,M2,APR-01,공통 결재선 엔진,승인·공유,—,Basic,M2
+1043,SCR-APR-01,결재함,결재·공유,pd,사용자,apr,,MDI,○,○,○,M2,APR-03,승인 대상 범용화,승인·공유,—,Basic,M2
+1043,SCR-APR-01,결재함,결재·공유,pd,사용자,apr,,MDI,○,○,○,M2,APR-04,모바일 승인·알림,승인·공유,—,Basic,M2
+1043,SCR-APR-01,결재함,결재·공유,pd,사용자,apr,,MDI,○,○,○,M2,APR-05,승인 이력·감사,승인·공유,—,Basic,M2
+1044,SCR-APR-02,대결·위임·전결 설정,결재·공유,pd,사용자,apr,,모달,○,○,△,M4,APR-02,대결·위임·전결,승인·공유,—,Enterprise,M4
+1045,SCR-APR-03,공유·외부 협업,결재·공유,pd,사용자,apr,portal,MDI,○,○,△,M2,APR-06,공유 권한(멤버·게스트),승인·공유,Free,Basic,M2
+1045,SCR-APR-03,공유·외부 협업,결재·공유,pd,사용자,apr,portal,MDI,○,○,△,M2,APR-08,외부 공유 링크·구독,승인·공유,Free,Basic,M4
+1045,SCR-APR-03,공유·외부 협업,결재·공유,pd,사용자,apr,portal,MDI,○,○,△,M2,APR-11,외부 참여 경로 판정(교차 테넌트 협업),승인·공유,Free,Basic,M2
+1046,SCR-APR-04,고객 포털·외부 요청 폼·CSAT,결재·공유,pd,회사 관리,portal,,MDI,○,○,✕,M1,APR-07,고객 포털,승인·공유,—,Enterprise,M4
+1046,SCR-APR-04,고객 포털·외부 요청 폼·CSAT,결재·공유,pd,회사 관리,portal,,MDI,○,○,✕,M1,APR-09,외부 요청 폼(필수),승인·공유,Free,Basic,M1
+1046,SCR-APR-04,고객 포털·외부 요청 폼·CSAT,결재·공유,pd,회사 관리,portal,,MDI,○,○,✕,M1,APR-10,고객만족도 설문(CSAT),승인·공유,Free,Basic,M2
+1047,SCR-CRM-01,영업 파이프라인,영업·수주 전,pd,사용자,crm,wcal,MDI,○,○,△,M2,CRM-01,영업 기회·파이프라인,CRM·영업,Professional,Basic,M2
+1047,SCR-CRM-01,영업 파이프라인,영업·수주 전,pd,사용자,crm,wcal,MDI,○,○,△,M2,CRM-02,수주 전환,CRM·영업,Professional,Basic,M2
+1047,SCR-CRM-01,영업 파이프라인,영업·수주 전,pd,사용자,crm,wcal,MDI,○,○,△,M2,CRM-03,매출·인력 전망,CRM·영업,Professional,Basic,M2
+1048,SCR-CRM-02,영업 활동·고객 소통,영업·수주 전,pd,사용자,crm,contact,MDI,○,○,○,M2,CRM-04,영업 활동 기록,CRM·영업,Professional,Basic,M2
+1048,SCR-CRM-02,영업 활동·고객 소통,영업·수주 전,pd,사용자,crm,contact,MDI,○,○,○,M2,CRM-05,고객 소통 통합 타임라인,CRM·영업,Professional,Basic,M2
+1049,SCR-PRE-01,입수 문서·요구 추출,영업·수주 전,pd,사용자,pre,,MDI,○,○,✕,M2,PRE-01,입수 문서 관리,수주 전 기획,Professional,Basic,M2
+1049,SCR-PRE-01,입수 문서·요구 추출,영업·수주 전,pd,사용자,pre,,MDI,○,○,✕,M2,PRE-02,요구 항목 추출·추적,수주 전 기획,Professional,Basic,M2
+1049,SCR-PRE-01,입수 문서·요구 추출,영업·수주 전,pd,사용자,pre,,MDI,○,○,✕,M2,PRE-03,AI 문서 요구 추출,수주 전 기획,Professional,Basic,M3
+1050,SCR-PRE-02,구성안·인력 계획,영업·수주 전,pd,사용자,pre,,MDI,○,○,✕,M2,PRE-04,솔루션 구성안,수주 전 기획,Professional,Basic,M2
+1050,SCR-PRE-02,구성안·인력 계획,영업·수주 전,pd,사용자,pre,,MDI,○,○,✕,M2,PRE-05,HW·인프라 구성안,수주 전 기획,Professional,Basic,M2
+1050,SCR-PRE-02,구성안·인력 계획,영업·수주 전,pd,사용자,pre,,MDI,○,○,✕,M2,PRE-06,인력 계획(역할 슬롯),수주 전 기획,Professional,Basic,M2
+1051,SCR-PRE-03,참여 결정(Go/No-Go),영업·수주 전,pd,사용자,pre,,MDI,○,○,△,M4,PRE-07,참여 결정(Go/No-Go),수주 전 기획,—,Enterprise,M4
+1052,SCR-COL-01,알림 센터,협업,pd,사용자,notify,,패널(알림 서랍),○,○,○,M1,COL-01,알림 센터,협업·알림,Free,Basic,M1
+1052,SCR-COL-01,알림 센터,협업,pd,사용자,notify,,패널(알림 서랍),○,○,○,M1,COL-02,모바일 푸시,협업·알림,Free,Basic,M1
+1052,SCR-COL-01,알림 센터,협업,pd,사용자,notify,,패널(알림 서랍),○,○,○,M1,COL-03,메일 알림,협업·알림,Free,Basic,M1
+1053,SCR-COL-02,메신저,협업,pd,사용자,col,notify,패널+SDI 미니창,○,○,○,M1,COL-07,메신저 대화방,협업·알림,—,Basic,M1
+1053,SCR-COL-02,메신저,협업,pd,사용자,col,notify,패널+SDI 미니창,○,○,○,M1,COL-08,메시지 기능,협업·알림,Free,Basic,M1
+1053,SCR-COL-02,메신저,협업,pd,사용자,col,notify,패널+SDI 미니창,○,○,○,M1,COL-09,온라인 상태·미니창,협업·알림,—,Basic,M1
+1053,SCR-COL-02,메신저,협업,pd,사용자,col,notify,패널+SDI 미니창,○,○,○,M1,COL-10,메시지 검색·이슈 연결,협업·알림,Professional,Basic,M1
+1053,SCR-COL-02,메신저,협업,pd,사용자,col,notify,패널+SDI 미니창,○,○,○,M1,COL-11,메시지 보존·감사,협업·알림,—,Enterprise,M4
+1053,SCR-COL-02,메신저,협업,pd,사용자,col,notify,패널+SDI 미니창,○,○,○,M1,COL-06,외부 메신저 연동,협업·알림,Professional,Basic,M4
+1054,SCR-COL-03,댓글·멘션·공지,협업,pd,사용자,col,,문서 안 영역,○,○,○,M1,COL-04,댓글·멘션,협업·알림,Free,Basic,M1
+1054,SCR-COL-03,댓글·멘션·공지,협업,pd,사용자,col,,문서 안 영역,○,○,○,M1,COL-05,공지,협업·알림,—,Basic,M4
+1055,SCR-COL-04,위키·지식베이스,협업,pd,사용자,wiki,,MDI,○,○,○,M1,COL-12,위키·지식베이스,협업·알림,Free,Basic,M1
+1056,SCR-COL-05,캘린더·화상회의,협업,pd,사용자,col,col_booking,MDI,○,○,○,M1,COL-13,캘린더,협업·알림,Free,Basic,M1
+1056,SCR-COL-05,캘린더·화상회의,협업,pd,사용자,col,col_booking,MDI,○,○,○,M1,COL-14,화상회의 연동,협업·알림,Free,Basic,M2
+1056,SCR-COL-05,캘린더·화상회의,협업,pd,사용자,col,col_booking,MDI,○,○,○,M1,COL-18,시설·자원 예약,협업·알림,—,Basic,M4
+1057,SCR-ADM-01,코드·카테고리,설정(업체관리),pd,회사 관리,adm,,MDI,○,○,✕,M1,ADM-03,코드·카테고리 관리,운영·관리,Free,Basic,M1
+a1003,SCR-ADM-02,도움말 관리,운영 콘솔(pd-admin),pd-admin,운영사,adm,,MDI,pd-admin,pd-admin,✕,M4,ADM-04,도움말 관리,운영·관리,Free,Basic,M4
+1058,SCR-ADM-03,백업·복원,설정(업체관리),pd,회사 관리,adm,,MDI,○,○,✕,M4,ADM-05,백업·복원(테넌트 단위),운영·관리,—,Enterprise,M4
+1059,SCR-ADM-04,검색 사전·색인,설정(업체관리),pd,회사 관리,adm,,MDI,○,○,✕,M4,ADM-08,검색 사전·색인 관리,운영·관리,—,Enterprise,M4
+1089,SCR-ADM-08,화면·항목 정책,설정(업체관리),pd,회사 관리,adm,,MDI,○,○,✕,M1,ADM-11,회사 화면·항목 정책 관리,운영·관리,Free,Basic,M1
+a1004,SCR-ADM-05,시스템관리자 콘솔·테넌트 운영,운영 콘솔(pd-admin),pd-admin,운영사,adm,lic·core,MDI,pd-admin,pd-admin,✕,M1,ADM-01,시스템관리자(root) 콘솔,운영·관리,내부,내부,M3
+a1004,SCR-ADM-05,시스템관리자 콘솔·테넌트 운영,운영 콘솔(pd-admin),pd-admin,운영사,adm,lic·core,MDI,pd-admin,pd-admin,✕,M1,ADM-09,요금제·기능 배치·사용 한도 관리(root),운영·관리,내부,내부,M3
+a1004,SCR-ADM-05,시스템관리자 콘솔·테넌트 운영,운영 콘솔(pd-admin),pd-admin,운영사,adm,lic·core,MDI,pd-admin,pd-admin,✕,M1,ADM-07,"테넌트 이사(배치 종류·서버군, 내부)",운영·관리,내부,내부,M4
+a1004,SCR-ADM-05,시스템관리자 콘솔·테넌트 운영,운영 콘솔(pd-admin),pd-admin,운영사,adm,lic·core,MDI,pd-admin,pd-admin,✕,M1,ADM-06,테스트 테넌트 초기화·재이관(내부),운영·관리,내부,내부,M1
+a1004,SCR-ADM-05,시스템관리자 콘솔·테넌트 운영,운영 콘솔(pd-admin),pd-admin,운영사,adm,lic·core,MDI,pd-admin,pd-admin,✕,M1,ADM-02,운영→스테이징 이관 도구,운영·관리,내부,내부,M2
+1060,SCR-PLT-01,작업공간 셸(파일·창·보기·시스템),(진입),pd,사용자,plt,,셸,○,○,○,M1,PLT-01,공유 UI 컴포넌트,플랫폼·공통,Free,Basic,M1
+1060,SCR-PLT-01,작업공간 셸(파일·창·보기·시스템),(진입),pd,사용자,plt,,셸,○,○,○,M1,PLT-06,MDI 작업공간,플랫폼·공통,Free,Basic,M1
+1060,SCR-PLT-01,작업공간 셸(파일·창·보기·시스템),(진입),pd,사용자,plt,,셸,○,○,○,M1,PLT-03,다국어,플랫폼·공통,Free,Basic,M4
+1060,SCR-PLT-01,작업공간 셸(파일·창·보기·시스템),(진입),pd,사용자,plt,,셸,○,○,○,M1,PLT-04,자동 업데이트,플랫폼·공통,Free,Basic,M1
+1060,SCR-PLT-01,작업공간 셸(파일·창·보기·시스템),(진입),pd,사용자,plt,,셸,○,○,○,M1,PLT-02,"로컬 캐시(모바일, 속도 전용)",플랫폼·공통,Professional,Basic,M4
+1060,SCR-PLT-01,작업공간 셸(파일·창·보기·시스템),(진입),pd,사용자,plt,,셸,○,○,○,M1,PLT-09,규모 모드·점진 공개·명령 팔레트,플랫폼·공통,Free,Basic,M2
+1060,SCR-PLT-01,작업공간 셸(파일·창·보기·시스템),(진입),pd,사용자,plt,,셸,○,○,○,M1,PLT-11,데스크톱 전역 빠른 캡처,플랫폼·공통,Free,Basic,M4
+1060,SCR-PLT-01,작업공간 셸(파일·창·보기·시스템),(진입),pd,사용자,plt,,셸,○,○,○,M1,PLT-12,테마·레이아웃 공유 스토어,플랫폼·공통,Free,Basic,M4
+1061,SCR-PLT-02,API·Webhook·BI·플러그인,설정(업체관리),pd,회사 관리,plt,rpt,MDI,○,○,✕,M3,PLT-05,공개 REST API·Webhook,플랫폼·공통,Professional,Basic,M4
+1061,SCR-PLT-02,API·Webhook·BI·플러그인,설정(업체관리),pd,회사 관리,plt,rpt,MDI,○,○,✕,M3,PLT-07,BI 커넥터,플랫폼·공통,Professional,Enterprise,M4
+1061,SCR-PLT-02,API·Webhook·BI·플러그인,설정(업체관리),pd,회사 관리,plt,rpt,MDI,○,○,✕,M3,PLT-08,마켓플레이스·플러그인,플랫폼·공통,Professional,Enterprise,M4
+1061,SCR-PLT-02,API·Webhook·BI·플러그인,설정(업체관리),pd,회사 관리,plt,rpt,MDI,○,○,✕,M3,PLT-10,MCP 서버,플랫폼·공통,Professional,Basic,M3
+a1005,SCR-AIP-01,AI 공급자·모델·공통 키·라우팅,운영 콘솔(pd-admin),pd-admin,운영사,aip,,MDI,pd-admin,pd-admin,✕,M3,AIP-01,공급자 어댑터·모델 카탈로그,AI 플랫폼,Professional,Basic,M3
+a1005,SCR-AIP-01,AI 공급자·모델·공통 키·라우팅,운영 콘솔(pd-admin),pd-admin,운영사,aip,,MDI,pd-admin,pd-admin,✕,M3,AIP-02,기능별 라우팅·폴백·강등,AI 플랫폼,내부,내부,M3
+a1005,SCR-AIP-01,AI 공급자·모델·공통 키·라우팅,운영 콘솔(pd-admin),pd-admin,운영사,aip,,MDI,pd-admin,pd-admin,✕,M3,AIP-03,플랫폼 공통 키 관리,AI 플랫폼,내부,내부,M3
+1062,SCR-AIP-02,AI 데이터 정책·호출 감사,설정(업체관리),pd,회사 관리,aip,,MDI,○,○,✕,M3,AIP-04,데이터 전송 정책·마스킹,AI 플랫폼,Professional,Basic,M3
+1062,SCR-AIP-02,AI 데이터 정책·호출 감사,설정(업체관리),pd,회사 관리,aip,,MDI,○,○,✕,M3,AIP-05,AI 호출 감사 로그,AI 플랫폼,Professional,Basic,M3
+1063,SCR-AIP-03,AI 사용량·한도·정산,설정(업체관리),pd,회사 관리,aip,,MDI,○,○,△,M3,AIP-06,호출 단위 사용량·원가 기록,AI 플랫폼,Free,Basic,M3
+1063,SCR-AIP-03,AI 사용량·한도·정산,설정(업체관리),pd,회사 관리,aip,,MDI,○,○,△,M3,AIP-08,과금 계산·월 정산,AI 플랫폼,Free,Basic,M3
+1063,SCR-AIP-03,AI 사용량·한도·정산,설정(업체관리),pd,회사 관리,aip,,MDI,○,○,△,M3,AIP-10,계층 예산·쿼터·한도,AI 플랫폼,Professional,Enterprise,M3
+1063,SCR-AIP-03,AI 사용량·한도·정산,설정(업체관리),pd,회사 관리,aip,,MDI,○,○,△,M3,AIP-11,관리자 3계층 조회·제어,AI 플랫폼,Free,Basic,M3
+1063,SCR-AIP-03,AI 사용량·한도·정산,설정(업체관리),pd,회사 관리,aip,,MDI,○,○,△,M3,AIP-12,사용량 대시보드,AI 플랫폼,Professional,Business,M3
+1063,SCR-AIP-03,AI 사용량·한도·정산,설정(업체관리),pd,회사 관리,aip,,MDI,○,○,△,M3,AIP-22,AI 할당량 배분,AI 플랫폼,—,Basic,M4
+a1006,SCR-AIP-04,AI 단가표·공급자 대사,운영 콘솔(pd-admin),pd-admin,운영사,aip,,MDI,pd-admin,pd-admin,✕,M3,AIP-07,원가·판매 단가표 버전,AI 플랫폼,내부,내부,M3
+a1006,SCR-AIP-04,AI 단가표·공급자 대사,운영 콘솔(pd-admin),pd-admin,운영사,aip,,MDI,pd-admin,pd-admin,✕,M3,AIP-09,공급자 사용량 대사,AI 플랫폼,내부,내부,M4
+a1007,SCR-AIP-05,AI 실시간 모니터링·급증 경보,운영 콘솔(pd-admin),pd-admin,운영사,aip,,MDI,pd-admin,pd-admin,✕,M3,AIP-13,실시간 AI 모니터링,AI 플랫폼,내부,내부,M3
+a1007,SCR-AIP-05,AI 실시간 모니터링·급증 경보,운영 콘솔(pd-admin),pd-admin,운영사,aip,,MDI,pd-admin,pd-admin,✕,M3,AIP-14,이상 급증 탐지·경보,AI 플랫폼,내부,내부,M4
+a1008,SCR-AIP-06,프롬프트·평가·실험·자기개선,운영 콘솔(pd-admin),pd-admin,운영사,aip,,MDI,pd-admin,pd-admin,✕,M3,AIP-15,프롬프트 레지스트리,AI 플랫폼,내부,내부,M3
+a1008,SCR-AIP-06,프롬프트·평가·실험·자기개선,운영 콘솔(pd-admin),pd-admin,운영사,aip,,MDI,pd-admin,pd-admin,✕,M3,AIP-16,샌드박스 시험 실행·비용 실측,AI 플랫폼,내부,내부,M3
+a1008,SCR-AIP-06,프롬프트·평가·실험·자기개선,운영 콘솔(pd-admin),pd-admin,운영사,aip,,MDI,pd-admin,pd-admin,✕,M3,AIP-17,평가 데이터셋·채점,AI 플랫폼,내부,내부,M4
+a1008,SCR-AIP-06,프롬프트·평가·실험·자기개선,운영 콘솔(pd-admin),pd-admin,운영사,aip,,MDI,pd-admin,pd-admin,✕,M3,AIP-18,A/B·카나리 실험,AI 플랫폼,내부,내부,M4
+a1008,SCR-AIP-06,프롬프트·평가·실험·자기개선,운영 콘솔(pd-admin),pd-admin,운영사,aip,,MDI,pd-admin,pd-admin,✕,M3,AIP-20,자기개선 루프,AI 플랫폼,내부,내부,M4
+a1008,SCR-AIP-06,프롬프트·평가·실험·자기개선,운영 콘솔(pd-admin),pd-admin,운영사,aip,,MDI,pd-admin,pd-admin,✕,M3,AIP-21,가중치 파인튜닝(선택),AI 플랫폼,내부,내부,X
+1064,SCR-DOC-01,산출물 템플릿 카탈로그,프로젝트,pd,사용자,doc,,MDI,○,○,△,M2,DOC-01,산출물 템플릿 카탈로그,전 주기 산출물,Free,Basic,M2
+1065,SCR-DOC-02,산출물 에디터·내보내기,프로젝트,pd,사용자,doc,,MDI,○,○,△,M2,DOC-02,구조화 문서 에디터,전 주기 산출물,Free,Basic,M2
+1065,SCR-DOC-02,산출물 에디터·내보내기,프로젝트,pd,사용자,doc,,MDI,○,○,△,M2,DOC-03,Word·Excel 내보내기,전 주기 산출물,Free,Basic,M2
+1066,SCR-DOC-03,가져오기 미리보기·변환 손실 보고,프로젝트,pd,사용자,doc,,MDI,○,○,✕,M2,DOC-04,Word·Excel 업로드 변환,전 주기 산출물,Free,Basic,M2
+1066,SCR-DOC-03,가져오기 미리보기·변환 손실 보고,프로젝트,pd,사용자,doc,,MDI,○,○,✕,M2,DOC-05,원본 보관·변환 손실 보고,전 주기 산출물,Free,Basic,M2
+1067,SCR-DOC-04,RFP 프로젝트 생성 마법사·추정,영업·수주 전,pd,사용자,scoping,,MDI,○,○,✕,M3,DOC-06,RFP→프로젝트 생성 마법사,전 주기 산출물,Professional,Basic,M3
+1067,SCR-DOC-04,RFP 프로젝트 생성 마법사·추정,영업·수주 전,pd,사용자,scoping,,MDI,○,○,✕,M3,DOC-07,기술·솔루션·공수 추정,전 주기 산출물,Professional,Basic,M3
+1068,SCR-DOC-05,산출물 커버리지,PMO,pd,사용자,doc,,MDI,○,○,△,M2,DOC-08,산출물 커버리지 검사,전 주기 산출물,Free,Basic,M2
+1069,SCR-HRS-04,연봉 수신,조직·인사,pd,회사 관리,hrs,,MDI,○,○,✕,M2,HRS-06,연봉 수신 연계,인사·보안,—,Enterprise,M2
+1070,SCR-PRE-04,사전 VRB·기준 고정,영업·수주 전,pd,사용자,pre,,MDI,○,○,△,M2,PRE-08,사전 VRB·기준 고정,수주 전 기획,—,Enterprise,M2
+1071,SCR-EVA-04,연말 통합 평가,조직·인사,pd,사용자,eva,,MDI,○,○,△,M2,EVA-05,연말 정기 평가,평가·KPI,—,Enterprise,M2
+1076,SCR-EVA-05,연말 개인별 평가,조직·인사,pd,사용자,appraisal,,MDI,○,○,△,M2,EVA-02,개인 평가·KPI,평가·KPI,—,Enterprise,M2
+1076,SCR-EVA-05,연말 개인별 평가,조직·인사,pd,사용자,appraisal,,MDI,○,○,△,M2,EVA-07,다중 참여 개인 평가 산식,평가·KPI,—,Enterprise,M4
+a1009,SCR-ADM-07,법인 마스터 콘솔,운영 콘솔(pd-admin),pd-admin,운영사,corp,,MDI,pd-admin,pd-admin,✕,M1,ADM-10,법인 마스터 운영·갱신(root),운영·관리,내부,내부,M1
+1077,SCR-ISS-08,범위·변경 관리,이슈,pd,사용자,iss,,MDI,○,○,△,M2,ISS-19,범위·변경 관리,이슈·버그·스프린트(Jira급),Professional,Basic,M2
+1078,SCR-KMS-01,프로젝트 지식,프로젝트,pd,사용자,kms,,MDI,○,○,△,M4,KMS-01,교훈 등록·검색,지식관리(KMS),Professional,Basic,M4
+1078,SCR-KMS-01,프로젝트 지식,프로젝트,pd,사용자,kms,,MDI,○,○,△,M4,KMS-02,산출물·템플릿 자산화,지식관리(KMS),Professional,Basic,M4
+1078,SCR-KMS-01,프로젝트 지식,프로젝트,pd,사용자,kms,,MDI,○,○,△,M4,KMS-03,유사 프로젝트 찾기,지식관리(KMS),Professional,Basic,M4
+1079,SCR-PRJ-07,아이디어함 (배치 후보),프로젝트,pd,사용자,prj,,MDI,○,○,○,M2,PRJ-19,아이디어 접수·평가·승격,프로젝트·계약,Free,Basic,M2
+1080,SCR-IMP-04,붙여넣기 분석 (배치 후보),프로젝트,pd,사용자,imp,,모달,○,○,△,M3,IMP-09,붙여넣기 분석 반영,가져오기·동기화,Professional,Basic,M3
+1081,SCR-AIN-04,제안함 (배치 후보),보고·AI,pd,사용자,suggest,,패널+MDI 문서 창,○,○,○,M3,AIN-08,제안함·1클릭 승인,AI 인사이트,Free,Basic,M3
+1082,SCR-AIN-05,질의응답 (배치 후보),보고·AI,pd,사용자,ain,,패널(SDI 분리 가능),○,○,○,M3,AIN-09,프로젝트 질의응답(RAG 챗봇),AI 인사이트,Professional,Basic,M3
+1083,SCR-COL-06,할 일 (배치 후보),협업,pd,사용자,col,,MDI,○,○,○,M2,COL-16,할 일 목록(개인·팀·그룹·프로젝트),협업·알림,Free,Basic,M2
+1084,SCR-COL-07,회의 실시간(STT) (배치 후보),협업,pd,사용자,col,,MDI(회의 중 SDI 권장),○,○,○,M4,COL-15,실시간 STT 회의록,협업·알림,Professional,Basic,M4
+1086,SCR-KMS-02,지식 연결 그래프 (배치 후보),프로젝트,pd,사용자,kms,,MDI,○,○,△,M4,KMS-04,객체 간 연결 패널,지식관리(KMS),Professional,Basic,M4
+1087,SCR-COL-08,회고·브레인스토밍 보드 (배치 후보),협업,pd,사용자,col,,MDI,○,○,△,M4,COL-17,회고·브레인스토밍 보드,협업·알림,Free,Basic,M4
+a1010,SCR-ADM-06,서버 설정 콘솔,운영 콘솔(pd-admin),pd-admin,운영사,adm,,MDI,pd-admin,pd-admin,✕,M3,ADM-01,시스템관리자(root) 콘솔,운영·관리,내부,내부,M3
+1072,SCR-SCH-04,로드맵·스윔레인 타임라인,일정,pd,사용자,sch,prj,MDI,○,○,✕,M2,SCH-07,칸반·리스트·캘린더 뷰,일정·간트,Free,Basic,M1
+1072,SCR-SCH-04,로드맵·스윔레인 타임라인,일정,pd,사용자,sch,prj,MDI,○,○,✕,M2,PRJ-04,포트폴리오/프로그램,프로젝트·계약,—,Business,M2
+1073,SCR-DSH-04,분석 차트(S-Curve·진척 분석),보고·AI,pd,사용자,rpt,sch·tim,MDI,○,○,△,M2,SCH-04,기준선(Baseline),일정·간트,Professional,Basic,M4
+1073,SCR-DSH-04,분석 차트(S-Curve·진척 분석),보고·AI,pd,사용자,rpt,sch·tim,MDI,○,○,△,M2,TIM-01,공수(작업) 기록,공수·타임시트,Free,Basic,M1
+1073,SCR-DSH-04,분석 차트(S-Curve·진척 분석),보고·AI,pd,사용자,rpt,sch·tim,MDI,○,○,△,M2,DSH-01,위젯 대시보드,대시보드·리포트,Free,Basic,M1
+1074,SCR-EVA-03,회사 평가 설정(방식·기준일·명칭),설정(업체관리),pd,회사 관리,eva,,MDI,○,○,✕,M2,EVA-01,프로젝트 평가,평가·KPI,—,Enterprise,M2
+1074,SCR-EVA-03,회사 평가 설정(방식·기준일·명칭),설정(업체관리),pd,회사 관리,eva,,MDI,○,○,✕,M2,EVA-05,연말 정기 평가,평가·KPI,—,Enterprise,M2
+1074,SCR-EVA-03,회사 평가 설정(방식·기준일·명칭),설정(업체관리),pd,회사 관리,eva,,MDI,○,○,✕,M2,EVA-06,평가 정책 템플릿·범위별 기준 지정,평가·KPI,—,Enterprise,M4
+1075,SCR-HRS-03,연봉 수신 설정,설정(업체관리),pd,회사 관리,hrs,,MDI,○,○,✕,M2,HRS-06,연봉 수신 연계,인사·보안,—,Enterprise,M2
+a1011,SCR-FIN-06,공공 SW 평균임금 단가표 초안·배포 승인 (배치 후보),운영 콘솔(pd-admin),pd-admin,운영사,fin,,MDI,pd-admin,pd-admin,✕,M2,FIN-19,공공 단가 가져오기,원가·손익·ROI,—,Basic,M2
+1085,SCR-PLT-03,온보딩·빠른 시작 (화면 후보),(진입),pd,사용자,plt,scoping,전용 창,○,○,○,M2,PLT-09,규모 모드·점진 공개·명령 팔레트,플랫폼·공통,Free,Basic,M2
+1085,SCR-PLT-03,온보딩·빠른 시작 (화면 후보),(진입),pd,사용자,plt,scoping,전용 창,○,○,○,M2,DOC-06,RFP→프로젝트 생성 마법사,전 주기 산출물,Professional,Basic,M3
+1088,SCR-IAM-05,로그인 수단 관리,개인 설정,pd,사용자,auth,,모달,○,○,○,M3,IAM-10,가입·본인 인증 정책,인증·권한,Free,Basic,M3

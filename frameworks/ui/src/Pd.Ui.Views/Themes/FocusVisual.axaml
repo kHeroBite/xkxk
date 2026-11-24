@@ -1,0 +1,26 @@
+<!-- 키보드 포커스 표시(U21): Fluent 기본 굵은 검정 2px 사각형 대신 테마 강조색 1px 둥근 사각형. 키보드로 옮긴 포커스(:focus-visible)에만 Avalonia 가 그린다.
+     자체 포커스 테두리를 가진 입력 컨트롤(TextBox 계열)은 겹쳐 그리지 않도록 FocusAdorner 를 끈다. 연결: App.axaml Application.Styles 맨 끝 StyleInclude -->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Style Selector=":is(Control)">
+    <Setter Property="FocusAdorner">
+      <FocusAdornerTemplate>
+        <Border BorderThickness="1" BorderBrush="{DynamicResource PdBrushAccent}" CornerRadius="3" Margin="-1" IsHitTestVisible="False" />
+      </FocusAdornerTemplate>
+    </Setter>
+  </Style>
+  <!-- 제목줄 크롬 단추(AC-025): 강조색 제목줄 위에서는 위 강조색 1px 가 바탕에 묻힌다. 제목줄 기호색(PdChromeGlyph — 강조 띠면 제목 글자색, 표면색 제목줄이면 본문 글자색) 2px 안쪽 링으로 바꾼다.
+       범위는 pdChrome 단추뿐이다(전역 규칙 뒤에 두어야 이긴다 — ChromeButtonStyles 는 MdiChrome 으로 이 파일보다 먼저 포함된다).
+       pdChrome 은 ChromeButtonStyles 에서 Focusable=True 라 Tab 으로 닿는다(이월 3, AC-202). 메인 제목줄 UI 형 스위치는 MainTitleBar.axaml 이 따로 건다 -->
+  <Style Selector="Button.pdChrome, ToggleButton.pdChrome">
+    <Setter Property="FocusAdorner">
+      <FocusAdornerTemplate>
+        <Border BorderThickness="2" BorderBrush="{DynamicResource PdChromeGlyph}" CornerRadius="4" Margin="1" IsHitTestVisible="False" />
+      </FocusAdornerTemplate>
+    </Setter>
+  </Style>
+  <!-- 그리드는 현재 셀 테두리가 포커스 표시를 맡는다(화살표 이동마다 덧그리지 않는다) -->
+  <Style Selector="TextBox, AutoCompleteBox, NumericUpDown, DataGrid, DataGridCell, DataGridRow, DataGridColumnHeader">
+    <Setter Property="FocusAdorner" Value="{x:Null}" />
+  </Style>
+</Styles>

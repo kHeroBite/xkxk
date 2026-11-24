@@ -1,0 +1,7 @@
+{
+  "host.loading": "Loading…",
+  "host.startFailed": "The app could not start. Please reload the page.",
+  "host.instance.busy": "PD is already open in another tab.",
+  "host.instance.useHere": "Use here",
+  "host.instance.moved": "PD is now in use in another tab. This tab has stopped."
+}

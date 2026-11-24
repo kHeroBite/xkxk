@@ -1,0 +1,65 @@
+<!-- 화면 조립 층 라이브러리(axaml·코드비하인드·테마·문서 뷰·벤치) — 셸을 참조하고 호스트가 이 층을 참조한다. 셸은 이 층을 모른다(IViewRegistry). 계층 규칙은 tools/check_layers.py 가 강제한다 -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>Pd.Ui.Views</RootNamespace>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pd.Poc.Shell\Pd.Poc.Shell.csproj" />
+  </ItemGroup>
+
+  <!-- DataGrid 테마: 그리드 구현별 파일 하나만 같은 avares 경로(Themes/DataGridTheme.axaml)로 링크한다(odev-gc). SDK 기본 glob 이 두 파일을 다 넣으므로 먼저 뺀다.
+       PocGrid 미지정(본판·제품·진단 기본)은 Directory.Build.props 에서 Builtin 이 되므로 Builtin 파일이 링크된다. -->
+  <ItemGroup>
+    <AvaloniaXaml Remove="Themes\DataGridTheme.*.axaml" />
+    <AvaloniaXaml Include="Themes\DataGridTheme.Builtin.axaml" Link="Themes\DataGridTheme.axaml" Condition="'$(PocGrid)' != 'Pro'" />
+    <AvaloniaXaml Include="Themes\DataGridTheme.Pro.axaml" Link="Themes\DataGridTheme.axaml" Condition="'$(PocGrid)' == 'Pro'" />
+  </ItemGroup>
+
+  <!-- 제목줄 컬러 로고 -->
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\Logo\*.png" />
+  </ItemGroup>
+
+  <!-- 그리드·차트 벤치(odev-gc). 버전 출처: api.nuget.org 레지스트레이션(2026-10-29) — 모두 Avalonia ≥12.x 의존 -->
+  <ItemGroup Condition="'$(PdBench)' == 'true' and '$(PdDiagnostics)' == 'true'">
+    <PackageReference Include="Avalonia.Skia" Version="12.1.4" /> <!-- 벤치 한글 글꼴(SkiaSharp) 컴파일용 — 차트 패키지를 0개로 골라도 깨지지 않게 -->
+    <!-- 벤치 차트 전용 글꼴(odev-gc, team-lead 승인 — ScottPlot 에만 지정, 벤치 한정, 제품판 제외): 나눔고딕 OFL -->
+    <AvaloniaResource Include="Documents\Bench\Assets\Fonts\*.ttf" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(PdBench)' == 'true' and '$(PdDiagnostics)' == 'true' and $(PocCharts.Contains('ScottPlot'))">
+    <PackageReference Include="ScottPlot.Avalonia" Version="5.1.59" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(PdBench)' == 'true' and '$(PdDiagnostics)' == 'true' and $(PocCharts.Contains('ProCharts'))">
+    <PackageReference Include="ProCharts.Avalonia" Version="12.1.0.6" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(PdBench)' == 'true' and '$(PdDiagnostics)' == 'true' and $(PocCharts.Contains('LiveCharts'))">
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.1.0-dev-798" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(PdBench)' == 'true' and '$(PdDiagnostics)' == 'true' and $(PocCharts.Contains('OxyPlot'))">
+    <PackageReference Include="OxyPlot.Avalonia" Version="2.2.0" />
+  </ItemGroup>
+  <!-- TheOne.Avalonia(MIT, preview): 문서에 "공식 Avalonia.Controls.DataGrid 와 같이 참조하지 말 것"이 있어 Builtin 그리드와 충돌할 수 있다 [미확인] — 복원·컴파일 결과를 B2 에 기록한다 -->
+  <ItemGroup Condition="'$(PdBench)' == 'true' and '$(PdDiagnostics)' == 'true' and $(PocCharts.Contains('TheOne'))">
+    <PackageReference Include="TheOne.Avalonia" Version="1.0.0-preview.11" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(PdBench)' == 'true' and '$(PdDiagnostics)' == 'true' and '$(PocXlsx)' == 'true'">
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+  </ItemGroup>
+  <!-- 벤치 미포함 빌드(제품 기본·제품판 전부 — 벤치는 진단판 전용)는 벤치 소스·XAML 을 빼고 컴파일한다. Documents/BenchEntry.cs 는 밖에 있어 항상 컴파일된다(IsAvailable=false). -->
+  <ItemGroup Condition="'$(PdBench)' != 'true' or '$(PdDiagnostics)' != 'true'">
+    <Compile Remove="Documents\Bench\**" />
+    <AvaloniaXaml Remove="Documents\Bench\**" />
+  </ItemGroup>
+
+</Project>

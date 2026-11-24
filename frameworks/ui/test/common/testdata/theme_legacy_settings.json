@@ -1,0 +1,7 @@
+{
+  "Theme": "Light",
+  "ThemeId": "user-legacy01",
+  "SystemLightThemeId": "pd-light",
+  "SystemDarkThemeId": "pd-dark",
+  "UserThemesJson": "[{\"Id\":\"user-legacy01\",\"Name\":\"시험 구판 테마\",\"Base\":\"Light\",\"Colors\":{\"PdBrushBackground\":\"#FAF0E6\",\"PdBrushAccent\":\"#7A1F8E\",\"PdBrushText\":\"#1B1B1B\"}}]"
+}

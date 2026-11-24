@@ -1,0 +1,18 @@
+<!-- 차트 벤치 화면 — 라이브러리 선택 × 점 수(1만~100만) × 정적/롤링 스트리밍. 차트 컨트롤은 선택한 라이브러리 것만 코드가 만들어 ChartHost 에 넣는다 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Pd.Ui.Views.Documents.Bench.ChartBenchView">
+  <DockPanel>
+    <Border DockPanel.Dock="Top" Padding="6,4" Background="{DynamicResource PdBrushSurfaceAlt}">
+      <WrapPanel Orientation="Horizontal" ItemSpacing="6" LineSpacing="4">
+        <ComboBox x:Name="LibBox" AutomationProperties.AutomationId="bench.chart.lib" MinWidth="120" />
+        <TextBox x:Name="PointsBox" AutomationProperties.AutomationId="bench.chart.points" Width="100" Text="100000" />
+        <Button x:Name="StaticButton" AutomationProperties.AutomationId="bench.chart.static" Content="Static draw" Click="OnStatic" />
+        <Button x:Name="StreamButton" AutomationProperties.AutomationId="bench.chart.stream" Content="Live stream (5s)" Click="OnStream" />
+        <!-- 결과는 3줄까지만 보인다(작은 화면에서 차트를 밀어내지 않게 — otest-m-1 Fold5). 전체 JSON 은 원격 bench.result -->
+        <TextBlock x:Name="ResultText" AutomationProperties.AutomationId="bench.chart.result" VerticalAlignment="Center" Foreground="{DynamicResource PdBrushTextMuted}" TextWrapping="Wrap" MaxLines="3" TextTrimming="CharacterEllipsis" MaxWidth="900" />
+      </WrapPanel>
+    </Border>
+    <ContentControl x:Name="ChartHost" AutomationProperties.AutomationId="bench.chart.host" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+  </DockPanel>
+</UserControl>

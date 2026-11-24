@@ -1,0 +1,41 @@
+<!-- 문의하기 화면(UI-17) — 분류·제목·내용, 앱 정보 첨부 동의와 미리보기, 보내기(서버 전에는 로컬 임시함). 문자열은 다국어 사전 키 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Pd.Poc.Shell.ViewModels.SystemMenu"
+             xmlns:shellvm="using:Pd.Poc.Shell.ViewModels"
+             xmlns:loc="using:Pd.Poc.Shell.Localization"
+             x:Class="Pd.Ui.Views.SystemMenu.InquiryView"
+             x:DataType="vm:InquiryViewModel">
+  <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto" Margin="12" RowSpacing="6">
+    <TextBlock Grid.Row="0" Text="{loc:Tr sysview.server.offline}" Opacity="0.75" TextWrapping="Wrap"
+               AutomationProperties.AutomationId="sys.inquiry.lblOffline" />
+    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="6">
+      <TextBlock Text="{loc:Tr sysview.inquiry.category}" VerticalAlignment="Center" />
+      <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding Category, Mode=TwoWay}" MinWidth="160"
+                AutomationProperties.AutomationId="sys.inquiry.cboCategory">
+        <ComboBox.ItemTemplate>
+          <DataTemplate x:DataType="shellvm:LocalizedOption">
+            <TextBlock Text="{Binding Text}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+    </StackPanel>
+    <TextBox Grid.Row="2" Text="{Binding Title, Mode=TwoWay}" PlaceholderText="{loc:Tr sysview.inquiry.title}" MaxLength="200"
+             AutomationProperties.AutomationId="sys.inquiry.txtTitle" />
+    <TextBox Grid.Row="3" Text="{Binding Body, Mode=TwoWay}" PlaceholderText="{loc:Tr sysview.inquiry.body}" AcceptsReturn="True"
+             TextWrapping="Wrap" MinHeight="120" AutomationProperties.AutomationId="sys.inquiry.txtBody" />
+    <Expander Grid.Row="4" AutomationProperties.AutomationId="sys.inquiry.expAppInfo">
+      <Expander.Header>
+        <CheckBox IsChecked="{Binding AttachAppInfo, Mode=TwoWay}" Content="{loc:Tr sysview.inquiry.attachAppInfo}"
+                  AutomationProperties.AutomationId="sys.inquiry.chkAppInfo" />
+      </Expander.Header>
+      <SelectableTextBlock Text="{Binding AppInfoPreview}" FontSize="12" TextWrapping="Wrap" />
+    </Expander>
+    <TextBlock Grid.Row="5" Text="{Binding Message}" IsVisible="{Binding Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+               TextWrapping="Wrap" AutomationProperties.AutomationId="sys.inquiry.lblMessage" />
+    <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="6">
+      <Button Content="{loc:Tr sysview.inquiry.send}" Command="{Binding SendCommand}" IsDefault="True"
+              AutomationProperties.AutomationId="sys.inquiry.btnSend" />
+    </StackPanel>
+  </Grid>
+</UserControl>

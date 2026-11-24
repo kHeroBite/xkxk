@@ -1,0 +1,105 @@
+<Project Sdk="Microsoft.NET.Sdk.WebAssembly">
+  <!-- PD UI PoC 브라우저(WASM) 호스트 -->
+  <PropertyGroup>
+    <TargetFramework>net11.0-browser</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>Pd.Poc.Browser</RootNamespace>
+    <AssemblyName>Pd.Poc.Browser</AssemblyName>
+    <!-- D-CULTURE: 기본은 브라우저 로캘로 ICU 조각을 고른다(de·fr 등 → EFIGS 에는 ko·ja·zh 자료가 없다). 화면 언어 ko·en·ja·zh 를 모두 담은 CJK 조각으로 고정한다.
+         근거: dotnet/runtime docs/design/features/globalization-icu-wasm.md — icudt_CJK.dat = "en" "ja" "ko" "zh".
+         이 SDK(Microsoft.NET.Sdk.WebAssembly.Pack 10.0.5 Browser.targets)는 WasmIcuDataFileName 이 아니라 BlazorIcuDataFileName 을 읽는다(실측: Wasm* 는 sharded 그대로). -->
+    <BlazorIcuDataFileName>icudt_CJK.dat</BlazorIcuDataFileName>
+  </PropertyGroup>
+
+  <!-- W-PF M3 진단 전용(-p:PdWasmProfile=true 일 때만): wasm C 함수 이름 + 브라우저 프로파일러 C# 메서드 구간. 제품판·시간 판정용 판에는 켜지 않는다.
+       근거: learn.microsoft.com/aspnet/core/blazor/performance/webassembly-browser-developer-tools-diagnostics (aspnetcore-10.0), dotnet/runtime release/10.0 src/mono/wasm/features.md -->
+  <PropertyGroup Condition="'$(PdWasmProfile)' == 'true'">
+    <WasmEmitSymbolMap>true</WasmEmitSymbolMap>
+    <WasmProfilers>browser:callspec=all;</WasmProfilers>
+    <WasmNativeStrip>false</WasmNativeStrip>
+    <WasmNativeDebugSymbols>true</WasmNativeDebugSymbols>
+    <WasmDebugLevel>0</WasmDebugLevel>
+  </PropertyGroup>
+  <!-- 같은 판에서만 GridRouteProbe 경로 깊이 기록을 켠다(runtimeconfig 의 AppContext 스위치). 다른 판에는 스위치가 없어 처리기가 등록되지 않는다 -->
+  <ItemGroup Condition="'$(PdWasmProfile)' == 'true'">
+    <RuntimeHostConfigurationOption Include="Pd.Diagnostics.RouteChain" Value="true" />
+  </ItemGroup>
+  <!-- 제품 Release 빌드는 AOT 로 컴파일한다(웹 끌기·창 열기 속도, poc/ui/logs/webperf/desktop/summary_otest-w-7.md). Debug 는 빌드 시간을 늘리지 않도록 끈 채로 둔다.
+       WasmStripILAfterAOT 는 넣지 않는다: aot_prod 실측에서 번들 크기 변화가 없었고, AOT 로 못 만든 메서드가 인터프리터로 돌 때 IL 이 없어 실패할 위험만 남는다 -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <RunAOTCompilation>true</RunAOTCompilation>
+  </PropertyGroup>
+
+  <!-- 웹 번들 축소(odev-wtrim, 2026-11-06). 이 프로젝트에만 있으므로 데스크톱·Android 빌드에는 영향이 없다.
+       SDK 기본값(Microsoft.NET.Runtime.WebAssembly.Sdk 10.0.5 BrowserWasmApp.targets 실측): TrimMode=full, WasmStripILAfterAOT=true,
+       WasmEnableExceptionHandling=true, WasmEnableSIMD=true, EventSourceSupport·MetricsSupport=false → 이미 켜진 것은 다시 적지 않는다.
+       ① PdWasmSlim(기본 true, -p:PdWasmSlim=false 로 끔): 공식 트리밍 기능 스위치(learn.microsoft.com/dotnet/core/deploying/trimming/trimming-options).
+          UseSizeOptimizedLinq(.NET 10+) = LINQ 크기 우선 구현. UseSystemResourceKeys = System.* 예외 메시지를 리소스 ID 로 줄인다(진단 빌드 PdDiagnostics=true 에서는 메시지를 남긴다).
+       ② PdWasmSizeOpt(기본 false, -p:PdWasmSizeOpt=true 로 켬): AOT 비트코드·링크 최적화를 -O2 에서 -Oz 로 바꾼다(WasmApp.Common.targets 공개 속성
+          WasmBitcodeCompileOptimizationFlag·EmccLinkOptimizationFlag). 내려받기는 줄지만 실행 속도가 내려갈 수 있어 실측 뒤에 기본값을 정한다.
+       ③ PdWasmAotProfile(기본 빈 값, -p:PdWasmAotProfile=경로): AOT 프로파일 파일(WasmAotProfilePath 공개 속성). 프로파일 생성 절차는 아직 검증되지 않았다.
+       시간대 자료(BlazorEnableTimeZoneSupport)는 끄지 않는다. 끄면 현지 시각이 UTC 로 보인다. -->
+  <PropertyGroup>
+    <PdWasmSlim Condition="'$(PdWasmSlim)' == ''">true</PdWasmSlim>
+    <PdWasmSizeOpt Condition="'$(PdWasmSizeOpt)' == ''">false</PdWasmSizeOpt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PdWasmSlim)' == 'true'">
+    <UseSizeOptimizedLinq>true</UseSizeOptimizedLinq>
+    <UseSystemResourceKeys Condition="'$(PdDiagnostics)' != 'true'">true</UseSystemResourceKeys>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PdWasmSizeOpt)' == 'true'">
+    <WasmBitcodeCompileOptimizationFlag>-Oz</WasmBitcodeCompileOptimizationFlag>
+    <EmccLinkOptimizationFlag>-Oz</EmccLinkOptimizationFlag>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PdWasmAotProfile)' != ''">
+    <WasmAotProfilePath>$(PdWasmAotProfile)</WasmAotProfilePath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 버전은 Directory.Build.props 의 PdAvaloniaBrowserVersion(기본 12.1.4, -p:PdAvaloniaBrowserPatch=true 면 로컬 피드 12.1.4-pd.1 — odev-3 유휴 rAF 패치) -->
+    <PackageReference Include="Avalonia.Browser" Version="$(PdAvaloniaBrowserVersion)" />
+    <!-- net11.0-browser(Emscripten 6.0.2): Avalonia.Skia 12.1.4 가 끌어오는 SkiaSharp 3.119.x 의 wasm 정적 라이브러리는 Emscripten 3.1.56 용이라 saveSetjmp/testSetjmp 링크 오류가 난다
+         (근거 https://github.com/AvaloniaUI/Avalonia/issues/21700). 6.0.2 용 libSkiaSharp.a 가 있는 4.x 프리뷰로 웹 프로젝트만 올린다(데스크톱·Android 는 3.119 유지).
+         Avalonia 12.2(PR #22196)가 NuGet 에 나오면 이 4개 참조와 아래 강제 인터프리트 항목을 걷어내고 재시험한다. 실험·시험 결과는 INFRA.md·HISTORY.md 참조 -->
+    <PackageReference Include="SkiaSharp" Version="4.158.0-preview.2.26560.5" />
+    <PackageReference Include="SkiaSharp.NativeAssets.WebAssembly" Version="4.158.0-preview.2.26560.5" />
+    <PackageReference Include="HarfBuzzSharp" Version="15.0.0-preview.2.26560.5" />
+    <PackageReference Include="HarfBuzzSharp.NativeAssets.WebAssembly" Version="15.0.0-preview.2.26560.5" />
+    <!-- 위 4.x/15.x managed 어셈블리는 Mono AOT 컴파일러가 크래시(sgen-alloc.c:409 Assertion)해 AOT 에서 제외(인터프리트)한다. SDK 내부 항목이라 SDK 갱신 때 재확인 -->
+    <_AOT_InternalForceInterpretAssemblies Include="SkiaSharp.dll" />
+    <_AOT_InternalForceInterpretAssemblies Include="HarfBuzzSharp.dll" />
+  </ItemGroup>
+
+  <!-- WASM 에는 시스템 한글 폰트가 없으므로 Noto Sans KR(OFL 1.1) 서브셋을 임베드한다.
+       PdFontAssembly(기본 true, -p:PdFontAssembly=false 로 끔): 글꼴을 글꼴 전용 어셈블리 Pd.Fonts 에 담는다. 앱 코드만 바뀌면 Pd.Fonts 의 내용 해시가
+       그대로라 브라우저 캐시를 다시 쓴다(지금은 앱이 바뀔 때마다 글꼴 br 약 0.8MB 를 다시 받는다). 코드에서는 PD_FONT_ASSEMBLY 로 avares 경로를 고른다.
+       Pd.Fonts 는 코드가 없고 avares 는 문자열 URI 라, TrimMode=full 트리머가 어셈블리를 지우지 않도록 루트로 둔다. -->
+  <PropertyGroup>
+    <PdFontAssembly Condition="'$(PdFontAssembly)' == ''">true</PdFontAssembly>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PdFontAssembly)' == 'true'">
+    <DefineConstants>$(DefineConstants);PD_FONT_ASSEMBLY</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(PdFontAssembly)' == 'true'">
+    <ProjectReference Include="..\Pd.Fonts\Pd.Fonts.csproj" />
+    <TrimmerRootAssembly Include="Pd.Fonts" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(PdFontAssembly)' != 'true'">
+    <AvaloniaResource Include="Assets\Fonts\*.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pd.Poc.Shell\Pd.Poc.Shell.csproj" />
+    <ProjectReference Include="..\Pd.Ui.Views\Pd.Ui.Views.csproj" />
+  </ItemGroup>
+
+  <!-- 제품 빌드(PdDiagnostics≠true)에서는 웹 자동화 브리지 diag.js 를 산출물에서 뺀다(main.js 동적 import 와 이중 방어) -->
+  <ItemGroup Condition="'$(PdDiagnostics)' != 'true'">
+    <Content Remove="wwwroot\diag.js" />
+    <None Remove="wwwroot\diag.js" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,38 @@
+<!-- 디자인 테마 효과 스타일(REQ-104) — 문서 창 바탕(surface)·작업 영역 장식(decor)·창 모양(chrome pill/minimal). Setter 값은 PdStyle* 리소스만(값은 DesignEffectsApplier 가 쓴다).
+     ds-classic 기본값(surface=PdBrushSurface 그대로·decor=투명·chrome=standard 라 클래스 없음)에서는 지금 화면과 같다. 제목줄·창 크롬 버튼(pdChrome·tabTitle·tabClose·sdiIcon, 호스트 pdTitleBar)은 건드리지 않는다 -->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:Dock.Avalonia.Controls">
+
+  <Styles.Resources>
+    <!-- 알약 모양 모서리(완전 둥근 값). 값을 바꾸려면 이 리소스 하나만 덮어쓴다(REQ-99) -->
+    <CornerRadius x:Key="PdStylePillRadius">999</CornerRadius>
+  </Styles.Resources>
+
+  <!-- surface: 문서 창 본문 바탕. 테마 기본 Background(PdBrushSurface)와 같은 값이 flat 이므로 클래식은 변화 없음 -->
+  <Style Selector="controls|MdiDocumentWindow">
+    <Setter Property="Background" Value="{DynamicResource PdStyleSurface}" />
+  </Style>
+
+  <!-- decor: 작업 영역(MDI 문서 영역) 배경 1장. 적용기가 장식이 켜졌을 때만 최상위 창에 pdStyleDecor 클래스를 단다(문서 창 안에는 그리지 않는다) -->
+  <Style Selector=":is(TopLevel).pdStyleDecor controls|MdiDocumentControl /template/ Border#PART_Root > Grid">
+    <Setter Property="Background" Value="{DynamicResource PdStyleDecor}" />
+  </Style>
+  <!-- 장식 아래 바탕: 이미지(decor=image)의 맞춤·가운데 여백과 불투명도 아래로 MDI 바탕색이 보이게 한다(무늬·그라데이션은 바탕을 함께 칠해 화면 불변) -->
+  <Style Selector=":is(TopLevel).pdStyleDecor controls|MdiDocumentControl /template/ Border#PART_Root">
+    <Setter Property="Background" Value="{DynamicResource PdBrushMdiBackground}" />
+  </Style>
+
+  <!-- chrome=pill: 일반 단추 알약 모서리(제목줄·캡션·탭 닫기 등 창 크롬 단추 제외) -->
+  <Style Selector=":is(TopLevel).pdStylePill Button:not(.pdChrome):not(.pdLogo):not(.tabTitle):not(.tabClose):not(.sdiIcon)">
+    <Setter Property="CornerRadius" Value="{DynamicResource PdStylePillRadius}" />
+  </Style>
+
+  <!-- chrome=minimal: 일반 단추·입력 상자 테두리 0(같은 제외 규칙). 사용자·회사가 그 요소 테두리를 정했으면 적용기가 pdPin*Border 표식을 달아 빼준다(18 §4 우선순위) -->
+  <Style Selector=":is(TopLevel).pdStyleMinimal:not(.pdPinButtonBorder) Button:not(.pdChrome):not(.pdLogo):not(.tabTitle):not(.tabClose):not(.sdiIcon)">
+    <Setter Property="BorderThickness" Value="0" />
+  </Style>
+  <Style Selector=":is(TopLevel).pdStyleMinimal:not(.pdPinInputBorder) TextBox">
+    <Setter Property="BorderThickness" Value="0,0,0,1" />
+  </Style>
+</Styles>

@@ -1,0 +1,53 @@
+{
+  "_note": "클라이언트 계층 규칙(check_layers.py 가 읽는다). 층별 금지 프로젝트 참조·패키지·코드 패턴과 신규 층 파일의 줄 수·헤더 규칙. required=true 층은 프로젝트가 없으면 위반이다.",
+  "src_root": "src",
+  "scan_paths": ["src", "tools"],
+  "skip_dirs": ["bin", "obj", ".vs", "node_modules", "__pycache__"],
+  "layers": {
+    "Pd.Ui": {
+      "required": true,
+      "forbid_projects": ["Pd.Poc.Shell", "Pd.Client.Data", "Pd.Ui.Views", "Pd.Poc.Desktop", "Pd.Poc.Browser", "Pd.Poc.Android"],
+      "allow_packages": { "Avalonia": "12.1.4" },
+      "forbid_code": ["\\bPd\\.Poc\\.(Shell|Desktop|Browser|Droid)\\b", "\\bPd\\.Client\\.Data\\b", "\\bPd\\.Ui\\.Views\\b", "\\busing\\s+Dock\\."]
+    },
+    "Pd.Ui.Views": {
+      "required": true,
+      "forbid_projects": ["Pd.Poc.Desktop", "Pd.Poc.Browser", "Pd.Poc.Android"],
+      "_note_avares": "벤치 글꼴 후보가 호스트 자원을 avares URI 문자열로 찾는 것은 형식 참조가 아니라 허용한다",
+      "forbid_code": ["(?<!avares://)\\bPd\\.Poc\\.(Desktop|Browser|Droid)\\b"]
+    },
+    "Pd.Poc.Shell": {
+      "required": true,
+      "forbid_projects": ["Pd.Ui.Views", "Pd.Poc.Desktop", "Pd.Poc.Browser", "Pd.Poc.Android"],
+      "forbid_exts": [".axaml"],
+      "_note_parts": "템플릿 부품 이름은 Pd.Ui 의 TemplateParts 상수로만 쓴다(문자열 리터럴·조합 금지). 주석 언급은 허용",
+      "forbid_code": ["\\bPd\\.Ui\\.Views\\b", "\\bPART_"]
+    },
+    "Pd.Client.Data": {
+      "required": true,
+      "forbid_projects": ["Pd.Poc.Shell", "Pd.Ui", "Pd.Ui.Views", "Pd.Poc.Desktop", "Pd.Poc.Browser", "Pd.Poc.Android"],
+      "forbid_packages": ["Avalonia"],
+      "forbid_code": ["\\bAvalonia\\b", "\\bPd\\.Ui\\b", "\\bPd\\.Poc\\.Shell\\b"]
+    }
+  },
+  "template_parts": {
+    "_note": "contract 의 상수 이름이 definer 층 axaml 의 Name 정의나 dock_packages 의 DLL(버전은 version_from 의 PackageReference)에 실재해야 한다. DLL 을 못 찾으면 통과가 아니라 위반이다.",
+    "contract": "src/Pd.Ui/Controls/TemplateParts.cs",
+    "definer": "Pd.Ui.Views",
+    "version_from": "src/Pd.Poc.Shell/Pd.Poc.Shell.csproj",
+    "dock_packages": ["Dock.Avalonia", "Dock.Avalonia.Themes.Fluent"],
+    "dock_tfm": "net10.0"
+  },
+  "new_files": {
+    "prefixes": ["src/Pd.Ui/", "src/Pd.Ui.Views/", "src/Pd.Client.Data/", "tools/check_layers.py", "tools/check_layers_parts.py", "tools/classify_layers.py"],
+    "max_lines": 300,
+    "exts": [".cs", ".axaml", ".csproj", ".py"],
+    "exempt": []
+  },
+  "line_limit_only": {
+    "_note": "기존 층 파일이라 헤더 규칙은 면제하되 줄 수 상한만 건다(소스 분할 라운드 2). 코드·화면 파일이 대상이다.",
+    "prefixes": ["src/Pd.Poc.Shell/"],
+    "max_lines": 300,
+    "exts": [".cs", ".axaml"]
+  }
+}

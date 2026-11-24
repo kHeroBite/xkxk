@@ -1,0 +1,11 @@
+{
+  "panel.explorer": "탐색기",
+  "panel.log": "로그",
+  "panel.documents": "문서",
+  "panel.documents.empty": "열린 문서가 없습니다",
+  "panel.pos.panel": "패널 위치",
+  "panel.pos.tab": "이 탭 옮기기",
+  "panel.pos.dest": "{0} 패널",
+  "panel.pos.destNamed": "{0} 패널: {1}",
+  "panel.pos.documents": "문서 영역"
+}

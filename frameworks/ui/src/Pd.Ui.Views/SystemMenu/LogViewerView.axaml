@@ -1,0 +1,50 @@
+<!-- 로그 보기 화면(UI-17 로그 ▶) — 범주·표시 레벨 필터, 현재 기록 레벨 표시, 실시간 로그 목록, 내보내기·지우기. 문자열은 다국어 사전 키 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Pd.Poc.Shell.ViewModels.SystemMenu"
+             xmlns:shellvm="using:Pd.Poc.Shell.ViewModels"
+             xmlns:log="using:Pd.Client.Data.Logging"
+             xmlns:loc="using:Pd.Poc.Shell.Localization"
+             xmlns:input="using:Pd.Ui.Input"
+             x:Class="Pd.Ui.Views.SystemMenu.LogViewerView"
+             x:DataType="vm:LogViewerViewModel">
+  <Grid RowDefinitions="Auto,*,Auto" Margin="10" RowSpacing="6">
+    <WrapPanel Grid.Row="0" Orientation="Horizontal">
+      <TextBlock Text="{loc:Tr sysview.log.category}" VerticalAlignment="Center" Margin="0,0,6,0" />
+      <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding Category, Mode=TwoWay}" MinWidth="110" Margin="0,0,12,0"
+                AutomationProperties.AutomationId="sys.log.cboCategory">
+        <ComboBox.ItemTemplate>
+          <DataTemplate x:DataType="shellvm:LocalizedOption">
+            <TextBlock Text="{Binding Text}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+      <TextBlock Text="{loc:Tr sysview.log.showLevel}" VerticalAlignment="Center" Margin="0,0,6,0" />
+      <ComboBox ItemsSource="{Binding Levels}" SelectedItem="{Binding Level, Mode=TwoWay}" MinWidth="110" Margin="0,0,12,0"
+                AutomationProperties.AutomationId="sys.log.cboLevel">
+        <ComboBox.ItemTemplate>
+          <DataTemplate x:DataType="log:PdLogLevel">
+            <TextBlock Text="{Binding}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+      <TextBlock Text="{loc:Tr sysview.log.recordingLevel}" VerticalAlignment="Center" Opacity="0.75" Margin="0,0,4,0" />
+      <TextBlock Text="{Binding RecordingLevel}" VerticalAlignment="Center" Opacity="0.75" AutomationProperties.AutomationId="sys.log.lblRecording" />
+    </WrapPanel>
+    <!-- 긴 로그 줄을 Shift+휠로 볼 수 있게 가로 스크롤을 켠다. 공통 휠 조작은 화면설계 공통원칙 §5.4 -->
+    <ListBox Grid.Row="1" ItemsSource="{Binding Lines}" FontSize="12" AutomationProperties.AutomationId="sys.log.list"
+             ScrollViewer.HorizontalScrollBarVisibility="Auto" input:DenseList.Enable="True" input:DenseList.LocalFont="True">
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="x:String">
+          <SelectableTextBlock Text="{Binding}" TextWrapping="NoWrap" />
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+    <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6">
+      <TextBlock Grid.Column="0" x:Name="StatusText" VerticalAlignment="Center" Opacity="0.75" TextWrapping="Wrap"
+                 AutomationProperties.AutomationId="sys.log.lblStatus" />
+      <Button Grid.Column="1" Content="{loc:Tr sysview.log.export}" Click="OnExport" AutomationProperties.AutomationId="sys.log.btnExport" />
+      <Button Grid.Column="2" Content="{loc:Tr sysview.log.clear}" Command="{Binding ClearCommand}" AutomationProperties.AutomationId="sys.log.btnClear" />
+    </Grid>
+  </Grid>
+</UserControl>

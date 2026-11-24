@@ -1,0 +1,45 @@
+<!-- 1만 행 가상화 그리드 문서 화면(필터 입력 + DataGrid). 글자는 셸 토큰(PdFont*), 색은 테마 토큰(PdBrush*), 문구는 다국어 사전(doc.grid.*)을 따른다 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Pd.Ui.Views.Documents"
+             xmlns:loc="using:Pd.Poc.Shell.Localization"
+             x:Class="Pd.Ui.Views.Documents.GridDocumentView">
+  <DockPanel>
+    <Border DockPanel.Dock="Top" Padding="6,4" Background="{DynamicResource PdBrushSurfaceAlt}">
+      <WrapPanel Orientation="Horizontal" ItemSpacing="8">
+        <TextBlock Text="{loc:Tr doc.grid.filter}" VerticalAlignment="Center" />
+        <TextBox x:Name="FilterBox" AutomationProperties.AutomationId="grid.txtFilter" MinWidth="140" PlaceholderText="{loc:Tr doc.grid.filter.placeholder}" />
+        <TextBlock x:Name="CountText" AutomationProperties.AutomationId="grid.lblCount" VerticalAlignment="Center" FontSize="{DynamicResource PdFontDetail}" />
+        <TextBlock x:Name="TimingText" AutomationProperties.AutomationId="grid.lblTiming" VerticalAlignment="Center" Foreground="{DynamicResource PdBrushTextMuted}" FontSize="{DynamicResource PdFontDetail}" />
+      </WrapPanel>
+    </Border>
+    <!-- 행 높이·열 너비·줄무늬·스타일·휠 배율은 공통 표 PdDataGrid 가 맡는다.
+         열은 경량 텍스트 열 GridRowTextColumn(PdTextColumn.cs — 셀마다 TextBlock 1개, 미리 계산한 문자열을 정적 접근자로 넣음.
+         DataTemplate·바인딩·리플렉션 없음, G1 첫 레이아웃 비용 감소). 정렬은 SortMemberPath(숫자·날짜 원값). -->
+    <local:PdDataGrid x:Name="RowsGrid"
+              AutomationProperties.AutomationId="grid.dgMain"
+              IsReadOnly="True"
+              CanUserSortColumns="True"
+              CanUserResizeColumns="True"
+              GridLinesVisibility="Horizontal"
+              Background="{DynamicResource PdBrushBackground}"
+              Foreground="{DynamicResource PdBrushText}"
+              RowBackground="{DynamicResource PdBrushBackground}"
+              HorizontalGridLinesBrush="{DynamicResource PdBrushGridLine}"
+              AutoGenerateColumns="False">
+      <local:PdDataGrid.Columns>
+        <local:GridRowTextColumn Header="{loc:Tr doc.grid.col.no}" SortMemberPath="No" Field="NoText" Width="70" />
+        <local:GridRowTextColumn Header="{loc:Tr doc.grid.col.code}" SortMemberPath="Code" Field="Code" Width="100" />
+        <!-- 작업명: 남은 폭 차지(최소 160) + 잘리면 툴팁으로 전체 문구(툴팁은 이 열에만) -->
+        <local:GridRowTextColumn Header="{loc:Tr doc.grid.col.name}" SortMemberPath="Name" Field="Name" Width="*" MinWidth="160" ShowToolTip="True" />
+        <local:GridRowTextColumn Header="{loc:Tr doc.grid.col.owner}" SortMemberPath="Owner" Field="Owner" Width="80" />
+        <local:GridRowTextColumn Header="{loc:Tr doc.grid.col.status}" SortMemberPath="Status" Field="Status" Width="70" />
+        <local:GridRowTextColumn Header="{loc:Tr doc.grid.col.start}" SortMemberPath="Start" Field="StartText" Width="100" />
+        <local:GridRowTextColumn Header="{loc:Tr doc.grid.col.end}" SortMemberPath="End" Field="EndText" Width="100" />
+        <local:GridRowTextColumn Header="{loc:Tr doc.grid.col.progress}" SortMemberPath="Progress" Field="ProgressText" Width="70" />
+        <local:GridRowTextColumn Header="{loc:Tr doc.grid.col.hours}" SortMemberPath="Hours" Field="HoursText" Width="80" />
+        <local:GridRowTextColumn Header="{loc:Tr doc.grid.col.note}" SortMemberPath="Note" Field="Note" Width="160" />
+      </local:PdDataGrid.Columns>
+    </local:PdDataGrid>
+  </DockPanel>
+</UserControl>

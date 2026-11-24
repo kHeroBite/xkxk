@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!-- PD UI PoC 브라우저(WASM) 진입 페이지 -->
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PD UI PoC</title>
+  <!-- 임시 앱 아이콘(tools/make_icons.py 생성): 탭 favicon·iOS 홈 화면·PWA 매니페스트 -->
+  <link rel="icon" href="./favicon.ico" sizes="16x16 32x32 48x48" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./icons/icon-32.png" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="modulepreload" href="./main.js" />
+  <link rel="modulepreload" href="./_framework/dotnet.js" />
+  <link rel="preload" href="./host.i18n.json" as="fetch" crossorigin="anonymous" />
+  <!-- #out 의 touch-action: none — 핀치·패닝을 브라우저가 가로채지 않고 앱(Avalonia 캔버스)이 받게 한다(핀치 줌, lead 승인).
+       앱 캔버스 호스트 #out 에만 건다. 제스처 판정은 대상과 조상 값의 교집합이라 하위 캔버스에도 적용된다(MDN touch-action). -->
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #1e1e1e; }
+    /* touch-action: none on the app canvas host only (pinch zoom) — see the HTML comment above <style> */
+    #out { width: 100vw; height: 100vh; touch-action: none; }
+    /* PageKeyFocus moves focus here so keys reach the app; no browser focus ring around the whole app */
+    #out:focus { outline: none; }
+    #pd-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      color: #ccc; font: 14px sans-serif; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <!-- 문구는 main.js 가 host.i18n.json(ko/en)으로 즉시 바꾼다. 아래는 스크립트가 돌기 전·꺼졌을 때의 언어 중립 원문 -->
+  <div id="out"><div id="pd-loading" data-i18n="host.loading">Loading…</div></div>
+  <noscript>JavaScript is required.</noscript>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

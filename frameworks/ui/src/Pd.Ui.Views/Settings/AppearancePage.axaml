@@ -1,0 +1,73 @@
+<!-- 설정 창 '모양' 페이지(요건 7) — 테마·색 테마·시스템 짝·테마 편집기·글꼴·글자 크기·Ctrl+휠. 값·명령은 AppearancePageViewModel, 이 파일에 로직 없음 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Pd.Poc.Shell.ViewModels"
+             xmlns:vms="using:Pd.Poc.Shell.ViewModels.Settings"
+             xmlns:th="using:Pd.Poc.Shell.Theming"
+             xmlns:loc="using:Pd.Poc.Shell.Localization"
+             xmlns:ui="using:Pd.Ui.Controls"
+             x:Class="Pd.Ui.Views.Settings.AppearancePage"
+             x:DataType="vms:AppearancePageViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="OptionTemplate" x:DataType="vm:LocalizedOption">
+      <TextBlock Text="{Binding Text}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ThemeTemplate" x:DataType="th:ThemeDefinition">
+      <TextBlock Text="{Binding DisplayName}" />
+    </DataTemplate>
+  </UserControl.Resources>
+  <StackPanel>
+    <ui:SettingsRow SettingId="theme" Label="{loc:Tr settings.theme}">
+      <ComboBox ItemsSource="{Binding ThemeNames}" ItemTemplate="{StaticResource OptionTemplate}" SelectedIndex="{Binding ThemeIndex, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="shell.cmbTheme" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="colorTheme" Label="{loc:Tr settings.colorTheme}">
+      <ComboBox ItemsSource="{Binding ColorThemes}" ItemTemplate="{StaticResource ThemeTemplate}" SelectedItem="{Binding SelectedColorTheme, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="settings.cmbColorTheme" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="systemLight" Label="{loc:Tr settings.systemLight}">
+      <ComboBox ItemsSource="{Binding SystemPair.LightThemes}" ItemTemplate="{StaticResource ThemeTemplate}" SelectedItem="{Binding SystemPair.SystemLightTheme, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="settings.cmbSystemLight" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="systemDark" Label="{loc:Tr settings.systemDark}">
+      <ComboBox ItemsSource="{Binding SystemPair.DarkThemes}" ItemTemplate="{StaticResource ThemeTemplate}" SelectedItem="{Binding SystemPair.SystemDarkTheme, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="settings.cmbSystemDark" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="themeEditor" Label="{loc:Tr settings.themeEditor}">
+      <Button Content="{loc:Tr settings.themeEditor.open}" Command="{Binding OpenThemeEditorCommand}" AutomationProperties.AutomationId="settings.btnThemeEditor" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="font" Label="{loc:Tr settings.font}">
+      <ComboBox ItemsSource="{Binding FontNames}" SelectedItem="{Binding FontName, Mode=TwoWay}" Width="200" MaxDropDownHeight="320"
+                AutomationProperties.AutomationId="shell.cmbFont" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="docFont" Label="{loc:Tr settings.docFont}">
+      <NumericUpDown Value="{Binding DocumentFontSize, Mode=TwoWay}" Minimum="{Binding MinFontSize}" Maximum="{Binding MaxFontSize}" Increment="1" FormatString="0" Width="120"
+                     AutomationProperties.AutomationId="shell.numDocFont" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="fontSize" Label="{loc:Tr settings.fontSize}">
+      <NumericUpDown Value="{Binding CurrentFontSize, Mode=TwoWay}" Minimum="{Binding MinFontSize}" Maximum="{Binding MaxFontSize}" Increment="1" FormatString="0" Width="120"
+                     AutomationProperties.AutomationId="settings.numFontSize" />
+    </ui:SettingsRow>
+    <!-- 시스템(셸) 글자·탭 줄 높이(사용자 지시 2026-11-11, 01 §2-1·§5.2) — 문서 창 밖(메뉴 줄·제목 줄·패널·상태바) -->
+    <ui:SettingsRow SettingId="shellFont" Label="{loc:Tr settings.shellFont}">
+      <ComboBox ItemsSource="{Binding FontNames}" SelectedItem="{Binding ShellFontName, Mode=TwoWay}" Width="200" MaxDropDownHeight="320"
+                AutomationProperties.AutomationId="settings.cmbShellFont" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="shellFontSize" Label="{loc:Tr settings.shellFontSize}">
+      <NumericUpDown Value="{Binding ShellFontSize, Mode=TwoWay}" Minimum="{Binding MinFontSize}" Maximum="{Binding MaxFontSize}" Increment="1" FormatString="0" Width="120"
+                     AutomationProperties.AutomationId="settings.numShellFontSize" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="tabStripHeight" Label="{loc:Tr settings.tabStripHeight}">
+      <NumericUpDown Value="{Binding TabStripHeight, Mode=TwoWay}" Minimum="{Binding MinTabStripHeight}" Maximum="{Binding MaxTabStripHeight}" Increment="1" FormatString="0" Width="120"
+                     AutomationProperties.AutomationId="settings.numTabStripHeight" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="tabCloseMode" Label="{loc:Tr settings.tabCloseMode}">
+      <ComboBox ItemsSource="{Binding TabCloseModeNames}" ItemTemplate="{StaticResource OptionTemplate}" SelectedIndex="{Binding TabCloseModeIndex, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="settings.cmbTabCloseMode" />
+    </ui:SettingsRow>
+    <ui:SettingsRow SettingId="wheelMode" Label="{loc:Tr settings.wheelMode}">
+      <ComboBox ItemsSource="{Binding WheelModeNames}" ItemTemplate="{StaticResource OptionTemplate}" SelectedIndex="{Binding WheelModeIndex, Mode=TwoWay}" MinWidth="200"
+                AutomationProperties.AutomationId="shell.cmbWheelMode" />
+    </ui:SettingsRow>
+  </StackPanel>
+</UserControl>
