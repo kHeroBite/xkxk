@@ -191,7 +191,12 @@ param(
     #   그 상태의 우클릭이 ★대시보드의 메뉴★ 를 띄웠다. ②는 PID 가 같아 통과했다.
     #   ⇒ 앱 종속 REST 에 의존하지 않으면서 그 오인을 줄이는 절충이 이 파라미터다.
     #   ⚠ 부분 일치(대소문자 무시)다. 탭 전환이 제목에 반영되지 않는 앱에서는 무력하다.
-    [string] $ExpectedWindowTitle = ""
+    [string] $ExpectedWindowTitle = "",
+
+    # ★주입 기록(D-6/D-7, 2026-11-25)★ — PC 비움 감시기(user_away_guard·pc_away_monitor)가 시험 자신의 입력을
+    #   사용자 입력으로 오인하지 않게 safe_wheel.ps1 과 같은 형식(t_ms·kind·x·y·source)으로 injections.jsonl 에 남긴다.
+    #   비우면 영역 logs/pcaway/injections.jsonl. 기록에 실패하면 입력을 보내지 않는다(safe_wheel 과 같음).
+    [string] $InjectionLog = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -276,6 +281,28 @@ function Fail-Guard {
     param([string] $Axis, [string] $Reason)
     Write-Step 'X' ("{0} 실패 — {1}" -f $Axis, $Reason)
     throw ("safe_click 가드 차단 [{0}]: {1}" -f $Axis, $Reason)
+}
+
+# 주입 기록 — user_away_guard.read_records 가 읽는 한 줄 JSON. t_ms 는 Windows 시계 UTC ms(GetLastInputInfo 와 같은 기준).
+#   감시기 규칙: '<kind>_pre' 는 같은 이름의 완료('<kind>' 또는 '<kind>_failed')까지 주입 구간, 완료 기록은 t_ms~+1.5초,
+#   x·y 가 있는 마지막 기록이 '주입 뒤 커서가 있어야 할 자리'다.
+if (-not $InjectionLog) { $InjectionLog = Join-Path (Join-Path $PSScriptRoot '..\logs\pcaway') 'injections.jsonl' }
+function Write-Injection {
+    param([string] $Kind, $X, $Y)
+    $line = [ordered]@{ t_ms = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds(); kind = $Kind; x = $X; y = $Y; source = 'safe_click'; button = $Button } | ConvertTo-Json -Compress
+    $dir = Split-Path -Parent $InjectionLog
+    if (-not (Test-Path -LiteralPath $dir)) { [void][System.IO.Directory]::CreateDirectory($dir) }
+    [System.IO.File]::AppendAllText($InjectionLog, $line + "`n", [System.Text.UTF8Encoding]::new($false))
+}
+$script:injKind = $null   # '<kind>_pre' 를 남긴 뒤에만 채운다
+$script:injDone = $false
+# 주입 구간 안에서 가드 차단·예외로 끝나면 '<kind>_failed' 를 남기고 그대로 실패시킨다(break = 원래 예외 전파)
+trap {
+    if ($script:injKind -and -not $script:injDone) {
+        $script:injDone = $true
+        try { Write-Injection ($script:injKind + '_failed') $null $null } catch { }
+    }
+    break
 }
 
 # ---------------------------------------------------------------------------
@@ -437,6 +464,11 @@ if (-not [string]::IsNullOrWhiteSpace($ExpectedWindowTitle)) {
 #    - ★클램프도 여기서 잡힌다★ — ①을 통과해도 OS 가 좌표를 옮길 수 있다.
 #      클램프 지점은 예측 불가하므로(상단 실측 참조) 예측하지 말고 측정한다.
 # ---------------------------------------------------------------------------
+# 주입 시작 기록 — ③ 의 SetCursorPos 부터가 실제 커서 이동(입력)이다. 기록에 실패하면 예외로 보내지 않는다.
+$isDrag = ($DragToX -ne [int]::MinValue -and $DragToY -ne [int]::MinValue)
+$injKindNow = if ($NoClick) { 'cursor_move' } elseif ($WheelDelta -ne 0) { 'wheel' } elseif ($isDrag) { 'drag' } elseif ($DoubleClick) { 'dblclick' } else { 'click' }
+Write-Injection ($injKindNow + '_pre') $null $null
+$script:injKind = $injKindNow
 if (-not [SafeClickNative]::SetCursorPos($tx, $ty)) {
     Fail-Guard '③ DPI' ("SetCursorPos({0},{1}) 호출 자체가 실패했다." -f $tx, $ty)
 }
@@ -591,5 +623,11 @@ if ($NoClick) {
         Write-Step '=' ("3축 검증 통과 — ({0},{1}) ★{2}★ 클릭 완료." -f $tx, $ty, $Button)
     }
 }
+
+# 주입 완료 기록 — x·y 는 주입 뒤 커서가 있어야 할 자리(드래그는 종료점, 그 밖은 목표점)
+$endX = if ($isDrag -and -not $NoClick -and $WheelDelta -eq 0) { $DragToX } else { $tx }
+$endY = if ($isDrag -and -not $NoClick -and $WheelDelta -eq 0) { $DragToY } else { $ty }
+$script:injDone = $true
+Write-Injection $script:injKind $endX $endY
 
 exit 0

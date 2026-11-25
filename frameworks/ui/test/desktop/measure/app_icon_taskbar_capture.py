@@ -122,7 +122,10 @@ def measure(args, res):
         shutil.copyfile(stage, render)
     rig.only_own_pd()
     res["idle_s_before_capture"] = require_away(args.away_state)
-    res["band"] = real.ps_encoded(BAND_PS.replace("__OUT__", app.win(band).replace("'", "''")))
+    band_stage = os.path.join(render_target(out), "taskbar.png")  # PowerShell 도 \\wsl.localhost 경로에 PNG 를 못 쓴다(D-6, rc=4) — main_render 와 같은 우회
+    res["band"] = real.ps_encoded(BAND_PS.replace("__OUT__", app.win(band_stage).replace("'", "''")))
+    if band_stage != band and os.path.exists(band_stage) and os.path.getmtime(band_stage) >= started:
+        shutil.copyfile(band_stage, band)
     res["taskbar_capture"] = fresh(band, started) if "BAND " in res["band"] else None
     res["main_title_render"] = fresh(render, started)
     res["alt_tab"] = "미확인(시스템 조합 입력이 필요해 찍지 않음)"

@@ -9,7 +9,9 @@
 - 코드. `MenuIcon`·`MenuIconStyles.axaml`·`MenuIconBitmap`·`SdiDocumentIcon`·`CmdIconKeys.Generated.cs`(아이콘 키는 `plan/_build/icon_glyphs_cmd.py` 가 생성), `ModalScope*.cs`·`Win32ModalBlock.cs`·`RemoteModalCommands.cs`·`RemoteMenuIconCommands.cs`, 창·입력 쪽 `WindowCommands`·`WindowStateOps`·`SettingsInput`·`ShellPlatform` 수정.
 - 문서. `plan/05_아키텍처/02_별별UI_프레임워크화_계획.md` 와 부록 폴더(a1·a2), UADR-0004~0006, REQ-117~120, 화면설계 문서 갱신, `plan/README.md` 폴더 지도에 05_아키텍처 부록 반영.
 - 판정기. `test/desktop/judge/` 의 `menu_icons_judge`·`settings_modal_judge`·`main_font_wheel_judge`·`c27_judge_common`·`c27_b10`, `test/web/measure/menu_modal_font_web.py`, `test/desktop/measure/win_enabled.ps1`.
-- 시험 결과 요약. 데스크톱 B1~B7·B10 PASS, 웹 B1_web·B3_web·B4_web·B10_web PASS. 작업표시줄 띠 캡처는 PC 비움 시험으로 진행 중이라 보류다.
+- 시험 결과 요약. 데스크톱 B1~B7·B10 PASS, 웹 B1_web·B3_web·B4_web·B10_web PASS. B11·B12 rc=0 이다. 작업표시줄은 창 아이콘 값은 PASS 지만 이 PC 의 작업 표시줄 묶음 설정 때문에 띠 화면 판독은 불가였다.
+- 자율 발견 2건(시험 도구 결함, 제품 코드 무변경). D-6(B11) `test/desktop/measure/app_icon_taskbar_capture.py` 가 `--out-dir` 에 WSL 경로를 받으면 띠 PNG 저장에 실패했다(rc=4). Windows 경로에 먼저 저장한 뒤 복사하도록 고쳤다. D-7(B12) `tools/safe_click.ps1` 이 클릭 주입을 injections.jsonl 에 기록하지 않아 PC 비움 감시기가 시험 자신의 클릭을 사용자 입력으로 오인했다(23:23 시험 중단 실사고). `safe_wheel.ps1` 과 같은 형식으로 기록하게 고쳤다. `test/README.md`·`tools/README.md` 도 갱신했다.
+- PC 비움 보강 실측. B2·B3·B4 에서 설정 모달 실클릭 PASS, 메인 Ctrl+실휠 PASS 다. B11·B12 도 PC 비움 상태에서 PASS 다(WSL 경로 저장 rc=0, 실클릭 기록 2줄, 감시기 away 유지).
 - 알려진 한계. 프레임워크화는 계획만 있고 구현이 없다. Avalonia 12.1.4 가 `IInputManager.PreProcess`·`Raw*EventArgs` 를 공개하지 않아 원시 입력 관문 대신 히트 차단을 쓴다.
 
 ## 2026-11-25 — PC 비움 판정 보류 8건·UTODO-0018~0021·0004·0006 처리(O4, conv_179559297106)
