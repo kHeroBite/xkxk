@@ -29,12 +29,12 @@ HANGUL = re.compile(r"[가-힣]")
 
 
 def user_dir():
-    """사용자 설정 폴더(%LOCALAPPDATA%\\PdPoc). 앱이 꺼져 있으면 연결 정보 파일이 없으므로 pdctl.info_path(없으면 sys.exit)를 쓰지 않는다."""
+    """사용자 설정 폴더(%LOCALAPPDATA%\\xkxk\\frameworks\\ui). 앱이 꺼져 있으면 연결 정보 파일이 없으므로 pdctl.info_path(없으면 sys.exit)를 쓰지 않는다."""
     if os.environ.get("PD_REMOTE_INFO"):
         return os.path.dirname(os.environ["PD_REMOTE_INFO"])
-    found = sorted(glob.glob("/mnt/c/Users/*/AppData/Local/PdPoc"), key=os.path.getmtime)
+    found = sorted(glob.glob("/mnt/c/Users/*/AppData/Local/xkxk/frameworks/ui"), key=os.path.getmtime)
     if not found:
-        raise RuntimeError("사용자 설정 폴더(PdPoc)를 찾지 못함")
+        raise RuntimeError("사용자 설정 폴더(xkxk/frameworks/ui)를 찾지 못함")
     return found[-1]
 
 

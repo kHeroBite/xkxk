@@ -5,7 +5,7 @@
       python3 -B snap_assist_remote.py --info <격리 data 폴더의 remote-control.json> [--port 5961] --work <결과 폴더>
       python3 -B snap_assist_remote.py --self-test
 기동·종료는 desktop/measure/mdi_drag_app.launch/stop(--multi-instance on, 임시 data·profile, 화면 밖 --bg-pos, 자기 PID 만 종료)을 그대로 쓴다.
---info 모드는 사용자 폴더(%LOCALAPPDATA%\\PdPoc)의 연결 정보와 사용자 포트(5180·5220)를 거부한다. --port 는 연결 정보 파일의 포트를 덮어쓴다.
+--info 모드는 사용자 폴더(%LOCALAPPDATA%\\xkxk\\frameworks\\ui)의 연결 정보와 사용자 포트(5180·5220)를 거부한다. --port 는 연결 정보 파일의 포트를 덮어쓴다.
 진입은 실입력 없이 최대화 단추 팝업 원격(snapflyout.hover → snapflyout.pick, SnapFlyoutHover.Pick 과 같은 ApplyCell(…, Flyout) 경로)으로 한다.
 판정은 상태(snapassist.state)와 배치 결과(placement.state 의 MDI bounds)만 본다. 시간(ms) 판정은 하지 않는다(성능은 별도 측정).
 썸네일은 snapassist.thumbdump(진단: 원래 크기·축소 비트맵을 --work 아래 thumbdump_* 에 저장)와 카드 칸 좌표(ui.find snap.assist.card.N.thumb·.label)로,
@@ -561,7 +561,7 @@ def attach(args):
     """이미 떠 있는 격리 인스턴스에 붙는다. 사용자 연결 정보·사용자 포트는 거부한다."""
     info = os.path.abspath(args.info)
     low = info.replace("\\", "/").lower()
-    if "appdata/local/pdpoc" in low or not os.path.exists(info):
+    if "appdata/local/xkxk/frameworks/ui" in low or not os.path.exists(info):
         sys.exit("거부: 사용자 폴더 연결 정보이거나 파일이 없다 — 격리 data 폴더의 remote-control.json 만 쓴다: %s" % info)
     os.environ["PD_REMOTE_INFO"] = info
     from retest_remote import Remote

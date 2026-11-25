@@ -1,4 +1,5 @@
 // 데스크톱 호스트의 파일 기반 레이아웃 저장소(ILayoutStore 구현)
+using xkxk.frameworks.ui.data;
 using xkxk.frameworks.ui.data.Layout;
 using System.Text;
 using xkxk.frameworks.ui.shell.Docking;
@@ -6,7 +7,7 @@ using xkxk.frameworks.ui.shell.Docking;
 namespace xkxk.frameworks.ui.desktop;
 
 /// <summary>
-/// 레이아웃 JSON 을 파일 1개에 저장·복원한다. 기본 경로는 %LOCALAPPDATA%\PdPoc\layout.json,
+/// 레이아웃 JSON 을 파일 1개에 저장·복원한다. 기본 경로는 %LOCALAPPDATA%\xkxk\frameworks\ui\layout.json,
 /// 실행 인자 --layout-file 로 바꿀 수 있다. 쓰기는 임시 파일 → 교체로 원자 처리한다.
 /// </summary>
 public sealed class FileLayoutStore : ILayoutStore
@@ -22,8 +23,7 @@ public sealed class FileLayoutStore : ILayoutStore
 
     public static string DefaultPath()
     {
-        var root = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        return Path.Combine(root, "PdPoc", "layout.json");
+        return Path.Combine(AppDataFolder.Root, "layout.json");
     }
 
     public async Task SaveAsync(string json)

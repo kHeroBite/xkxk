@@ -3,11 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using xkxk.frameworks.ui.data;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
 /// <summary>
-/// 우선순위: --data-dir X / --data-dir=X 인자 > PD_DATA_DIR 환경변수 > 기존 %LOCALAPPDATA%\PdPoc (Android 등 기존 동작 불변).
+/// 우선순위: --data-dir X / --data-dir=X 인자 > PD_DATA_DIR 환경변수 > 기존 %LOCALAPPDATA%\xkxk\frameworks\ui (Android 등 기존 동작 불변).
 /// 데이터 폴더가 정해지면 &lt;X&gt;\remote-control.json 을 쓴다. Configure 는 StartFromArgs 첫 줄에서 1회 호출한다.
 /// </summary>
 public static class RemoteInfoPath
@@ -20,8 +21,7 @@ public static class RemoteInfoPath
     /// <summary>현재 연결 정보 파일 경로.</summary>
     public static string Current => Path.Combine(_dataDir ?? DefaultDir, FileName);
 
-    private static string DefaultDir => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PdPoc");
+    private static string DefaultDir => AppDataFolder.Root;
 
     /// <summary>인자·환경변수에서 데이터 폴더를 읽어 고정한다(없으면 기존 경로).</summary>
     public static void Configure(IReadOnlyList<string> args)

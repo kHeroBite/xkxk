@@ -9,7 +9,7 @@
   기본값 결과(합류 없음)는 그대로 남기고, 계획서 oplan r2 §6 위험 2 에 따라 '패널 기능 켬' 조건 결과를 따로 잰다.
 방법: retest_android_pcaway_lib.attach 를 감싸 연결 성공 직후 설정 창 '창' 페이지 콤보(settings.cmbPanelFeature)를 index 1(켬)로 고르고
   settings.esc 로 닫는다(retest_r2_web.set_feature 와 같은 화면 경로). 값은 다시 읽어 c.raw['panel_feature_on'] 에 남긴다.
-  시험 앱(com.pd.poc) 자기 저장소만 바뀐다. 사용자 앱·사용자 설정은 건드리지 않는다.
+  시험 앱(xkxk.frameworks.ui) 자기 저장소만 바뀐다. 사용자 앱·사용자 설정은 건드리지 않는다.
   F07 의 '탭 두 개' 사전 조건은 원본 도구 tab_move 가 panel.join(LeftPane, tool=Log)로 만든다. 켬 조건에서 그 결과를 c.raw['join_precheck'] 로 따로 남긴다.
 고정: 원본 도구·라이브러리 sha256 을 아래에 고정하고 다르면 실행을 거부한다.
 """

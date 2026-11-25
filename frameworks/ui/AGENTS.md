@@ -27,7 +27,7 @@
   - 브라우저: `bash tools/build_browser.sh --bg [Release]`
   - Android: `bash tools/build_android.sh --bg [Debug|Release]`
 - `--bg` 는 `logs/build_*_<시각>.log` 와 같은 이름 `.rc` 를 남긴다. 성공은 `.rc`=0 이고 로그에 `오류 0개` 또는 `0 Error(s)` 가 있는 것이다.
-- 빌드는 한 번에 한 명만 돌린다(obj 잠금). 실행·포트·프로세스 규칙은 `INFRA.md` 4절을 따른다. 실행 파일 이름은 `xkxk.frameworks.ui.desktop.exe` 로 사용자 Pd 앱의 옛 이름 실행 파일(LEGACY, `Pd.Poc` 접두)과 달라졌지만, 데이터 폴더·단일 인스턴스 이름은 공유하므로(UTODO-0014) 자기 PID 외 프로세스는 건드리지 않는다.
+- 빌드는 한 번에 한 명만 돌린다(obj 잠금). 실행·포트·프로세스 규칙은 `INFRA.md` 4절을 따른다. 실행 파일 이름은 `xkxk.frameworks.ui.desktop.exe` 이고, 데이터 폴더(`%LOCALAPPDATA%\xkxk\frameworks\ui`)·단일 인스턴스 이름(`xkxk.frameworks.ui.<채널>.Instance`)도 옛 Pd 앱과 분리됐다. 같은 이름의 다른 프로세스는 사용자가 띄웠을 수 있으므로 자기 PID 외 프로세스는 건드리지 않는다.
 
 ## 5. 레이어 원칙
 - UI/UX(화면 조립)·컨트롤·데이터 층을 철저히 나눈다. 시험·PoC 코드도 같은 규칙을 따른다.
@@ -45,6 +45,6 @@
 - 층 파일은 300줄 이하에 첫 줄 한국어 헤더 주석을 둔다.
 
 ## 6. 알려진 한계
-- 프로젝트·어셈블리 이름은 폴더 경로 기준 `xkxk.frameworks.ui.*` 로 전환했다(UTODO-0007, UADR-0002). 단 Android 패키지 `com.pd.poc`(UTODO-0013)와, 사용자 Pd 앱과 공유하는 데이터 폴더 `%LOCALAPPDATA%\PdPoc`·단일 인스턴스 이름 `PdPoc.<채널>.Instance`(UTODO-0014)는 바꾸지 않았다.
+- 프로젝트·어셈블리 이름은 폴더 경로 기준 `xkxk.frameworks.ui.*` 로 전환했다(UTODO-0007, UADR-0002). Android 패키지(`xkxk.frameworks.ui`)·데이터 폴더(`%LOCALAPPDATA%\xkxk\frameworks\ui`)·단일 인스턴스 이름(`xkxk.frameworks.ui.<채널>.Instance`)도 같은 규칙으로 전환했다(UTODO-0013·0014). 옛 폴더·설정은 이전하지 않는다.
 - 일부 시험 스크립트·도구에 Pd 경로가 박혀 있다. 목록과 과제 번호(UTODO-0001)는 `plan/90_결정관리/이전기록_2026-11-24_경로고정목록.md` 에 있다.
 - `plan/09_화면설계/02_메뉴구조.md` 는 Pd 저장소의 `menu_tree.py` 가 만드는 생성물이라 이 영역에서는 재생성할 수 없다.

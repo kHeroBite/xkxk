@@ -8,7 +8,7 @@
   pdctl.py --raw '{"cmd":"status"}'      요청 JSON 을 그대로 전송
 값은 문자열로 보내고 서버가 숫자·불리언으로 해석한다. 종료 코드: 0=ok, 1=명령 실패(연결 정보 파일 없음 포함 — 원격 서버 없는 제품판 포함), 2=연결 실패(연결 시간 초과·curl 실패).
 
-연결 정보: %LOCALAPPDATA%\\PdPoc\\remote-control.json(앱이 기동 시 기록). 환경변수 PD_REMOTE_INFO 로 경로 지정 가능.
+연결 정보: %LOCALAPPDATA%\\xkxk\\frameworks\\ui\\remote-control.json(앱이 기동 시 기록). 환경변수 PD_REMOTE_INFO 로 경로 지정 가능.
 WSL2 NAT 모드에서는 WSL 의 curl 이 Windows localhost 에 닿지 않는다(Mars INFRA.md 실측과 동일) → Windows curl.exe 를 쓴다.
 """
 import glob
@@ -25,7 +25,7 @@ ISOLATED_GLOB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "
 
 def info_path():
     """연결 정보 파일 우선순위: ① PD_REMOTE_INFO ② 격리 폴더(--data-dir 로 기동한 시험의
-    <영역 루트>/logs/proddata/*/remote-control.json 중 최신) ③ 사용자 폴더(%LOCALAPPDATA%\\PdPoc, 최신).
+    <영역 루트>/logs/proddata/*/remote-control.json 중 최신) ③ 사용자 폴더(%LOCALAPPDATA%\\xkxk\\frameworks\\ui, 최신).
     격리(--data-dir)로 앱을 띄우는 시험 도구는 반드시 PD_REMOTE_INFO 를 export 해야 한다.
     안 하면 ②에 파일이 아직 없을 때(기동 직후) ③의 사용자 인스턴스에 잘못 붙을 수 있다."""
     if os.environ.get("PD_REMOTE_INFO"):
@@ -33,7 +33,7 @@ def info_path():
     isolated = glob.glob(ISOLATED_GLOB)
     if isolated:
         return max(isolated, key=os.path.getmtime)
-    found = glob.glob("/mnt/c/Users/*/AppData/Local/PdPoc/remote-control.json")
+    found = glob.glob("/mnt/c/Users/*/AppData/Local/xkxk/frameworks/ui/remote-control.json")
     if not found:
         sys.exit("연결 정보 파일이 없습니다. 앱을 --remote-control 로 기동했는지 확인하세요.")
     return max(found, key=os.path.getmtime)

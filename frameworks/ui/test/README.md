@@ -244,7 +244,7 @@ PYTHONPATH=test/common:test/web/measure:test/common/measure:test/desktop/measure
 - 전경 감시: `test/common/measure/fgwatch2.ps1`(옛 `fgwatch.ps1` 은 `archive/retired/` 로 옮겼다). odev-tab 판 `logs/odev_tab/fgwatch_ev.ps1` 은 회차 자료라 옮기지 않았다.
 - ui20 기기 웹 실행: `python3 -B test/desktop/measure/ui20_device.py --out <결과.json> [--url-part 127.0.0.1:5185]`
 - 창 메뉴 시험: `python3 -B test/desktop/measure/retest_window_menu.py ...`, 재기동 Z순서: `python3 -B test/desktop/measure/retest_remote_z.py --mode user ...`
-  - `retest_window_menu.py --target desktop --isolated`: 사용자 폴더(%LOCALAPPDATA%\PdPoc) layout·settings 백업·복원을 생략한다. 연결된 앱 PID 명령줄에 사용자 폴더(하위 폴더·정션 포함)가 아닌 `--data-dir` 가 있을 때만 실행하고(`--profile-dir` 만으로는 격리로 보지 않는다), 확인하지 못하면 rc=3 으로 거부한다. 재기동은 `--no-kill` 로 하고 첫 기동의 `--data-dir`·`--profile-dir`·`--multi-instance` 를 넘긴다. 재기동한 앱이 격리 확인에 실패하면 이 도구가 띄운 앱(run_desktop_bg 출력의 로그 이름이 명령줄에 있는 PID)만 내린다. 종료는 시험 앱 PID 하나만 한다(사용자 Pd 는 종료하지 않음).
+  - `retest_window_menu.py --target desktop --isolated`: 사용자 폴더(%LOCALAPPDATA%\xkxk\frameworks\ui) layout·settings 백업·복원을 생략한다. 연결된 앱 PID 명령줄에 사용자 폴더(하위 폴더·정션 포함)가 아닌 `--data-dir` 가 있을 때만 실행하고(`--profile-dir` 만으로는 격리로 보지 않는다), 확인하지 못하면 rc=3 으로 거부한다. 재기동은 `--no-kill` 로 하고 첫 기동의 `--data-dir`·`--profile-dir`·`--multi-instance` 를 넘긴다. 재기동한 앱이 격리 확인에 실패하면 이 도구가 띄운 앱(run_desktop_bg 출력의 로그 이름이 명령줄에 있는 PID)만 내린다. 종료는 시험 앱 PID 하나만 한다(사용자 Pd 는 종료하지 않음).
   - `retest_remote_z.py --isolated`: 동작은 위와 같다(사용자 폴더 백업·복원 생략, 앱 격리 확인 실패 시 rc=3, 재기동 앱도 다시 확인). user 모드에서는 첫 기동의 `--profile-dir` 를 넘기지 않고, 도구 인자 `--profile-dir`(비어 있는 새 임시 폴더)를 앱에 준다.
   - 두 도구 모두 비격리 기본 모드는 사용자 Pd(run_desktop_bg 로 띄우지 않은 Pd)가 떠 있으면 실행 전에 rc=3 으로 거부한다. 사용자 Pd 를 그대로 둔 채 시험하려면 `--isolated` 를 쓴다.
 

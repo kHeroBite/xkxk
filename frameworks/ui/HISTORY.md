@@ -4,6 +4,13 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-25 — 옛 Pd 앱과의 의존 분리(데이터 폴더·단일 인스턴스·Android 패키지, O3, conv_179556284747)
+- 사용자 결정 "기존 폴더와의 의존성을 모두 끊어야 한다"·"옛앱은 이제 필요없으니 모두 지워도 된다. 신규앱만 남겨라"에 따라 UTODO-0013·0014 를 실행했다(UADR-0003).
+- 데이터 폴더 `%LOCALAPPDATA%\PdPoc` 를 `%LOCALAPPDATA%\xkxk\frameworks\ui` 로 바꿨다(`src/xkxk.frameworks.ui.data/AppDataFolder.cs` 신설). 단일 인스턴스 이름은 `xkxk.frameworks.ui.<채널>.Instance`, Android 패키지는 `com.pd.poc` 에서 `xkxk.frameworks.ui`(APK `xkxk.frameworks.ui-Signed.apk`)로 바꿨다. 옛 폴더를 읽는 이전·폴백은 두지 않았다. 브라우저 localStorage 키는 바꾸지 않았다.
+- 수정 범위는 src 11개+신설 1개·LAYERS.md, tools 5개·test 28개·README·AGENTS·test/README 이다. `INFRA.md` 도 고쳤으나 커밋하지 않는다.
+- 빌드 3종 rc=0. 데스크톱 시험 PASS(A1~A11·A14·A15), 모바일 PASS(Fold5 A12·A13).
+- 옛 흔적을 지웠다. `%LOCALAPPDATA%\PdPoc` 삭제(커밋 직전 재확인에서 재생성 없음), Fold5 의 `com.pd.poc` 제거, 옛 `.lnk` 0건. 참고로 Pd 저장소의 `poc/ui` 삭제는 다른 세션이 Pd 커밋 108c819 로 처리했으며 이 저장소 변경이 아니다.
+
 ## 2026-11-25 — 300줄 분할·접근성 이름·PERF-13 첫 프레임 누락 수정·측정보류 재측정(O4, conv_179552725422)
 - 300줄 초과 5파일을 부분 클래스로 나눴다(K1). `PerfProbe`→`PerfProbe.Counters.cs`, `RemoteControlServer`→`RemoteControlServer.Routes.cs`, `WindowMenuOps.Snap`→`WindowMenuOps.Snap.Menu.cs`, `UiStyleViewModel`→`UiStyleViewModel.Options.cs`, `GanttCanvas`→`GanttCanvas.Render.cs`. `tools/check_layers.py` 위반 0.
 - 접근성 이름(K2, UTODO-0015 완료). `PocDocument`·`NotificationPanelViewModel` 의 `ToString` 이 형식 이름 대신 제목·문장을 돌려준다. MDI·독·SDI 의 UIA 이름이 문서 제목으로 나온다.

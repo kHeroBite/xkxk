@@ -574,7 +574,7 @@ def make_cdp_web(base, cdp, port, out):
         capture = "raw CDP Page.captureScreenshot (device Chrome %s)" % cdp
 
         def _tidy_chrome(self):
-            """연결이 멈추면 기기 Chrome 에 about:blank 를 새로 열어 상태를 가볍게 한다(앱 com.pd.poc 는 건드리지 않는다). adb 는 환경변수 ADB, 기기는 연결된 첫 장치."""
+            """연결이 멈추면 기기 Chrome 에 about:blank 를 새로 열어 상태를 가볍게 한다(앱 xkxk.frameworks.ui 는 건드리지 않는다). adb 는 환경변수 ADB, 기기는 연결된 첫 장치."""
             import subprocess
             adb = os.environ.get("ADB")
             if not adb:

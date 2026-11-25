@@ -93,11 +93,11 @@ def restart(ctx):
             time.sleep(1)
     else:  # android: 강제 종료 → 재실행 → 토큰 다시 읽기(포트는 기존 forward 유지)
         s = ["-s", a.serial] if a.serial else []
-        subprocess.run([ADB] + s + ["shell", "am", "force-stop", "com.pd.poc"], capture_output=True, timeout=20)
-        subprocess.run([ADB] + s + ["shell", "monkey", "-p", "com.pd.poc", "-c", "android.intent.category.LAUNCHER", "1"],
+        subprocess.run([ADB] + s + ["shell", "am", "force-stop", "xkxk.frameworks.ui"], capture_output=True, timeout=20)
+        subprocess.run([ADB] + s + ["shell", "monkey", "-p", "xkxk.frameworks.ui", "-c", "android.intent.category.LAUNCHER", "1"],
                        capture_output=True, timeout=20)
         time.sleep(6)
-        raw = subprocess.run([ADB] + s + ["exec-out", "run-as", "com.pd.poc", "cat", "files/PdPoc/remote-control.json"],
+        raw = subprocess.run([ADB] + s + ["exec-out", "run-as", "xkxk.frameworks.ui", "cat", "files/xkxk/frameworks/ui/remote-control.json"],
                              capture_output=True, timeout=20).stdout
         info = json.loads(raw.decode("utf-8"))
         info["port"] = ctx.r.info["port"]
@@ -197,7 +197,7 @@ def main(argv):
     import glob
     import hashlib
     import shutil
-    ud = sorted(glob.glob("/mnt/c/Users/*/AppData/Local/PdPoc"), key=os.path.getmtime)[-1]
+    ud = sorted(glob.glob("/mnt/c/Users/*/AppData/Local/xkxk/frameworks/ui"), key=os.path.getmtime)[-1]
     md5 = lambda n: (hashlib.md5(open(os.path.join(ud, n), "rb").read()).hexdigest()[:8] if os.path.exists(os.path.join(ud, n)) else None)
     names = ("layout.json", "settings.json")
     bdir = os.path.abspath(out) + ".backup"

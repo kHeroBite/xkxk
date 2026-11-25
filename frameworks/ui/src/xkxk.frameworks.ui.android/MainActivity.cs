@@ -33,7 +33,7 @@ public sealed class MainActivity : AvaloniaMainActivity
         StartupMarks.Mark("activity_create_begin");
 #if PD_DIAGNOSTICS
         // 진단 인자(예: --loc static): Android 에는 명령줄이 없어 인텐트 문자열 추가값 pdargs 로 받는다. 앱 초기화(base.OnCreate) 전에 넣어야 셸이 읽는다.
-        // 사용: adb shell am force-stop com.pd.poc 후 am start -n <패키지>/<MainActivity> --es pdargs "--loc static"
+        // 사용: adb shell am force-stop xkxk.frameworks.ui 후 am start -n <패키지>/<MainActivity> --es pdargs "--loc static"
         // 파일(files/pdargs.txt, AndroidApp — App 초기화 전)로 이미 받았으면 그쪽을 우선한다(lead 02:3x). 인텐트는 App 초기화 뒤라
         // 자동 저장 억제·--fresh(ApplyStartupArgs 재판정)에만 효과가 있고 --loc static·--notify-panel 에는 늦다.
         if (!AndroidApp.ArgsFromFile && Intent?.GetStringExtra("pdargs") is { Length: > 0 } pdargs)

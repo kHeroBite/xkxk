@@ -7,7 +7,7 @@
   app_icon_taskbar_capture.py --self-test      # 앱·화면 없이 판정 함수만 시험
 
 앱을 띄우거나 끝내지 않는다. 앱은 run_desktop_bg.sh 로만 `--multi-instance on --data-dir <절대경로 격리>`(attach 가 인자·layout-file 확인)·화면 안(승인)에 띄우되 --offscreen-guard 를 붙이지 않는다(붙이면 작업 표시줄 단추가 없다).
-찍기 전 전제: 자기 기동 기록·명령줄 일치, 다른 xkxk.frameworks.ui.*(및 LEGACY 옛 이름 Pd.Poc.*) 0개, pc_away_monitor away, 유휴 300초 이상(찍기 직전 다시 확인).
+찍기 전 전제: 자기 기동 기록·명령줄 일치, 다른 xkxk.frameworks.ui.* 0개, pc_away_monitor away, 유휴 300초 이상(찍기 직전 다시 확인).
   예외는 --user-pid 로 명시한 사용자 앱 1개뿐이다(이름 고정, 입력·조작 없음). 원격 조회·렌더 캡처는 자기 인스턴스 연결 정보로만 한다.
 화면 캡처는 작업 표시줄 띠 영역만이다. 고정된 Pd 단추는 옛 빌드를 띄울 수 있어 누르지 않는다.
 결과는 고정 이름(taskbar.png·main_render.png·app_icon.json)에 덮어쓰고, 이번 시작보다 오래된 파일은 증거로 쓰지 않는다.

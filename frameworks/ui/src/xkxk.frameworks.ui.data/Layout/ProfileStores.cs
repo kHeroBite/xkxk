@@ -10,7 +10,7 @@ namespace xkxk.frameworks.ui.data.Layout;
 
 /// <summary>
 /// 사용: 데스크톱 `--profile-dir C:\tmp\pdprof1`(또는 `--profile-dir=...`), Android `--es pdargs "--profile-dir t1"`.
-/// 상대 경로는 앱 데이터 폴더(LocalApplicationData/PdPoc/profiles) 아래로 풀린다 — Android 는 앱 전용 폴더만 쓸 수 있어서다.
+/// 상대 경로는 앱 데이터 폴더(LocalApplicationData/xkxk/frameworks/ui/profiles) 아래로 풀린다 — Android 는 앱 전용 폴더만 쓸 수 있어서다.
 /// 폴더 안 파일: layout.json(자동 저장 슬롯), settings.json(설정), layouts/(개인 레이아웃·전체 백업). 브라우저는 파일 시스템이 없어 무시된다(웹 격리는 --layout-key).
 /// --fresh 와 함께 주면 --fresh(메모리)가 우선한다(FreshGuardStores).
 /// </summary>
@@ -53,7 +53,7 @@ public static class ProfileStores
         {
             var dir = Path.IsPathRooted(value)
                 ? value
-                : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PdPoc", "profiles", value);
+                : Path.Combine(AppDataFolder.Root, "profiles", value);
             Directory = Path.GetFullPath(dir);
             Layout = new FileTextStore(Path.Combine(Directory, "layout.json"));
             Settings = new FileTextStore(Path.Combine(Directory, "settings.json"));

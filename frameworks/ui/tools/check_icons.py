@@ -1,7 +1,7 @@
 # 빌드 산출물(Desktop exe·APK·웹 publish)에 임시 앱 아이콘이 들어갔는지 파일 검사로만 판정하는 스크립트(앱을 실행하지 않는다)
 """
 사용법(표준 라이브러리만 사용 — python3 -I 로도 동작):
-    python3 tools/check_icons.py --exe <xkxk.frameworks.ui.desktop.exe> --apk <com.pd.poc-Signed.apk> --web <publish/wwwroot> [--json 결과.json]
+    python3 tools/check_icons.py --exe <xkxk.frameworks.ui.desktop.exe> --apk <xkxk.frameworks.ui-Signed.apk> --web <publish/wwwroot> [--json 결과.json]
 세 입력은 각각 생략할 수 있다(생략한 축은 SKIP). rc: 0=전부 PASS, 1=FAIL 있음, 2=입력 오류.
 구조(D-LAYER): 축마다 측정(measure_*) → 판정(judge_*) → 기록(print_*·write_json)을 다른 함수로 나누고 main 은 순서만 정한다.
 

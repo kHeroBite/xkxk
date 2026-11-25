@@ -381,7 +381,7 @@ def main(argv):
                 res["d21_fold"] = {"exception": repr(e)}
             fold(False)
         rc, log = adb("logcat", "-d", "-v", "brief", "*:E", timeout=60)
-        res["fatal_lines"] = [l for l in log.splitlines() if "FATAL" in l or "ANR in com.pd.poc" in l]
+        res["fatal_lines"] = [l for l in log.splitlines() if "FATAL" in l or "ANR in xkxk.frameworks.ui" in l]
         res["call_errors"] = [c for c in r.calls if not c.get("ok")][:40]
         return 0
     finally:

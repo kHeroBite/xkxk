@@ -11,9 +11,7 @@ TMP="$F.tmp.$$"
 TS="$(date '+%Y-%m-%dT%H:%M:%S')"
 
 # 앱이 떠 있으면 이관하지 않는다(이전 소유자 반납 확인 전제)
-# 새 이름(xkxk.frameworks.ui.desktop.exe)과 옛 이름(사용자 Pd 앱 Pd.Poc.Desktop.exe — LEGACY)을 모두 센다
-if tasklist.exe /FI "IMAGENAME eq xkxk.frameworks.ui.desktop.exe" /FO CSV /NH 2>/dev/null | grep -qi "^\"xkxk.frameworks.ui.desktop.exe\"" \
-   || tasklist.exe /FI "IMAGENAME eq Pd.Poc.Desktop.exe" /FO CSV /NH 2>/dev/null | grep -qi "^\"Pd.Poc.Desktop.exe\""; then # LEGACY
+if tasklist.exe /FI "IMAGENAME eq xkxk.frameworks.ui.desktop.exe" /FO CSV /NH 2>/dev/null | grep -qi "^\"xkxk.frameworks.ui.desktop.exe\""; then
   echo "HANDOFF=REFUSED 데스크톱 앱이 실행 중 — 이전 소유자 반납(프로세스 0개) 확인 뒤 다시 실행"
   exit 2
 fi

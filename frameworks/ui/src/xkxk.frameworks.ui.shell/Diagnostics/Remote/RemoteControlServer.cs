@@ -19,7 +19,7 @@ namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 /// 수신: TcpListener 를 IPAddress.Loopback·IPv6Loopback 에만 바인드(다른 NIC 주소로는 연결 자체가 안 됨) + 요청 원격 주소가 루프백이 아니면 403.
 ///   HttpListener(http.sys)는 관리자 권한 없이 루프백만 바인드할 수 없어(localhost 접두사 = 모든 주소 수신 후 Host 헤더로만 거름 — otest-1 실측) 쓰지 않는다.
 /// 토큰: 기동마다 무작위 32자, 요청마다 X-Pd-Token / Authorization: Bearer / ?token= 로 확인. /api/health 만 토큰 없이 응답(루프백에서만).
-/// 연결 정보 파일: %LOCALAPPDATA%\PdPoc\remote-control.json {url,port,token,pid,started}. Android 는 앱 전용 files/PdPoc/.
+/// 연결 정보 파일: %LOCALAPPDATA%\xkxk\frameworks\ui\remote-control.json {url,port,token,pid,started}. Android 는 앱 전용 files/xkxk/frameworks/ui/.
 /// 경로: POST /api/cmd {"cmd","args"} 또는 /api/{영역}/{동작}(쿼리·JSON 본문이 인자). GET /api/screenshot/download 는 PNG 바이트.
 /// 개발·시험 전용. 운영 배포 빌드에서는 켜지 않는다(README 보안 주의).
 /// </summary>
@@ -60,7 +60,7 @@ public sealed partial class RemoteControlServer : IDisposable
     /// <summary>실제 바인드된 주소(예: 127.0.0.1:5960, [::1]:5960).</summary>
     public IReadOnlyList<string> Bindings => _listeners.ConvertAll(l => l.LocalEndpoint.ToString() ?? "");
 
-    /// <summary>연결 정보 파일 경로(%LOCALAPPDATA%\PdPoc\remote-control.json).</summary>
+    /// <summary>연결 정보 파일 경로(%LOCALAPPDATA%\xkxk\frameworks\ui\remote-control.json).</summary>
     public static string InfoFilePath => RemoteInfoPath.Current; // --data-dir/PD_DATA_DIR 가 있으면 그 폴더
 
     /// <summary>

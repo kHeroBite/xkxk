@@ -9,7 +9,7 @@
 앱을 띄우거나 끝내지 않는다. 앱은 run_desktop_bg.sh 로만 `--multi-instance on --data-dir <절대경로 격리>`·화면 안(승인된 PD_ALLOW_ONSCREEN)에 새 프로필로 먼저 띄운다.
 안전 전제(하나라도 어긋나거나 조회에 실패하면 입력하지 않는다)
   1. 대상 PID 는 run_desktop_bg.sh 가 --owner 이름으로 기록한 PID 이고, 인자 값과 앱 로그 layout-file 이 격리 폴더다(perf_effect_common.verify_launch).
-  2. 입력 직전마다 자기 PID 를 뺀 xkxk.frameworks.ui.*(및 LEGACY 옛 이름 Pd.Poc.*) 프로세스가 0개다.
+  2. 입력 직전마다 자기 PID 를 뺀 xkxk.frameworks.ui.* 프로세스가 0개다.
      예외는 --user-pid 로 명시한 사용자 앱 1개뿐이다(시작 때 이미지 이름을 고정하고, 이름이 바뀌면 거부). 입력은 여전히 4 의 전경 게이트·ExpectedProcessId=자기 PID 로만 간다.
   3. 입력 직전마다 pc_away_monitor 가 away 이고 user_away_guard.check 를 통과한다.
   4. 전경 게이트·모니터 경계·safe_click 의 ExpectedProcessId 소유권(시작·끝점)은 retest_real_input.Rig 것을 그대로 쓴다.
@@ -54,9 +54,9 @@ class Precondition(Exception):
 
 
 def pd_names(tasklist_csv):
-    """tasklist CSV 의 xkxk.frameworks.ui.*(및 LEGACY 옛 이름 Pd.Poc.*) 프로세스 {PID: 이미지 이름}."""
+    """tasklist CSV 의 xkxk.frameworks.ui.* 프로세스 {PID: 이미지 이름}."""
     return {int(r[1]): r[0] for r in csv.reader(tasklist_csv.splitlines())
-            if len(r) > 1 and r[0].lower().startswith(("xkxk.frameworks.ui.", "pd.poc")) and r[1].isdigit()}  # "pd.poc" 는 LEGACY(사용자 Pd 앱 Pd.Poc.Desktop.exe) 이름 접두
+            if len(r) > 1 and r[0].lower().startswith("xkxk.frameworks.ui.") and r[1].isdigit()}
 
 
 def other_pd(tasklist_csv, own, allowed=None):
@@ -274,13 +274,13 @@ def self_test():
         judge("hide", idle, idle, [mid_off])[0] == "FAIL",
         judge("hide", idle, dict(end, shadow="none"), [mid_off])[0] == "FAIL",
         other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"cmd.exe","9"', 7) == [],
-        other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"Pd.Poc.Other.exe","8"', 7) == [8],
-        other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"Pd.Poc.Desktop.exe","8"', 7, (8, "Pd.Poc.Desktop.exe")) == [],
-        other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"Pd.Poc.Desktop.exe","8"\n"Pd.Poc.Other.exe","9"', 7, (8, "Pd.Poc.Desktop.exe")) == [9],
-        declare_user('"xkxk.frameworks.ui.desktop.exe","7"\n"Pd.Poc.Desktop.exe","8"', 8, 7) == (8, "Pd.Poc.Desktop.exe"),
+        other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"xkxk.frameworks.ui.other.exe","8"', 7) == [8],
+        other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"xkxk.frameworks.ui.desktop.exe","8"', 7, (8, "xkxk.frameworks.ui.desktop.exe")) == [],
+        other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"xkxk.frameworks.ui.desktop.exe","8"\n"xkxk.frameworks.ui.other.exe","9"', 7, (8, "xkxk.frameworks.ui.desktop.exe")) == [9],
+        declare_user('"xkxk.frameworks.ui.desktop.exe","7"\n"xkxk.frameworks.ui.desktop.exe","8"', 8, 7) == (8, "xkxk.frameworks.ui.desktop.exe"),
         declare_user("", None, 7) is None,
     ]
-    for bad in (lambda: other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"xkxk.frameworks.ui.desktop.exe","8"', 7, (8, "Pd.Poc.Desktop.exe")),  # PID 재사용 의심
+    for bad in (lambda: other_pd('"xkxk.frameworks.ui.desktop.exe","7"\n"xkxk.frameworks.ui.desktop.exe","8"', 7, (8, "xkxk.frameworks.ui.other.exe")),  # PID 재사용 의심
                 lambda: declare_user('"xkxk.frameworks.ui.desktop.exe","7"', 7, 7),  # 자기 PID 허용 금지
                 lambda: declare_user('"xkxk.frameworks.ui.desktop.exe","7"', 8, 7)):  # 없는 PID 허용 금지
         try:

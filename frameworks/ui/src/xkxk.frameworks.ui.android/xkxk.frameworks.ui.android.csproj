@@ -10,7 +10,7 @@
     <LangVersion>latest</LangVersion>
     <RootNamespace>xkxk.frameworks.ui.android</RootNamespace>
     <AssemblyName>xkxk.frameworks.ui.android</AssemblyName>
-    <ApplicationId>com.pd.poc</ApplicationId>
+    <ApplicationId>xkxk.frameworks.ui</ApplicationId>
     <ApplicationTitle>별별UI</ApplicationTitle>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>

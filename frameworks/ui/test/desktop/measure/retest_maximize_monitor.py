@@ -163,7 +163,7 @@ def positions(mons):
 
 def user_files_md5():
     base = subprocess.run(["cmd.exe", "/c", "echo %LOCALAPPDATA%"], capture_output=True, text=True).stdout.strip()
-    root = os.path.join(subprocess.run(["wslpath", base], capture_output=True, text=True).stdout.strip(), "PdPoc")
+    root = os.path.join(subprocess.run(["wslpath", base], capture_output=True, text=True).stdout.strip(), "xkxk", "frameworks", "ui")
     out = {}
     for name in ("layout.json", "settings.json"):
         path = os.path.join(root, name)

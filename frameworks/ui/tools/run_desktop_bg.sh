@@ -34,10 +34,6 @@ STDIO_LOG="$ROOT/logs/desktop_${TS}_stdio.log"
 [ -f "$EXE" ] || { echo "실행파일 없음: $EXE (build_desktop.sh 먼저)"; exit 2; }
 
 proc_count() { tasklist.exe /FI "IMAGENAME eq $IMAGE" /FO CSV /NH 2>/dev/null | grep -ci "^\"$IMAGE\""; }
-# LEGACY: 사용자 Pd 앱 실행 파일 이름(Pd.Poc.Desktop.exe) — 같은 %LOCALAPPDATA%\PdPoc 폴더·단일 인스턴스 이름을 쓰므로 사용자 파일 대조 건너뜀·신호 차단 판정에만 센다(BUSY·--kill 대상은 새 이름만).
-LEGACY_IMAGE="Pd.Poc.Desktop.exe" # LEGACY
-legacy_count() { tasklist.exe /FI "IMAGENAME eq $LEGACY_IMAGE" /FO CSV /NH 2>/dev/null | grep -ci "^\"$LEGACY_IMAGE\""; }
-any_count() { echo $(( $(proc_count) + $(legacy_count) )); }
 
 # ⓪ 슬롯 소유자 확인(team-lead 02:2x 지시) — logs/odev4b/slot_owner.txt 첫 줄 '소유자 시각'. 호출자는 PD_SLOT_OWNER=<이름> 을 준다.
 #    소유자가 아니면 기동하지 않는다(rc=6). 슬롯 관리자(odev-4b)가 넘길 때 이전 소유자의 회수 확인 뒤 이 파일을 바꾼다.
@@ -51,16 +47,16 @@ if [ -z "$DRY" ] && [ -n "$SLOT_OWNER" ] && [ "${PD_SLOT_OWNER:-}" != "$SLOT_OWN
 fi
 [ -z "$DRY" ] && echo "$(date '+%Y-%m-%d %H:%M:%S') owner=${PD_SLOT_OWNER:-} conf=$CONF kill=$KILL args=$*" >> "$ROOT/logs/odev4b/slot_runs.log"
 
-# ⓪-b 사용자 파일 보호(lead 10:2x — 제품판은 --fresh·--exit-after 를 무시하고 사용자 %LOCALAPPDATA%\PdPoc 를 쓴다)
+# ⓪-b 사용자 파일 보호(lead 10:2x — 제품판은 --fresh·--exit-after 를 무시하고 사용자 %LOCALAPPDATA%\xkxk\frameworks\ui 를 쓴다)
 #      직전 제품판 기동의 사용자 파일 md5 대조가 남아 있으면(앱 0개일 때) 먼저 대조한다. 다르면 기동 거부(rc=9) — 백업에서 확인·복구 후
 #      logs/user_files/pending 을 지워야 다음 기동이 된다.
 UF_DIR="$ROOT/logs/user_files"
-USER_PD="$(wslpath "$(cmd.exe /c 'echo %LOCALAPPDATA%' 2>/dev/null | tr -d '\r')" 2>/dev/null)/PdPoc"
+USER_PD="$(wslpath "$(cmd.exe /c 'echo %LOCALAPPDATA%' 2>/dev/null | tr -d '\r')" 2>/dev/null)/xkxk/frameworks/ui"
 # 대상: layout.json·settings.json·layouts/*(진단 원격 제어가 쓰는 remote-control.json 은 제외 — 진단판 기동마다 바뀐다)
 # + 사용자 폴더 전체의 파일·폴더 이름 목록(logs\ 하위 포함, lead 10:4x — 새 파일·폴더가 생기면 불일치). remote-control.json 은 목록에서도 제외
 #   일자 로그 logs/pd-YYYYMMDD.log(숫자 정확히 8자리)도 목록에서 제외(사용자 결정 Q2, 2026-11-24 — 앱이 매일 새로 만드는 파일이라 거짓 불일치). settings.json·layout.json md5 대조는 유지
 uf_md5() { [ -d "$USER_PD" ] && (cd "$USER_PD" && find . -maxdepth 2 -type f \( -name layout.json -o -name settings.json -o -path './layouts/*' \) | sort | xargs -r md5sum; find . -mindepth 1 ! -name remote-control.json ! -path './logs/pd-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].log' -printf 'entry %P\n' | sort) ; }
-if [ -z "$DRY" ] && [ -f "$UF_DIR/pending" ] && [ "$(any_count)" -eq 0 ]; then
+if [ -z "$DRY" ] && [ -f "$UF_DIR/pending" ] && [ "$(proc_count)" -eq 0 ]; then
   PREV_TS="$(cat "$UF_DIR/pending")"
   BASE="$UF_DIR/$PREV_TS.md5"
   # 이름 목록(entry) 도입 전 기준 파일이면 md5 줄만 대조한다(형식 호환)
@@ -73,8 +69,8 @@ if [ -z "$DRY" ] && [ -f "$UF_DIR/pending" ] && [ "$(any_count)" -eq 0 ]; then
   fi
 elif [ -z "$DRY" ] && [ -f "$UF_DIR/pending" ]; then
   # 대조 건너뜀 기록 — Pd 가 1개 이상 떠 있으면 사용자 파일 대조(위)를 하지 않는다. 건너뛴 사실을 남겨 빈틈을 눈에 보이게 한다(검출을 늘리는 방향만).
-  echo "사용자 파일 대조 건너뜀: $IMAGE 또는 $LEGACY_IMAGE 실행 중($(any_count)개) — 직전 제품판 기동 $(cat "$UF_DIR/pending") 기준 pending 유지. 앱 종료 후 다음 기동에서 대조된다."
-  echo "$(date '+%Y-%m-%d %H:%M:%S') owner=${PD_SLOT_OWNER:-} conf=$CONF pending=$(cat "$UF_DIR/pending") proc=$(any_count) 대조 건너뜀" >> "$UF_DIR/skipped_compare.log" 2>/dev/null
+  echo "사용자 파일 대조 건너뜀: $IMAGE 실행 중($(proc_count)개) — 직전 제품판 기동 $(cat "$UF_DIR/pending") 기준 pending 유지. 앱 종료 후 다음 기동에서 대조된다."
+  echo "$(date '+%Y-%m-%d %H:%M:%S') owner=${PD_SLOT_OWNER:-} conf=$CONF pending=$(cat "$UF_DIR/pending") proc=$(proc_count) 대조 건너뜀" >> "$UF_DIR/skipped_compare.log" 2>/dev/null
 fi
 # ① 사전 확인 — 기본은 실행 중이면 실패(BUSY, 아무것도 죽이지 않음), --kill 은 슬롯 소유자만(위에서 확인) 자기가 기록한 PID 를 종료(①-1)
 if [ -z "$DRY" ] && [ "$KILL" = "check" ] && [ "$(proc_count)" -gt 0 ]; then
@@ -108,9 +104,9 @@ kill_recorded() {
   return 0
 }
 if [ "$KILL" = "1" ]; then kill_recorded || exit 4; fi
-# 옛 이름(사용자 Pd 앱)은 KILL 모드와 무관하게 거부한다 — 단일 인스턴스 이름 PdPoc.{채널}.Instance 를 공유하므로 신호가 사용자 창으로 간다(UTODO-0014).
-if [ -z "$DRY" ] && [ "$HAS_MULTI" -eq 0 ] && { { [ "$KILL" != "check" ] && [ "$(proc_count)" -gt 0 ]; } || [ "$(legacy_count)" -gt 0 ]; }; then
-  echo "실행 중인 $IMAGE 또는 $LEGACY_IMAGE 가 있어 기동하지 않음 — 그대로 띄우면 기존 창에 활성화 신호가 간다. 함께 띄우려면 --multi-instance on(진단판·lead 승인)을 준다."
+# 같은 이름의 앱이 떠 있으면 --multi-instance 없이는 거부한다 — 단일 인스턴스 이름 xkxk.frameworks.ui.{채널}.Instance 가 같아 신호가 그 창으로 간다.
+if [ -z "$DRY" ] && [ "$HAS_MULTI" -eq 0 ] && [ "$KILL" != "check" ] && [ "$(proc_count)" -gt 0 ]; then
+  echo "실행 중인 $IMAGE 가 있어 기동하지 않음 — 그대로 띄우면 기존 창에 활성화 신호가 간다. 함께 띄우려면 --multi-instance on(진단판·lead 승인)을 준다."
   echo "RESULT=EXISTING_INSTANCE"; exit 11
 fi
 
@@ -160,7 +156,7 @@ if [ "$HAS_DD" = "1" ]; then
     [ -n "$DRY" ] && rmdir "$DDW" 2>/dev/null # 점검 모드는 빈 폴더를 남기지 않는다
   fi
   case "$(printf '%s' "$DD" | tr 'A-Z' 'a-z' | tr '/' '\\')" in
-    *appdata\\local\\pdpoc|*appdata\\local\\pdpoc\\) echo "--data-dir 가 사용자 폴더($DD) — 기동 거부."; echo "RESULT=PRODUCT_USER_DATADIR"; exit 8 ;;
+    *appdata\\local\\xkxk\\frameworks\\ui|*appdata\\local\\xkxk\\frameworks\\ui\\) echo "--data-dir 가 사용자 폴더($DD) — 기동 거부."; echo "RESULT=PRODUCT_USER_DATADIR"; exit 8 ;;
   esac
   echo "임시 데이터 폴더: $DD"
   if [ -z "$DRY" ]; then # 기동 전 사용자 파일 백업·md5(다음 기동 때 자동 대조)
@@ -172,7 +168,7 @@ if [ "$HAS_DD" = "1" ]; then
     elif [ ! -f "$UF_DIR/pending" ]; then echo "$TS" > "$UF_DIR/pending"; PEND_STATE="신규(없어서 기록)"; fi
     echo "사용자 파일 백업: $UF_DIR/$TS/ ($(wc -l < "$UF_DIR/$TS.md5")개) pending=$PEND_STATE"
     # 자기 PID 외 Pd 가 떠 있는데 --data-dir 격리 없이 기동하면 사용자 폴더를 같이 쓰므로 경고한다(경고만, 동작 불변). 이 분기는 --data-dir 지원판만 들어온다.
-    [ "$HAS_MULTI" -eq 1 ] && [ "$(any_count)" -gt 0 ] && echo "경고: 다른 $IMAGE 또는 $LEGACY_IMAGE 가 실행 중인 상태의 --multi-instance 기동 — 사용자 폴더 변경은 이후 대조(pending=$(cat "$UF_DIR/pending" 2>/dev/null))에서 검출된다."
+    [ "$HAS_MULTI" -eq 1 ] && [ "$(proc_count)" -gt 0 ] && echo "경고: 다른 $IMAGE 가 실행 중인 상태의 --multi-instance 기동 — 사용자 폴더 변경은 이후 대조(pending=$(cat "$UF_DIR/pending" 2>/dev/null))에서 검출된다."
   fi
 fi
 [ "$HAS_EXIT" -eq 1 ] || ARGS+=(--exit-after 30)

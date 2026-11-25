@@ -69,11 +69,11 @@ public sealed class AndroidApp : AvaloniaAndroidApplication<xkxk.frameworks.ui.v
         return ApplyGpuMode(customized);
     }
 
-    /// <summary>제품 로그 싱크(UI-17): logcat(표준 출력, 항상) + 앱 전용 폴더 PdPoc/logs/pd-YYYYMMDD.log(14일 보존).</summary>
+    /// <summary>제품 로그 싱크(UI-17): logcat(표준 출력, 항상) + 앱 전용 폴더 xkxk/frameworks/ui/logs/pd-YYYYMMDD.log(14일 보존).</summary>
     private static void AttachLogSinks()
     {
         xkxk.frameworks.ui.data.Logging.PdLog.AddSink(new xkxk.frameworks.ui.data.Logging.ConsoleLogSink(onlyInDebugMode: false));
-        var dir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PdPoc", "logs");
+        var dir = System.IO.Path.Combine(AppDataFolder.Root, "logs");
         xkxk.frameworks.ui.data.Logging.PdLog.FileDirectory = dir;
         xkxk.frameworks.ui.data.Logging.PdLog.AddSink(new xkxk.frameworks.ui.data.Logging.FileLogSink(dir));
         xkxk.frameworks.ui.data.Logging.PdLog.WriteSystem(xkxk.frameworks.ui.data.Logging.PdLogLevel.Information,
@@ -117,7 +117,7 @@ public sealed class AndroidApp : AvaloniaAndroidApplication<xkxk.frameworks.ui.v
         // 앱 전용 파일 files/pdargs.txt 를 App 초기화(XAML 로드·CreateLayout·TrExtension 판정) 전에 읽어 App.StartupArgs 에 넣고 지운다.
         // 인텐트 pdargs(MainActivity.OnCreate)는 Application 초기화보다 늦어 --loc static·--notify-panel 이 적용되지 않았다
         // (i0156 실측: 기준·loc static·notify-panel off 시각 트리 모두 2,912 — odev-3 02:3x).
-        // 시험기: adb shell run-as com.pd.poc sh -c 'echo "--loc static" > files/pdargs.txt' 뒤 기동. 한 번 읽으면 지워 다음 기동에 남지 않는다.
+        // 시험기: adb shell run-as xkxk.frameworks.ui sh -c 'echo "--loc static" > files/pdargs.txt' 뒤 기동. 한 번 읽으면 지워 다음 기동에 남지 않는다.
         try
         {
             if (FilesDir?.AbsolutePath is not { } dir) { return; }

@@ -43,7 +43,7 @@ export WSLENV="${WSLENV:+$WSLENV:}PD_ANDROID_SDK:PD_JAVA_SDK"
 LOG="${BUILD_LOG:-$ROOT/logs/build_android_$(date +%Y%m%d_%H%M%S).log}"
 rm -f "$LOG.rc"
 PROJ_WIN="$(wslpath -w "$ROOT/src/xkxk.frameworks.ui.android/xkxk.frameworks.ui.android.csproj")"
-APK="$ROOT/src/xkxk.frameworks.ui.android/bin/$CONF/net11.0-android/com.pd.poc-Signed.apk"
+APK="$ROOT/src/xkxk.frameworks.ui.android/bin/$CONF/net11.0-android/xkxk.frameworks.ui-Signed.apk"
 
 {
   echo "# build_android start $(date '+%Y-%m-%d %H:%M:%S') conf=$CONF PdDiagnostics=$DIAG"

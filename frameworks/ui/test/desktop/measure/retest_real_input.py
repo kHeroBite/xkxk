@@ -592,14 +592,14 @@ USER_PD_LOG_START = re.compile(r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\.\d+ \S+
 
 
 def user_pd_launches(t0_ms, t1_ms, log_dir=None):
-    """측정 구간 [t0, t1] 안에 사용자 데이터 폴더(%LOCALAPPDATA%\\PdPoc\\logs) 로그에 남은 'host start' 시각 목록. 읽을 수 없으면 None(판정 불가).
+    """측정 구간 [t0, t1] 안에 사용자 데이터 폴더(%LOCALAPPDATA%\\xkxk\\frameworks\\ui\\logs) 로그에 남은 'host start' 시각 목록. 읽을 수 없으면 None(판정 불가).
     한계: 로그를 남기지 않고 떴다 사라진 프로세스는 이 기록으로 잡지 못한다(시작·끝 present 로만 본다)."""
     if not t0_ms or not t1_ms:
         return None
     try:
         if log_dir is None:
             local = subprocess.run(["cmd.exe", "/c", "echo %LOCALAPPDATA%"], capture_output=True, text=True, timeout=30).stdout.strip()
-            log_dir = os.path.join(subprocess.run(["wslpath", local], capture_output=True, text=True, timeout=30).stdout.strip(), "PdPoc", "logs")
+            log_dir = os.path.join(subprocess.run(["wslpath", local], capture_output=True, text=True, timeout=30).stdout.strip(), "xkxk", "frameworks", "ui", "logs")
         found = []
         for day in sorted({time.strftime("%Y%m%d", time.localtime(t / 1000.0)) for t in (t0_ms, t1_ms)}):
             path = os.path.join(log_dir, "pd-%s.log" % day)

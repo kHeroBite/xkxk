@@ -2,7 +2,7 @@
 # motion_nav_fold5.py 의 안전 판정(켜짐·잠금·전면 앱)·원복 기대값·DOCK ✕ 자리와 종료 코드, 그 자체 시험 — 기기 없이 돈다
 import re
 
-PKG = "com.pd.poc"
+PKG = "xkxk.frameworks.ui"
 BOX = re.compile(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"')
 
 
@@ -73,7 +73,7 @@ def self_test():
         "잠금 판독 실패": not screen_ready(on, "")[0],
         "다른 이름은 안 봄": not screen_ready(on, "isShowing=false")[0],
         "홈에서 시작": may_start("topResumedActivity=com.sec.android.app.launcher/.Home"),
-        "시험 앱에서 시작": may_start("topResumedActivity=com.pd.poc/.MainActivity"),
+        "시험 앱에서 시작": may_start("topResumedActivity=xkxk.frameworks.ui/.MainActivity"),
         "다른 앱이면 안 함": not may_start("topResumedActivity=com.android.chrome/.Main"),
         "전면 판독 실패": not may_start(""),
         "DOCK ✕ 자리": close_point(dump, "그리드 6") == (890, 178) and close_point(dump, "그리드 5") == (673, 178),

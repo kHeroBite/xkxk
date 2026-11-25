@@ -141,7 +141,7 @@ class Close:
     def come_back(self):
         if not may_start(self.top()):
             return  # 다른 앱이 앞이면 사람 흔적이다 — 부르지 않고 다음 안전 확인이 멈춘다
-        name = self.sh("cmd package resolve-activity --brief com.pd.poc").splitlines()
+        name = self.sh("cmd package resolve-activity --brief xkxk.frameworks.ui").splitlines()
         if name and "/" in name[-1]:
             self.sh("am start -n '%s'" % name[-1])
             time.sleep(4)

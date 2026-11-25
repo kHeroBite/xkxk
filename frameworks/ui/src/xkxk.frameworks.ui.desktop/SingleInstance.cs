@@ -89,8 +89,8 @@ public sealed class SingleInstance : IDisposable
     /// </summary>
     public static SingleInstance? TryAcquire(string channel, Action<string> log)
     {
-        var name = $"PdPoc.{channel}.Instance";
-        var pipe = $"PdPoc.{channel}.{Process.GetCurrentProcess().SessionId}.Activate";
+        var name = $"xkxk.frameworks.ui.{channel}.Instance";
+        var pipe = $"xkxk.frameworks.ui.{channel}.{Process.GetCurrentProcess().SessionId}.Activate";
         Mutex mutex;
         bool createdNew;
         try

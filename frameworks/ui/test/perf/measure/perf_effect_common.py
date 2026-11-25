@@ -250,7 +250,7 @@ def self_test():
         ("data-dir 없음 거부", bool(launch_problem("# run args: --multi-instance on", good_log, data))),
         ("다른 data-dir 거부", bool(launch_problem(good_args.replace(data, data + "2"), good_log, data))),
         ("상대경로 data-dir 거부", bool(launch_problem(good_args.replace(data, "logs\\x"), good_log, "logs\\x"))),
-        ("사용자 경로 layout-file 거부", bool(launch_problem(good_args, "layout-file=C:\\Users\\u\\PdPoc\\layout.json bg-pos=auto", data))),
+        ("사용자 경로 layout-file 거부", bool(launch_problem(good_args, "layout-file=C:\\Users\\u\\xkxk\\frameworks\\ui\\layout.json bg-pos=auto", data))),
         ("layout-file 없음 거부", bool(launch_problem(good_args, "", data))),
         ("격리 안 연결 정보 허용", info_problem(inside, {"port": 5242}) is None),
         ("사용자 포트 거부", info_problem(inside, {"port": 5180}) and info_problem(inside, {"port": 5220})),

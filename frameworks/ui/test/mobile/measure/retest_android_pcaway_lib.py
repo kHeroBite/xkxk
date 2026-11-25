@@ -19,7 +19,7 @@ import ui28_android as U  # noqa: E402
 
 ra, rr = U.ra, U.rr
 SER = "R3CW70202FP"
-PKG = "com.pd.poc"
+PKG = "xkxk.frameworks.ui"
 PLAY_PROTECT = []  # 설치 중 만난 Play 프로텍트 전송 질문 기록
 
 
@@ -138,7 +138,7 @@ def attach(c, restart=True, token_from_logcat=False, wait=80):
     if restart:
         sh("am force-stop %s" % PKG)
         if not token_from_logcat:
-            sh("run-as %s rm -f files/PdPoc/remote-control.json" % PKG)
+            sh("run-as %s rm -f files/xkxk/frameworks/ui/remote-control.json" % PKG)
         adb("logcat", "-c")
         sh("monkey -p %s -c android.intent.category.LAUNCHER 1" % PKG)
     adb("forward", "tcp:%d" % ra.HOST_PORT, "tcp:5960")
@@ -149,7 +149,7 @@ def attach(c, restart=True, token_from_logcat=False, wait=80):
             if ms:
                 info = {"url": ms[-1][0], "port": 5960, "token": ms[-1][3], "pid": int(ms[-1][2]), "bind": ms[-1][1].split(",")}
         else:
-            rc, out = adb("exec-out", "run-as", PKG, "cat", "files/PdPoc/remote-control.json")
+            rc, out = adb("exec-out", "run-as", PKG, "cat", "files/xkxk/frameworks/ui/remote-control.json")
             if rc == 0 and out.strip().startswith("{"):
                 info = json.loads(out)
         if not info:

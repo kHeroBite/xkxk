@@ -33,7 +33,7 @@ internal sealed class HostArgs
     public bool IsOn(string key) => string.Equals(Get(key), "on", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>레이아웃 파일 경로: --layout-file > (--data-dir 또는 PD_DATA_DIR)\layout.json > null(기본 위치).
-    /// 데이터 폴더 재지정은 제품판 시험이 사용자 %LOCALAPPDATA%\PdPoc 를 건드리지 않게 하는 수단이다(team-lead 10:2x).</summary>
+    /// 데이터 폴더 재지정은 제품판 시험이 사용자 %LOCALAPPDATA%\xkxk\frameworks\ui 를 건드리지 않게 하는 수단이다(team-lead 10:2x).</summary>
     public string? LayoutFile()
     {
         var dataDir = Get(DataDirArg) is { Length: > 0 } dd ? dd : Environment.GetEnvironmentVariable(DataDirEnv);

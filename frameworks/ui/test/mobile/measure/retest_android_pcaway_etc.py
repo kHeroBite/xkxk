@@ -112,7 +112,7 @@ def c7(a):
     os.makedirs(a.out, exist_ok=True)
     density = L.sh("wm density")
     stay = L.sh("settings get global stay_on_while_plugged_in")
-    pkgs = L.sh("pm list packages com.pd")
+    pkgs = L.sh("pm list packages xkxk.frameworks.ui.")  # 끝 점: 본 앱(xkxk.frameworks.ui) 제외, 시험용 별도 패키지만 본다
     st = L.sh("cmd device_state state")
     print(density, stay, pkgs, st, flush=True)
     if a.measure:

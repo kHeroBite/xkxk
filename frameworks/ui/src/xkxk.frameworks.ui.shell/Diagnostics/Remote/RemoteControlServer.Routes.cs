@@ -27,7 +27,7 @@ public sealed partial class RemoteControlServer
         if (cmd.Equals("health", StringComparison.OrdinalIgnoreCase))
         {
             var (ready, reason) = await VisualTreeInspector.ReadyAsync(); // ready=TopLevel·뷰모델·셸 모두 있음, 아니면 reason=첫 결핍(lead 02:5x)
-            return Json(200, RemoteProtocol.Ok("health", new JsonObject { ["app"] = "Pd.Poc", ["pid"] = Environment.ProcessId, ["ready"] = ready, ["reason"] = reason, ["restore"] = RemoteCommands.StartupRestore }, 0)); // restore=기동 복원 결과(odev-2 RestoreResult)
+            return Json(200, RemoteProtocol.Ok("health", new JsonObject { ["app"] = "xkxk.frameworks.ui", ["pid"] = Environment.ProcessId, ["ready"] = ready, ["reason"] = reason, ["restore"] = RemoteCommands.StartupRestore }, 0)); // restore=기동 복원 결과(odev-2 RestoreResult)
         }
 
         if (!Authorized(req))

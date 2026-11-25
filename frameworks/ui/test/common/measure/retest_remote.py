@@ -164,10 +164,10 @@ def step_chrome(r):
 
 
 def shot_dir_ok(d):
-    """캡처 폴더 검사: 그 실행의 임시 데이터 폴더(Windows 경로)여야 한다. 비었거나 사용자 폴더(%LOCALAPPDATA%\\PdPoc)면 None(D-SHOT1 — path 없는 캡처는 진단판이 사용자 폴더에 쓴다)."""
+    """캡처 폴더 검사: 그 실행의 임시 데이터 폴더(Windows 경로)여야 한다. 비었거나 사용자 폴더(%LOCALAPPDATA%\\xkxk\\frameworks\\ui)면 None(D-SHOT1 — path 없는 캡처는 진단판이 사용자 폴더에 쓴다)."""
     d = (d or "").strip().rstrip("\\")
     low = d.lower().replace("/", "\\")
-    if not d or ":\\" not in d or low.endswith("appdata\\local\\pdpoc") or "\\appdata\\local\\pdpoc\\" in low + "\\":
+    if not d or ":\\" not in d or low.endswith("appdata\\local\\xkxk\\frameworks\\ui") or "\\appdata\\local\\xkxk\\frameworks\\ui\\" in low + "\\":
         return None
     return d
 

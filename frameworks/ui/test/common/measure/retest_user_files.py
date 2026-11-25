@@ -1,4 +1,4 @@
-# 데스크톱 시험 공용 — 사용자 상태 파일(%LOCALAPPDATA%\PdPoc 의 layout·settings) 백업·md5(앱이 꺼져 있어도 폴더를 찾는다)
+# 데스크톱 시험 공용 — 사용자 상태 파일(%LOCALAPPDATA%\xkxk\frameworks\ui 의 layout·settings) 백업·md5(앱이 꺼져 있어도 폴더를 찾는다)
 import glob
 import hashlib
 import os
@@ -9,9 +9,9 @@ USER_FILES = ("layout.json", "settings.json")  # 종료 자동 저장·명시 la
 
 def user_dir():
     """사용자 설정 폴더. pdctl.info_path 는 연결 정보 파일이 없으면 sys.exit 하므로 쓰지 않는다."""
-    found = sorted(glob.glob("/mnt/c/Users/*/AppData/Local/PdPoc"), key=os.path.getmtime)
+    found = sorted(glob.glob("/mnt/c/Users/*/AppData/Local/xkxk/frameworks/ui"), key=os.path.getmtime)
     if not found:
-        raise RuntimeError("사용자 설정 폴더(PdPoc) 없음")
+        raise RuntimeError("사용자 설정 폴더(xkxk/frameworks/ui) 없음")
     return found[-1]
 
 
@@ -74,13 +74,13 @@ def host_args(cmdline):
 
 def in_user_dir(win_path):
     """
-    그 Windows 경로가 사용자 폴더(%LOCALAPPDATA%\\PdPoc)와 같거나 그 아래인가(하위 폴더·정션 포함). 판정 못 하면 True(비격리로 본다).
-    문자열 검사(…\\AppData\\Local\\PdPoc[\\…]) 뒤, wslpath 로 바꿔 realpath(정션·심볼릭 링크 해석)를 사용자 폴더 realpath 와 대조한다.
+    그 Windows 경로가 사용자 폴더(%LOCALAPPDATA%\\xkxk\\frameworks\\ui)와 같거나 그 아래인가(하위 폴더·정션 포함). 판정 못 하면 True(비격리로 본다).
+    문자열 검사(…\\AppData\\Local\\xkxk\\frameworks\\ui[\\…]) 뒤, wslpath 로 바꿔 realpath(정션·심볼릭 링크 해석)를 사용자 폴더 realpath 와 대조한다.
     """
     import re
     import subprocess
     s = (win_path or "").replace("/", "\\").lower()
-    if not s or re.search(r"\\appdata\\local\\pdpoc(\\|$)", s):
+    if not s or re.search(r"\\appdata\\local\\xkxk\\frameworks\\ui(\\|$)", s):
         return True
     try:
         wsl = subprocess.run(["wslpath", "-u", win_path], capture_output=True, timeout=10).stdout.decode().strip()
@@ -89,13 +89,13 @@ def in_user_dir(win_path):
     if not wsl:
         return True
     real = os.path.realpath(wsl).lower()
-    users = [os.path.realpath(p).lower() for p in glob.glob("/mnt/c/Users/*/AppData/Local/PdPoc")]
+    users = [os.path.realpath(p).lower() for p in glob.glob("/mnt/c/Users/*/AppData/Local/xkxk/frameworks/ui")]
     return any(real == u or real.startswith(u.rstrip("/") + "/") for u in users)
 
 
 def isolation(pid):
     """
-    (격리 여부, 상세). 격리 = 그 PID 명령줄에 사용자 폴더(%LOCALAPPDATA%\\PdPoc, 하위 폴더·정션 포함)가 아닌 --data-dir 가 있다.
+    (격리 여부, 상세). 격리 = 그 PID 명령줄에 사용자 폴더(%LOCALAPPDATA%\\xkxk\\frameworks\\ui, 하위 폴더·정션 포함)가 아닌 --data-dir 가 있다.
     --profile-dir 만으로는 격리로 보지 않는다(앱은 로그·캡처 폴더를 --data-dir 로 정한다). --profile-dir 가 있으면 그것도 사용자 폴더가 아니어야 한다.
     명령줄을 읽지 못하거나 PID 가 없으면 격리 아님(확인 불가 = 거부). --isolated 모드의 실행 전제다.
     """
@@ -130,12 +130,11 @@ def user_pds():
     import re
     import subprocess
     found = []
-    # 새 이름과 옛 이름(LEGACY: 사용자 Pd 앱 Pd.Poc.Desktop.exe)을 모두 조회한다
-    for image in ("xkxk.frameworks.ui.desktop.exe", "Pd.Poc.Desktop.exe"):  # LEGACY
+    for image in ("xkxk.frameworks.ui.desktop.exe",):
         out = subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq " + image, "/NH", "/FO", "CSV"], capture_output=True).stdout
         for line in out.decode("utf-8", "replace").splitlines():
             cols = [c.strip('"') for c in line.strip().split('","')]
-            if len(cols) > 1 and cols[0].lower().startswith(("xkxk.frameworks.ui.desktop", "pd.poc.desktop")) and cols[1].isdigit():  # LEGACY 옛 이름 pd.poc.desktop 조회
+            if len(cols) > 1 and cols[0].lower().startswith("xkxk.frameworks.ui.desktop") and cols[1].isdigit():
                 cmd = proc_cmdline(int(cols[1]))
                 tool = cmd and "--remote-control" in cmd and re.search(r"--log\s+\"?[^\"]*desktop_[0-9_]+\.log", cmd)
                 if not tool:

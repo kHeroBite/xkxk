@@ -182,7 +182,7 @@ def self_test():
         ("대체값도 기준 2000 초과·단축 부족이면 불합격", judge_mode(mk([{"ff_miss": "first_sample_late", "ff_aux_ms": 2100}], after, kept), 2267)[0]["first_frame"], False),
         ("다른 사유(all_blank)엔 대체 안 함", judge_mode(mk([{"ff_miss": "all_blank", "ff_aux_ms": 500}], after, kept), 2267)[0]["first_frame"], False),
         ("ff_ms 있으면 대체 미사용", judge_mode(mk(good_ff, after, kept), 2267)[1]["대체 지표"], None),
-        ("시행 줄의 Displayed 우선", row_displayed({"lines": ["I ActivityTaskManager: Displayed com.pd.poc/x for user 0: +1s565ms"]}), 1565),
+        ("시행 줄의 Displayed 우선", row_displayed({"lines": ["I ActivityTaskManager: Displayed xkxk.frameworks.ui/x for user 0: +1s565ms"]}), 1565),
     ]
     bad = 0
     for name, got, want in cases:

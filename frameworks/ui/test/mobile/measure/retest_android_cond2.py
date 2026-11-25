@@ -45,12 +45,12 @@ def count_nodes(node):
 def launch(serial, args, info_path):
     """앱을 종료하고 files/pdargs.txt 를 쓴 뒤 기동해 새 토큰을 연결 정보 파일에 쓴다."""
     ra.adb(serial, "shell", "am", "force-stop", ra.PKG)
-    ra.adb(serial, "shell", "run-as", ra.PKG, "rm", "-f", "files/PdPoc/remote-control.json")
+    ra.adb(serial, "shell", "run-as", ra.PKG, "rm", "-f", "files/xkxk/frameworks/ui/remote-control.json")
     ra.adb(serial, "logcat", "-c")
     ra.adb(serial, "shell", "run-as %s sh -c 'echo \"%s\" > files/pdargs.txt'" % (ra.PKG, args))
     ra.adb(serial, "shell", "monkey", "-p", ra.PKG, "-c", "android.intent.category.LAUNCHER", "1")
     for _ in range(45):
-        rc, out = ra.adb(serial, "exec-out", "run-as", ra.PKG, "cat", "files/PdPoc/remote-control.json")
+        rc, out = ra.adb(serial, "exec-out", "run-as", ra.PKG, "cat", "files/xkxk/frameworks/ui/remote-control.json")
         if rc == 0 and out.strip().startswith("{"):
             info = json.loads(out)
             info["port"] = ra.HOST_PORT

@@ -48,5 +48,13 @@
 - 결정: 프로젝트·라이브러리·어셈블리 이름을 저장소 폴더 경로를 점으로 이은 소문자 이름(`xkxk.frameworks.ui`, 층별 `.views`·`.shell`·`.data`·`.desktop`·`.browser`·`.android`·`.fonts`)으로 한다. 하위 네임스페이스는 하위 폴더 이름(PascalCase) 그대로 둔다. 이름 대응은 `Pd.Ui`→`xkxk.frameworks.ui`, `Pd.Ui.Views`→`.views`, `Pd.Poc.Shell`→`.shell`, `Pd.Client.Data`→`.data`, `Pd.Poc.Desktop`→`.desktop`, `Pd.Poc.Browser`→`.browser`, `Pd.Poc.Android`·`Pd.Poc.Droid`→`.android`, `Pd.Fonts`→`.fonts` 이다.
 - 근거: 사용자 원문 "프로젝트 라이브러리는 폴더기준으로 잡자. 예를들면 xkxk.frameworks.ui 같은거다". 이름과 폴더 경로가 기계적으로 대응하고, 실행 파일 이름이 사용자 Pd 앱과 달라져 프로세스 이름 겹침이 사라진다.
 - 대안: PascalCase(`Xkxk.Frameworks.Ui.*`)는 사용자 예시와 달라 기각했다. 폴더는 그대로 두고 어셈블리만 바꾸는 안은 폴더와 이름이 어긋나 기각했다. 하위 네임스페이스까지 소문자로 하는 안은 하위 폴더 수백 곳 이름 변경이 필요해 기각했다.
-- 영향: `src/` 전체, 도구·시험 스크립트, `AGENTS.md`, `README.md`, `plan/04_기술스택/02_소스구조_분할규칙.md`. Android 패키지 `com.pd.poc`(UTODO-0013)와 `PdPoc` 데이터 폴더·단일 인스턴스 이름(UTODO-0014)은 이번 결정 범위 밖이다.
+- 영향: `src/` 전체, 도구·시험 스크립트, `AGENTS.md`, `README.md`, `plan/04_기술스택/02_소스구조_분할규칙.md`. Android 패키지 `com.pd.poc`(UTODO-0013)와 `PdPoc` 데이터 폴더·단일 인스턴스 이름(UTODO-0014)은 이번 결정 범위 밖이었으나 UADR-0003 에서 같은 규칙으로 전환했다.
+- 상태: 채택
+
+## UADR-0003 데이터 폴더·단일 인스턴스·Android 패키지도 폴더 경로 기준으로 옛 Pd 앱과 분리한다
+- 일자: 2026-11-25
+- 결정: 사용자 데이터 폴더를 `%LOCALAPPDATA%\xkxk\frameworks\ui`, 단일 인스턴스 이름을 `xkxk.frameworks.ui.<채널>.Instance`, Android 패키지를 `xkxk.frameworks.ui`(APK `xkxk.frameworks.ui-Signed.apk`)로 한다. 옛 `%LOCALAPPDATA%\PdPoc` 를 읽는 이전·폴백 코드는 두지 않는다. 브라우저 localStorage 키는 바꾸지 않는다.
+- 근거: 사용자 원문 "기존 폴더와의 의존성을 모두 끊어야 한다"·"xkxk/frameworks/ui 처럼 폴더를 동일하게 맞춰라"·"옛앱은 이제 필요없으니 모두 지워도 된다. 신규앱만 남겨라. %LOCALAPPDATA%\PdPoc 도 지워라".
+- 대안: 옛 폴더를 읽어 설정을 옮기는 이전 코드는 사용자가 옛 앱을 버리기로 해 기각했다. Android 패키지를 그대로 두는 안(UTODO-0013 당시 유지)은 옛 앱과 공존·충돌 위험이 남아 기각했다.
+- 영향: `src/xkxk.frameworks.ui.data/AppDataFolder.cs`(신설)·데스크톱·Android 호스트, `tools/`·`test/` 스크립트, `AGENTS.md`, `README.md`. UTODO-0013·0014 완료. 이전하지 않으므로 사용자 옛 설정은 새 앱에 이어지지 않는다.
 - 상태: 채택

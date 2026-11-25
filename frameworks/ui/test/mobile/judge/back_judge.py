@@ -24,9 +24,9 @@ def back_closed(nodes_after, foreground, pkg):
 
 
 def self_test():
-    pkg = "com.pd.poc"
+    pkg = "xkxk.frameworks.ui"
     launcher = "topResumedActivity=ActivityRecord{135566092 u0 com.sec.android.app.launcher/.activities.LauncherActivity t7}\n  ResumedActivity: ActivityRecord{135566092 u0 com.sec.android.app.launcher/.activities.LauncherActivity t7}"
-    app = "topResumedActivity=ActivityRecord{151762747 u0 com.pd.poc/crc64470901fbb571b1ad.MainActivity t42}"
+    app = "topResumedActivity=ActivityRecord{151762747 u0 xkxk.frameworks.ui/crc64470901fbb571b1ad.MainActivity t42}"
     cases = [
         ("전면 패키지 launcher", foreground_package(launcher), "com.sec.android.app.launcher"),
         ("전면 패키지 앱", foreground_package(app), pkg),

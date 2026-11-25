@@ -68,6 +68,6 @@
 
 ## 6. 이번에 하지 않은 것
 
-- `Pd.Poc.*` 이름 전환은 2026-11-24 `xkxk.frameworks.ui.*` 로 했다(UTODO-0007, UADR-0002). NuGet 패키지화, `apps/pd` 이전, 루트 공통 표준 본문 작성은 하지 않았다.
+- `Pd.Poc.*` 이름 전환은 2026-11-24 `xkxk.frameworks.ui.*` 로 했다(UTODO-0007, UADR-0002). 데이터 폴더·단일 인스턴스·Android 패키지도 2026-11-25 같은 규칙으로 전환했다(UTODO-0013·0014, UADR-0003). NuGet 패키지화, `apps/pd` 이전, 루트 공통 표준 본문 작성은 하지 않았다.
 - 경로가 박힌 시험 스크립트는 고치지 않고 `/mnt/c/DATA/Project/xkxk/frameworks/ui/plan/90_결정관리/이전기록_2026-11-24_경로고정목록.md` 에 UTODO-0001 로 남겼다.
 - `plan/09_화면설계/02_메뉴구조.md` 생성기(`menu_tree.py`)는 옮기지 않았다. 재생성은 Pd 저장소에서 한다.

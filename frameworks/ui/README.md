@@ -39,7 +39,7 @@ cat <RC 파일>                            # 0 이면 성공
 ```
 
 - Android SDK·JDK 경로는 환경변수 `PD_ANDROID_SDK`·`PD_JAVA_SDK`(Windows 경로)로 넘긴다. `xkxk.frameworks.ui.android.csproj` 는 이 값이 있으면 쓰고, 없으면 이 PC 의 실측 경로(`C:\Program Files (x86)\Android\android-sdk`, `C:\Program Files\Android\openjdk\jdk-21.0.8`)가 존재할 때 쓴다. `tools/build_android.sh` 는 환경변수가 비어 있을 때만 `%USERPROFILE%\pd-android\{sdk,jdk}` 가 있으면 설정하고 `WSLENV` 로 `dotnet.exe` 에 전달한다. 둘 다 없으면 워크로드 기본 탐색에 맡긴다.
-- Android: `poc/ui/tools/build_android.sh --bg [Debug|Release] [PdDiagnostics=true|false]`(기본 Debug·true). 산출물은 `src/xkxk.frameworks.ui.android/bin/<구성>/net11.0-android/com.pd.poc-Signed.apk`.
+- Android: `poc/ui/tools/build_android.sh --bg [Debug|Release] [PdDiagnostics=true|false]`(기본 Debug·true). 산출물은 `src/xkxk.frameworks.ui.android/bin/<구성>/net11.0-android/xkxk.frameworks.ui-Signed.apk`.
 - **웹(.NET 11) SkiaSharp 우회**: `xkxk.frameworks.ui.browser.csproj` 에만 `SkiaSharp`·`SkiaSharp.NativeAssets.WebAssembly` 4.158.0-preview.2.26560.5 와 `HarfBuzzSharp`·`HarfBuzzSharp.NativeAssets.WebAssembly` 15.0.0-preview.2.26560.5 를 직접 참조하고, `SkiaSharp.dll`·`HarfBuzzSharp.dll` 은 `_AOT_InternalForceInterpretAssemblies`(SDK 내부 항목)로 AOT 에서 뺀다. 원인은 Avalonia.Skia 12.1.4 가 끌어오는 SkiaSharp 3.119 의 wasm 정적 라이브러리가 Emscripten 3.1.56 용이라 .NET 11(Emscripten 6.0.2)에서 `saveSetjmp` 링크 오류가 나는 것이고(근거 https://github.com/AvaloniaUI/Avalonia/issues/21700), 4.x 어셈블리를 Mono AOT 하면 크래시(`sgen-alloc.c:409`)해 해석 실행으로 둔다(크래시 위치는 obuild-2 보고). 위험: Avalonia.Skia 12.1.4 와 SkiaSharp 4.x 프리뷰는 보증된 조합이 아니며 데스크톱·Android 는 3.119 그대로라 판이 다르다. Avalonia 12.2(PR https://github.com/AvaloniaUI/Avalonia/pull/22196)가 NuGet 에 나오면 이 우회를 뺀다.
 - **직렬화**: 세 스크립트는 `tools/build_lock.sh` 의 `flock`(`logs/.build_<구성>.lock`)으로 같은 Configuration 빌드를 한 번에 하나만 돌린다. 헤드(Desktop·Browser·Android)·`PdDiagnostics`·`PdChannel` 이 달라도 공유 프로젝트의 `obj/<구성>` 을 같이 쓰므로 겹치면 판본이 섞인다. Desktop 의 Work·Product·R2R 은 Release 잠금을 쓴다. 대기 상한은 `PD_BUILD_LOCK_WAIT`초(기본 1800), 넘기면 rc=75.
 - **웹 프로파일 판(진단 전용, 판정 미사용)**: 브라우저 publish 에 `-p:PdDiagnostics=true -p:PdWasmProfile=true` 를 주면 wasm 함수 이름 맵과 브라우저 프로파일러 C# 구간이 들어간다(`src/xkxk.frameworks.ui.browser/xkxk.frameworks.ui.browser.csproj` 18~28행). 이 판은 SDK 제약으로 `-p:RunAOTCompilation=false`(비-AOT)라 시간 판정에 쓰지 않고 함수별 상대 몫만 본다. 프로파일 판을 만든 뒤 일반 웹 빌드는 obj 가 프로파일 상태라 `--no-incremental` 로 다시 빌드한다.
@@ -82,7 +82,7 @@ poc/ui/tools/run_desktop_bg.sh -- --open grid:5,gantt:5,form:10 --layout tile \
 | `--reps N` | `--cmd perf-ui` 조작별 반복 수 덮어쓰기(기본=profile 값 full 10 / short 3). 결과 operations 에 `*_p95_interp_ms`(선형보간)·`frame_cold_ms`·`frame_warm_*` 추가 필드 |
 | (로그) | perf-ui 는 조작마다 `[perf-ui] 시각 start/end 이름 sync=..ms frame=..ms` 를 남기고 2초 초과는 `SLOW` 를 붙인다. PerfProbe 는 rAF 간격 1초 초과를 `[perf] 시각 frame gap Nms phase=…` 로 항상 남긴다(UI 스레드 정지 추적). 데스크톱은 `--log` 파일, 브라우저는 console(`window.__pdPoc.logs`) |
 | `--fresh` | 깨끗한 시험용(셸이 소비): 기동 시 레이아웃 자동 복원 안 함, 종료 시 자동 저장 안 함. 웹은 `?fresh`. 사용자 경로 시험(`--mode user`)에는 붙이지 않는다. 인자가 있는 자동화 실행은 원래도 자동 저장·복원이 꺼져 있다 |
-| `--layout-file <json>` | 레이아웃 파일 경로(데스크톱, 기본 `%LOCALAPPDATA%\PdPoc\layout.json`) |
+| `--layout-file <json>` | 레이아웃 파일 경로(데스크톱, 기본 `%LOCALAPPDATA%\xkxk\frameworks\ui\layout.json`) |
 | `--log <파일>` | 앱 로그 경로(데스크톱 호스트 전용) |
 | `--layout-key <키>` | localStorage 키(브라우저, 기본 `pd-poc-layout`) |
 
@@ -145,7 +145,7 @@ grep "MDI-12 normalize" poc/ui/logs/desktop_*.log | tail -3
   - 예전에 쓰던 HttpListener(http.sys)는 `http://localhost:포트/` 접두사가 모든 주소에서 연결을 받고 Host 헤더로만 걸렀다(otest-1 실측). 루프백 IP 접두사는 관리자 권한(urlacl)이 필요하다. 그래서 교체했다.
 - 포트가 사용 중이면 +1씩 최대 10회 다시 시도한다. 실제 바인드 주소는 시작 로그(`bind=127.0.0.1:5960,[::1]:5960`)와 연결 정보 파일의 `bind` 배열로 확인한다.
 - 토큰은 기동할 때마다 무작위 32자로 만든다. 요청마다 `X-Pd-Token: <토큰>` 헤더, `Authorization: Bearer <토큰>`, `?token=` 중 하나로 보낸다. `/api/health` 만 토큰 없이 응답한다.
-- 연결 정보는 `%LOCALAPPDATA%\PdPoc\remote-control.json`(url·port·token·pid·bind·started)에 기록하고 호스트 로그에도 남긴다. 종료할 때 파일을 지운다. Android 는 앱 전용 폴더(`/data/user/0/com.pd.poc/files/PdPoc/remote-control.json`, 22:42 실측)다.
+- 연결 정보는 `%LOCALAPPDATA%\xkxk\frameworks\ui\remote-control.json`(url·port·token·pid·bind·started)에 기록하고 호스트 로그에도 남긴다. 종료할 때 파일을 지운다. Android 는 앱 전용 폴더(`/data/user/0/xkxk.frameworks.ui/files/xkxk/frameworks/ui/remote-control.json`, 22:42 실측)다.
 - 모든 조작은 UI 스레드(Dispatcher)에서 실행한다. 실입력(SendInput·커서·전경 획득)은 쓰지 않는다. 클릭은 Automation Peer 패턴(Invoke/Toggle/SelectionItem/ExpandCollapse)으로 한다.
 - HTTP 처리는 최소 구현이다(RemoteHttp.cs). 한 연결에 요청 1건만 받고 `Connection: close` 로 응답한다. 헤더는 64KB, 본문은 16MB 까지이고 요청 하나는 120초가 지나면 끊는다.
 - 브라우저(WASM)는 소켓 수신이 없어 HTTP 서버를 쓸 수 없다. 대신 `window.pdAutomation.invoke({cmd, args})` 브리지(`RemoteCommandRouter.Default.InvokeJsonAsync`)로 같은 명령을 부른다.
@@ -190,11 +190,11 @@ python3 tools/pdctl.py screenshot.download out=/tmp/a.png window=0
 ### Android(Debug APK)
 Debug APK 는 기동하면 기기 안 `localhost:5960` 에서 원격 제어를 켠다. 23:28 Fold5 에서 루프백 전용 판(APK md5 2aa85531)을 실측했다. 시작 로그 bind 는 `127.0.0.1:5960,[::1]:5960` 이다. adb forward 연결은 기기 루프백으로 들어오며 health 200 이다. status 의 platform 은 `android` 다.
 
-1. 설치·실행: `adb -s <기기> install -r com.pd.poc-Signed.apk` 뒤 `adb shell monkey -p com.pd.poc -c android.intent.category.LAUNCHER 1`. logcat `DOTNET` 태그에 `[remote] 원격 제어 서버 시작 … token=…` 이 찍힌다.
+1. 설치·실행: `adb -s <기기> install -r xkxk.frameworks.ui-Signed.apk` 뒤 `adb shell monkey -p xkxk.frameworks.ui -c android.intent.category.LAUNCHER 1`. logcat `DOTNET` 태그에 `[remote] 원격 제어 서버 시작 … token=…` 이 찍힌다.
 2. 포트 연결: `adb -s <기기> forward tcp:15960 tcp:5960`. Windows 쪽 포트는 데스크톱 앱과 겹치지 않는 값을 쓴다.
-3. 토큰: `adb -s <기기> exec-out run-as com.pd.poc cat files/PdPoc/remote-control.json > /tmp/pd_android.json` 로 받은 뒤 JSON 의 `port` 를 15960 으로 바꾼다.
+3. 토큰: `adb -s <기기> exec-out run-as xkxk.frameworks.ui cat files/xkxk/frameworks/ui/remote-control.json > /tmp/pd_android.json` 로 받은 뒤 JSON 의 `port` 를 15960 으로 바꾼다.
 4. 호출: `PD_REMOTE_INFO=/tmp/pd_android.json python3 tools/pdctl.py status`. 명령 체계는 데스크톱과 같다.
-5. 원복: `adb forward --remove tcp:15960`, `adb uninstall com.pd.poc`. 기기 화면 설정(wm size·density 등)은 바꾸지 않는다.
+5. 원복: `adb forward --remove tcp:15960`, `adb uninstall xkxk.frameworks.ui`. 기기 화면 설정(wm size·density 등)은 바꾸지 않는다.
 
 ### 명령 표
 | 명령 | 인자 | 결과 |

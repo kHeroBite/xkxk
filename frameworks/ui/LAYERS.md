@@ -8,13 +8,13 @@
 | 층 | 파일 수 |
 |---|---:|
 | Control | 268 |
-| Data | 33 |
+| Data | 34 |
 | Diag | 88 |
 | Host | 72 |
 | Ui | 26 |
 | Views | 237 |
 
-합계 724개(.cs·.axaml).
+합계 725개(.cs·.axaml).
 
 ## 끊어야 하는 참조(현재 기준 금지 방향)
 
@@ -60,6 +60,7 @@
 | `xkxk.frameworks.ui.browser/Program.cs` | Host |  | 호스트 프로젝트 | O |  | Program |
 | `xkxk.frameworks.ui.browser/StartupTiming.cs` | Host |  | 호스트 프로젝트 | O |  | StartupTiming |
 | `xkxk.frameworks.ui.data/AppChannel.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.data/AppDataFolder.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Layout/BackupBundle.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Layout/BackupIndex.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Layout/BackupIndexItem.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |

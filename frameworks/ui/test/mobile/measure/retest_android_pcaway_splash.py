@@ -549,7 +549,7 @@ def self_test():
         ("유실 ③ 앱 로그 뒤 탭·표식 없음", (classify_loss({**lost, "tap_ms": 900}, cm) or {}).get("cls"), "other"),
         ("유실 ② 설계상 버림", (classify_loss({**lost, "marks": {**none, "replay_result": "dropped reason=stale"}}, cm) or {}).get("cls"), "design_discard"),
         ("유실 ③ sent 인데 안 열림", (classify_loss({**lost, "marks": buf}, cm) or {}).get("cls"), "other"),
-        ("유실 ① 입력 싱크(앱 로그 뒤 탭)", (classify_loss({**lost, "tap_ms": 900, "input_lines": inj("W InputDispatcher: Not sending touch gesture to 51bf5a5 ActivityRecordInputSink com.pd.poc/x.MainActivity because it has config NO_INPUT_CHANNEL")}, cm) or {}).get("cls"), "before_window"),
+        ("유실 ① 입력 싱크(앱 로그 뒤 탭)", (classify_loss({**lost, "tap_ms": 900, "input_lines": inj("W InputDispatcher: Not sending touch gesture to 51bf5a5 ActivityRecordInputSink xkxk.frameworks.ui/x.MainActivity because it has config NO_INPUT_CHANNEL")}, cm) or {}).get("cls"), "before_window"),
         ("유실 ① 닿은 창 없음", (classify_loss({**lost, "tap_ms": 900, "input_lines": inj("I InputDispatcher: No new touched window at (646.0, 116.0) in display 0")}, cm) or {}).get("cls"), "before_window"),
         ("유실 ① 다른 pid 창", (classify_loss({**lost, "tap_ms": 900, "lines": pid_lines, "input_lines": inj("I InputDispatcher: Delivering touch to (32528): action: 0x0, f=0x0, d=0, 'Embedde', t=1")}, cm) or {}).get("cls"), "before_window"),
         ("유실 ③ 앱 pid 창에 전달됐는데 안 열림", (classify_loss({**lost, "tap_ms": 900, "lines": pid_lines, "input_lines": inj("I InputDispatcher: Delivering touch to (12715): action: 0x0, f=0x0, d=0, 'a5b9e03', t=1")}, cm) or {}).get("cls"), "other"),
