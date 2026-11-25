@@ -28,7 +28,7 @@
           <ComboBox.ItemTemplate>
             <DataTemplate x:DataType="docking:PocDocument">
               <StackPanel Orientation="Horizontal" Spacing="6">
-                <views:WindowIcon Document="{Binding}" Width="16" Height="16" VerticalAlignment="Center" />
+                <views:WindowIcon Name="NavDocIcon" Document="{Binding}" Width="16" Height="16" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding Title}" VerticalAlignment="Center" />
               </StackPanel>
             </DataTemplate>

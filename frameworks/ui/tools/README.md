@@ -18,7 +18,7 @@
 | `tools/safe_click.ps1` | 물리 클릭 전 좌표계·창 소유권(ExpectedProcessId)·DPI 3축을 검증한 뒤에만 클릭·끌기하는 가드 | 실입력 시험(`test/desktop/measure/retest_real_input.py` 의 `SAFE_CLICK`)이 공유하는 클릭 경로 | `retest_real_input.Rig.click` 이 호출(직접 실행 시 `powershell.exe -File tools/safe_click.ps1 -ScreenX <x> -ScreenY <y> -ExpectedProcessId <pid>`) | 2026-11-24 Pd `.claude/scripts/safe_click.ps1`(기준 커밋 867b432)에서 본문 무변경 복사. 그전에는 xkxk 에 없어 실입력 시험이 깨졌다 |
 | `tools/run_desktop_bg.sh` | Desktop 을 비전경·stdio 분리로 기동하고 실존 2회 확인 | 시험 기동 표준 | `bash tools/run_desktop_bg.sh [--conf Debug] -- <앱 인자>` | 경로 문구 없음 |
 | `tools/slot_handoff.sh` | 데스크톱 실행 슬롯 소유자 이관 | 실행 슬롯 교착 방지 | `bash tools/slot_handoff.sh <새 소유자\|없음> [메모]` | 경로 문구 없음 |
-| `tools/serve_browser.sh`·`tools/serve_browser.py` | WASM 번들을 127.0.0.1 에 서빙 | 웹 시험 서버 | `bash tools/serve_browser.sh start [포트] [번들경로]` | 경로 문구 없음 |
+| `tools/serve_browser.sh`·`tools/serve_browser.py` | WASM 번들을 127.0.0.1 에 서빙 | 웹 시험 서버 | `bash tools/serve_browser.sh start [포트=5791] [번들경로]` | 경로 문구 없음 |
 | `tools/pdctl.py` | 실행 중 PoC 앱 원격 제어 서버에 명령 전달 | 시험 자동화 클라이언트 | `python3 -B tools/pdctl.py <명령>` | 2026-11-24 경로 고정 해소(동작 줄에 옛 경로 없음) |
 
 ## 계층·정적 검사

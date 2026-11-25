@@ -130,16 +130,19 @@ public static partial class WindowTransitions
             .Append(",\"source\":").Append(n.Source is null ? "null" : "\"" + n.Source + "\"")
             .Append(",\"ghost\":").Append(n.Ghost is null ? "null" : "\"" + n.Ghost + "\"")
             .Append(",\"enter\":\"").Append(n.Enter ?? "none").Append('"')
+            .Append(",\"origin\":\"").Append(n.Origin ?? "none").Append('"')
             .Append(",\"tabHeaderFirst\":").Append(B(UiSettings.Current.TabHeaderFirst))
             .Append('}').ToString();
     }
 
     private sealed record Hidden(WeakReference<PocDocument> Doc, Located At, Snapshot Shot);
 
-    /// <summary>전환 1건 진단. Source = activated(활성 알림에서 찍음)·hidden(숨기기 직전 그림)·null(짝 없음), Ghost = started·done·none(덮개 층 없음), Enter = started(재생 시작)·skipped_none(효과 없음 또는 자리 없음)·skipped_running(열기 재생 중이라 건너뜀)·null→none.</summary>
+    /// <summary>전환 1건 진단. Source = activated(활성 알림에서 찍음)·hidden(숨기기 직전 그림)·null(짝 없음), Ghost = started·done·none(덮개 층 없음), Enter = started(재생 시작)·skipped_none(효과 없음 또는 자리 없음)·skipped_running(열기 재생 중이라 건너뜀)·null→none, Origin = 활성화 출처 키(ActivationOrigin.ToKey — keyboard·title_tab·window_list·body_click·program 다섯 값)·null→none.</summary>
     private sealed class SwitchNote(int seq)
     {
         public int Seq { get; } = seq;
+
+        public string? Origin { get; set; }
 
         public bool PrevFound { get; set; }
 

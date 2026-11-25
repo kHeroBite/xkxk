@@ -1,7 +1,7 @@
 # PC 비움 전수 시험 계약 판정기(pcaway_gate) — `pcaway_gate.py item <ID>` : 0=PASS 1=FAIL 2=판정불가. 새 홈(frameworks/ui) 경로로 옮긴 사본
 # 출처: Pd worktree pd-18 `.claude/archive/test/2026-11/20261111-1429_conv_179435695241_pcaway_gate_before_lowload_removal.py`(sha256 3f259d45455a0f47e2a3fdf8b7e8f1e45c18ffe8b985e91bbf51a920bb33bb0d).
 #   남은 보관본 중 가장 최근 판이며 최종판이 아니다(그 뒤 '저부하 조건 제거' 등 변경분은 보관되지 않아 없다). 2026-11-24 경로(poc/ui→frameworks/ui)·프로젝트 이름(Pd.*→xkxk.frameworks.ui.*)·ROOT 폴백만 기계 치환했다.
-# 2026-11-25 재기준(UTODO-0017): 저부하는 사용자 결정(2026-11-08)대로 참고 기록(REF_ONLY·check_p1 참고 출력), 계약 시각은 환경변수(PCAWAY_CYCLE_START·PCAWAY_R2_START·PCAWAY_WEBPERF_START, 기본 2026-11-24T00:00:00+09:00)로 재정의. 최종판 원본은 없음. 빌드 sha·REPLAY_PREFIX_SHA 는 UTODO-0018.
+# 2026-11-25 재기준(UTODO-0017): 저부하는 사용자 결정(2026-11-08)대로 참고 기록(REF_ONLY·check_p1 참고 출력), 계약 시각은 환경변수(PCAWAY_CYCLE_START·PCAWAY_R2_START·PCAWAY_WEBPERF_START, 기본 2026-11-24T00:00:00+09:00)로 재정의. 최종판 원본은 없음. 빌드 sha 는 UTODO-0018. UTODO-0018: 수정 전 빌드 sha 는 manifest replay_prefix_sha 로, Pd 값 제거.
 # PC 비움 전수 시험·2차 묶음·이월 결함 계약 판정기 — `pcaway_gate.py item <ID>` : 0=PASS 1=FAIL 2=판정불가. 저장소·시험 결과(frameworks/ui/logs/pcaway/<ID>.json)·최종 빌드 목록만 읽는다
 # 결과 파일 존재만으로 통과시키지 않는다: writer=otest*, 계약 시각 이후 실행, 스크립트·빌드 sha 일치, 필수 측정 이름 전부 pass=true, 캡처 판독 기록, 안전 필드를 모두 요구한다.
 import hashlib, json, os, re, subprocess, sys
@@ -31,7 +31,9 @@ TITLEBAR_TOOL, STATES_TOOL, STATE_RULES, WHEEL_TOOL = JD + "main_titlebar_contra
 TABLET_TOOL = "frameworks/ui/test/mobile/judge/tablet_first_layout_judge.py"
 REPLAY_JUDGE, REPLAY_MEASURE = "frameworks/ui/test/mobile/judge/replay_target_judge.py", "frameworks/ui/test/mobile/measure/retest_android_pcaway_replay.py"
 REPLAY_RULES = {"replay_target_rc": ("==", 0), "replay_sent_open": (">=", 20), "replay_sent_closed": (">=", 20), "replay_bad": ("==", 0), "replay_fatal": ("==", 0)}
-REPLAY_PREFIX_SHA = {"309ba30eae9ead697b9d8c6e82cf26b633866664765db9656ab703d822481cbc", "0aa51f789d2f4a32e368bddbd5270c0b238e409d4862253e339642bf959607bc"}  # 수정 전 android_prod·android_release(plans/pcaway_final_build_before_touchfix.json)
+def replay_prefix_shas(man):  # UTODO-0018: 수정 전 빌드 sha 는 manifest(plans/pcaway_final_build.json) replay_prefix_sha 목록에서만 읽는다(없으면 빈 집합)
+    v = (man or {}).get("replay_prefix_sha")
+    return {x for x in v if isinstance(x, str)} if isinstance(v, list) else set()
 def ATLEAST(*names, v): return {n: (">=", v) for n in names}
 # K 묶음의 측정 이름은 도구 출력 키를 따른다. 테마별 값은 전 테마 중 가장 낮은 값을 적는다. 기준 수치는 임시 기준(plan/09_화면설계/01 §4.2)이다
 WHEEL_GANTT = ["gantt_rows_grow", "gantt_rows_anchor", "gantt_rows_keep_dayWidth", "gantt_rows_keep_offsetX", "gantt_rows_max", "gantt_rows_min", "gantt_rows_delta_x", "gantt_rows_back_to_0", "gantt_alt_width", "gantt_alt_keep_row", "gantt_shift_hscroll", "gantt_plain_vscroll", "gantt_ctrl_handled", "gantt_ctrl_reset"]
@@ -395,7 +397,7 @@ def check_k7_builds():
         e = by.get(role)
         if not isinstance(e, dict): fail("판본 값 누락: " + role)
         got = e.get("sha256")
-        if got in REPLAY_PREFIX_SHA: fail("수정 전 빌드 값은 인정하지 않는다: %s %s" % (role, got))
+        if got in replay_prefix_shas(man): fail("수정 전 빌드 값은 인정하지 않는다: %s %s" % (role, got))
         if not got or got != (man.get(role) or {}).get("sha256"): fail("판본 sha 가 최종 빌드와 다름: %s %s" % (role, got))
         if not e.get("path") or not os.path.isfile(abspath(e["path"])): fail("판본 산출물 부재: " + role)
         if sha(abspath(e["path"])) != got: fail("판본 산출물이 시험 뒤 바뀜: " + role)

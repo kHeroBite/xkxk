@@ -189,6 +189,16 @@ def place_on_canvas(icon, area):
     return canvas
 
 
+def gpu_env(headed, gpu_driver, environ):
+    """headed 일 때 Chromium 에 줄 환경변수와 기록할 GALLIUM_DRIVER. (env 또는 None, 기록값). 사용자가 이미 정한 값은 덮어쓰지 않는다."""
+    if not headed:
+        return None, None
+    have = environ.get("GALLIUM_DRIVER")
+    if have or not gpu_driver or gpu_driver == "none":
+        return None, have
+    return dict(environ, GALLIUM_DRIVER=gpu_driver), gpu_driver
+
+
 def burst_self_test():
     """화면 burst 모드의 파싱·캔버스 규칙. powershell 은 쓰지 않는다(창 후보 시험이 같은 C# 형식 컴파일을 본다)."""
     from PIL import Image
@@ -204,7 +214,36 @@ def burst_self_test():
             bad.append(text)
         except ValueError:
             pass
+    class _R:
+        raw = "ok"
+        click = "input"
+
+    guard, probe = RemoteOnlyRig(_R()), []
+    for attr in ("raw", "click"):
+        try:
+            getattr(guard, attr)
+            probe.append(attr)
+        except Abort:
+            pass
+    only = object.__new__(Desktop)
+    only.remote_only = True
+    only.args = type("A", (), {"away_state": "/nonexistent"})()
+    deflt = object.__new__(Desktop)
+    deflt.remote_only = False
+    deflt.args = only.args
+    try:
+        deflt.away()
+        default_needs_away = False  # away 상태 파일이 없는데 통과하면 안 된다
+    except Exception:
+        default_needs_away = True
     return run_cases([
+        ("remote_only: 실입력 경로 차단·원격 경로 허용", probe == ["raw"]),
+        ("remote_only: away 생략", only.away() is None),
+        ("기본: away 필수", default_needs_away),
+        ("gpu: headless 불변", gpu_env(False, "d3d12", {}) == (None, None)),
+        ("gpu: headed 기본 d3d12", gpu_env(True, "d3d12", {"A": "1"}) == ({"A": "1", "GALLIUM_DRIVER": "d3d12"}, "d3d12")),
+        ("gpu: 사용자 값 유지", gpu_env(True, "d3d12", {"GALLIUM_DRIVER": "zink"}) == (None, "zink")),
+        ("gpu: none 으로 끔", gpu_env(True, "none", {}) == (None, None)),
         ("좌표 음수 허용", parse_pos("-2400, 200") == (-2400, 200)),
         ("좌표 형식 오류 거부", not bad),
         ("노출 시간 = 되돌림 - 올림", meta.get("exposure_ms") == 2500.0),
@@ -267,6 +306,10 @@ def parser(doc):
     ap = common.parser(doc)
     ap.add_argument("--bundle", help="웹 판 wwwroot(주면 웹으로 판정)")
     ap.add_argument("--port", type=int, default=5744, help="웹 정적 서버 포트")
+    ap.add_argument("--gpu-driver", default="d3d12", help="--headed 일 때 GALLIUM_DRIVER 기본값(WSLg 실제 GPU). 환경변수가 이미 있으면 덮어쓰지 않고, none 이면 설정하지 않는다")
+    ap.add_argument("--remote-only", action="store_true", help="데스크톱: 원격 명령·화면 밖 캡처만 쓰는 판정(실입력·전경 획득 없음)이라 PC 비움(away) 검사를 생략한다. "
+                    "실입력 경로(Rig 의 클릭·끌기 등, 화면 올림 burst)를 쓰면 즉시 실패한다. 기본은 away 필수")
+    ap.add_argument("--headed", action="store_true", help="웹 판을 화면 창으로 띄운다(PC 비움 때만, swiftshader 인자를 빼 GPU 합성 사용). 결과에 headed:true 기록")
     ap.add_argument("--dpr", type=float, default=1.0, help="웹 기기 배율. 1 이 아니면 화면 표본을 CSS 크기로 줄여 판정한다")
     ap.add_argument("--scale-mode", choices=SCALE_MODES, default="force",
                     help="--dpr ≠ 1 일 때 배율 방식: force=Chrome 실제 배율(--force-device-scale-factor·no_viewport, 기본), "
@@ -282,6 +325,8 @@ def parser(doc):
 
 
 SCALE_MODES = ("force", "emulation")
+RENDERER_JS = """() => { try { const c = document.createElement('canvas').getContext('webgl'); const e = c.getExtension('WEBGL_debug_renderer_info');
+  return e ? c.getParameter(e.UNMASKED_RENDERER_WEBGL) : c.getParameter(c.RENDERER); } catch (x) { return 'error: ' + x; } }"""
 
 
 def scale_mode_of(dpr, requested):
@@ -301,11 +346,38 @@ def shots_dir(args, name):
     return path
 
 
+REMOTE_ONLY_RIG_OK = ("raw", "ops", "call")  # 원격 명령 경로만 — 그 밖(클릭·끌기·창 이동 등 실입력)은 막는다
+
+
+class RemoteOnlyRig:
+    """remote_only 모드에서 Rig 를 감싼다. 허용 목록 밖 속성에 접근하면 즉시 실패한다(실입력·전경 획득 경로 차단)."""
+
+    def __init__(self, rig):
+        self._rig = rig
+
+    def __getattr__(self, name):
+        if name not in REMOTE_ONLY_RIG_OK:
+            raise Abort("INVALID", "remote_only 모드에서 실입력 경로(rig.%s)를 쓸 수 없다" % name)
+        return getattr(self._rig, name)
+
+
 class Desktop(common.Session):
     scope = "desktop"
 
+    def away(self, started=False):
+        if not self.remote_only:  # 기본은 PC 비움 필수
+            super().away(started)
+
     def __init__(self, args, name):
+        self.remote_only = bool(getattr(args, "remote_only", False))
+        if self.remote_only and not getattr(args, "away_state", None):
+            args.away_state = "(remote_only — 사용 안 함)"  # 부모의 필수 인자 확인만 통과시킨다. away() 는 호출되지 않는다
         super().__init__(args)
+        if self.remote_only:
+            self.rig = RemoteOnlyRig(self.rig)
+            self.meta.update(mode="remote_only", away_required=False)
+        else:
+            self.meta.update(mode="default", away_required=True)
         self.shots = shots_dir(args, name)
         self.pid = int(self.call("status")["pid"])
 
@@ -356,6 +428,8 @@ class Desktop(common.Session):
         from PIL import Image
 
         screen = getattr(self.args, "burst_capture", "printwindow") == "screen"
+        if screen and self.remote_only:  # 창을 화면 좌표에 올리는 방식이라 remote_only 에서는 쓰지 않는다
+            raise Abort("INVALID", "remote_only 모드에서 --burst-capture screen 을 쓸 수 없다")
         out = subprocess.check_output(["wslpath", "-w", self.shots], text=True).strip().replace("'", "''")
         if screen:
             if area is None or not getattr(self.args, "burst_screen_pos", None):
@@ -445,17 +519,20 @@ class Web:
         self.dpr = float(getattr(args, "dpr", 1.0) or 1.0)
         self.scale_mode = scale_mode_of(self.dpr, getattr(args, "scale_mode", "force") or "force")
         self.meta = {"bundle": os.path.abspath(args.bundle), "started": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "dpr": self.dpr,
-                     "scale_mode": self.scale_mode}
+                     "scale_mode": self.scale_mode, "headed": bool(getattr(args, "headed", False))}
+        headed = self.meta["headed"]
+        gl_args = [a for a in ui28_web.ARGS if "swiftshader" not in a] if headed else ui28_web.ARGS  # headed 는 소프트웨어 GL 강제 인자 제거
+        env, self.meta["gallium_driver"] = gpu_env(headed, getattr(args, "gpu_driver", "d3d12"), os.environ)
         self.web = ui28_web.Web(args.bundle, args.port, self.shots)
         self.play = sync_playwright().start()
         try:
             w = self.web
             if self.scale_mode == "force":  # Chrome 실제 배율 — Playwright 가 배율·뷰포트를 덮어쓰지 않게 no_viewport, 창 크기는 --window-size
-                w.browser = self.play.chromium.launch(headless=True, args=ui28_web.ARGS + [
+                w.browser = self.play.chromium.launch(headless=not headed, env=env, args=gl_args + [
                     "--force-device-scale-factor=%s" % self.dpr, "--window-size=%d,%d" % w.viewport])
                 w.page = w.browser.new_context(no_viewport=True).new_page()
             else:
-                w.browser = self.play.chromium.launch(headless=True, args=ui28_web.ARGS)
+                w.browser = self.play.chromium.launch(headless=not headed, env=env, args=gl_args)
                 w.page = w.browser.new_page(viewport={"width": w.viewport[0], "height": w.viewport[1]}, device_scale_factor=self.dpr)
             w.page.on("pageerror", lambda e: w.errors.append("pageerror: " + str(e)[:300]))
             w.page.on("console", lambda m: w.errors.append(m.text[:300]) if m.type == "error" else None)
@@ -472,6 +549,8 @@ class Web:
                     raise Abort("INVALID", "앱이 준비되지 않았다")
                 time.sleep(1)
             time.sleep(1.5)
+            if headed:
+                self.meta["webgl_renderer"] = w.page.evaluate(RENDERER_JS)
             self.state0 = self.call("style.state")
         except BaseException:
             self.close()

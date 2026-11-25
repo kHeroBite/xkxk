@@ -88,9 +88,11 @@ class Run:
                 need(w, "docs.state", doc=doc["id"], state="maximized")
                 time.sleep(0.8)
 
-    def open_menu(self):  # 아래 조작 함수는 (기대 활성 문서, 실행 함수) 를 돌려준다. 실행 함수만 전환을 만든다
+    def open_menu(self, more=False):  # 아래 조작 함수는 (기대 활성 문서, 실행 함수) 를 돌려준다. 실행 함수만 전환을 만든다
         self.click("shell.mnuWindow")
         time.sleep(1.2)
+        if more:
+            ops.wait_visible(self, "shell.mnuWinListMore")
 
     def list_item(self, how, same=False):
         act, other = self.pair()
@@ -119,10 +121,9 @@ class Run:
         act = self.check.active(self.w)
         ids = [d["id"] for d in self.docs()]
         row = 1 if ids[0] == act else 0
-        self.open_menu()
+        self.open_menu(True)
         self.click("shell.mnuWinListMore")
-        time.sleep(1.2)
-        b, keys = self.box("shell.moreWindowsList"), self.w.page.keyboard
+        b, keys = ops.wait_visible(self, "shell.moreWindowsList"), self.w.page.keyboard
         self.w.page.mouse.click(b["x"] + 40, b["y"] + 14)
         keys.press("Home")
         for _ in range(row):
@@ -180,7 +181,7 @@ class Run:
         time.sleep(1.5)
         return played
 
-    def trial(self, make, want, paired, place, shot, control):
+    def trial(self, make, want, paired, place, shot, control, expect=None):
         w, need = self.w, self.need
         time.sleep(1)
         at = self.layout(place, shot)
@@ -191,7 +192,7 @@ class Run:
         time.sleep(2.5)
         perf = self.motion_played()
         first["after"] = self.last_switch()
-        played, basis = resolve_played(want, perf, first)  # perf 빈 구간 탈락 보조(짝 사례만) — 근거 없으면 None → INVALID
+        played, basis = resolve_played(want, perf, first, expect_origin=expect)  # perf 빈 구간 탈락 보조(짝 사례만) — 근거 없으면 None → INVALID
         reached, pair, switch = self.check.active(w) == target, None, None
         if want and paired and reached and played:  # 짝은 같은 조작을 한 번 더 해서 본다
             time.sleep(1)
@@ -304,7 +305,7 @@ def main():
                         evidence = "inject" if name in INJECT else "real"
                         for i in range(a.repeat):
                             try:
-                                trials.append(dict(run.trial(make, want, paired, place, None if i else name, control), evidence=evidence))
+                                trials.append(dict(run.trial(make, want, paired, place, None if i else name, control, ops.expect_origin(name)), evidence=evidence))
                             except Exception as e:  # noqa: BLE001
                                 trials.append({"verdict": "ERROR", "why": repr(e)[:300]})
                                 w.page.keyboard.press("Escape")

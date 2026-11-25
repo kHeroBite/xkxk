@@ -4,6 +4,16 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-25 — PC 비움 판정 보류 8건·UTODO-0018~0021·0004·0006 처리(O4, conv_179559297106)
+- 사용자 요청: PC 비움 동안 판정 보류 8건(AC-013·014·015·024·026·028·029, TODO-671)을 판정 우회 없이 실측·판정기 신설로 끝내고, Fold5 잔여와 다음 사이클 과제를 남김없이 처리한다.
+- 측정 결과(PC 비움 실입력·실기기). AC-024 PASS(실끌기 커밋 프레임 p95 15.15ms, 기준 25ms), AC-029 RECORDED(숨김 14.0ms·유지 14.09ms), AC-026 PASS(작업 표시줄 띠 png 직접 판독, Alt+Tab 은 도구 한계로 미확인), AC-028 PASS(실입력 3상태 + OS 합성 캡처 3장), AC-013·014·015 PASS(원격 명령만 써서 비전경으로 측정, AC-015 는 NAV 포함 6곳), TODO-671 RECORDED(실제 GPU headed 에서도 묶음 닫기 1~2프레임). 웹 TODO-670 165행 PASS 165, Fold5 TODO-501-3·4b 접힘 PASS. A1~A20 은 c26_gate 직접 실행 rc=0 이고 A10(TODO-501-4c)만 blocked.
+- 도구·판정기. `app_icon_taskbar_capture.py` 렌더 경로를 NTFS 중간 폴더로(AC-026 rc=4 원인 제거), `judge_session.py --headed`(WSLg 기본 소프트웨어 GL 이라 `GALLIUM_DRIVER=d3d12` 기본 적용·WebGL renderer 기록), `pcaway_gate.py` Pd sha 상수를 manifest `replay_prefix_sha` 로(UTODO-0018), `drag_shadow_os_capture.py` OS 캡처 시점 수정(D-1), `motion_fallback_judge.py`(AC-013)·`background_pattern_judge.py`(AC-014, dots 만 보조 판정)·`title_tab_icons_judge.py` NAV 자리(AC-015) 신설·갱신.
+- 앱 코드. `SwitchNote.Origin`(UTODO-0019), `MoreWindowsView` 터널링 Enter 처리(UTODO-0020), 배경 이미지 손상 시 실효 decor 를 none 으로(AC-014 결함 A), `MobileNavView.axaml` `NavDocIcon` 이름(AC-015 판정 식별). 대화상자 경합(UTODO-0021)은 앱이 아니라 측정기 대기 문제였다.
+- 문서. `03_향후과제_TODO.md` UTODO-0004·0018~0021 완료·0006 결과·이월, UTODO-0022(웹 MDI 묶음 닫기 프레임 부족)·0023(`motion_web_origin_click.py` 337줄) 등재. `a10_측정보류_목록.md` §6.4 신설(10줄, 분할 파일 없음). 추적표 TODO-501·670·671 행 갱신.
+- 못 한 것. TODO-501-4c(Android 15 이하 기기 없음), TODO-671 원인 요소 분리(UTODO-0022), AC-026 Alt+Tab 직접 확인, TODO-136(외부 법무)·509·78(차트뷰 착수 때)·124 결정 118 문구. UTODO-0008~0011 은 사용자 결정 대기라 사후 질문 4건으로 등록했다.
+- 역라우팅 경과. TEST→DEV 역라우팅이 여러 차례 있었다(훅이 2씩 올리는 reroute_count 가 5). 원격 명령만 쓰는 판정기(AC-013·014·015)가 공용 `Session` 의 PC 비움 요구 때문에 DEFERRED 로 떨어져 remote_only 모드를 더했고, AC-014 는 손상 폴백 실효값·dots 판정기 한계, 웹은 more.enter·Popup 경합이 원인이었다. 게이트 `c26_gate.py` A13 은 axaml 또는 .cs 터널링 등록을 인정하도록 바꿨다(기준 완화 아님, Key.Enter→ConfirmMore 검사 유지).
+- 알려진 한계. `test/web/measure/motion_web_origin_click.py` 가 337줄로 300줄을 넘는다(UTODO-0023). 사용자 settings.json 17:58 변경은 사용자 본인 확인 뒤 새 기준으로 승인했다.
+
 ## 2026-11-25 — 향후과제 6건 조건 판정·진행(UTODO-0002·0003·0004·0005·0006·0017, O4, conv_179557939039)
 - 사용자 요청: 조건이 맞는 향후과제를 진행하고 PC 비움·실기기 조건이 필요한 것은 조건이 맞을 때만 실측한다. 사용자 결정 대기 과제(UTODO-0008~0011)는 범위 밖이다.
 - 코드·판정기: `test/desktop/judge/pcaway_gate.py`·`test/mobile/measure/webperf_startup.py` 의 저부하 조건을 참고 기록으로 바꾸고 계약 시각을 환경변수로 뺐다(UTODO-0017, 잔여는 UTODO-0018). `test/desktop/judge/motion_effects_judge.py` 잡음 가드를 복원 화면 잡음까지 보도록 보강했다(UTODO-0003). `WindowTransitions.Switch.cs` 의 `SwitchNote` 에 Enter(started·skipped_none·skipped_running) 진단을 더하고 `motion_web_origin_rules.py` 가 그 값으로 재생 여부를 판정한다(TODO-670, 동작 불변). 빌드(데스크톱·브라우저 Release) rc=0, 레이어 검사 violations 0.

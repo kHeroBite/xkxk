@@ -42,7 +42,7 @@ def run(args, report):
         with open(png, "wb") as f:
             f.write(b"\x89PNG\r\n\x1a\nabc")
         same = {"path": ri.rel(bin_file, root), "sha256": ri.sha256(bin_file)}
-        report.write_json(os.path.join(sess, "plans", "pcaway_final_build.json"), {"desktop_work": same, "android_debug": same, "android_release": same, "android_prod": same, "web_prod": same})
+        report.write_json(os.path.join(sess, "plans", "pcaway_final_build.json"), {"desktop_work": same, "android_debug": same, "android_release": same, "android_prod": same, "web_prod": same, "replay_prefix_sha": ["e" * 64]})
         env = dict(os.environ, PCAWAY_ROOT=root, PCAWAY_SESSION=sess)
         raw, state, bad = os.path.join(tmp, "raw.json"), os.path.join(tmp, "s.json"), os.path.join(tmp, "m.json")
         report.write_json(raw, {"rows": [{"case": "MAXIMIZED_MDI_TO_SDI", "pass": True}, {"case": "NEW_DOC_SDI", "pass": True}]})
@@ -211,7 +211,7 @@ def run(args, report):
         k7_case("펼침·접힘 APK 다름", lambda docs: docs["android_prod_closed"].update(apk_sha256="0" * 64), 1, 1)
         k7_case("모드 뒤바뀜", lambda docs: docs["android_prod_open"].update(mode="closed"), 1, 1)
         k7_case("문서 3개", lambda docs: docs["android_prod_open"].update(docs_opened=3), 1, 1)
-        old_sha = next(iter(gate.REPLAY_PREFIX_SHA))
+        old_sha = "e" * 64  # 시험 manifest replay_prefix_sha 값
         k7_case("수정 전 sha", lambda docs: [docs[k].update(apk_sha256=old_sha) for k in ("android_prod_open", "android_prod_closed")], 0, 1)
         k7_real = MAP["K7"]["fn"]
         if k7_real({}, {"rc": {}, "manifest": None}):

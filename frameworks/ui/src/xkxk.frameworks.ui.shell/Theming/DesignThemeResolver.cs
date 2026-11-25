@@ -35,6 +35,12 @@ public static partial class DesignThemeResolver
     /// </summary>
     public static Func<bool>? NavLayout { get; set; }
 
+    /// <summary>
+    /// 사용자 배경 이미지를 읽지 못해 none 으로 낮췄는가(손상·누락·할당량, 21 §6.2). DesignEffectsApplier 가 읽기 결과로 정하고 Refresh 한다.
+    /// 참이면 decor=image 의 실효값은 none 이다(상태 보고 = 실제 화면, 저장값은 보존).
+    /// </summary>
+    internal static bool DecorImageFailed { get; set; }
+
     /// <summary>진단 전용 소프트웨어 렌더 흉내(원격 gpu.simulateSoftware). 바꾸면 곧바로 재계산한다.</summary>
     public static bool SimulateSoftware
     {
@@ -212,6 +218,11 @@ public static partial class DesignThemeResolver
         if (key == "depth.overview" && NavLayout?.Invoke() == true)
         {
             return "flat"; // 폼팩터 규칙(18 §6): NAV 전체 보기 = 평면 목록
+        }
+
+        if (key == "decor" && value == "image" && DecorImageFailed)
+        {
+            return "none"; // 이미지 읽기 실패(21 §6.2) — 화면은 none 이므로 실효값도 none
         }
 
         var reasons = Reasons();

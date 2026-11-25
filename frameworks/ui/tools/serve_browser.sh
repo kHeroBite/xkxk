@@ -1,12 +1,12 @@
 #!/bin/bash
 # WASM 정적 번들을 WSL python3(serve_browser.py)로 127.0.0.1 에 서빙하는 스크립트
-# 사용: serve_browser.sh [start|stop|status] [포트=5180] [번들경로]
-# 시나리오 URL 예: http://127.0.0.1:5180/?open=grid:5,gantt:5,form:10&layout=tile&save-layout&exit-after=10
+# 사용: serve_browser.sh [start|stop|status] [포트=5791] [번들경로]
+# 시나리오 URL 예: http://127.0.0.1:5791/?open=grid:5,gantt:5,form:10&layout=tile&save-layout&exit-after=10
 set -u
 TOOLS="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$TOOLS/.." && pwd)"
 CMD="${1:-start}"
-PORT="${2:-5180}"
+PORT="${2:-5791}"
 BUNDLE="${3:-$ROOT/src/xkxk.frameworks.ui.browser/bin/Release/net11.0-browser/publish/wwwroot}"
 PIDF="$ROOT/logs/serve_browser_$PORT.pid"
 LOG="$ROOT/logs/serve_browser_$PORT.log"
@@ -34,5 +34,5 @@ case "$CMD" in
     rm -f "$PIDF" ;;
   status)
     if is_alive; then echo "실행 중 pid=$(cat "$PIDF") url=http://127.0.0.1:$PORT/"; else echo "중지됨"; exit 1; fi ;;
-  *) echo "사용: $0 [start|stop|status] [포트] [번들경로]"; exit 64 ;;
+  *) echo "사용: $0 [start|stop|status] [포트=5791] [번들경로]"; exit 64 ;;
 esac

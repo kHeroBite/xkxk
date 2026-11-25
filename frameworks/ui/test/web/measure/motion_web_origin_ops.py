@@ -9,6 +9,42 @@ def visible(run, ctl, **kw):
     return None
 
 
+PAINT_JS = "() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(1))))"
+
+
+def wait_painted(run):
+    """브라우저 2프레임(requestAnimationFrame 2회)을 기다린다. UTODO-0021: '보임'은 레이아웃 기준이고 적중 판정은 마지막 합성 화면 기준이라,
+    그려지기 전에 누르면 바깥 닫기 층(LightDismissOverlayLayer)이 받아 대화상자가 닫힌다(odev-7 진단)."""
+    run.w.page.evaluate(PAINT_JS)
+
+
+def wait_visible(run, ctl, timeout=5):
+    """컨트롤이 보일 때까지 0.1초 간격으로 기다리고, 그려질 때까지 2프레임 더 기다려 bounds 를 돌려준다. 시간 초과면 RuntimeError(고정 sleep 경합 방지)."""
+    until = time.time() + timeout
+    while time.time() < until:
+        b = visible(run, ctl)
+        if b:
+            wait_painted(run)
+            return b
+        time.sleep(0.1)
+    raise RuntimeError("%.0f초 안에 보이지 않는다: %s" % (timeout, ctl))
+
+
+def expect_origin(name):
+    """사례 이름 → 앱이 기록할 활성화 출처 키(ToKey). nav.combo 는 앱 실측값을 따르므로 None(출처 미대조)."""
+    if name.startswith(("list.", "more.", "negative.")):
+        return "window_list"
+    if name.endswith(".keyboard"):
+        return "keyboard"
+    if ".tab" in name:
+        return "title_tab"
+    if name.endswith(".body_default"):
+        return "body_click"
+    if name == "nav.program":
+        return "program"
+    return None
+
+
 def tab_point(run, doc):
     for ctl in ("shell.tab." + doc, "DocTab." + doc, doc):  # 제목 탭 → DOCK 문서 탭
         b = visible(run, ctl)

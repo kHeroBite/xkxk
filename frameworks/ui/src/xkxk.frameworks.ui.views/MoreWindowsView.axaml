@@ -16,7 +16,7 @@
         <Button Content="{loc:Tr common.cancel}" IsCancel="True" Command="{Binding CancelMoreCommand}" MinWidth="72"
                 AutomationProperties.AutomationId="shell.moreWindowsCancel" />
       </StackPanel>
-      <!-- 더블클릭 = 확인(코드 비하인드 OnListDoubleTapped) -->
+      <!-- 더블클릭·Enter = 확인(코드 비하인드 OnListDoubleTapped·OnListKeyDown). Enter 는 ListBoxItem 이 버블 전에 소비하므로 터널링 구독이라 생성자에서 단다(XAML 에 터널링 문법 없음) -->
       <ListBox x:Name="List" ItemsSource="{Binding MoreEntries}" SelectedItem="{Binding SelectedEntry, Mode=TwoWay}" MaxHeight="360"
                DoubleTapped="OnListDoubleTapped" AutomationProperties.AutomationId="shell.moreWindowsList">
         <ListBox.ItemTemplate>

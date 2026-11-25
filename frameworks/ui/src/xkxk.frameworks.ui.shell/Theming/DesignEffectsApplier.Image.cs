@@ -76,12 +76,21 @@ public static partial class DesignEffectsApplier
             return;
         }
 
-        if (name == nameof(UiSettings.BackgroundImageFile))
+        var fileChanged = name == nameof(UiSettings.BackgroundImageFile);
+        if (fileChanged)
         {
             s_imageFailed.Clear();
         }
 
-        Dispatcher.UIThread.Post(() => { if (Application.Current is { } app) { Apply(app); } });
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (fileChanged)
+            {
+                SetDecorImageFailed(false); // 새 파일은 다시 읽는다 — 실효값을 image 로 되돌려야 ImageOf 가 불린다
+            }
+
+            if (Application.Current is { } app) { Apply(app); }
+        });
     }
 
     private static async Task LoadImageAsync(string file, int maxDim, BackgroundImageLimits limits, string key)
@@ -127,11 +136,13 @@ public static partial class DesignEffectsApplier
             s_imageFailed.Add(key);
             MarkImageLoadFailed();
             NotifyFallback(file, fail ?? "decode");
+            SetDecorImageFailed(true);
         }
         else
         {
             _imageBitmap = bmp;
             LastBackgroundFallback = null;
+            SetDecorImageFailed(false);
         }
 
         if (Application.Current is { } app)
@@ -161,11 +172,24 @@ public static partial class DesignEffectsApplier
         _imageBitmap = null;
         _imageLoading = false;
         s_imageFailed.Clear();
+        SetDecorImageFailed(false);
         if (Application.Current is { } app)
         {
             Invalidate();
             Apply(app);
         }
+    }
+
+    /// <summary>이미지 실패 여부를 해석기에 알린다. 바뀌면 Refresh 로 decor 실효값(image ↔ none)과 편집기 표시를 갱신한다.</summary>
+    private static void SetDecorImageFailed(bool failed)
+    {
+        if (DesignThemeResolver.DecorImageFailed == failed)
+        {
+            return;
+        }
+
+        DesignThemeResolver.DecorImageFailed = failed;
+        DesignThemeResolver.Refresh();
     }
 
     private static void NotifyFallback(string file, string reason)

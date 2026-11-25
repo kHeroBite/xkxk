@@ -58,8 +58,9 @@ public static partial class DesignEffectsApplier
                     EndPoint = new RelativePoint(1, 1, RelativeUnit.Relative),
                     GradientStops = { new GradientStop(accent, 0), new GradientStop(bg, 0.5), new GradientStop(accent, 1) },
                 };
-            case "grid": // 칸 위·왼쪽 변에만 선을 그어 바둑판이 이어진다
-                return Tile(tile, bg, Stroke(accent, size / 4, F("M0,0 H{0} M0,0 V{0}", tile)));
+            case "grid": // 칸 위·왼쪽 변에만 선을 그어 바둑판이 이어진다. 선을 굵기 절반만큼 안쪽에 둬 타일 경계에 반쪽이 잘리지 않게 한다(잘리면 채널 차가 2/3 로 준다)
+                var half = Math.Max(1, size / 4) / 2;
+                return Tile(tile, bg, Stroke(accent, size / 4, F("M0,{1} H{0} M{1},0 V{0}", tile, half)));
             case "diagonal": // 오른쪽 위로 오르는 사선(칸 모서리끼리 이어진다)
                 return Tile(tile, bg, Stroke(accent, size / 4, F("M0,{0} L{0},0", tile)));
             case "hex": // 뾰족한 위 벌집 — 칸 폭 √3·r, 높이 3r 에 육각형 1개와 아래 이음선

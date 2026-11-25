@@ -18,6 +18,7 @@ rc 0=원격 값 PASS+띠 캡처(판독 필요) 1=FAIL 2=준비 실패 3=전제 �
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -89,6 +90,16 @@ def require_away(state):
     return int(idle)
 
 
+def render_target(out_dir):
+    """앱(Windows)이 렌더 캡처를 쓸 폴더. /mnt/ 아래면 그대로, 아니면(\\\\wsl.localhost 로만 보이는 ext4) 영역의 NTFS logs/app_icon_stage/ 를 쓴다."""
+    out = os.path.abspath(out_dir)
+    if out.startswith("/mnt/"):
+        return out
+    stage = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(HERE))), "logs", "app_icon_stage")
+    os.makedirs(stage, exist_ok=True)
+    return stage
+
+
 def fresh(path, started):
     return path if os.path.exists(path) and os.path.getmtime(path) >= started else None
 
@@ -105,7 +116,10 @@ def measure(args, res):
     time.sleep(2)
     res["window_icon"] = rig.need("window.icon")
     res["value_pass"], res["value_missing"] = judge(res["window_icon"])
-    rig.r.call("screenshot", window=0, path=app.win(render))
+    stage = os.path.join(render_target(out), "main_render.png")  # 앱이 \\wsl.localhost 경로에 못 쓰는 문제(AC-026 rc=4) 회피
+    rig.r.call("screenshot", window=0, path=app.win(stage))
+    if stage != render and os.path.exists(stage):
+        shutil.copyfile(stage, render)
     rig.only_own_pd()
     res["idle_s_before_capture"] = require_away(args.away_state)
     res["band"] = real.ps_encoded(BAND_PS.replace("__OUT__", app.win(band).replace("'", "''")))
@@ -123,6 +137,8 @@ def self_test():
     row = {"explicit": True, "big": True, "small": True}
     good = {"ok": True, "embedded": True, "windows": [dict(row, kind="main"), dict(row, kind="sdi")]}
     cases = [
+        render_target("/mnt/c/x/y") == "/mnt/c/x/y",
+        render_target("/tmp/zz_not_mnt").replace(os.sep, "/").endswith("logs/app_icon_stage") and render_target("/tmp/zz_not_mnt").startswith("/mnt/"),
         judge(good)[0],
         not judge(dict(good, embedded=False))[0],
         not judge(dict(good, windows=[dict(row, kind="main")]))[0],

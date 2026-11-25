@@ -112,11 +112,11 @@ def self_test():
         "played: perf 없음·ghost none 은 판단 불가": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "none"}}) == (None, "none"),
         "played: perf 없음·seq 그대로는 판단 불가": resolve_played(True, False, {"before": {"seq": 2}, "after": {"seq": 2, "ghost": "done"}}) == (None, "none"),
         "played: enter started 는 재생": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": None, "enter": "started"}}) == (True, "lastSwitch.enter"),
-        "played: enter skipped_none·출처 일치는 무재생(FAIL)": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "none", "enter": "skipped_none", "origin": "more_dblclick"}}, "more_dblclick") == (False, "lastSwitch.enter")
+        "played: enter skipped_none·출처 일치는 무재생(FAIL)": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "none", "enter": "skipped_none", "origin": "window_list"}}, "window_list") == (False, "lastSwitch.enter")
                                                        and judge(True, True, False) == "FAIL",
-        "played: enter skipped_none·출처 불일치는 INVALID": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "none", "enter": "skipped_none", "origin": "body_click"}}, "more_dblclick") == (None, "출처 불일치")
+        "played: enter skipped_none·출처 불일치는 INVALID": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "none", "enter": "skipped_none", "origin": "body_click"}}, "window_list") == (None, "출처 불일치")
                                                        and judge(True, True, None) == "INVALID",
-        "played: enter skipped_none·출처 미기록은 INVALID": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "none", "enter": "skipped_none"}}, "more_dblclick") == (None, "출처 미기록"),
+        "played: enter skipped_none·출처 미기록은 INVALID": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "none", "enter": "skipped_none"}}, "window_list") == (None, "출처 미기록"),
         "played: 음성 기대 skipped_none 은 perf 없음 PASS 유지": resolve_played(False, False, {"before": {"seq": 1}, "after": {"seq": 2, "enter": "skipped_none"}}) == (False, "perf"),
         "played: enter skipped_running 은 판단 불가": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "done", "enter": "skipped_running"}}) == (None, "lastSwitch.enter"),
         "played: enter 없음은 ghost 보조(옛 행)": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "done"}}) == (True, "lastSwitch"),

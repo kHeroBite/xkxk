@@ -25,8 +25,8 @@ public sealed partial class DesignThemeViewModel
     public IReadOnlyList<DesignChoice> BackgroundFits { get; } =
         Enum.GetValues<BackgroundImageFit>().Select(f => new DesignChoice(UiKeyNames.Of(f), "theme.style.bgFit." + UiKeyNames.Of(f))).ToList();
 
-    /// <summary>배경 장식이 image 인가(배경 행의 이미지 조작을 보인다).</summary>
-    public bool IsImageDecor => DesignThemeResolver.Effective("decor") == "image";
+    /// <summary>배경 장식이 image 인가(배경 행의 이미지 조작을 보인다). 저장값 기준 — 읽기 실패로 실효값이 none 이어도 다른 파일을 고르고 사유를 볼 수 있게 남긴다.</summary>
+    public bool IsImageDecor => DesignThemeResolver.Stored("decor") == "image";
     public bool HasBackgroundImage => _settings.BackgroundImageFile is not null;
     public double MaxBackgroundDim => UiSettings.MaxBackgroundImageDim;
 

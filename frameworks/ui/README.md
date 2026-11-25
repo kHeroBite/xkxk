@@ -88,9 +88,9 @@ poc/ui/tools/run_desktop_bg.sh -- --open grid:5,gantt:5,form:10 --layout tile \
 
 ## 브라우저 실행
 ```bash
-poc/ui/tools/serve_browser.sh start 5180
-# http://127.0.0.1:5180/?open=grid:5,gantt:5,form:10&layout=tile&save-layout&exit-after=10
-poc/ui/tools/serve_browser.sh stop 5180
+poc/ui/tools/serve_browser.sh start 5791
+# http://127.0.0.1:5791/?open=grid:5,gantt:5,form:10&layout=tile&save-layout&exit-after=10
+poc/ui/tools/serve_browser.sh stop 5791
 ```
 - 쿼리 키는 `--키` 로, 값은 다음 인자로 전달된다. 값 없는 키는 플래그다.
 - 진행 상태는 `window.__pdPoc`(args·runtimeReadyMs·mainStartedMs·error·logs)로 읽는다.

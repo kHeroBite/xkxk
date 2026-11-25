@@ -128,7 +128,7 @@ public static partial class WindowTransitions
         // 이전 화면은 바뀐 직후(배치 전) 지금 찍는다. DOCK 탭 본문이 이미 숨겨졌으면 숨기기 직전 그림을 쓴다(.Switch.cs). 둘 다 없으면 짝 나감을 생략한다
         Located? before = null;
         Snapshot? shot = null;
-        var note = s_lastSwitch = new SwitchNote(++s_switchSeq);
+        var note = s_lastSwitch = new SwitchNote(++s_switchSeq) { Origin = key };
         if (s_previous is not null && s_previous.TryGetTarget(out var prev) && !ReferenceEquals(prev, doc))
         {
             (before, shot) = TakeLeaving(prev, key, sources, note);

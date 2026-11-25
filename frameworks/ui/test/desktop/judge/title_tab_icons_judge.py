@@ -1,12 +1,14 @@
 # AC-015·020 판정기 — 제목 탭 3방식, 표시 자리별 아이콘 키, title 방식·정지 조건의 불러오는 중 대체 표시를 판정한다
 """
 사용
-  title_tab_icons_judge.py --info <격리>/remote-control.json --away-state <pc_away.json> --approved '<누가·언제>' --out <결과.json>
+  title_tab_icons_judge.py --info <격리>/remote-control.json [--away-state <pc_away.json>] --approved '<누가·언제>' --out <결과.json>
+  (기본 remote_only — 원격 명령·앱 렌더 캡처만 쓰므로 PC 비움 검사를 하지 않는다)
   title_tab_icons_judge.py --bundle <wwwroot> --port <포트> --out <결과.json>      (웹 결과)
   title_tab_icons_judge.py --self-test
 
 방식 전환은 설정 화면 콤보(settings.cmbTitleTabDisplay)를 거친다. 아이콘 키는 WindowIcon 의 EffectiveIconKey, 표시는 DisplayState 를 읽는다.
-자리를 찾을 식별자가 없으면 그 자리는 INVALID 다(보였다고 치지 않는다). NAV 자리는 모바일형 판정기 몫이라 DEFERRED 다.
+자리를 찾을 식별자가 없으면 그 자리는 INVALID 다(보였다고 치지 않는다). NAV 자리는 ui.style set=mobile 로 모바일형을 강제한 뒤
+문서 콤보(shell.cmbDocs)의 아이콘(NavDocIcon)을 같은 방식으로 보고 원래 형으로 되돌린다. 결과에 places_pass(PASS 자리 수, 6곳 중)를 남긴다.
 깨끗한 격리 인스턴스에서만 돈다(설정을 바꾸고 문서를 연다).
 """
 import sys
@@ -21,6 +23,7 @@ PLACES = {  # 자리 → 찾을 이름(데스크톱 OS 독립 창은 DocIcon, �
     "explorer": ("shell.explorer.icon.Grid",),
     "dock_tab": ("HeaderBusy",),
     "sdi_title": ("DocIcon", "PdSdiTitleIcon"),
+    "nav": ("NavDocIcon",),  # 모바일형 문서 콤보(MobileNavView shell.cmbDocs)의 WindowIcon
 }
 PROPS = "EffectiveIconKey,DisplayState,IsBusyShown"
 
@@ -81,6 +84,45 @@ def judge_busy(node, loading, display, visible=True):
     if visible and not node.get("visible"):
         bad["보임"] = False
     return verdict(bad, "불러오는 중 표시 = %s" % display)
+
+
+def nav_case(s, find, key):
+    """모바일형(NAV)을 강제해 문서 콤보 아이콘 키를 보고 원래 형으로 되돌린다. 기기가 모바일형을 허용하지 않으면 INVALID."""
+    before = s.call("ui.style")
+    if "mobile" not in [str(a).lower() for a in before.get("allowed") or []]:
+        return {"verdict": "INVALID", "why": "이 기기(%s)는 모바일형을 허용하지 않는다" % before.get("device"), "allowed": before.get("allowed")}
+    try:
+        s.call("ui.style", set="mobile")
+        for _ in range(20):  # 자동 전환은 디바운스 뒤 반영
+            if str(s.call("ui.style").get("effective")).lower() == "mobile":
+                break
+            time.sleep(0.5)
+        time.sleep(1.5)
+        result = judge_place(find(*PLACES["nav"]), key)
+        s.capture("place_nav")
+        return dict(result, effective=s.call("ui.style").get("effective"))
+    finally:
+        s.call("ui.style", set=str(before.get("setting") or "auto").lower())
+        time.sleep(2)
+
+
+def places_pass(cases):
+    return sum(1 for name, c in cases.items() if name.startswith("place.") and c.get("verdict") == "PASS")
+
+
+def add_places_pass(path):
+    """결과 파일에 places_pass(PASS 자리 수)를 더한다. 결과가 없으면 그대로 둔다."""
+    import json
+
+    try:
+        with open(path, encoding="utf-8") as f:
+            out = json.load(f)
+    except (OSError, ValueError):
+        return
+    out["places_pass"] = places_pass(out.get("cases") or {})
+    out["places_total"] = len(PLACES)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, indent=1)
 
 
 def judge(s):
@@ -160,7 +202,9 @@ def judge(s):
         time.sleep(3)
         cases["place.sdi_title"] = judge_place(find(*PLACES["sdi_title"]), key)
         s.capture("place_sdi")
-        cases["place.nav"] = {"verdict": "DEFERRED", "why": "NAV 는 모바일형 판정기 몫"}
+        s.call("docs.sdi", doc=doc["id"], on=False)
+        time.sleep(2)
+        cases["place.nav"] = nav_case(s, find, key)
     finally:
         s.call("settings.set", **{"theme.motion.level": level})
         s.call("docs.close", all=True)
@@ -190,12 +234,33 @@ def self_test():
         ("트리 정지", shown_state([{"name": "TabIcon", "children": [{"type": "IconSpinner", "isVisible": False}]}]) == "static"),
         ("트리 없음", shown_state([{"name": "x", "children": []}]) is None),
         ("로딩 없음 INVALID", judge_busy(busy, False, "spinner")["verdict"] == "INVALID"),
+        ("자리 6곳(NAV 포함)", len(PLACES) == 6 and "nav" in PLACES),
+        ("places_pass 셈", places_pass({"place.a": {"verdict": "PASS"}, "place.b": {"verdict": "INVALID"},
+                                        "tab.x": {"verdict": "PASS"}}) == 1),
+        ("NAV 모바일형 불허 INVALID", nav_case(_FakeStyle(["Pc", "Tablet"]), None, "K")["verdict"] == "INVALID"),
     ])
 
 
+class _FakeStyle:
+    """자기시험용 — ui.style 만 답한다(모바일형 불허 경로)."""
+
+    def __init__(self, allowed):
+        self.allowed = allowed
+
+    def call(self, cmd, **kw):
+        return {"device": "Pc", "allowed": self.allowed, "setting": "Auto", "effective": "Pc"}
+
+
 def main():
-    args = session.parser(__doc__).parse_args()
-    return self_test() if args.self_test else session.run(args, "title_tab_icons_judge", judge)
+    ap = session.parser(__doc__)
+    ap.set_defaults(remote_only=True)  # 원격 명령·앱 렌더 캡처만 쓴다(실입력 없음) — PC 비움 검사 생략
+    args = ap.parse_args()
+    if args.self_test:
+        return self_test()
+    rc = session.run(args, "title_tab_icons_judge", judge)
+    if args.out:
+        add_places_pass(args.out)
+    return rc
 
 
 if __name__ == "__main__":
