@@ -184,7 +184,9 @@ internal static class Program
         App.SettingsStore = new FileLayoutStore(Path.Combine(folder, "settings.json")); // UI 설정(테마·글자 크기·폰트)은 레이아웃 파일과 같은 폴더
         xkxk.frameworks.ui.shell.Theming.DesignEffectsApplier.BlobStore = new xkxk.frameworks.ui.data.Theming.LocalBlobStore(folder); // 배경 이미지 복사본은 같은 앱 로컬 폴더 backgrounds/local/local(21 §6.2)
         App.VisibleFrameOf = WindowFrameMetrics.VisibleFrame;
+        SdiDocumentIcon.Install(); // B2: SDI OS 창 아이콘 = 활성 문서 메뉴 아이콘(AppWindowIcon 은 SDI 를 건너뛴다)
         AppWindowIcon.Install(); // AC-026: 작업 표시줄에 뜨는 창 전부에 앱 아이콘(창 생성 전 등록)
+        Win32ModalBlock.Install(); // B3: 설정 창 앱 모달의 OS 수준 차단(ModalScope.PlatformBlock = EnableWindow, Windows 만)
         App.ConfigureMainWindow = w =>
         {
             s_main = BgWindowPolicy.Main = w;

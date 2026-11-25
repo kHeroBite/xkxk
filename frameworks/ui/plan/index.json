@@ -20,8 +20,45 @@
     "문서 300줄 상한, 넘으면 부록으로 분리",
     "추정·미검증 표기, 외부 정보 출처 URL, 자격증명·서버값 금지(INFRA.md 참조로만)"
   ],
-  "requirements": [],
-  "decisions": [],
+  "requirements": [
+    {
+      "id": "REQ-117",
+      "topic": "상단 메뉴 아이콘·메뉴로 연 창 아이콘 일치",
+      "status": "구현중"
+    },
+    {
+      "id": "REQ-118",
+      "topic": "설정 창 앱 모달",
+      "status": "구현중"
+    },
+    {
+      "id": "REQ-119",
+      "topic": "메인 창 Ctrl+휠 시스템 글자 크기",
+      "status": "구현중"
+    },
+    {
+      "id": "REQ-120",
+      "topic": "별별UI 프레임워크화 계획(구현 결정은 사용자)",
+      "status": "확정(계획)·구현 보류"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "UADR-0004",
+      "topic": "메인 창 Ctrl+휠 = 시스템 글자 크기(2026-10-28 21:40 '메인창은 조절불가' 대체)",
+      "status": "채택"
+    },
+    {
+      "id": "UADR-0005",
+      "topic": "설정 창 앱 모달(ShowDialog + ModalScope)",
+      "status": "채택"
+    },
+    {
+      "id": "UADR-0006",
+      "topic": "명령 아이콘 키 PdCmdIcon* 와 창 아이콘 일치",
+      "status": "채택"
+    }
+  ],
   "documents": {
     "requirements_raw": "00_요구사항/01_사용자요구사항_원문.md",
     "requirements": "00_요구사항/02_요구사항정의서.md",
@@ -60,8 +97,13 @@
     ],
     "architecture": [
       "05_아키텍처/01_XKXK_저장소구조.md",
+      "05_아키텍처/02_별별UI_프레임워크화_계획.md",
       "05_아키텍처/08_지원_폼팩터_용어.md",
       "05_아키텍처/08a_지원_폼팩터_UX동등성_제약.md"
+    ],
+    "architecture_appendix": [
+      "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a1_방법론_전수조사.md",
+      "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a2_현행구조_진단.md"
     ],
     "screens": [
       "09_화면설계/01_화면설계_공통원칙.md",
@@ -124,5 +166,5 @@
     "tools_root": "tools"
   },
   "archived": [],
-  "note": "2026-11-24 Pd 에서 옮긴 UI 문서를 Pd 번호 체계 그대로 등재했다. 추가 키는 analysis·tech_stack·architecture·screens·decisions_appendix·pending_appendix·requirements_raw_appendix·migration_record 다. 결정 기록 정본은 decisions 이고 UADR-0001 이 있다."
+  "note": "2026-11-24 Pd 에서 옮긴 UI 문서를 Pd 번호 체계 그대로 등재했다. 추가 키는 analysis·tech_stack·architecture·screens·decisions_appendix·pending_appendix·requirements_raw_appendix·migration_record 다. 결정 기록 정본은 decisions 이고 UADR-0001 이 있다. 2026-11-25 architecture_appendix 키(프레임워크화 계획 부록)를 추가했다. requirements·decisions 배열은 이 날부터 새로 생긴 항목만 짧게 색인한다(그 전 항목은 본문 문서가 정본)."
 }

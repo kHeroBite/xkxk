@@ -2,7 +2,7 @@
 # 결정기록 (ADR) — ui
 
 - 상태: 작성 중
-- 최종 갱신일: 2026-11-24
+- 최종 갱신일: 2026-11-25
 - 카탈로그 키: `decisions`
 
 ## 작성 규칙
@@ -57,4 +57,29 @@
 - 근거: 사용자 원문 "기존 폴더와의 의존성을 모두 끊어야 한다"·"xkxk/frameworks/ui 처럼 폴더를 동일하게 맞춰라"·"옛앱은 이제 필요없으니 모두 지워도 된다. 신규앱만 남겨라. %LOCALAPPDATA%\PdPoc 도 지워라".
 - 대안: 옛 폴더를 읽어 설정을 옮기는 이전 코드는 사용자가 옛 앱을 버리기로 해 기각했다. Android 패키지를 그대로 두는 안(UTODO-0013 당시 유지)은 옛 앱과 공존·충돌 위험이 남아 기각했다.
 - 영향: `src/xkxk.frameworks.ui.data/AppDataFolder.cs`(신설)·데스크톱·Android 호스트, `tools/`·`test/` 스크립트, `AGENTS.md`, `README.md`. UTODO-0013·0014 완료. 이전하지 않으므로 사용자 옛 설정은 새 앱에 이어지지 않는다.
+- 상태: 채택
+
+## UADR-0004 메인 창 Ctrl+휠은 시스템 글자 크기를 바꾼다 (REQ-119)
+- 일자: 2026-11-25
+- 결정: 메인 창 크롬(문서 래퍼 밖 — 메뉴 줄·제목 줄 탭·탐색기 등 패널·상태바·MDI 문서 창 머리) 위의 Ctrl+휠(macOS Cmd+휠)은 시스템 글자 크기 `UiSettings.ShellFontSize`(설정 키 `ui.font.shell_size`, 범위 10~24, 기본 14)를 1씩 바꾸고 저장한다. 문서 창 안 Ctrl+휠(문서 글자·창 배율)과 Ctrl+0 동작은 바꾸지 않는다. 판정은 휠이 닿은 곳(히트 영역) 기준이다.
+- 근거: 사용자 원문 "MDI/SDI에서는 ctrl+휠로 확대/축소가 잘된다. 메인창에서도 ctrl+휠로 메인창 전체의 글자 폰트를 확대/축소 하여야 한다"(2026-11-25, RAW-002 4). 새 설정 키를 만들지 않고 기존 시스템 글자 크기를 쓰면 설정 화면 값과 항상 일치하고 재기동 뒤에도 유지된다.
+- 대체 대상: 2026-10-28 21:40 사용자 지시 "+ - 버튼은 없애고 ctrl+휠로만 … 다만 메인창은 조절불가"(출처 `Pd:plan/00_요구사항/01_사용자요구사항_원문.md` REQ-49 행, 이 영역 인용 `../04_기술스택/04_판정보고서_부록/a7_실측환경_데스크톱결과_2_3.2.md` UI-02·UI-05·UI-06, `../04_기술스택/04_판정보고서_부록/a13_화면공통원칙_구현대응_기록.md` §4.5) 중 "메인창은 조절불가" 부분이다. 메인 크롬 글자 크기 고정 규칙은 2026-11-11 시스템 글자 설정으로 이미 일부 대체됐고(같은 a13 §4.5), 이번 결정으로 Ctrl+휠 입력까지 대체한다. "+ - 버튼 없음"은 유지한다. 이 파일에는 옛 지시의 ADR 이 없어 상태를 바꿀 대상이 없다.
+- 대안: 메인 크롬 전용 배율 설정을 새로 두는 안은 시스템 글자 크기와 값이 둘로 갈라져 기각했다. 메인 창 전체(문서 포함)를 한 배율로 키우는 안은 기존 문서 창 배율 규칙과 충돌해 기각했다.
+- 영향: `src/xkxk.frameworks.ui.shell/Input/SettingsInput.cs`(메인 크롬 단계), `../09_화면설계/01_화면설계_공통원칙.md` §5.2·§5.3, 원격 진단 `input.wheel`·`input.ctrlWheel` 의 메인 대상 응답.
+- 상태: 채택
+
+## UADR-0005 설정 창은 앱 모달로 연다 (REQ-118)
+- 일자: 2026-11-25
+- 결정: 설정 창이 열려 있는 동안 메인 창·MDI 문서·SDI 창·다른 시스템 창의 입력을 모두 막는다. 데스크톱은 `Window.ShowDialog(owner)` 와 앱 공용 범위 `ModalScope`(OS 수준 차단은 데스크톱 훅 — Windows 는 `EnableWindow`, 앱 수준은 TopLevel 터널 입력 관문)를 함께 쓴다. 설정 창 자신과 그 소유 사슬 아래 창(테마 편집기 등)·팝업은 제외한다. 웹은 플라이아웃의 바깥 누름 닫기를 끄고 같은 앱 관문으로 막으며 Esc·닫기 단추로만 닫는다.
+- 근거: 사용자 원문 "설정창을 띄우면 설정창을 닫기 전까지 메인창/MDI/SDI 모두 컨트롤/클릭이 불가하여야 한다"(2026-11-25, RAW-002 3). Avalonia `ShowDialog(owner)` 는 owner 하나만 비활성화하고 다른 top-level 창(SDI)은 막지 않는다(https://raw.githubusercontent.com/AvaloniaUI/Avalonia/master/src/Avalonia.Controls/Window.cs , https://raw.githubusercontent.com/AvaloniaUI/Avalonia/master/src/Windows/Avalonia.Win32/WindowImpl.cs — 사이클27 계획서 §3 조사, SDI 를 막는 순회 코드가 없다는 판단은 추정).
+- 대안: `ShowDialog` 만 쓰는 안은 SDI 가 막히지 않아 요구를 채우지 못해 기각했다. 앱 관문만 쓰는 안은 OS 제목줄·캡션 단추·Alt+F4 를 막지 못해 기각했다.
+- 영향: `src/xkxk.frameworks.ui.shell/Platform/SystemDialogHost.cs`·`ModalScope.cs`·`ModalScope.Gate.cs`, `src/xkxk.frameworks.ui.desktop/Win32ModalBlock.cs`, 설정 열기 호출, `../09_화면설계/03_데스크톱_화면설계_2.md`·`04_웹_화면설계.md`, 진단 명령 `modal.state`. Windows 외 데스크톱은 앱 관문만 적용되는 한계가 있다.
+- 상태: 채택
+
+## UADR-0006 명령 아이콘 키 체계를 두고 메뉴 아이콘과 창 아이콘을 같은 키로 맞춘다 (REQ-117)
+- 일자: 2026-11-25
+- 결정: 상단 메뉴(파일·창·보기·시스템)의 각 항목에 16px 단색 선 아이콘을 단다. 키 체계는 메뉴 ID 화면 `PdMenuIcon<ID>`(기존), 셸 창 `PdShellIcon<이름>`(기존), 명령 `PdCmdIcon<이름>`(신설) 셋이며, 명령 키의 단일 출처는 생성 상수 `xkxk.frameworks.ui.data.Navigation.CmdIconKeys` 다. 메뉴로 연 창(MDI·SDI 문서, 설정·정보 등 시스템 창, SDI OS 창)의 창 아이콘은 그 메뉴 항목과 같은 키를 쓴다. 메인 창은 앱 아이콘을 유지한다. 최상위 메뉴 머리글에는 아이콘을 넣지 않는다.
+- 근거: 사용자 원문 "이 상단 메뉴들을 … 이렇게 메뉴마다 아이콘을 만들어 달라. 그래서 해당 메뉴를 눌러서 창이 뜰때에는 그 아이콘이 창아이콘으로 보여져야 한다"(2026-11-25, RAW-002 2). 메뉴와 창이 같은 상수를 쓰면 키가 어긋날 수 없다. 아이콘 그림은 외부 아이콘 path 를 복사하지 않고 생성기로 새로 그린다(`../09_화면설계/22_메뉴아이콘_제목탭_즐겨찾기_설계.md` §2.2).
+- 대안: 메뉴마다 아이콘 블록을 직접 적는 안은 메뉴 파일이 300줄을 넘고 키 오타를 막지 못해 기각했다. 외부 아이콘 글꼴 도입은 22 §2.2 와 라이선스 부담으로 기각했다.
+- 영향: `plan/_build/menu_icons.py`·`menu_icon_data.py`·`icon_glyphs_cmd.py`, `src/xkxk.frameworks.ui.views/Themes/MenuIcons.axaml`·`MenuIconStyles.axaml`·`Menus/*`, `src/xkxk.frameworks.ui.data/Navigation/CmdIconKeys.Generated.cs`·`MenuIconCatalog.cs`, `src/xkxk.frameworks.ui.shell/Platform/MenuIconBitmap.cs`·`SystemDialogHost.cs`, `src/xkxk.frameworks.ui.desktop/SdiDocumentIcon.cs`, `../09_화면설계/22_메뉴아이콘_제목탭_즐겨찾기_설계.md`. 프레임워크화(REQ-120)에서는 이 키 체계가 솔루션 아이콘 등록의 기반이 된다.
 - 상태: 채택

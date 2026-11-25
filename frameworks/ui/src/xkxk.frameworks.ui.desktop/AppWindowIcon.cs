@@ -24,7 +24,7 @@ internal static class AppWindowIcon
 
     private static void Apply(Window window)
     {
-        if (!window.ShowInTaskbar || window.Icon is not null)
+        if (!window.ShowInTaskbar || window.Icon is not null || SdiDocumentIcon.Handles(window)) // SDI 는 활성 문서 아이콘(SdiDocumentIcon, 문서 없으면 거기서 앱 아이콘)
         {
             return;
         }

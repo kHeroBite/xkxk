@@ -76,6 +76,14 @@ public partial class ThemeEditorView : UserControl
                 ShowActivated = activate,
             };
             _window.Bind(Window.TitleProperty, Loc.Instance.Observe("theme.ui.windowTitle")); // 언어 전환 시 창 제목도 즉시
+            // 창 아이콘 = 설정 ▸ 테마 편집기 아이콘(22 §2.3 — 시스템 창과 같은 규칙). 그리기 실패면 null → 앱 아이콘 유지
+            const string iconKey = "PdShellIconThemeEditor";
+            _window.SetValue(xkxk.frameworks.ui.shell.Platform.MenuIconBitmap.KeyProperty, iconKey);
+            if (xkxk.frameworks.ui.shell.Platform.MenuIconBitmap.Create(iconKey) is { } icon)
+            {
+                _window.Icon = icon;
+            }
+
             _window.Closed += (_, _) => _window = null;
             if (TopLevel.GetTopLevel(anchor) is Window owner)
             {

@@ -171,6 +171,8 @@
     <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
     <!-- 문서 창 크롬(UI-09 Mars 제목줄 버튼·UI-10 입체 외곽선·그림자, odev-7c) — Dock 테마보다 뒤여야 ControlTheme 재정의가 우선 -->
     <StyleInclude Source="avares://xkxk.frameworks.ui.views/Themes/MdiChrome.axaml" />
+    <!-- 상단 메뉴 항목 아이콘(22 §2.3) — MenuIcon.Key·배치 칸 항목에 Icon 템플릿을 단다 -->
+    <StyleInclude Source="avares://xkxk.frameworks.ui.views/Themes/MenuIconStyles.axaml" />
 
     <!-- 모든 창(메인·SDI 실 창)의 상속 글자 크기(셸 고정 토큰)·폰트 연결. 문서 창 안은 래퍼가 상속 크기를 다시 설정한다 -->
     <Style Selector=":is(TopLevel)">
@@ -209,12 +211,12 @@
             <NativeMenuItem Header="{loc:Tr shell.tray.show}" Command="{Binding ShowCommand}" />
             <NativeMenuItem Header="{loc:Tr shell.tray.hide}" Command="{Binding HideCommand}" />
             <NativeMenuItemSeparator />
-            <NativeMenuItem Header="{loc:Tr menu.ws.resetMain}" Command="{Binding Vm.WindowMenu.WindowMenuCommand}" CommandParameter="ResetMainWindow" />
-            <NativeMenuItem Header="{loc:Tr menu.ws.singleMonitor}" Command="{Binding Vm.WindowMenu.WindowMenuCommand}" CommandParameter="FitSingleMonitor" />
-            <NativeMenuItem Header="{loc:Tr menu.ws.multiMonitor}" Command="{Binding Vm.WindowMenu.WindowMenuCommand}" CommandParameter="FitMultiMonitor" />
+            <NativeMenuItem Header="{loc:Tr menu.ws.resetMain}" Command="{Binding WindowMenuCommand}" CommandParameter="ResetMainWindow" />
+            <NativeMenuItem Header="{loc:Tr menu.ws.singleMonitor}" Command="{Binding WindowMenuCommand}" CommandParameter="FitSingleMonitor" />
+            <NativeMenuItem Header="{loc:Tr menu.ws.multiMonitor}" Command="{Binding WindowMenuCommand}" CommandParameter="FitMultiMonitor" />
             <NativeMenuItemSeparator />
-            <NativeMenuItem Header="{loc:Tr menu.sys.help}" Command="{Binding Vm.SystemMenu.SystemViewCommand}" CommandParameter="Help" />
-            <NativeMenuItem Header="{loc:Tr menu.sys.about}" Command="{Binding Vm.SystemMenu.SystemViewCommand}" CommandParameter="About" />
+            <NativeMenuItem Header="{loc:Tr menu.sys.help}" Command="{Binding SystemViewCommand}" CommandParameter="Help" />
+            <NativeMenuItem Header="{loc:Tr menu.sys.about}" Command="{Binding SystemViewCommand}" CommandParameter="About" />
             <NativeMenuItemSeparator />
             <NativeMenuItem Header="{loc:Tr shell.tray.exit}" Command="{Binding ExitCommand}" />
           </NativeMenu>

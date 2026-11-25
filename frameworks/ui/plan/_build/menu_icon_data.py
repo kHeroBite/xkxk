@@ -127,3 +127,71 @@ STATUS = {
     "BadgeSlow": ("@badge", "clock"),   # 오래 걸리는 중 표지
     "BadgeError": ("@badge", "alert"),  # 불러오기 실패 표지
 }
+
+# 명령 아이콘(상단 메뉴 실행 항목 — 메뉴 ID 가 없는 명령). 이름: (글리프, 표지). 생성 키 PdCmdIcon<이름>, 상수 CmdIconKeys.<이름>.
+# 이름은 사이클27 계획서 계약표(메뉴·창·진단 코드가 같은 상수를 쓴다)라 바꾸지 않는다. 명령 글리프·표지 그림은 icon_glyphs_cmd.py.
+# 조합은 ICONS·SHELL·CMD 전체에서 달라야 한다. 문서 열기 항목은 MenuIconCatalog.Grid/Gantt/FormIconKey, 셸 창은 PdShellIcon 을 재사용한다.
+CMD = {
+    # 파일
+    "OpenSdi": ("popout", "plus"),      # 새 독립 창 ▸
+    "OpenBench": ("gauge", "clock"),    # 벤치(그리드·차트)
+    "SaveLayout": ("floppy", None),     # 레이아웃 저장
+    "LoadLayout": ("folderopen", None), # 레이아웃 복원
+    "LayoutSave": ("floppy", "plus"),   # 현재 레이아웃 백업 저장…
+    "LayoutManage": ("floppy", "gear"), # 레이아웃 백업 관리…
+    "Exit": ("exit", None),             # 끝내기
+    # 창
+    "Cascade": ("cascade", None),
+    "TileH": ("tileh", None),
+    "TileV": ("tilev", None),
+    "Tabbed": ("tabbed", None),
+    "Snap": ("snap", None),             # 창 배치 ▸(칸 항목은 SnapCellGlyph 가 그린다)
+    "Minimize": ("minimize", None),
+    "Maximize": ("maximize", None),     # 최대화 전환
+    "Restore": ("restore", None),
+    "Pin": ("pin", None),
+    "Rename": ("rename", None),
+    "ResetLayout": ("reset", None),
+    "MinimizeAll": ("cascade", "down"),
+    "RestoreAll": ("cascade", "up"),
+    "RestoreLastMin": ("restore", "clock"),
+    "Next": ("next", None),
+    "Prev": ("prev", None),
+    "SdiGroup": ("sdi", None),          # 독립 창 ▸
+    "ToggleSdi": ("sdi", "check"),
+    "Float": ("popout", None),          # 독립 창으로 띄우기
+    "Redock": ("dockin", None),         # 메인 창으로 되돌리기
+    "SdiResetPos": ("sdi", "reset"),
+    "SdiMinimize": ("sdi", "down"),
+    "SdiRestore": ("sdi", "up"),
+    "SdiCloseAll": ("sdi", "cross"),
+    "Monitor": ("monitors", None),      # 모니터 ▸
+    "SingleMonitor": ("monitor", None),
+    "MultiMonitor": ("monitors", "plus"),
+    "MonitorItem": ("monitor", "right"),  # 모니터 라디오 목록 각 항목
+    "MonitorNone": ("monitor", "cross"),
+    "MonitorMaximize": ("monitor", "up"),
+    "ResetMain": ("window", "reset"),   # 메인 창 위치 초기화
+    "Overview": ("overview", None),
+    "Close": ("close", None),
+    "CloseOthers": ("tabbed", "cross"),
+    "CloseAll": ("cascade", "cross"),
+    "Flash": ("flash", None),
+    "WinListMore": ("more", None),
+    # 보기
+    "FontReset": ("font", "reset"),     # 문서 글자 크기 초기화
+    "ToggleTheme": ("contrast", None),
+    "NextTheme": ("contrast", "right"),
+    # 시스템
+    "GpuRestart": ("chip", "reset"),    # 재시작 필요(GPU)
+    "SysMonitor": ("pulse", None),      # 모니터링 ▸
+    "AppMonitor": ("chip", None),       # 앱 자원
+    "LogGroup": ("list", "clock"),      # 로그 ▸
+    "LogFolder": ("folder", "search"),
+    "LogExport": ("list", "up"),
+    "Inquiry": ("chat", "plus"),
+    "InquiryList": ("chat", "search"),
+    "Update": ("cloud", "down"),
+    "Changelog": ("doc", "clock"),
+    "About": ("info", None),
+}

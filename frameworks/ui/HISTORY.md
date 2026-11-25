@@ -4,6 +4,14 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-25 — 메뉴 아이콘·설정창 모달·메인 글자 크기·프레임워크화 계획(O4, conv_1795611347, c27)
+- 사용자 요청 2~5. (2) 상단 메뉴(파일·창·보기·시스템·트레이) 항목마다 아이콘을 넣고, 메뉴로 띄운 창의 창 아이콘(MDI·SDI·작업표시줄)을 그 메뉴 아이콘과 같게 했다. 창 메뉴의 활성 창은 토글 칸에 ✓ 로 표시한다(D-5, B10). (3) 설정창은 모달이다. 닫기 전까지 메인·MDI·SDI 의 컨트롤과 클릭이 막힌다. 수단은 `ModalScope`(터널 관문 + IsHitTestVisible 히트 차단 + Win32 EnableWindow 재차단 + 트레이 가드 + 원격 포인터 차단)이다. (4) 메인창 Ctrl+휠로 메인창 전체 글자 크기(ShellFontSize 10~24)를 바꾼다. (5) 프레임워크화 계획 문서만 만들었고 구현은 하지 않았다.
+- 코드. `MenuIcon`·`MenuIconStyles.axaml`·`MenuIconBitmap`·`SdiDocumentIcon`·`CmdIconKeys.Generated.cs`(아이콘 키는 `plan/_build/icon_glyphs_cmd.py` 가 생성), `ModalScope*.cs`·`Win32ModalBlock.cs`·`RemoteModalCommands.cs`·`RemoteMenuIconCommands.cs`, 창·입력 쪽 `WindowCommands`·`WindowStateOps`·`SettingsInput`·`ShellPlatform` 수정.
+- 문서. `plan/05_아키텍처/02_별별UI_프레임워크화_계획.md` 와 부록 폴더(a1·a2), UADR-0004~0006, REQ-117~120, 화면설계 문서 갱신, `plan/README.md` 폴더 지도에 05_아키텍처 부록 반영.
+- 판정기. `test/desktop/judge/` 의 `menu_icons_judge`·`settings_modal_judge`·`main_font_wheel_judge`·`c27_judge_common`·`c27_b10`, `test/web/measure/menu_modal_font_web.py`, `test/desktop/measure/win_enabled.ps1`.
+- 시험 결과 요약. 데스크톱 B1~B7·B10 PASS, 웹 B1_web·B3_web·B4_web·B10_web PASS. 작업표시줄 띠 캡처는 PC 비움 시험으로 진행 중이라 보류다.
+- 알려진 한계. 프레임워크화는 계획만 있고 구현이 없다. Avalonia 12.1.4 가 `IInputManager.PreProcess`·`Raw*EventArgs` 를 공개하지 않아 원시 입력 관문 대신 히트 차단을 쓴다.
+
 ## 2026-11-25 — PC 비움 판정 보류 8건·UTODO-0018~0021·0004·0006 처리(O4, conv_179559297106)
 - 사용자 요청: PC 비움 동안 판정 보류 8건(AC-013·014·015·024·026·028·029, TODO-671)을 판정 우회 없이 실측·판정기 신설로 끝내고, Fold5 잔여와 다음 사이클 과제를 남김없이 처리한다.
 - 측정 결과(PC 비움 실입력·실기기). AC-024 PASS(실끌기 커밋 프레임 p95 15.15ms, 기준 25ms), AC-029 RECORDED(숨김 14.0ms·유지 14.09ms), AC-026 PASS(작업 표시줄 띠 png 직접 판독, Alt+Tab 은 도구 한계로 미확인), AC-028 PASS(실입력 3상태 + OS 합성 캡처 3장), AC-013·014·015 PASS(원격 명령만 써서 비전경으로 측정, AC-015 는 NAV 포함 6곳), TODO-671 RECORDED(실제 GPU headed 에서도 묶음 닫기 1~2프레임). 웹 TODO-670 165행 PASS 165, Fold5 TODO-501-3·4b 접힘 PASS. A1~A20 은 c26_gate 직접 실행 rc=0 이고 A10(TODO-501-4c)만 blocked.

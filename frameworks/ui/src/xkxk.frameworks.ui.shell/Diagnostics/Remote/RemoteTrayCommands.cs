@@ -19,8 +19,8 @@ internal static class RemoteTrayCommands
 
     internal static void Register(RemoteCommandRouter r)
     {
-        r.Register("window.icon", "앱 아이콘 상태(AC-026): 내장 자원(embedded)·창별 kind(main|sdi|other)·WM_GETICON(big·small·small2)·GCLP_HICON(classBig·classSmall)·작업 표시줄 스타일(showInTaskbar·appWindow·toolWindow). ok=메인·SDI 전부 big·small 있음", _ => IconState());
-        r.Register("tray.state", "트레이 상태: 선언(declared)·플랫폼 구현(implPresent — 데스크톱 true, Android·웹 false 예상)·실제 표시(visible)·저장값(trayEnabled)·시험 억제(suppressSaved)·원격 강제(remoteOverride)·툴팁·아이콘·메뉴 항목(name·header·enabled·명령·canExecute)·메인 창(visible·state)·마지막 실행 항목·pid", _ => TrayState());
+        r.Register("window.icon", "앱 아이콘 상태(AC-026): 내장 자원(embedded)·창별 kind(main|sdi|other)·WM_GETICON(big·small·small2)·GCLP_HICON(classBig·classSmall)·작업 표시줄 스타일(showInTaskbar·appWindow·toolWindow)·iconKey(메뉴 아이콘 창 키, null=앱 아이콘)·docIconKey(SDI 활성 문서 키). ok=메인·SDI 전부 big·small 있음", _ => IconState());
+        r.Register("tray.state", "트레이 상태: 선언(declared)·플랫폼 구현(implPresent — 데스크톱 true, Android·웹 false 예상)·실제 표시(visible)·저장값(trayEnabled)·시험 억제(suppressSaved)·원격 강제(remoteOverride)·툴팁·아이콘·메뉴 항목(name·header·enabled·명령·canExecute)·메인 창(visible·state)·마지막 실행 항목·lastBlocked(앱 모달로 보류한 마지막 항목)·modalActive·pid", _ => TrayState());
         r.Register("tray.invoke", "트레이 메뉴 항목 실행(실입력 없음 — App.axaml NativeMenuItem 에 바인딩된 Command 를 직접 실행) item=show|hide|resetMain|singleMonitor|multiMonitor|help|about|exit. exit 는 응답 송신 뒤 실행(종료 자동 저장 경로) → 실행 뒤 tray.state", a =>
         {
             var name = a.ReqStr("item");
@@ -86,6 +86,8 @@ internal static class RemoteTrayCommands
                 ["kind"] = kind,
                 ["title"] = window.Title,
                 ["explicit"] = window.Icon is not null,
+                ["iconKey"] = window.GetValue(MenuIconBitmap.KeyProperty), // B2: 메뉴 아이콘으로 만든 창 아이콘의 키(null = 앱 아이콘)
+                ["docIconKey"] = DocIconKey(window), // SDI 활성 문서 키(제목줄·탭과 같은 값) — iconKey 와 같아야 한다
                 ["showInTaskbar"] = window.ShowInTaskbar,
                 ["big"] = state?.Big,
                 ["small"] = state?.Small,
@@ -106,6 +108,11 @@ internal static class RemoteTrayCommands
             ["pid"] = Environment.ProcessId,
         };
     }
+
+    private static string? DocIconKey(Window window) =>
+        window is Dock.Model.Core.IHostWindow { Window.Layout: { } root } && xkxk.frameworks.ui.shell.Docking.WindowCommands.FindDocument(root) is { } doc
+            ? doc.IconKey ?? xkxk.frameworks.ui.data.Navigation.MenuIconCatalog.IconKeyFor(doc.ScreenId, doc.Kind.ToString())
+            : null;
 
     private static NativeMenuItem? TrayItem(string name)
     {
@@ -152,6 +159,8 @@ internal static class RemoteTrayCommands
             ["mainVisible"] = main?.IsVisible,
             ["mainState"] = main?.WindowState.ToString(),
             ["lastInvoked"] = menu?.LastInvoked,
+            ["lastBlocked"] = menu?.LastBlocked, // 앱 모달 때문에 실행하지 않은 마지막 항목(B3 트레이 판정, 실행했으면 null)
+            ["modalActive"] = ModalScope.IsActive,
             ["pid"] = Environment.ProcessId,
         };
     }

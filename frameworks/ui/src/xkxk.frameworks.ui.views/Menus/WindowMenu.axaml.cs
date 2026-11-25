@@ -40,6 +40,20 @@ public partial class WindowMenu : MenuItem
             vm.WindowMenu.OpenWindows.Refresh();
             vm.WindowMenu.RefreshTips();
             RefreshSnapMenu(vm);
+            SyncActiveChecks();
+        }
+    }
+
+    // 열린 창 칸의 ✓(토글 칸)를 실제 활성 값으로 맞춘다. 메뉴는 CheckBox 항목을 누르면 IsChecked 를 SetCurrentValue 로 뒤집는데,
+    // 이미 활성인 창을 다시 고르면 IsActive 가 안 바뀌어 바인딩이 값을 되돌려 주지 않는다. SetCurrentValue 라 OneWay 바인딩은 유지된다
+    private void SyncActiveChecks()
+    {
+        foreach (var item in Items.OfType<MenuItem>())
+        {
+            if (item.CommandParameter is OpenWindowSlot slot && item.IsChecked != slot.IsActive)
+            {
+                item.SetCurrentValue(MenuItem.IsCheckedProperty, slot.IsActive);
+            }
         }
     }
 

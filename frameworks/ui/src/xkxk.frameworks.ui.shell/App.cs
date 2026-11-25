@@ -96,6 +96,9 @@ public class App : Application
         SettingsStore = new FreshGuardLayoutStore(SettingsStore ?? new MemoryLayoutStore(), Isolated, ProfileSettings);
         LayoutLibraryStore = new FreshGuardKeyValueStore(LayoutLibraryStore ?? new MemoryKeyValueStore(), Isolated, ProfileLibrary);
 
+        // 앱 모달 입력 관문(설정 창 — 03_2 §8.2)을 Ctrl+휠/Ctrl+0 처리보다 먼저 등록한다(같은 터널 단계 클래스 처리기는 등록 순서대로 돈다).
+        ModalScope.InstallGate();
+
         // 테마·글자 크기·폰트를 화면 생성 전에 반영하고 Ctrl+휠/Ctrl+0 전역 처리를 등록한다.
         Input.SettingsInput.Install(UiSettings.Current, this, SettingsStore); // 설정 시작 순서·전역 입력 처리기(컨트롤 계층)
 

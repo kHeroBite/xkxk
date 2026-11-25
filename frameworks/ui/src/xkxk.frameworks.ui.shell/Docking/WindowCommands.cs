@@ -115,7 +115,8 @@ public sealed partial class WindowCommands : IShellCommands
 
     private void ActivateFromWindow(object? context)
     {
-        if (FindDocument(context) is not { } doc || ReferenceEquals(doc, ActiveDocument) || !OpenDocuments.Contains(doc))
+        // 앱 모달(설정 창) 중에는 누름·창 활성화 알림으로 문서를 바꾸지 않는다(03_2 §8.2 — 아래 누름 처리기는 handledEventsToo 라 입력 관문의 Handled 를 무시한다)
+        if (Platform.ModalScope.IsActive || FindDocument(context) is not { } doc || ReferenceEquals(doc, ActiveDocument) || !OpenDocuments.Contains(doc))
         {
             return;
         }

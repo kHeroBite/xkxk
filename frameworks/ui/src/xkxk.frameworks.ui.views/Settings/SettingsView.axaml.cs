@@ -6,6 +6,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using xkxk.frameworks.ui.data.Navigation;
 using xkxk.frameworks.ui.shell.ViewModels.Settings;
 
 namespace xkxk.frameworks.ui.views.Settings;
@@ -33,7 +34,10 @@ public partial class SettingsView : UserControl, ISettingsRootView
             () => new SettingsView { DataContext = new SettingsWindowViewModel(main) },
             anchor,
             WindowWidth,
-            WindowHeight);
+            WindowHeight,
+            // 창 아이콘 = 메뉴 '설정' 아이콘(22 §2.3). 설정 창이 열린 동안 메인·MDI·SDI 조작 불가(앱 모달, 03_2 '설정 창 앱 모달')
+            iconKey: MenuIconCatalog.ShellIconKey("Settings"),
+            modal: true);
     }
 
     protected override void OnDataContextChanged(EventArgs e)

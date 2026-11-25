@@ -20,7 +20,7 @@ internal static class RemoteWheelCommands
     internal static void Register(RemoteCommandRouter r)
     {
         r.Register("input.wheel",
-            "수식키+휠 재현 id=|dock= [doc] [dy=1] [dx=0] [ctrl|alt|shift|meta=true] [x= y=(대상 좌표 DIP, 생략 시 가운데)] → {target, handled, state}", async a =>
+            "수식키+휠 재현 id=|dock= [doc] [dy=1] [dx=0] [ctrl|alt|shift|meta=true] [x= y=(대상 좌표 DIP, 생략 시 가운데)] → {target, handled, denseTarget, state(공통 휠 조작 대상이 아니면 null)}", async a =>
             {
                 var c = RemoteUiTargets.Target(a);
                 var top = TopLevel.GetTopLevel(c) ?? throw new RemoteCommandException("대상이 화면 트리에 없습니다.");
@@ -42,7 +42,9 @@ internal static class RemoteWheelCommands
                 var e = new PointerWheelEventArgs(hit, pointer, top, point, (ulong)Environment.TickCount64, props, mods, new Vector(a.Num("dx") ?? 0, a.Num("dy") ?? 1));
                 hit.RaiseEvent(e);
                 await AutomationBridge.WaitFramesAsync(top, 2); // DataGrid 는 다음 측정에서 스크롤을 반영한다
-                return new JsonObject { ["target"] = hit.GetType().Name, ["handled"] = e.Handled, ["state"] = State(c, local) };
+                // 메뉴 줄·탐색기처럼 공통 휠 조작(DenseWheel)이 없는 대상(B4 메인 크롬 Ctrl+휠)은 이벤트만 보내고 state=null 로 성공 응답한다
+                var dense = DenseWheel.FindTarget(c) is not null;
+                return new JsonObject { ["target"] = hit.GetType().Name, ["handled"] = e.Handled, ["denseTarget"] = dense, ["state"] = dense ? State(c, local) : null };
             });
         r.Register("dense.state",
             "수식키+휠 대상의 실제 값 id=|dock= [doc] [x= y=] → {kind, rowLevel, columnLevel, rowAt, rowHeight, ...}", a =>

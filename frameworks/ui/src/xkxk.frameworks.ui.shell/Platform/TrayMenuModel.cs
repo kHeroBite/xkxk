@@ -1,4 +1,4 @@
-// 시스템 트레이 메뉴의 바인딩 원본(Application.DataContext) — 표시 규칙(저장값·시험 억제·원격 강제)과 보이기·숨기기·종료 명령
+// 시스템 트레이 메뉴의 바인딩 원본(Application.DataContext) — 표시 규칙(저장값·시험 억제·원격 강제)과 보이기·숨기기·창·시스템·종료 명령(앱 모달 중에는 모달 창을 앞으로)
 using xkxk.frameworks.ui.shell;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -10,6 +10,9 @@ namespace xkxk.frameworks.ui.shell.Platform;
 /// <summary>
 /// 메뉴 배치는 App.axaml 의 TrayIcon.Icons 가 정본이다(Avalonia 문서 권장 — Application 에 DataContext).
 /// 창 초기화·모니터 맞춤은 윈도우 메뉴(Vm.WindowMenuCommand), 도움말·정보는 시스템 메뉴(Vm.SystemViewCommand)와 같은 명령을 쓴다.
+/// 앱 모달(설정 창, 03_2 §8.2)이 열린 동안에는 메인·MDI·SDI 상태를 바꾸거나 창을 여는 항목(보이기·숨기기·창 초기화·모니터 맞춤·도움말·정보)을
+/// 실행하지 않고 모달 창을 앞으로 가져온다(ModalScope.ActivateModal). 종료만 허용한다(사용자가 앱을 끝낼 길은 항상 남긴다 — 종료 저장 절차는 같다).
+/// 트레이 메뉴(App.axaml)와 진단 tray.* 는 모두 이 모델의 명령을 실행하므로 같은 규칙을 탄다.
 /// </summary>
 public sealed partial class TrayMenuModel : ObservableObject
 {
@@ -23,6 +26,8 @@ public sealed partial class TrayMenuModel : ObservableObject
         ShowCommand = new RelayCommand(Show);
         HideCommand = new RelayCommand(Hide);
         ExitCommand = new RelayCommand(Exit);
+        WindowMenuCommand = new RelayCommand<string?>(p => Guarded("window:" + p, () => vm.WindowMenu.WindowMenuCommand.Execute(p)));
+        SystemViewCommand = new RelayCommand<string?>(p => Guarded("system:" + p, () => vm.SystemMenu.SystemViewCommand.Execute(p)));
         vm.Extras.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(ShellExtrasViewModel.TrayEnabled))
@@ -62,6 +67,15 @@ public sealed partial class TrayMenuModel : ObservableObject
     /// <summary>종료: App.RequestExit → 메인 창 Close → 종료 자동 저장(레이아웃·설정 플러시) → Shutdown. X 버튼과 같은 경로다.</summary>
     public RelayCommand ExitCommand { get; }
 
+    /// <summary>트레이 창 항목(창 초기화·모니터 맞춤) — 윈도우 메뉴 명령에 위임, 앱 모달 중에는 모달 창을 앞으로.</summary>
+    public RelayCommand<string?> WindowMenuCommand { get; }
+
+    /// <summary>트레이 시스템 항목(도움말·정보) — 시스템 메뉴 명령에 위임, 앱 모달 중에는 모달 창을 앞으로.</summary>
+    public RelayCommand<string?> SystemViewCommand { get; }
+
+    /// <summary>앱 모달 때문에 실행하지 않은 마지막 트레이 항목(진단·시험 판정용). 실행했으면 null.</summary>
+    public string? LastBlocked { get; private set; }
+
     /// <summary>마지막으로 실행한 트레이 항목(진단 tray.state 판정용).</summary>
     public string? LastInvoked { get; private set; }
 
@@ -70,13 +84,29 @@ public sealed partial class TrayMenuModel : ObservableObject
     private void Show()
     {
         Mark("show");
-        ShellPlatform.RestoreMain(_window, activate: !xkxk.frameworks.ui.shell.Platform.SystemDialogHost.BackgroundMode);
+        Guarded("show", () => ShellPlatform.RestoreMain(_window, activate: !xkxk.frameworks.ui.shell.Platform.SystemDialogHost.BackgroundMode));
     }
 
     private void Hide()
     {
         Mark("hide");
-        ShellPlatform.HideMain(_window); // 소유 SDI 목록을 기억해 보이기에서 함께 복원(D-C3-8)
+        Guarded("hide", () => ShellPlatform.HideMain(_window)); // 소유 SDI 목록을 기억해 보이기에서 함께 복원(D-C3-8)
+    }
+
+    /// <summary>앱 모달 중이면 action 을 실행하지 않고 모달 창을 앞으로 가져온다. 실행했으면 true.</summary>
+    private bool Guarded(string item, System.Action action)
+    {
+        if (ModalScope.IsActive)
+        {
+            LastBlocked = item;
+            System.Diagnostics.Debug.WriteLine($"[모달] 트레이 항목 보류 item={item} modal={ModalScope.ActiveName}");
+            ModalScope.ActivateModal();
+            return false;
+        }
+
+        LastBlocked = null;
+        action();
+        return true;
     }
 
     private void Exit()

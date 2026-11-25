@@ -1,0 +1,22 @@
+<!-- 상단 메뉴 항목 아이콘(22 §2.3) — MenuIcon.Key 가 있는 항목(pdCmdIcon)은 그 키의 WindowIcon, 배치 칸 항목(pdSnapIcon)은 SnapCellGlyph 를 Icon 칸에 단다.
+     Setter 값이 <Template> 이면 Avalonia 가 항목마다 새 인스턴스를 만든다(12.1.4 Avalonia.Base PropertySetterTemplateInstance — DockJoinTarget.axaml Adorner 와 같은 방식).
+     Icon 칸은 Fluent 템플릿의 아이콘 칸(토글 칸과 별개)이라 라디오·체크 항목도 아이콘을 함께 가진다. 연결: PdApp.axaml Application.Styles -->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="using:xkxk.frameworks.ui.views"
+        xmlns:menus="using:xkxk.frameworks.ui.views.Menus">
+  <Style Selector="MenuItem.pdCmdIcon">
+    <Setter Property="Icon">
+      <Template>
+        <views:WindowIcon Width="16" Height="16" IconKey="{Binding $parent[MenuItem].(menus:MenuIcon.Key)}" />
+      </Template>
+    </Setter>
+  </Style>
+  <Style Selector="MenuItem.pdSnapIcon">
+    <Setter Property="Icon">
+      <Template>
+        <menus:SnapCellGlyph Width="16" Height="16" Spec="{Binding $parent[MenuItem].Tag}" />
+      </Template>
+    </Setter>
+  </Style>
+</Styles>

@@ -4,6 +4,18 @@
 > 2026-11-24 에 Pd 저장소(`Pd:LESSONS.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-25 — 메뉴 아이콘·설정창 모달 사이클 교훈(conv_1795611347, c27, odone)
+
+1. **ofinish 정리는 `evidence/` 를 지운다.** 시험 원자료는 `test_artifacts/` 에 둔다(D-4).
+2. **활성 창 ✓ 를 아이콘 열에 두면 가려진다.** ✓ 는 토글 칸에 둔다(D-5, B10). 아이콘이 들어가는 메뉴는 표식 칸 배치를 캡처로 판독한다.
+3. **숨김 슬롯(visible=false)을 판정에 넣으면 판정기가 틀린다.** 보이는 항목만 세고 숨김은 따로 센다.
+4. **PID 4700 이 `bin/Release` 를 잠근다.** 자기 PID 가 아니므로 건드리지 않고 Work 설정으로 빌드한다.
+5. **Avalonia 12.1.4 는 `IInputManager.PreProcess`·`Raw*EventArgs` 를 공개하지 않는다.** 원시 입력 관문은 만들 수 없고 `IsHitTestVisible` 히트 차단과 Win32 `EnableWindow` 재차단을 조합한다.
+6. **히트 차단으로 바꾸면 pointerClick 이 '가림' 으로 거부된다.** 판정기가 이를 처리하지 못해 INVALID 가 났다. 거부를 막힘 증거로 인정하되 기준선(모달 전)과 해제 대조(모달 후)를 함께 둔다.
+7. **아차사고. otest 가 `PD_REMOTE_INFO` 없이 `pdctl app.shutdown` 을 1회 호출했다.** 사용자 폴더 기본 경로가 없어 실패했고 영향은 없었다. 원격 명령은 반드시 자기 인스턴스의 remote-info 로만 보낸다.
+
+재발방지 검토(수단 우선순위 hook > 도구 > 스킬 > 문서). 7번은 도구에서 막는 것이 맞다. `pdctl` 이 `PD_REMOTE_INFO` 없이 `app.shutdown` 같은 파괴적 명령을 거부하게 고치는 방안을 후속 과제로 남긴다(이번 범위 밖, 정본은 `tools/` 의 pdctl). 5·6번은 판정기 공용 모듈(`c27_judge_common`)에 막힘 증거 처리를 넣었고, 1번은 시험 자산 경로 규칙(`test/README.md`)이 이미 같은 방향이다.
+
 ## 2026-11-25 — PC 비움 판정 보류 8건 사이클 교훈(conv_179559297106, odone)
 
 1. **in-process 팀원은 tmux pane 이 없는 것이 정상이다.** pane 부재만 보고 TaskStop 으로 멈춘 것은 실수였다. 살아 있는지는 pane 이 아니라 팀 구성·heartbeat·ListAgents 로 확인한다.

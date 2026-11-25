@@ -1,4 +1,5 @@
 // '다시 시작해야 적용됩니다' 대화 코드비하인드 — 재시작 훅(SystemHost.Restart) 유무로 버튼을 바꾸고, [지금 다시 시작]은 설정 저장을 기다린 뒤 재시작한다
+using xkxk.frameworks.ui.data.Navigation;
 using xkxk.frameworks.ui.shell;
 using xkxk.frameworks.ui.shell.Platform;
 using Avalonia.Controls;
@@ -28,7 +29,7 @@ public partial class RestartRequiredView : UserControl
 
     /// <summary>대화를 연다(이미 열려 있으면 활성화).</summary>
     public static void Open(Control? anchor = null) =>
-        SystemDialogHost.Open(DialogName, "sys.restartRequired.title", () => new RestartRequiredView(), anchor, 420, 220);
+        SystemDialogHost.Open(DialogName, "sys.restartRequired.title", () => new RestartRequiredView(), anchor, 420, 220, iconKey: CmdIconKeys.GpuRestart);
 
     private async void OnNow(object? sender, RoutedEventArgs e)
     {

@@ -1,9 +1,11 @@
-// UI 설정 입력 처리(컨트롤 계층) — 문서 창 위에서만 순수 Ctrl+휠(글자 크기 또는 창 배율)·Ctrl+0(초기화)·두 손가락 핀치 처리, 메인 창 크롬은 고정
+// UI 설정 입력 처리(컨트롤 계층) — 문서 창 위 순수 Ctrl+휠(글자 크기 또는 창 배율)·Ctrl+0(초기화)·두 손가락 핀치, 메인 창 크롬 위 Ctrl+휠은 시스템 글자 크기
 using xkxk.frameworks.ui.data.Layout;
 using System;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
@@ -66,15 +68,63 @@ public static class SettingsInput
     /// <summary>마지막으로 Ctrl+휠이 처리된 문서 창 안 요소(U1 — Ctrl+0 이 "휠로 배율을 바꾼 그 창"을 찾는 데 쓴다). 약한 참조라 창이 닫히면 사라진다.</summary>
     private static WeakReference<Visual>? s_lastWheel;
 
-    // 순수 Ctrl+휠, macOS 는 Cmd+휠(Shift·Alt 조합 제외 — Alt·Alt+Shift 는 xkxk.frameworks.ui DenseWheel). 포인터가 문서 창(래퍼) 위일 때만 처리·Handled.
-    // 메인 창 크롬(메뉴·탭·패널·상태바) 위에서는 무시하고 일반 스크롤로 통과시킨다(사용자 지시 21:40 "메인창은 조절불가").
+    // 순수 Ctrl+휠, macOS 는 Cmd+휠(Shift·Alt 조합 제외 — Alt·Alt+Shift 는 xkxk.frameworks.ui DenseWheel). 히트 영역으로 가른다(01 §5.3):
+    // ① 문서 창(래퍼) 위 = 문서 처리(Step) ② 메인 창의 문서 밖 크롬(메뉴·탭·MDI 창 머리·패널·상태바) = 시스템 글자 크기(MainChromeStep)
+    // ③ SDI 창 크롬·팝업·시스템 창 위 = 무시(일반 스크롤). 이전 "메인창은 조절불가"(사용자 지시 21:40)는 UADR-0004(2026-11-25 요구 4)로 대체됐다.
+    // 모달 범위가 열려 있으면 막힌 창의 휠은 ModalScope 관문이 먼저 Handled 로 막아 여기까지 오지 않는다(App.cs 등록 순서).
     private static void OnWheel(TopLevel sender, PointerWheelEventArgs e)
     {
-        if (IsCommandModifier(sender, e.KeyModifiers) && e.Delta.Y != 0 && Step(e.Source as Visual, e.Delta.Y > 0 ? 1 : -1))
+        if (!IsCommandModifier(sender, e.KeyModifiers) || e.Delta.Y == 0)
+        {
+            return;
+        }
+
+        var delta = e.Delta.Y > 0 ? 1 : -1;
+        var source = e.Source as Visual;
+        if (Step(source, delta))
         {
             s_lastWheel = new WeakReference<Visual>((Visual)e.Source!);
             e.Handled = true;
         }
+        else if (MainChromeStep(source, delta))
+        {
+            e.Handled = true;
+        }
+    }
+
+    /// <summary>
+    /// 메인 창 크롬 Ctrl+휠 입구(원격 input.wheel 도 같은 경로). source 가 메인 TopLevel(데스크톱 메인 창·단일 뷰 메인 뷰) 안이고 문서 래퍼·팝업 밖이면
+    /// UiSettings.ShellFontSize(설정 ▸ 모양 '시스템 글자 크기', 10~24, 저장됨)를 ±1 하고 true. delta=0(Ctrl+0)은 처리하지 않는다(문서 전용 유지).
+    /// 경계값에서는 값이 그대로여도 true(스크롤로 새지 않게). 연속 입력 저장은 UiSettingsStore 가 직렬화·합류(진행 중 요청은 마지막 값 1회)한다.
+    /// </summary>
+    public static bool MainChromeStep(Visual? source, int delta)
+    {
+        if (delta == 0 || source is null || IsInDocument(source) || !IsMainChrome(source))
+        {
+            return false;
+        }
+
+        var settings = UiSettings.Current;
+        settings.ShellFontSize += delta > 0 ? 1 : -1; // setter 가 범위 맞춤·적용(ui.font.shellSize 계측)·저장한다
+        return true;
+    }
+
+    /// <summary>source 가 메인 TopLevel 의 크롬인가 — 팝업(데스크톱 PopupRoot, 단일 뷰 OverlayLayer 안 메뉴·콤보 드롭다운·Flyout)은 아니다.</summary>
+    private static bool IsMainChrome(Visual source)
+    {
+        var top = TopLevel.GetTopLevel(source);
+        if (top is null || top is PopupRoot)
+        {
+            return false;
+        }
+
+        TopLevel? main = Application.Current?.ApplicationLifetime switch
+        {
+            IClassicDesktopStyleApplicationLifetime d => d.MainWindow,
+            ISingleViewApplicationLifetime { MainView: { } view } => TopLevel.GetTopLevel(view),
+            _ => null,
+        };
+        return ReferenceEquals(top, main) && !source.GetSelfAndVisualAncestors().OfType<OverlayLayer>().Any();
     }
 
     // Ctrl+0(macOS Cmd+0) = 초기화(① 문서 기본 글자 크기 / ② 그 창 100%). 크게/작게 키는 제거됨(사용자 지시).

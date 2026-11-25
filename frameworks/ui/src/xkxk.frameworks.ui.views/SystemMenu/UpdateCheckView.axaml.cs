@@ -1,4 +1,5 @@
 // 업데이트 확인 화면 코드비하인드 — 열 때 바로 1회 확인하고, 진입점만 담당(값은 AboutViewModel)
+using xkxk.frameworks.ui.data.Navigation;
 using xkxk.frameworks.ui.shell;
 using xkxk.frameworks.ui.shell.Platform;
 using Avalonia.Controls;
@@ -17,5 +18,5 @@ public partial class UpdateCheckView : UserControl
             var vm = new AboutViewModel();
             vm.CheckUpdateCommand.Execute(null);
             return new UpdateCheckView { DataContext = vm };
-        }, anchor, 480, 320);
+        }, anchor, 480, 320, iconKey: CmdIconKeys.Update);
 }

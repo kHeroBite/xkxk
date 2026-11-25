@@ -1,4 +1,5 @@
 // 로그 보기 화면 코드비하인드 — 열기 진입점과 로그 내보내기(파일 저장 대화, 저장 불가 환경은 안내)만 담당
+using xkxk.frameworks.ui.data.Navigation;
 using xkxk.frameworks.ui.shell;
 using xkxk.frameworks.ui.data.Logging;
 using xkxk.frameworks.ui.shell.Platform;
@@ -18,7 +19,7 @@ public partial class LogViewerView : UserControl
 
     /// <summary>로그 보기 창을 연다(이미 열려 있으면 활성화).</summary>
     public static void Open(Control? anchor = null) =>
-        SystemDialogHost.Open("log", "sysview.log.windowTitle", () => new LogViewerView { DataContext = new LogViewerViewModel() }, anchor, 760, 520);
+        SystemDialogHost.Open("log", "sysview.log.windowTitle", () => new LogViewerView { DataContext = new LogViewerViewModel() }, anchor, 760, 520, iconKey: MenuIconCatalog.ShellIconKey("Log"));
 
     /// <summary>
     /// 메모리 로그 전체(필터 없음)를 파일로 저장한다. 메뉴 '로그 내보내기'도 이 함수를 쓴다. 저장 대화만 여기서, 내용 쓰기는 LogExport.

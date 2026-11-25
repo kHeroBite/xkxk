@@ -3,26 +3,28 @@
           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
           xmlns:vm="using:xkxk.frameworks.ui.shell.ViewModels"
           xmlns:loc="using:xkxk.frameworks.ui.shell.Localization"
+          xmlns:nav="using:xkxk.frameworks.ui.data.Navigation"
+          xmlns:menus="using:xkxk.frameworks.ui.views.Menus"
           x:Class="xkxk.frameworks.ui.views.Menus.FileMenu"
           x:DataType="vm:MainViewModel"
           Header="{loc:Tr menu.file}" AutomationProperties.AutomationId="shell.mnuFile">
-  <MenuItem Header="{loc:Tr menu.file.openGrid}" Command="{Binding OpenCommand}" CommandParameter="Grid" AutomationProperties.AutomationId="shell.mnuOpenGrid" />
-  <MenuItem Header="{loc:Tr menu.file.openGantt}" Command="{Binding OpenCommand}" CommandParameter="Gantt" AutomationProperties.AutomationId="shell.mnuOpenGantt" />
-  <MenuItem Header="{loc:Tr menu.file.openForm}" Command="{Binding OpenCommand}" CommandParameter="Form" AutomationProperties.AutomationId="shell.mnuOpenForm" />
-  <MenuItem Header="{loc:Tr menu.file.openSdi}" AutomationProperties.AutomationId="shell.mnuOpenSdiGroup">
-    <MenuItem Header="{loc:Tr menu.file.openGridSdi}" Command="{Binding OpenSdiCommand}" CommandParameter="Grid" AutomationProperties.AutomationId="shell.mnuOpenGridSdi" />
-    <MenuItem Header="{loc:Tr menu.file.openGanttSdi}" Command="{Binding OpenSdiCommand}" CommandParameter="Gantt" AutomationProperties.AutomationId="shell.mnuOpenGanttSdi" />
-    <MenuItem Header="{loc:Tr menu.file.openFormSdi}" Command="{Binding OpenSdiCommand}" CommandParameter="Form" AutomationProperties.AutomationId="shell.mnuOpenFormSdi" />
+  <MenuItem Header="{loc:Tr menu.file.openGrid}" Command="{Binding OpenCommand}" CommandParameter="Grid" menus:MenuIcon.Key="{x:Static nav:MenuIconCatalog.GridIconKey}" AutomationProperties.AutomationId="shell.mnuOpenGrid" />
+  <MenuItem Header="{loc:Tr menu.file.openGantt}" Command="{Binding OpenCommand}" CommandParameter="Gantt" menus:MenuIcon.Key="{x:Static nav:MenuIconCatalog.GanttIconKey}" AutomationProperties.AutomationId="shell.mnuOpenGantt" />
+  <MenuItem Header="{loc:Tr menu.file.openForm}" Command="{Binding OpenCommand}" CommandParameter="Form" menus:MenuIcon.Key="{x:Static nav:MenuIconCatalog.FormIconKey}" AutomationProperties.AutomationId="shell.mnuOpenForm" />
+  <MenuItem Header="{loc:Tr menu.file.openSdi}" menus:MenuIcon.Key="{x:Static nav:CmdIconKeys.OpenSdi}" AutomationProperties.AutomationId="shell.mnuOpenSdiGroup">
+    <MenuItem Header="{loc:Tr menu.file.openGridSdi}" Command="{Binding OpenSdiCommand}" CommandParameter="Grid" menus:MenuIcon.Key="{x:Static nav:MenuIconCatalog.GridIconKey}" AutomationProperties.AutomationId="shell.mnuOpenGridSdi" />
+    <MenuItem Header="{loc:Tr menu.file.openGanttSdi}" Command="{Binding OpenSdiCommand}" CommandParameter="Gantt" menus:MenuIcon.Key="{x:Static nav:MenuIconCatalog.GanttIconKey}" AutomationProperties.AutomationId="shell.mnuOpenGanttSdi" />
+    <MenuItem Header="{loc:Tr menu.file.openFormSdi}" Command="{Binding OpenSdiCommand}" CommandParameter="Form" menus:MenuIcon.Key="{x:Static nav:MenuIconCatalog.FormIconKey}" AutomationProperties.AutomationId="shell.mnuOpenFormSdi" />
   </MenuItem>
   <!-- 벤치(그리드·차트 후보 비교, odev-gc): 벤치 포함 빌드에서만 보인다 -->
-  <MenuItem Header="{loc:Tr menu.file.openBench}" IsVisible="{Binding Extras.BenchAvailable}" Command="{Binding Extras.OpenBenchCommand}" CommandParameter="grid" AutomationProperties.AutomationId="shell.mnuOpenBench" />
+  <MenuItem Header="{loc:Tr menu.file.openBench}" IsVisible="{Binding Extras.BenchAvailable}" Command="{Binding Extras.OpenBenchCommand}" CommandParameter="grid" menus:MenuIcon.Key="{x:Static nav:CmdIconKeys.OpenBench}" AutomationProperties.AutomationId="shell.mnuOpenBench" />
   <Separator />
-  <MenuItem Header="{loc:Tr menu.file.saveLayout}" Command="{Binding SaveLayoutCommand}" InputGesture="Ctrl+S" AutomationProperties.AutomationId="shell.mnuSaveLayout" />
-  <MenuItem Header="{loc:Tr menu.file.loadLayout}" Command="{Binding LoadLayoutCommand}" AutomationProperties.AutomationId="shell.mnuLoadLayout" />
-  <MenuItem Header="{loc:Tr menu.ws.layoutSave}" Command="{Binding WindowMenu.SaveCurrentLayoutCommand}" AutomationProperties.AutomationId="shell.mnuLayoutSave" />
-  <MenuItem Header="{loc:Tr menu.ws.layoutManage}" Command="{Binding WindowMenu.ManageLayoutsCommand}" AutomationProperties.AutomationId="shell.mnuLayoutManage" />
+  <MenuItem Header="{loc:Tr menu.file.saveLayout}" Command="{Binding SaveLayoutCommand}" InputGesture="Ctrl+S" menus:MenuIcon.Key="{x:Static nav:CmdIconKeys.SaveLayout}" AutomationProperties.AutomationId="shell.mnuSaveLayout" />
+  <MenuItem Header="{loc:Tr menu.file.loadLayout}" Command="{Binding LoadLayoutCommand}" menus:MenuIcon.Key="{x:Static nav:CmdIconKeys.LoadLayout}" AutomationProperties.AutomationId="shell.mnuLoadLayout" />
+  <MenuItem Header="{loc:Tr menu.ws.layoutSave}" Command="{Binding WindowMenu.SaveCurrentLayoutCommand}" menus:MenuIcon.Key="{x:Static nav:CmdIconKeys.LayoutSave}" AutomationProperties.AutomationId="shell.mnuLayoutSave" />
+  <MenuItem Header="{loc:Tr menu.ws.layoutManage}" Command="{Binding WindowMenu.ManageLayoutsCommand}" menus:MenuIcon.Key="{x:Static nav:CmdIconKeys.LayoutManage}" AutomationProperties.AutomationId="shell.mnuLayoutManage" />
   <!-- 요건 7: 화면 캡처 방지 값은 설정 창(창 범주)으로 옮겼다 -->
   <!-- 종료: 데스크톱 창에서만 보인다(웹·Android 는 앱이 창을 닫지 않는다). 창 닫기와 같은 종료 처리(자동 저장·설정 플러시)를 탄다 -->
   <Separator x:Name="ExitSeparator" />
-  <MenuItem x:Name="ExitItem" Header="{loc:Tr menu.file.exit}" InputGesture="Alt+F4" Click="OnExit" AutomationProperties.AutomationId="shell.mnuExit" />
+  <MenuItem x:Name="ExitItem" Header="{loc:Tr menu.file.exit}" InputGesture="Alt+F4" Click="OnExit" menus:MenuIcon.Key="{x:Static nav:CmdIconKeys.Exit}" AutomationProperties.AutomationId="shell.mnuExit" />
 </MenuItem>

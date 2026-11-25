@@ -24,6 +24,15 @@ public static partial class MenuIconCatalog
         ["Form"] = "SCR-PRJ-02",
     };
 
+    /// <summary>새 그리드 문서 창의 아이콘 키 = IconKeyFor(null, "Grid"). 상단 메뉴 '새 그리드' 항목과 그 창이 같이 쓴다(22 설계 §2.1).</summary>
+    public static string GridIconKey => IconKeyFor(null, "Grid");
+
+    /// <summary>새 간트 문서 창의 아이콘 키 = IconKeyFor(null, "Gantt").</summary>
+    public static string GanttIconKey => IconKeyFor(null, "Gantt");
+
+    /// <summary>새 입력폼 문서 창의 아이콘 키 = IconKeyFor(null, "Form").</summary>
+    public static string FormIconKey => IconKeyFor(null, "Form");
+
     /// <summary>화면 ID → 메뉴 ID. 모르면 null.</summary>
     public static string? MenuIdOf(string? screenId) =>
         !string.IsNullOrEmpty(screenId) && MenuIdByScreenId.TryGetValue(screenId, out var menuId) ? menuId : null;

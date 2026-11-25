@@ -138,7 +138,7 @@ internal sealed partial class WindowStateOps
         };
         Avalonia.Input.InputElement.PointerPressedEvent.AddClassHandler<Avalonia.Controls.TopLevel>((top, _) =>
         {
-            if (top is not Dock.Avalonia.Controls.HostWindow && !DiagPressDisabled)
+            if (top is not Dock.Avalonia.Controls.HostWindow && !DiagPressDisabled && !Platform.ModalScope.IsActive) // 앱 모달 중 막힌 누름은 '메인 쪽 누름'이 아니다
             {
                 NoteMainPressed();
             }

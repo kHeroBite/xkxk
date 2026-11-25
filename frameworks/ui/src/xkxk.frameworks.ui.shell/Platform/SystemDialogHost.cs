@@ -1,4 +1,4 @@
-// 시스템 메뉴(UI-17) 창 공용 열기 — 데스크톱은 이름별 별도 창 1개(이미 열려 있으면 활성화), 브라우저·Android(단일 뷰)는 호출 위치 아래 플라이아웃
+// 시스템 메뉴(UI-17) 창 공용 열기 — 데스크톱은 이름별 별도 창 1개(이미 열려 있으면 활성화), 브라우저·Android(단일 뷰)는 호출 위치 아래 플라이아웃. 창 아이콘 키·앱 모달(설정 창) 선택
 using xkxk.frameworks.ui.shell;
 using System;
 using System.Collections.Generic;
@@ -33,8 +33,12 @@ public static class SystemDialogHost
     /// <summary>
     /// name 은 창 식별자(AutomationId 접미사로도 쓴다), titleKey 는 제목 사전 키, create 는 내용을 만드는 함수다.
     /// anchor 가 null 이면 메인 창(데스크톱)·메인 뷰(단일 뷰) 기준이다.
+    /// iconKey 가 있으면 데스크톱 창 아이콘을 그 글리프로 단다(MenuIconBitmap — 메뉴 아이콘과 같은 키, 단일 뷰는 OS 창이 없어 무시).
+    /// modal 이면 앱 모달이다(03_2 §8.2): 데스크톱은 ShowDialog(owner) + ModalScope 로 메인·MDI·SDI·다른 시스템 창을 막고,
+    /// 단일 뷰는 Flyout 바깥 누름 닫기를 끄고 ModalScope 로 내용 밖 입력을 막는다(Esc·닫기 단추·뒤로 가기로만 닫힘).
     /// </summary>
-    public static void Open(string name, string titleKey, Func<Control> create, Control? anchor = null, double width = 560, double height = 480)
+    public static void Open(string name, string titleKey, Func<Control> create, Control? anchor = null, double width = 560, double height = 480,
+        string? iconKey = null, bool modal = false)
     {
         var lifetime = Application.Current?.ApplicationLifetime;
         var hasCallerAnchor = anchor is not null;
@@ -47,7 +51,7 @@ public static class SystemDialogHost
 
         if (lifetime is IClassicDesktopStyleApplicationLifetime)
         {
-            OpenWindow(name, titleKey, create, anchor, width, height);
+            OpenWindow(name, titleKey, create, anchor, width, height, iconKey, modal);
             return;
         }
 
@@ -62,8 +66,17 @@ public static class SystemDialogHost
         Avalonia.Automation.AutomationProperties.SetAutomationId(content, "sys.dlg." + name);
         Close(name); // 같은 이름의 플라이아웃이 열려 있으면 닫고 새로 연다
         var flyout = FittedFlyout.Create(content, anchor, hasCallerAnchor, width, height, fixedHeight: false);
+        IDisposable? modalScope = null;
+        if (modal)
+        {
+            flyout.Popup.IsLightDismissEnabled = false; // 바깥 누름으로 닫히지 않는다(PopupFlyoutBase 는 팝업 생성 때만 true 로 정하고 ShowAt 에서 다시 정하지 않는다)
+            // 실제로 열린 뒤에만 범위를 연다 — 열리지 못한 Flyout 은 Closed 가 오지 않아 범위가 남을 수 있다. 내용이 화면에서 떨어져도 범위가 스스로 끝난다(이중 보장)
+            flyout.Opened += (_, _) => modalScope ??= ModalScope.Begin(content, name);
+        }
+
         flyout.Closed += (_, _) =>
         {
+            modalScope?.Dispose();
             if (Flyouts.TryGetValue(name, out var current) && ReferenceEquals(current, flyout))
             {
                 Flyouts.Remove(name); // 닫힘 알림이 늦게 와도 새로 연 같은 이름 플라이아웃은 지우지 않는다
@@ -106,7 +119,8 @@ public static class SystemDialogHost
         }
     }
 
-    private static void OpenWindow(string name, string titleKey, Func<Control> create, Control? anchor, double width, double height)
+    private static void OpenWindow(string name, string titleKey, Func<Control> create, Control? anchor, double width, double height,
+        string? iconKey, bool modal)
     {
         var activate = s_activateOnce ?? !BackgroundMode;
         s_activateOnce = null;
@@ -139,19 +153,67 @@ public static class SystemDialogHost
 
         Avalonia.Automation.AutomationProperties.SetAutomationId(window, "sys.dlg." + name);
         window.Bind(Window.TitleProperty, Loc.Instance.Observe(titleKey)); // 언어 전환 시 제목도 즉시 바뀐다
+        if (iconKey is not null)
+        {
+            MenuIconBitmap.Apply(window, iconKey); // 메뉴 아이콘과 같은 키 — AppWindowIcon 은 Icon 이 이미 있으면 건드리지 않는다
+        }
+
+        IDisposable? modalScope = null;
         window.Closed += (_, _) =>
         {
+            modalScope?.Dispose(); // 어떤 경로로 닫혀도(닫기 단추·Esc·Alt+F4·앱 종료) 범위를 끝낸다 — ModalScope 도 Closed 를 따로 받는다(이중 보장)
             Windows.Remove(name);
             (content.DataContext as IDisposable)?.Dispose();
         };
         Windows[name] = window;
-        if (owner is not null)
+        if (modal)
+        {
+            modalScope = ShowModal(window, owner, name);
+        }
+        else if (owner is not null)
         {
             window.Show(owner);
         }
         else
         {
             window.Show();
+        }
+    }
+
+    /// <summary>
+    /// 앱 모달로 띄운다. 보이는 소유 창이 있으면 ShowDialog(owner)(OS 가 owner 를 막음), 없으면(메인 숨김·트레이) 소유 관계 없이 Show.
+    /// 어느 쪽이든 ModalScope 가 나머지 창(SDI·다른 시스템 창, owner 없을 때는 메인 포함)을 막는다.
+    /// </summary>
+    private static IDisposable? ShowModal(Window window, Window? owner, string name)
+    {
+        if (owner is { IsVisible: true })
+        {
+            try
+            {
+                _ = window.ShowDialog(owner);
+            }
+            catch (InvalidOperationException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[경고][모달] ShowDialog 실패, 일반 표시로 대체: {ex.Message}");
+                if (!window.IsVisible)
+                {
+                    window.Show();
+                }
+            }
+        }
+        else
+        {
+            window.Show();
+        }
+
+        try
+        {
+            return ModalScope.Begin(window, name);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[경고][모달] 모달 범위 시작 실패: {ex.Message}");
+            return null;
         }
     }
 }

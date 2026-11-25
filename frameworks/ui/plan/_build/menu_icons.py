@@ -1,4 +1,5 @@
 # 메뉴 아이콘 생성기 — menu_icon_data.py(조합)·icon_glyphs.py(그림)로 메뉴 ID 별 SVG·Avalonia StreamGeometry·C# 대응표·라이선스 행을 만든다
+# 명령 아이콘(CMD, 그림 icon_glyphs_cmd.py)은 StreamGeometry PdCmdIcon<이름> 과 상수 CmdIconKeys.Generated.cs 만 만든다(SVG 없음)
 # 실행: python3 -B plan/_build/menu_icons.py [--check | --self-test | --sheet <png 경로>]   (인자 없음 = 생성)
 #   --check     누락·중복·없는 이름·폐기 번호·경로 문법·생성물 최신 여부를 보고 문제가 있으면 rc=1
 #   --self-test 검사기 결함 주입(누락·중복·없는 이름·폐기 번호·오목 도려내기)과 차집합·래스터·결정성 시험
@@ -7,6 +8,7 @@ import argparse, os, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import icon_glyphs as G
+import icon_glyphs_cmd as GC     # 불러오는 순간 명령 글리프·표지가 G 에 합쳐진다
 import menu_icon_data as D
 from menu_data import MENU_ID, RETIRED_MENU_IDS, SCREENS, REF_SCREENS
 
@@ -14,6 +16,7 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 SVG_DIR = os.path.join(ROOT, "assets", "icons", "menu")
 AXAML = os.path.join(ROOT, "src", "xkxk.frameworks.ui.views", "Themes", "MenuIcons.axaml")
 CS = os.path.join(ROOT, "src", "xkxk.frameworks.ui.data", "Navigation", "MenuIconCatalog.Generated.cs")
+CMD_CS = os.path.join(ROOT, "src", "xkxk.frameworks.ui.data", "Navigation", "CmdIconKeys.Generated.cs")
 LIC = os.path.join(ROOT, "assets", "_LICENSES.csv")
 LIC_PREFIX = "icons/menu/"
 CORNERS = "M0,0L0.01,0L0,0.01ZM24,24L23.99,24L24,23.99Z"     # 두 모서리 점 — Stretch=Uniform 이 격자 전체 기준으로 맞추게 한다
@@ -51,7 +54,13 @@ def all_paths():
     menu = {m: G.to_path(contours_of(s)) for m, s in sorted(D.ICONS.items())}
     shell = {n: G.to_path(contours_of(s)) for n, s in D.SHELL.items()}
     status = {n: G.to_path(contours_of(s)) for n, s in D.STATUS.items()}
-    return menu, shell, status
+    cmd = {n: G.to_path(contours_of(s)) for n, s in D.CMD.items()}
+    return menu, shell, status, cmd
+
+
+def cmd_errors():
+    taken = {**{s: f"메뉴 {m}" for m, s in D.ICONS.items()}, **{s: f"셸 {n}" for n, s in D.SHELL.items()}}
+    return GC.validate_cmd(D.CMD, taken)
 
 
 def _esc(s):
@@ -65,14 +74,15 @@ def svg_text(mid, path):
             f'<path fill="currentColor" d="{path}"/></svg>\n')
 
 
-def axaml_text(menu, shell, status):
-    out = ["<!-- 메뉴·셸 아이콘 StreamGeometry — plan/_build/menu_icons.py 생성물(손으로 고치지 말고 menu_icon_data.py 를 고친 뒤 다시 만든다).",
-           "     24 격자 단색, 키 PdMenuIcon<메뉴ID>·PdShellIcon<이름>·PdIcon<이름>. 두 모서리 점으로 Uniform 배율을 격자 기준으로 맞춘다 -->",
+def axaml_text(menu, shell, status, cmd):
+    out = ["<!-- 메뉴·셸·명령 아이콘 StreamGeometry — plan/_build/menu_icons.py 생성물(손으로 고치지 말고 menu_icon_data.py 를 고친 뒤 다시 만든다).",
+           "     24 격자 단색, 키 PdMenuIcon<메뉴ID>·PdShellIcon<이름>·PdIcon<이름>·PdCmdIcon<이름>(상수 CmdIconKeys). 두 모서리 점으로 Uniform 배율을 격자 기준으로 맞춘다 -->",
            '<ResourceDictionary xmlns="https://github.com/avaloniaui"',
            '                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">']
     out += [f'  <StreamGeometry x:Key="PdMenuIcon{m}">F1 {CORNERS}{p}</StreamGeometry>' for m, p in menu.items()]
     out += [f'  <StreamGeometry x:Key="PdShellIcon{n}">F1 {CORNERS}{p}</StreamGeometry>' for n, p in shell.items()]
     out += [f'  <StreamGeometry x:Key="PdIcon{n}">F1 {CORNERS}{p}</StreamGeometry>' for n, p in status.items()]
+    out += [f'  <StreamGeometry x:Key="{GC.KEY_PREFIX}{n}">F1 {CORNERS}{p}</StreamGeometry>' for n, p in cmd.items()]
     return "\n".join(out + ["</ResourceDictionary>", ""])
 
 
@@ -119,11 +129,12 @@ def merge_rows(text, prefix, rows):
 
 
 def expected():
-    menu, shell, status = all_paths()
+    menu, shell, status, cmd = all_paths()
     files = {os.path.join(SVG_DIR, f"m{m}.svg"): svg_text(m, p) for m, p in menu.items()}
-    files[AXAML] = axaml_text(menu, shell, status)
+    files[AXAML] = axaml_text(menu, shell, status, cmd)
     files[CS] = cs_text()
-    return files, menu, shell, status
+    files[CMD_CS] = GC.cmdkeys_text(D.CMD)
+    return files, menu, shell, status, cmd
 
 
 def _read(p):
@@ -147,7 +158,7 @@ def stale_svgs(files):
 
 
 def generate():
-    errs = validate(D.ICONS, MENU_ID.values(), RETIRED_MENU_IDS)
+    errs = validate(D.ICONS, MENU_ID.values(), RETIRED_MENU_IDS) + cmd_errors()
     if errs:
         print("\n".join(errs)); return 1
     files, *_ = expected()
@@ -161,14 +172,14 @@ def generate():
     new = merge_rows(lic, LIC_PREFIX, license_rows())
     if new != lic:
         _write(LIC, new); changed += 1
-    print(f"생성: 메뉴 아이콘 {len(D.ICONS)}개 · 셸 {len(D.SHELL)} · 상태 {len(D.STATUS)} · 바뀐 파일 {changed}개")
+    print(f"생성: 메뉴 아이콘 {len(D.ICONS)}개 · 셸 {len(D.SHELL)} · 상태 {len(D.STATUS)} · 명령 {len(D.CMD)} · 바뀐 파일 {changed}개")
     return 0
 
 
 def check():
-    errs = validate(D.ICONS, MENU_ID.values(), RETIRED_MENU_IDS)
-    files, menu, shell, status = expected()
-    for k, p in list(menu.items()) + list(shell.items()) + list(status.items()):
+    errs = validate(D.ICONS, MENU_ID.values(), RETIRED_MENU_IDS) + cmd_errors()
+    files, menu, shell, status, cmd = expected()
+    for k, p in list(menu.items()) + list(shell.items()) + list(status.items()) + list(cmd.items()):
         if not PATH_RE.match(p):
             errs.append(f"경로 문법 오류: {k}")
     errs += [f"생성물 낡음(다시 생성 필요): {os.path.relpath(p, ROOT)}" for p, t in files.items() if _read(p) != t]
@@ -178,7 +189,7 @@ def check():
         errs.append("라이선스 행 불일치: assets/_LICENSES.csv 의 icons/menu/ 행을 다시 생성해야 한다")
     used = {g for g, _ in D.ICONS.values()}
     print(f"메뉴 ID {len(set(MENU_ID.values()))} · 아이콘 {len(D.ICONS)} · 누락 {sum(e.startswith('누락') for e in errs)} · "
-          f"중복 {sum(e.startswith('중복') for e in errs)} · 글리프 {len(used)}/{len(G.GLYPHS)} · 표지 {len(G.BADGES)} · 오류 {len(errs)}")
+          f"중복 {sum(e.startswith('중복') for e in errs)} · 글리프 {len(used)}/{len(G.GLYPHS)} · 표지 {len(G.BADGES)} · 명령 {len(D.CMD)} · 오류 {len(errs)}")
     if errs:
         print("\n".join(errs))
     return 1 if errs else 0
@@ -195,7 +206,8 @@ def raster(contours, px, ss=4):
 
 def items_for_sheet():
     return ([(m, contours_of(s)) for m, s in sorted(D.ICONS.items(), key=lambda kv: (kv[0][0].isalpha(), kv[0]))]
-            + [(n[:8], contours_of(s)) for n, s in list(D.SHELL.items()) + list(D.STATUS.items())])
+            + [(n[:8], contours_of(s)) for n, s in list(D.SHELL.items()) + list(D.STATUS.items())]
+            + [(n, contours_of(s)) for n, s in D.CMD.items()])
 
 
 def sheet(path):
@@ -245,14 +257,21 @@ def self_test():
     ok(all(G.area(c) > 0 for c in b.c), "윤곽 방향 일치")
     p1, p2 = all_paths(), all_paths()
     ok(p1 == p2, "결정성")
-    for k, s in list(D.ICONS.items()) + list(D.SHELL.items()) + list(D.STATUS.items()):
+    taken, n0, n1 = {D.ICONS["1001"]: "메뉴 1001"}, *list(D.CMD)[:2]
+    ok(not cmd_errors(), "명령 정상 데이터 통과(교차 중복 0)")
+    ok(any(e.startswith("중복") for e in GC.validate_cmd(dict(D.CMD, **{n1: D.CMD[n0]}), {})), "명령 중복 검출")
+    ok(any(e.startswith("중복") for e in GC.validate_cmd({"Zz": D.ICONS["1001"]}, taken)), "명령·메뉴 교차 중복 검출")
+    ok(any("없는 글리프" in e for e in GC.validate_cmd({"Zz": ("없는글리프", None)}, {})), "명령 없는 글리프 검출")
+    ok(any("이름 형식" in e for e in GC.validate_cmd({"Count": ("close", "plus")}, {})), "명령 예약 이름 검출")
+    ok(all(f'{n} = "{GC.KEY_PREFIX}{n}";' in GC.cmdkeys_text(D.CMD) for n in D.CMD), "CmdIconKeys 상수 전부")
+    for k, s in list(D.ICONS.items()) + list(D.SHELL.items()) + list(D.STATUS.items()) + list(D.CMD.items()):
         cs = contours_of(s)
         c = sum(raster(cs, 32).tobytes()) / 255 / 1024
         ok(0.05 < c < 0.85, f"{k} 채움 비율 {c:.2f}")
         ok(bool(PATH_RE.match(G.to_path(cs))), f"{k} 경로 문법")
     ok(merge_rows("h\na,1\nicons/menu/x\nb,2\n", LIC_PREFIX, ["icons/menu/y"]) == "h\na,1\nicons/menu/y\nb,2\n", "라이선스 행 제자리 교체")
     ok(merge_rows("h\na,1\n", LIC_PREFIX, ["icons/menu/y"]) == "h\na,1\nicons/menu/y\n", "라이선스 행 끝에 붙임")
-    total = 14 + 2 * (len(D.ICONS) + len(D.SHELL) + len(D.STATUS))
+    total = 20 + 2 * (len(D.ICONS) + len(D.SHELL) + len(D.STATUS) + len(D.CMD))
     print(f"자체 시험: {total - len(fails)}/{total} 통과")
     if fails:
         print("\n".join("실패: " + f for f in fails))

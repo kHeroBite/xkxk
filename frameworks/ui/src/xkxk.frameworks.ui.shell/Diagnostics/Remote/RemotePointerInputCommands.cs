@@ -147,7 +147,11 @@ internal static class RemotePointerInputCommands
         }
 
         pointer.Capture(null);
-        return new JsonObject { ["target"] = target.GetType().Name, ["handled"] = new JsonObject { ["pressed"] = pressed, ["released"] = released } };
+        return new JsonObject
+        {
+            ["target"] = target.GetType().Name, ["handled"] = new JsonObject { ["pressed"] = pressed, ["released"] = released },
+            ["modalBlocked"] = ModalBlocked(target), // true 면 앱 모달 때문에 이벤트를 보내지 않았다
+        };
     }
 
     /// <summary>누름 → steps 번 이동(버튼 누른 채) → 놓음. 이동·놓음은 캡처한 요소가 있으면 그 요소, 없으면 그 점의 히트 요소로 보낸다(실입력 라우팅과 같다).</summary>
@@ -162,6 +166,7 @@ internal static class RemotePointerInputCommands
         {
             p = start + delta * ((double)i / steps);
             var to = pointer.Captured as Interactive ?? top.InputHitTest(p) as Interactive ?? target;
+            if (ModalBlocked(to)) { continue; } // 앱 모달 — 막은 누름의 이동도 보내지 않는다
             to.RaiseEvent(new PointerEventArgs(InputElement.PointerMovedEvent, to, pointer, top, p, Stamp(), held, KeyModifiers.None));
         }
 
@@ -176,8 +181,18 @@ internal static class RemotePointerInputCommands
         };
     }
 
+    /// <summary>앱 모달(설정 창) 중 모달 밖 대상인가. 실입력은 원시 입력 관문(ModalScope.RawGate)이 라우팅 전에 끊으므로 합성 입력도 보내지 않는다(handledEventsToo 처리기까지 같게).</summary>
+    private static bool ModalBlocked(Interactive to) =>
+        xkxk.frameworks.ui.shell.Platform.ModalScope.IsActive && !xkxk.frameworks.ui.shell.Platform.ModalScope.IsAllowed(to as Visual);
+
     private static bool Press(Interactive to, Pointer pointer, TopLevel top, Point p, bool right, int clickCount)
     {
+        if (ModalBlocked(to))
+        {
+            xkxk.frameworks.ui.shell.Platform.ModalScope.ActivateModal(); // 실입력 누름과 같게 모달을 앞으로
+            return true;
+        }
+
         var props = new PointerPointProperties(right ? RawInputModifiers.RightMouseButton : RawInputModifiers.LeftMouseButton,
             right ? PointerUpdateKind.RightButtonPressed : PointerUpdateKind.LeftButtonPressed);
         var e = new PointerPressedEventArgs(to, pointer, top, p, Stamp(), props, KeyModifiers.None, clickCount);
@@ -187,6 +202,11 @@ internal static class RemotePointerInputCommands
 
     private static bool Release(Interactive to, Pointer pointer, TopLevel top, Point p, bool right)
     {
+        if (ModalBlocked(to))
+        {
+            return true;
+        }
+
         var props = new PointerPointProperties(RawInputModifiers.None, right ? PointerUpdateKind.RightButtonReleased : PointerUpdateKind.LeftButtonReleased);
         var e = new PointerReleasedEventArgs(to, pointer, top, p, Stamp(), props, KeyModifiers.None, right ? MouseButton.Right : MouseButton.Left);
         to.RaiseEvent(e);

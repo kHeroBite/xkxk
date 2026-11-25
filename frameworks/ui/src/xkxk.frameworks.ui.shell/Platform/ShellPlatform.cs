@@ -49,6 +49,8 @@ public static class ShellPlatform
         if (Tray is not null)
         {
             Tray.Icon = AppIcon; // 진입 어셈블리(데스크톱 헤드) 앱 아이콘이라 AXAML 경로로 지정할 수 없다
+            // 앱 모달(설정 창) 중 트레이 클릭: 보이기 명령이 메인을 되살린 뒤 모달을 맨 앞으로 가져온다(03_2 §8.2, 막힌 메인이 앞에 남지 않게)
+            Tray.Clicked += (_, _) => Avalonia.Threading.Dispatcher.UIThread.Post(() => ModalScope.ActivateModal());
         }
 
         window.PropertyChanged += (_, e) =>

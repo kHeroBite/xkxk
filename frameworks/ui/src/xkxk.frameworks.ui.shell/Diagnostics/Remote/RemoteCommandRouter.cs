@@ -86,6 +86,8 @@ public sealed class RemoteCommandRouter
         RemoteSplitCommands.Register(r); // UI-20 패널 영역 분할 split.dump·split.do·split.drag·split.capture(odev-1r, RemoteSplitCommands.cs)
         RemoteDockAsDocumentCommands.Register(r); // D-DAD1 판정 dock.asDocument(odev-1s, RemoteDockAsDocumentCommands.cs)
         RemoteTrayCommands.Register(r); // 시스템 트레이 tray.state·tray.invoke·tray.enable(odev-tray, RemoteTrayCommands.cs)
+        RemoteMenuIconCommands.Register(r); // B1 상단 메뉴 아이콘 menu.icons·menu.render(RemoteMenuIconCommands.cs)
+        RemoteModalCommands.Register(r); // B3 설정 창 앱 모달 modal.state(RemoteModalCommands.cs)
         RemoteSimActiveCommands.Register(r); // 창 활성 처리기·탭 클릭 분기 시험 sim.*
         RemoteDockMenuInvokeCommands.Register(r); // Dock 메뉴 항목 실행 dock.menuInvoke(odev-chrome, RemoteDockMenuInvokeCommands.cs — L2 우클릭 대체)
         ContextMenuInspector.Register(r); // ContextMenu 항목 조회·열기 ui.contextMenu(odev-7i, ContextMenuInspector.cs 단독 클래스 — 제목줄 시스템 메뉴 id 대조)

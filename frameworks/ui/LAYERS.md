@@ -7,14 +7,14 @@
 
 | 층 | 파일 수 |
 |---|---:|
-| Control | 268 |
-| Data | 34 |
-| Diag | 88 |
-| Host | 72 |
+| Control | 273 |
+| Data | 35 |
+| Diag | 90 |
+| Host | 74 |
 | Ui | 26 |
-| Views | 237 |
+| Views | 240 |
 
-합계 725개(.cs·.axaml).
+합계 738개(.cs·.axaml).
 
 ## 끊어야 하는 참조(현재 기준 금지 방향)
 
@@ -78,6 +78,7 @@
 | `xkxk.frameworks.ui.data/Logging/MemoryLogSink.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Logging/PdLog.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Logging/PdLogEntry.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.data/Navigation/CmdIconKeys.Generated.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Navigation/MenuIconCatalog.Generated.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Navigation/MenuIconCatalog.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Navigation/NavMenuCatalog.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
@@ -113,6 +114,7 @@
 | `xkxk.frameworks.ui.desktop/Program.cs` | Host |  | 호스트 프로젝트 | O |  | Program |
 | `xkxk.frameworks.ui.desktop/SdiAboveMainHook.cs` | Host |  | 호스트 프로젝트 | O |  | SdiAboveMainHook |
 | `xkxk.frameworks.ui.desktop/SdiBgPinHook.cs` | Host |  | 호스트 프로젝트 | O |  | SdiBgPinHook |
+| `xkxk.frameworks.ui.desktop/SdiDocumentIcon.cs` | Host |  | 호스트 프로젝트 | O | O | SdiDocumentIcon |
 | `xkxk.frameworks.ui.desktop/SdiHostPlacement.cs` | Host |  | 호스트 프로젝트 | O |  | SdiHostPlacement |
 | `xkxk.frameworks.ui.desktop/SdiMagnetHook.cs` | Host |  | 호스트 프로젝트 | O |  | SdiMagnetHook |
 | `xkxk.frameworks.ui.desktop/SdiMagnetSnapper.cs` | Host |  | 호스트 프로젝트 | O |  | SdiMagnetSnapper |
@@ -133,6 +135,7 @@
 | `xkxk.frameworks.ui.desktop/SdiZOrderRaiser.cs` | Host |  | 호스트 프로젝트 | O | O | SdiZOrderRaiser |
 | `xkxk.frameworks.ui.desktop/SingleInstance.cs` | Host |  | 호스트 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.desktop/SysWindowBgPinHook.cs` | Host |  | 호스트 프로젝트 | O |  | SysWindowBgPinHook |
+| `xkxk.frameworks.ui.desktop/Win32ModalBlock.cs` | Host |  | 호스트 프로젝트 | O |  | Win32ModalBlock |
 | `xkxk.frameworks.ui.desktop/WindowDefaultMove.cs` | Host |  | 호스트 프로젝트 | O | O | WindowDefaultMove |
 | `xkxk.frameworks.ui.desktop/WindowFrameMetrics.cs` | Host |  | 호스트 프로젝트 | O |  | WindowFrameMetrics |
 | `xkxk.frameworks.ui.desktop/WindowPlacement.cs` | Host |  | 호스트 프로젝트 | O |  |  |
@@ -193,6 +196,8 @@
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteLangCommands.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteLangCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteLayoutsCommands.cs` | Diag |  | 진단 전용 폴더 |  |  | RemoteLayoutsCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteLoadSelfTest.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteLoadSelfTest |
+| `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteMenuIconCommands.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteMenuIconCommands |
+| `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteModalCommands.cs` | Diag |  | 진단 전용 폴더 | O |  |  |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteMonitorCommands.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteMonitorCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteNotifyCommands.cs` | Diag |  | 진단 전용 폴더 |  |  | RemoteNotifyCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemotePanelCornerCommands.cs` | Diag |  | 진단 전용 폴더 | O | O | RemotePanelCornerCommands |
@@ -222,7 +227,7 @@
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteTitleMenuCommands.cs` | Diag |  | 진단 전용 폴더 | O | O | RemoteTitleMenuCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteTourCatalogCommands.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteTourCatalogCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteTourCommands.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteTourCommands |
-| `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteTrayCommands.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteTrayCommands |
+| `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteTrayCommands.cs` | Diag |  | 진단 전용 폴더 | O | O | RemoteTrayCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteUiCommands.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteUiCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteUiModeCommands.cs` | Diag |  | 진단 전용 폴더 | O |  |  |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteUiTargets.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteUiTargets |
@@ -382,6 +387,11 @@
 | `xkxk.frameworks.ui.shell/Platform/DeviceTraits.cs` | Data | xkxk.frameworks.ui.data/Platform/DeviceTraits.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Platform/FittedFlyout.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Platform/InputFormFactor.cs` | Control |  | 폼팩터 판정 논리. 데이터가 아니고 화면도 아니다 |  |  |  |
+| `xkxk.frameworks.ui.shell/Platform/MenuIconBitmap.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
+| `xkxk.frameworks.ui.shell/Platform/ModalScope.Gate.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
+| `xkxk.frameworks.ui.shell/Platform/ModalScope.Leaks.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
+| `xkxk.frameworks.ui.shell/Platform/ModalScope.RawGate.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
+| `xkxk.frameworks.ui.shell/Platform/ModalScope.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Platform/ShellPlatform.cs` | Control |  | 트레이·플랫폼 서비스. axaml 없음. 호스트 2곳·진단 2곳이 직접 쓴다 | O |  |  |
 | `xkxk.frameworks.ui.shell/Platform/SystemDialogHost.cs` | Control |  | 창 수명 서비스(내용은 Control 로 받음, 화면 형식 무참조). 도킹·호스트·진단이 BackgroundMode 를 읽는다 | O |  |  |
 | `xkxk.frameworks.ui.shell/Platform/TrayMenuModel.cs` | Control |  | 트레이 메뉴 뷰모델. ShellPlatform 과 한 묶음 | O |  |  |
@@ -630,6 +640,8 @@
 | `xkxk.frameworks.ui.views/MdiStaticLight.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O | O | MdiStaticLight |
 | `xkxk.frameworks.ui.views/Menus/FileMenu.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Menus/FileMenu.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.views/Menus/MenuIcon.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.views/Menus/SnapCellGlyph.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Menus/SystemMenuItem.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Menus/SystemMenuItem.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Menus/ViewMenu.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
@@ -721,6 +733,7 @@
 | `xkxk.frameworks.ui.views/Themes/MdiChrome.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Themes/MdiDocumentWindowTheme.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Themes/MdiWindowMenu.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.views/Themes/MenuIconStyles.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Themes/MenuIcons.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Themes/NarrowToolChrome.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Themes/PinnedDockNoWindow.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
