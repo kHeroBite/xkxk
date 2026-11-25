@@ -53,6 +53,7 @@ public static partial class WindowTransitions
         var enterId = at is null ? MotionEffects.None : DesignThemeResolver.SwitchEffect(at.Placement, key, sources);
         if (at is null || enterId == MotionEffects.None || s_running.ContainsKey(at.View))
         {
+            note.Enter = at is not null && enterId != MotionEffects.None ? "skipped_running" : "skipped_none";
             shot?.Image.Dispose(); // 열기 재생 중이면 열기를 우선한다
             return;
         }
@@ -68,6 +69,7 @@ public static partial class WindowTransitions
         }
 
         double? start = at.Placement == MotionPlacement.MdiOverlap ? DesignThemeResolver.Number(VisibleStartKey) : null;
+        note.Enter = "started";
         Play(at.View, MotionDirection.Enter, enterId, start, null);
     }
 
@@ -127,13 +129,14 @@ public static partial class WindowTransitions
             .Append(",\"prevFound\":").Append(B(n.PrevFound))
             .Append(",\"source\":").Append(n.Source is null ? "null" : "\"" + n.Source + "\"")
             .Append(",\"ghost\":").Append(n.Ghost is null ? "null" : "\"" + n.Ghost + "\"")
+            .Append(",\"enter\":\"").Append(n.Enter ?? "none").Append('"')
             .Append(",\"tabHeaderFirst\":").Append(B(UiSettings.Current.TabHeaderFirst))
             .Append('}').ToString();
     }
 
     private sealed record Hidden(WeakReference<PocDocument> Doc, Located At, Snapshot Shot);
 
-    /// <summary>전환 1건 진단. Source = activated(활성 알림에서 찍음)·hidden(숨기기 직전 그림)·null(짝 없음), Ghost = started·done·none(덮개 층 없음).</summary>
+    /// <summary>전환 1건 진단. Source = activated(활성 알림에서 찍음)·hidden(숨기기 직전 그림)·null(짝 없음), Ghost = started·done·none(덮개 층 없음), Enter = started(재생 시작)·skipped_none(효과 없음 또는 자리 없음)·skipped_running(열기 재생 중이라 건너뜀)·null→none.</summary>
     private sealed class SwitchNote(int seq)
     {
         public int Seq { get; } = seq;
@@ -143,5 +146,7 @@ public static partial class WindowTransitions
         public string? Source { get; set; }
 
         public string? Ghost { get; set; }
+
+        public string? Enter { get; set; }
     }
 }

@@ -4,6 +4,15 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-25 — 향후과제 6건 조건 판정·진행(UTODO-0002·0003·0004·0005·0006·0017, O4, conv_179557939039)
+- 사용자 요청: 조건이 맞는 향후과제를 진행하고 PC 비움·실기기 조건이 필요한 것은 조건이 맞을 때만 실측한다. 사용자 결정 대기 과제(UTODO-0008~0011)는 범위 밖이다.
+- 코드·판정기: `test/desktop/judge/pcaway_gate.py`·`test/mobile/measure/webperf_startup.py` 의 저부하 조건을 참고 기록으로 바꾸고 계약 시각을 환경변수로 뺐다(UTODO-0017, 잔여는 UTODO-0018). `test/desktop/judge/motion_effects_judge.py` 잡음 가드를 복원 화면 잡음까지 보도록 보강했다(UTODO-0003). `WindowTransitions.Switch.cs` 의 `SwitchNote` 에 Enter(started·skipped_none·skipped_running) 진단을 더하고 `motion_web_origin_rules.py` 가 그 값으로 재생 여부를 판정한다(TODO-670, 동작 불변). 빌드(데스크톱·브라우저 Release) rc=0, 레이어 검사 violations 0.
+- 시험: 웹 A13 은 FAIL 0(INVALID 5·ERROR 1). 모바일 Fold5 AC-022 5사례 PASS, TODO-501 PASS 7·WAIT 2. 데스크톱은 PERF-12 n=40×3 비율 0.9436·1.0068·0.9676(기준 1.15) PASS, AC-012 어두운·밝은 테마, AC-020 PASS. WAIT 8건(AC-015 NAV·024·029·026·028·013·014·TODO-671)은 PC 비움 부족·전용 판정기 부재·headed Chrome 필요로 열림 상태 이월(다음 PC 비움 때 진행).
+- 문서: `03_향후과제_TODO.md` 0002·0003·0005·0017 완료, 0004·0006 열림 이월, UTODO-0018~0021 등재. `a10_측정보류_목록.md` §6.3 신설(AC-020·024·029 는 Fold5 가 아니라 PC 비움 항목이라는 정정 포함). `이전기록_2026-11-24_Pd열린UI과제.md` §4 추적표.
+- 역라우팅 #1(TEST→DEV, 웹): 측정기 `motion_web_origin_click.py` 가 더블클릭 뒤 Maximized 상태를 남겨 다음 시행이 오염됐고(첫 실행 FAIL 1·ERROR 3·INVALID 8), 활성화 출처가 다른 행도 PASS 로 세던 문제가 있었다. 출처 불일치는 INVALID 로 가르는 규칙과 시행 전 Normal 원복(`restore_normal`)을 넣어 재실행에서 FAIL 0 이 됐다. 원기록(reroute_context.md)은 덮어써져 이 항목은 팀리드 지시 요지에서 적었다.
+- 역라우팅 #2(DONE→PLAN): 목표 계약 검사 F-CRUD-1 이 AC 최상위에 `crud_대상=false` 선언이 없고 a10b 조건부 부록이 배정표에 들어 있다는 이유로 거부했다. oplan-2 가 선언을 보완하고 a10b 를 배정에서 뺐으며 재판정을 통과했다. a10 은 300줄 이하라 부록을 만들지 않았다.
+- 알려진 한계: 활성화 출처 필드(UTODO-0019)·`more.enter` Enter 미전환(UTODO-0020)·대화상자 안 열림 경합(UTODO-0021)은 후속 과제다.
+
 ## 2026-11-25 — 옛 Pd 앱과의 의존 분리(데이터 폴더·단일 인스턴스·Android 패키지, O3, conv_179556284747)
 - 사용자 결정 "기존 폴더와의 의존성을 모두 끊어야 한다"·"옛앱은 이제 필요없으니 모두 지워도 된다. 신규앱만 남겨라"에 따라 UTODO-0013·0014 를 실행했다(UADR-0003).
 - 데이터 폴더 `%LOCALAPPDATA%\PdPoc` 를 `%LOCALAPPDATA%\xkxk\frameworks\ui` 로 바꿨다(`src/xkxk.frameworks.ui.data/AppDataFolder.cs` 신설). 단일 인스턴스 이름은 `xkxk.frameworks.ui.<채널>.Instance`, Android 패키지는 `com.pd.poc` 에서 `xkxk.frameworks.ui`(APK `xkxk.frameworks.ui-Signed.apk`)로 바꿨다. 옛 폴더를 읽는 이전·폴백은 두지 않았다. 브라우저 localStorage 키는 바꾸지 않았다.

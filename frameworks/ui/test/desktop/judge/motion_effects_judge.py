@@ -68,6 +68,14 @@ def held_changed(strict, low, noise):
     return max(strict, low)
 
 
+def noise_floor(noise, restored_noise):
+    """잡음 바닥 = 정지 화면끼리의 낮은 색차 잡음과, 복원 뒤 화면(restored_noise)의 낮은 색차 잡음 중 큰 값.
+    정지 화면 2장은 거의 늘 같아 0 이 나오므로, 실제로 재생을 거친 복원 화면까지 보아야 낮은 색차 값을 믿을지 정할 수 있다."""
+    if restored_noise is None:
+        return noise
+    return restored_noise if noise is None else max(noise, restored_noise)
+
+
 def judge(s):
     if s.call("window.load.state").get("docs"):
         raise session.Abort("INVALID", "문서가 열려 있다(깨끗한 격리 폴더로 다시)")
@@ -99,26 +107,36 @@ def judge(s):
             held = s.call("motion.probe", effect=effect, hold="0.3")
             time.sleep(0.6)
             shot = s.capture(name)[0]
-            return held, held_changed(ratio(still, shot, box), ratio(still, shot, box, PIXEL_LOW), noise)
+            return held, (ratio(still, shot, box), ratio(still, shot, box, PIXEL_LOW))
 
-        held, changed = hold("wipeRight", "motion_held_press")
+        def restored(name):
+            # 복원 뒤 화면: (기본 색차 차이 = after, 낮은 색차 잡음 = restored_noise)
+            shot = s.capture(name)[0]
+            return ratio(still, shot, box), ratio(still, shot, box, PIXEL_LOW)
+
+        held, (strict, low) = hold("wipeRight", "motion_held_press")
         s.call("ui.pointerDrag", id="PART_Grid", doc=doc, dx=0, dy=0, steps=1)  # 끌기 시작 = 누름(이동 0)
         time.sleep(0.8)
         left = s.call("motion.probe", hold="release")
-        cases["interrupt.drag_start"] = judge_interrupt(held, left, changed, ratio(still, s.capture("motion_after_press")[0], box))
+        after, restored_noise = restored("motion_after_press")  # changed 계산은 복원 화면 캡처 뒤로 미룬다
+        changed = held_changed(strict, low, noise_floor(noise, restored_noise))
+        cases["interrupt.drag_start"] = judge_interrupt(held, left, changed, after)
 
         s.call("motion.probe", effect="wipeRight", hold="0.3")
-        held, changed = hold("circle", "motion_held_next")  # 다른 재생이 시작되면 앞 재생은 끝나고 1건만 남는다
+        held, (strict, low) = hold("circle", "motion_held_next")  # 다른 재생이 시작되면 앞 재생은 끝나고 1건만 남는다
         left = s.call("motion.probe", hold="release")
         time.sleep(0.8)
         one = dict(left, released=left.get("released", -1) - 1)
-        cases["interrupt.next_effect"] = judge_interrupt(held, one, changed, ratio(still, s.capture("motion_after_next")[0], box))
+        after, restored_noise = restored("motion_after_next")
+        changed = held_changed(strict, low, noise_floor(noise, restored_noise))
+        cases["interrupt.next_effect"] = judge_interrupt(held, one, changed, after)
 
-        held, changed = hold("split", "motion_held_close")
+        held, (strict, low) = hold("split", "motion_held_close")
         s.call("docs.close", doc=doc)
         opened.remove(doc)
         time.sleep(1.5)
-        cases["interrupt.close"] = judge_interrupt(held, s.call("motion.probe", hold="release"), changed, None)
+        # 닫기는 복원 화면이 없어 정지 화면 잡음만 쓴다(기존 동작)
+        cases["interrupt.close"] = judge_interrupt(held, s.call("motion.probe", hold="release"), held_changed(strict, low, noise), None)
         # 사례로 두면 전체가 늘 RECORDED 가 되므로 결과의 meta 에 근거로 남긴다
         s.meta["flowing"] = ("시간에 따라 흐르는 재생은 이 판정기가 재지 않는다 — 근거는 odev-2 의 실제 재생 표본 실측"
                              "(test/web/measure/motion_web_check.py·test/mobile/measure/motion_nav_fold5.py)")
@@ -150,6 +168,10 @@ def self_test():
         ("보정 후 문턱 통과", judge_interrupt(held, left, held_changed(0.0489, 0.12, 0.0), 0.0)["verdict"] == "PASS"),
         ("잡음 큼 보정 안 함", held_changed(0.0489, 0.12, 0.02) == 0.0489),
         ("진짜 안 그려짐 INVALID", judge_interrupt(held, left, held_changed(0.0, 0.001, 0.0), 0.0)["verdict"] == "INVALID"),
+        ("복원 잡음 큼(0.02) 보정 안 함", held_changed(0.0489, 0.12, noise_floor(0.0, 0.02)) == 0.0489),
+        ("복원 잡음 큼 → INVALID 유지", judge_interrupt(held, left, held_changed(0.0489, 0.12, noise_floor(0.0, 0.02)), 0.0)["verdict"] == "INVALID"),
+        ("복원 잡음 작음(0.001) 보정", held_changed(0.0489, 0.12, noise_floor(0.0, 0.001)) == 0.12),
+        ("복원 화면 없음 = 정지 잡음만", noise_floor(0.003, None) == 0.003),
     ])
 
 

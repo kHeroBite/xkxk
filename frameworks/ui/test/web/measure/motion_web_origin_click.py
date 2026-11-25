@@ -208,6 +208,13 @@ class Run:
             row.update(basis="lastSwitch", lastSwitch=switch, pair_why=judge_pair(switch, pair)[1] if reached else "활성 미전환")
         return row
 
+    def restore_normal(self):
+        """더블클릭 둘째 클릭 등으로 Maximized 가 남으면 다음 시행 전에 Normal 로 되돌린다. 되돌렸거나 처음부터 없으면 True, 못 돌리면 False."""
+        for doc in [d for d in self.docs() if d.get("state") == "Maximized"]:
+            self.w.call("docs.state", doc=doc["id"], state="normal")
+            time.sleep(0.8)
+        return not any(d.get("state") == "Maximized" for d in self.docs())
+
     def last_switch(self):
         """motion.probe 의 lastSwitch(마지막 전환 1건: seq·source·ghost). 표에 없는 effect 를 주면 표본 재생 없이 기록만 읽는다."""
         return self.need(self.w, "motion.probe", effect="__last__").get("lastSwitch")
@@ -304,6 +311,8 @@ def main():
                             try:
                                 if name.startswith("more.") and ops.dismiss(run):
                                     trials[-1]["dialog_left"] = True  # 판정은 그대로 두고 다음 시행만 살린다
+                                if name.startswith("more.") and place != "max" and not run.restore_normal():
+                                    trials[-1]["verdict"], trials[-1]["why"] = "INVALID", "상태 잔존"  # Maximized 를 못 돌렸다
                             except Exception as e:  # noqa: BLE001
                                 trials[-1]["dismiss_error"] = repr(e)[:300]
                         print(name, [t["verdict"] for t in trials], flush=True)

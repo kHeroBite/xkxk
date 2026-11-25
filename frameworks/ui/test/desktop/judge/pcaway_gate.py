@@ -1,6 +1,7 @@
 # PC 비움 전수 시험 계약 판정기(pcaway_gate) — `pcaway_gate.py item <ID>` : 0=PASS 1=FAIL 2=판정불가. 새 홈(frameworks/ui) 경로로 옮긴 사본
 # 출처: Pd worktree pd-18 `.claude/archive/test/2026-11/20261111-1429_conv_179435695241_pcaway_gate_before_lowload_removal.py`(sha256 3f259d45455a0f47e2a3fdf8b7e8f1e45c18ffe8b985e91bbf51a920bb33bb0d).
-#   남은 보관본 중 가장 최근 판이며 최종판이 아니다(그 뒤 '저부하 조건 제거' 등 변경분은 보관되지 않아 없다). 2026-11-24 경로(poc/ui→frameworks/ui)·프로젝트 이름(Pd.*→xkxk.frameworks.ui.*)·ROOT 폴백만 기계 치환했고 판정 로직은 그대로다.
+#   남은 보관본 중 가장 최근 판이며 최종판이 아니다(그 뒤 '저부하 조건 제거' 등 변경분은 보관되지 않아 없다). 2026-11-24 경로(poc/ui→frameworks/ui)·프로젝트 이름(Pd.*→xkxk.frameworks.ui.*)·ROOT 폴백만 기계 치환했다.
+# 2026-11-25 재기준(UTODO-0017): 저부하는 사용자 결정(2026-11-08)대로 참고 기록(REF_ONLY·check_p1 참고 출력), 계약 시각은 환경변수(PCAWAY_CYCLE_START·PCAWAY_R2_START·PCAWAY_WEBPERF_START, 기본 2026-11-24T00:00:00+09:00)로 재정의. 최종판 원본은 없음. 빌드 sha·REPLAY_PREFIX_SHA 는 UTODO-0018.
 # PC 비움 전수 시험·2차 묶음·이월 결함 계약 판정기 — `pcaway_gate.py item <ID>` : 0=PASS 1=FAIL 2=판정불가. 저장소·시험 결과(frameworks/ui/logs/pcaway/<ID>.json)·최종 빌드 목록만 읽는다
 # 결과 파일 존재만으로 통과시키지 않는다: writer=otest*, 계약 시각 이후 실행, 스크립트·빌드 sha 일치, 필수 측정 이름 전부 pass=true, 캡처 판독 기록, 안전 필드를 모두 요구한다.
 import hashlib, json, os, re, subprocess, sys
@@ -15,8 +16,9 @@ def _root():
     return os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..", ".."))  # 저장소 루트(옛 Pd worktree 절대경로 폴백 대체)
 ROOT = _root()
 RUN_TIMEOUT = 60
-CYCLE_START = "2026-11-05T07:00:00+09:00"  # 이 사이클 지시 시각. 이전 실행 결과는 인정하지 않는다
-R2_START = "2026-11-07T00:00:00+09:00"  # 2차 묶음(P·Q·T·N) 계약 시각. 새 항목은 이 시각 이전 실행 결과를 인정하지 않는다
+HOME_START = "2026-11-24T00:00:00+09:00"  # 새 홈(frameworks/ui) 이전 시각 — 계약 시각 기본값(2026-11-25 재기준)
+CYCLE_START = os.environ.get("PCAWAY_CYCLE_START", HOME_START)  # 이 사이클 지시 시각. 이전 실행 결과는 인정하지 않는다
+R2_START = os.environ.get("PCAWAY_R2_START", HOME_START)  # 2차 묶음(P·Q·T·N) 계약 시각. 새 항목은 이 시각 이전 실행 결과를 인정하지 않는다
 UI, SH, VW, VM, DK, AN, MS, JD = ("frameworks/ui/src/xkxk.frameworks.ui/", "frameworks/ui/src/xkxk.frameworks.ui.shell/", "frameworks/ui/src/xkxk.frameworks.ui.views/", "frameworks/ui/src/xkxk.frameworks.ui.shell/ViewModels/",
     "frameworks/ui/src/xkxk.frameworks.ui.shell/Docking/", "frameworks/ui/src/xkxk.frameworks.ui.android/", "frameworks/ui/test/desktop/measure/", "frameworks/ui/test/desktop/judge/")
 PNG = b"\x89PNG\r\n\x1a\n"
@@ -39,7 +41,7 @@ WHEEL_REAL = ["real_wheel_%s_%s" % (t, m) for t in ("gantt", "grid") for m in ("
 GRID_TOOL_NAMES = ["grid_first_row_height", "grid_lang_en_not_narrower", "grid_lang_back", "grid_theme_keep_row_pd-light", "grid_theme_keep_row_pd-dark", "grid_theme_switched"]
 STATE_ON_BARS = ["rest_hover", "rest_on", "on_hover_fill", "on_onhover_border", "glyph_on_hover", "glyph_on_on"]
 # W 웹 속도. 기준 25ms·500ms 는 a9 잠정 기준(plan/04_기술스택/04_판정보고서_부록/a9 §PERF-02·창 열기) 그대로다. 완화 금지
-WEBPERF_START = "2026-11-06T01:04:17+09:00"  # 웹 속도 계약 시각. 이전 실행 결과는 W3·W4 에서 인정하지 않는다
+WEBPERF_START = os.environ.get("PCAWAY_WEBPERF_START", HOME_START)  # 웹 속도 계약 시각. 이전 실행 결과는 W3·W4 에서 인정하지 않는다
 BROWSER_DIR = "frameworks/ui/src/xkxk.frameworks.ui.browser/"
 BROWSER_CSPROJ, BUILD_BROWSER = BROWSER_DIR + "xkxk.frameworks.ui.browser.csproj", "frameworks/ui/tools/build_browser.sh"
 AOT_MARKS = (b"mono_aot_aot_instances_get_method", b"mono_aot_Pd_Ui_Views_get_method", b"mono_aot_Pd_Poc_Shell_get_method")  # AOT 판 dotnet.native.wasm 에만 있는 ASCII 심볼(webperf_aot_prod 실측, base_diag 에는 없음)
@@ -68,12 +70,12 @@ STRIP_SPEC_H, TAB_SPEC_H = (19, 48), (16, 40)  # 기대 높이(설정값 유래)
 T4_EXPECT = dict(TRUE("theme_icon_rightmost", "ui_icons_present", "toolbar_row_absent", "theme_toggle_changes_theme", "strip_ratio", "tab_ratio"))
 P5_NAMES = ["fonts_sha_build1", "fonts_sha_build2", "fonts_name_build1", "fonts_name_build2", "built_at_1", "built_at_2"]
 R2_ITEMS = {
- "P1": R(P1_OPEN + P1_DRAG + ["fold5_runs_low_load", "frame_source_chrome_trace"], roles=("web_prod",), caps=2,
-         expect=dict(ALL(P1_OPEN, "<=", 500), **ALL(P1_DRAG, "<=", 25), fold5_runs_low_load=(">=", 10), frame_source_chrome_trace=("==", True)), start=R2_START),
+ "P1": R(P1_OPEN + P1_DRAG + ["frame_source_chrome_trace"], roles=("web_prod",), caps=2,
+         expect=dict(ALL(P1_OPEN, "<=", 500), **ALL(P1_DRAG, "<=", 25), frame_source_chrome_trace=("==", True)), start=R2_START),
  "P2": R(["fold5_tab_body_p95_ms_on", "tab_body_on_le_off", "tab_order_crossed", "tab_runs_each"], roles=("web_prod",),
          expect=dict(fold5_tab_body_p95_ms_on=("<=", 500), tab_body_on_le_off=("==", True), tab_order_crossed=("==", True), tab_runs_each=(">=", 10)), start=R2_START),
- "P3": R(["closed_menu_median_ms", "closed_tab_median_ms", "closed_low_load_only"], roles=("web_prod",),
-         expect=dict(closed_menu_median_ms=("<=", 118), closed_tab_median_ms=("<=", 86), closed_low_load_only=("==", True)), start=R2_START),
+ "P3": R(["closed_menu_median_ms", "closed_tab_median_ms"], roles=("web_prod",),
+         expect=dict(closed_menu_median_ms=("<=", 118), closed_tab_median_ms=("<=", 86)), start=R2_START),
  "P4": R(["splash_loss_classified_all", "loss_app_unexpected", "loss_before_window_reported", "touch_after_first_frame"], roles=("android_prod",),
          expect=dict(splash_loss_classified_all=("==", True), loss_app_unexpected=("==", 0), loss_before_window_reported=("==", True), touch_after_first_frame=("==", True)), start=R2_START),
  "P5": R(P5_NAMES, roles=("web_prod",), safety=False, static=True, files=[R2_FILES["fonts_csproj"]], start=R2_START),
@@ -278,6 +280,7 @@ def check_user_pd_case(sf):
         if not b.get("rects") or b.get("rects") != a.get("rects"): fail("사용자 Pd present_untouched 근거 불충족(창 사각형 없음 또는 바뀜)")
     elif b.get("pid") or a.get("pid") or b.get("present") != [] or a.get("present") != [] or sf.get("user_pd_launches") != []:
         fail("사용자 Pd absent_both 근거 불충족(시작·끝 0개·실행 기록 없음이 아님)")
+REF_ONLY = {"fold5_runs_low_load", "closed_low_load_only"}  # 사용자 결정(2026-11-08 '성능은 실제 동작시간으로 판정') — 저부하는 판정 근거가 아닌 참고 기록
 def check_result(i, s, ids=()):
     # ids: 결과 파일 이름이 항목 ID 와 다른 경우(T4_web 등)의 허용 ac_id 목록. 새 항목(start 지정)은 그 시각 이전 실행을 인정하지 않는다
     t = rd("frameworks/ui/logs/pcaway/%s.json" % i)
@@ -306,6 +309,7 @@ def check_result(i, s, ids=()):
     for m in ms:
         if not isinstance(m, dict) or "name" not in m or "value" not in m or "pass" not in m: fail("measurements 항목에 name/value/pass 누락")
         seen[m["name"]] = m
+        if m["name"] in REF_ONLY: continue  # 저부하 이름은 참고 기록(옛 형식 결과 호환) — pass 를 보지 않는다
         if m["pass"] is not True: fail("측정 실패: %s value=%s" % (m["name"], m["value"]))
     for n in s["req"]:
         if n not in seen: fail("필수 측정 누락: " + n)
@@ -509,11 +513,12 @@ def check_w4():
 def r2_result(i):
     return json.loads(rd("frameworks/ui/logs/pcaway/%s.json" % i))
 def check_p1():
+    # 2026-11-25 재기준: load1 은 시행을 무효로 만들지 않는다(사용자 결정 2026-11-08). 목록 상태만 참고로 출력한다
     d = r2_result("P1").get("detail")
     ls = d.get("load1_per_run") if isinstance(d, dict) else None
-    if not isinstance(ls, list) or not ls: fail("detail.load1_per_run 목록 없음")
-    bad = [v for v in ls if isinstance(v, bool) or not isinstance(v, (int, float)) or v >= 8]
-    if bad: fail("부하 8 이상 또는 값 오류 시행 %d건 (%s …)" % (len(bad), bad[0]))
+    if not isinstance(ls, list) or not ls: print("참고 detail.load1_per_run 목록 없음"); return
+    hi = [v for v in ls if isinstance(v, bool) or not isinstance(v, (int, float)) or v >= 8]
+    print("참고 load1 시행 %d건 중 8 이상·값 오류 %d건" % (len(ls), len(hi)))
 def check_p5():
     ms = {m["name"]: unwrap(m["value"]) for m in r2_result("P5")["measurements"]}
     s1, s2 = ms["fonts_sha_build1"], ms["fonts_sha_build2"]
@@ -575,8 +580,55 @@ def check_e3():
     fail("E3 대체 항목 %s 실패(rc=%d): %s" % (sup, p.returncode, p.stdout.strip()))
 SPECIAL = {"F13": check_discarded, "F14": check_readme, "T4": check_t4}
 W_CHECKS = {"W1": check_w1, "W2": check_w2, "W3": check_w3, "W4": check_w4, "P1": check_p1, "P5": check_p5, "Q1": check_q1, "T2": check_t2, "N1": check_n1}
+def self_test():
+    # 2026-11-25 재기준 자기시험: 임시 ROOT 에 옛 형식 P3 결과를 두고 check_result 를 실제로 돌린다(정적 사례로 빌드·안전 검사는 뺀다)
+    import importlib.util, tempfile
+    global ROOT
+    def rc_of(fn):
+        try: fn(); return 0
+        except SystemExit as e: return e.code
+    def p3(menu_ok=True, start="2026-11-25T01:00:00+09:00"):
+        return {"ac_id": "P3", "verdict": "PASS", "writer": "otest-1", "run_id": "st", "started_at": start, "finished_at": "2026-11-25T02:00:00+09:00",
+                "script": {"path": "frameworks/ui/st.py", "sha256": sha(os.path.join(ROOT, "frameworks/ui/st.py"))},
+                "measurements": [{"name": "closed_menu_median_ms", "value": 100 if menu_ok else 130, "pass": menu_ok},
+                                 {"name": "closed_tab_median_ms", "value": 80, "pass": True},
+                                 {"name": "closed_low_load_only", "value": False, "pass": False}]}  # 옛 형식: 저부하 미달 pass=False
+    def put(doc):
+        with open(os.path.join(ROOT, "frameworks/ui/logs/pcaway/P3.json"), "w", encoding="utf-8") as f: json.dump(doc, f)
+    old, cases = ROOT, []
+    with tempfile.TemporaryDirectory() as d:
+        ROOT = d
+        os.makedirs(os.path.join(d, "frameworks/ui/logs/pcaway"))
+        open(os.path.join(d, "frameworks/ui/st.py"), "w").close()
+        spec = dict(R2_ITEMS["P3"], static=True, safety=False)
+        put(p3())
+        cases.append(("REF_ONLY: 옛 형식 closed_low_load_only pass=False 여도 PASS", rc_of(lambda: check_result("P3", spec)) == 0))
+        put(p3(menu_ok=False))
+        cases.append(("대조: 실제 동작시간 미달은 FAIL", rc_of(lambda: check_result("P3", spec)) == 1))
+        put(p3(start="2026-11-23T23:00:00+09:00"))
+        cases.append(("기본 계약 시각(2026-11-24) 이전 실행 FAIL", rc_of(lambda: check_result("P3", spec)) == 1))
+        put(p3())
+        keep = {k: os.environ.get(k) for k in ("PCAWAY_R2_START", "PCAWAY_CYCLE_START", "PCAWAY_WEBPERF_START")}
+        os.environ.update(PCAWAY_R2_START="2026-11-25T01:30:00+09:00", PCAWAY_CYCLE_START="2026-11-25T01:30:00+09:00", PCAWAY_WEBPERF_START="2026-11-25T01:30:00+09:00")
+        try:
+            sp = importlib.util.spec_from_file_location("pcaway_gate_env", os.path.abspath(__file__))
+            g = importlib.util.module_from_spec(sp); sp.loader.exec_module(g)
+        finally:
+            for k, v in keep.items():
+                if v is None: os.environ.pop(k, None)
+                else: os.environ[k] = v
+        g.ROOT = d
+        cases.append(("환경변수 재정의: 계약 시각 3개가 값으로 바뀜", g.R2_START == g.CYCLE_START == g.WEBPERF_START == "2026-11-25T01:30:00+09:00"))
+        cases.append(("환경변수 재정의: 01:00 실행이 새 계약 시각(01:30) 이전이라 FAIL", rc_of(lambda: g.check_result("P3", dict(g.R2_ITEMS["P3"], static=True, safety=False))) == 1))
+        cases.append(("환경변수 미지정 판은 같은 결과 PASS", rc_of(lambda: check_result("P3", spec)) == 0))
+    ROOT = old
+    for n, c in cases: print("OK " if c else "NG ", n)
+    good = sum(1 for _, c in cases if c)
+    print("self-test %s %d/%d" % ("PASS" if good == len(cases) else "FAIL", good, len(cases)))
+    return 0 if good == len(cases) else 1
 def main():
-    if len(sys.argv) != 3 or sys.argv[1] != "item": und("사용법: item <ID>")
+    if sys.argv[1:] == ["--self-test"]: sys.exit(self_test())
+    if len(sys.argv) != 3 or sys.argv[1] != "item": und("사용법: item <ID> | --self-test")
     i = sys.argv[2]
     if not os.path.isdir(os.path.join(ROOT, "frameworks/ui")): und("frameworks/ui 부재")
     if i == "Z1": check_commit(); print("PASS"); return

@@ -28,14 +28,16 @@ def judge_pair(switch, pair):
     return "INVALID", "관측 없음 — lastSwitch seq %s→%s, 폴링 pair=%s" % (before, after.get("seq"), pair)
 
 
-def resolve_played(want, perf, switch=None):
+def resolve_played(want, perf, switch=None, expect_origin=None):
     """
     첫 전환의 재생 여부와 근거 → (played, basis). played 는 True·False·None(판단 불가), basis 는 perf·lastSwitch·none.
     perf = perf 구간 motion.play 유무. 이 구간은 재생 중 프레임 표본이 0장이면 버려진다(PerfFrameLog: End > Start 만 출력) —
     부하로 프레임 간격이 재생 시간(320ms)보다 길면 재생했어도 '없음'이 될 수 있다(r10 tab_hold2000 2건).
     보조 근거 lastSwitch: seq 가 늘고 ghost 가 started·done 이면 StartSwitch 가 효과 ID 확인을 통과해 재생을 시작한 것이다(짝 있는 최대화·DOCK 만).
     음성 사례(재생 기대 없음)는 perf 없음을 그대로 무재생으로 본다(PASS 근거 — 뒤집지 않는다).
-    한계: 겹침(짝 없음)은 ghost 가 없어 보조 근거가 없으므로 빈 구간 탈락이 나면 INVALID(관측 없음)로 남는다. 앱 진단 필드(SwitchNote Enter)는 다음 작업 후보.
+    앱 진단 필드 enter(반영됨, SwitchNote.Enter): seq 가 늘었고 perf 가 없으면 started → 재생, skipped_none → 무재생(효과 없음이 정답),
+    skipped_running → 판단 불가(열기 재생 중이라 전환 효과 여부를 이 진단으로 가릴 수 없다). enter 가 없는 옛 행은 아래 ghost 보조 근거를 쓴다.
+    한계: enter·ghost 가 모두 없는 옛 행의 겹침(짝 없음)은 보조 근거가 없으므로 빈 구간 탈락이 나면 INVALID(관측 없음)로 남는다.
     """
     if perf:
         return True, "perf"
@@ -43,7 +45,21 @@ def resolve_played(want, perf, switch=None):
         return False, "perf"
     before = ((switch or {}).get("before") or {}).get("seq") or 0
     after = (switch or {}).get("after") or {}
-    if isinstance(after.get("seq"), int) and after["seq"] > before and after.get("ghost") in GHOST_PRESENT:
+    grown = isinstance(after.get("seq"), int) and after["seq"] > before
+    enter = after.get("enter")
+    if grown and enter == "started":
+        return True, "lastSwitch.enter"
+    if grown and enter == "skipped_none":
+        # 무조건 무재생(FAIL)으로 보지 않는다 — 활성화 출처(after.origin)가 기대 출처와 같을 때만. 다르거나 미기록이면 판단 불가(INVALID)
+        origin = after.get("origin")
+        if not origin:
+            return None, "출처 미기록"
+        if expect_origin and origin != expect_origin:
+            return None, "출처 불일치"
+        return False, "lastSwitch.enter"
+    if grown and enter == "skipped_running":
+        return None, "lastSwitch.enter"
+    if grown and after.get("ghost") in GHOST_PRESENT:
         return True, "lastSwitch"
     return None, "none"
 
@@ -95,6 +111,15 @@ def self_test():
         "played: perf 없음·짝 기록 있음은 재생": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "started"}}) == (True, "lastSwitch"),
         "played: perf 없음·ghost none 은 판단 불가": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "none"}}) == (None, "none"),
         "played: perf 없음·seq 그대로는 판단 불가": resolve_played(True, False, {"before": {"seq": 2}, "after": {"seq": 2, "ghost": "done"}}) == (None, "none"),
+        "played: enter started 는 재생": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": None, "enter": "started"}}) == (True, "lastSwitch.enter"),
+        "played: enter skipped_none·출처 일치는 무재생(FAIL)": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "none", "enter": "skipped_none", "origin": "more_dblclick"}}, "more_dblclick") == (False, "lastSwitch.enter")
+                                                       and judge(True, True, False) == "FAIL",
+        "played: enter skipped_none·출처 불일치는 INVALID": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "none", "enter": "skipped_none", "origin": "body_click"}}, "more_dblclick") == (None, "출처 불일치")
+                                                       and judge(True, True, None) == "INVALID",
+        "played: enter skipped_none·출처 미기록은 INVALID": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "none", "enter": "skipped_none"}}, "more_dblclick") == (None, "출처 미기록"),
+        "played: 음성 기대 skipped_none 은 perf 없음 PASS 유지": resolve_played(False, False, {"before": {"seq": 1}, "after": {"seq": 2, "enter": "skipped_none"}}) == (False, "perf"),
+        "played: enter skipped_running 은 판단 불가": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "done", "enter": "skipped_running"}}) == (None, "lastSwitch.enter"),
+        "played: enter 없음은 ghost 보조(옛 행)": resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": "done"}}) == (True, "lastSwitch"),
         "played: 겹침 perf 없음은 무효(관측 없음)": judge(True, True, resolve_played(True, False, {"before": {"seq": 1}, "after": {"seq": 2, "ghost": None}})[0]) == "INVALID",
         "첫 전환 lastSwitch(앞 없음)": judge(True, True, True, 0, switch={"before": None, "after": {"seq": 1, "ghost": "done"}}) == "PASS",
         "음성 0": judge(False, True, False) == "PASS",

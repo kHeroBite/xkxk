@@ -286,7 +286,7 @@ def build_result(item, raws, metric="settle"):
             v = p95(fr) if fr else None
             m.append(_meas("fold5_drag_frame_p95_ms_doc%d" % n, v, v is not None and v <= 25))
         low = min([sum(1 for r in d.get("runs", []) if r.get("low_load")) for d in docs] or [0])
-        m.append(_meas("fold5_runs_low_load", low, low >= 10))
+        det["fold5_runs_low_load"] = low  # 참고 기록 — 저부하는 판정 근거가 아니다(사용자 결정 2026-11-08, UTODO-0017)
         m.append(_meas("frame_source_chrome_trace", bool(src_ok), src_ok))
     elif item == "P2":
         d = raws.get("open") or {}
@@ -306,12 +306,13 @@ def build_result(item, raws, metric="settle"):
         d = raws.get("closed") or {}
         lowruns = {run["i"] for run in d.get("runs", []) if run.get("low_load")}
         for nm, act, lim in (("closed_menu_median_ms", "menu", 118), ("closed_tab_median_ms", "tab", 86)):
-            vals = [r["resp_ms"] for run, r in _rows(d, act) if run["i"] in lowruns and r.get("resp_ms") is not None]
+            vals = [r["resp_ms"] for run, r in _rows(d, act) if r.get("resp_ms") is not None]  # 전체 시행 중앙값(실제 동작시간 판정)
             v = statistics.median(vals) if vals else None
             m.append(_meas(nm, v, v is not None and v <= lim))
+            lv = [r["resp_ms"] for run, r in _rows(d, act) if run["i"] in lowruns and r.get("resp_ms") is not None]
+            det[nm + "_low_load"] = statistics.median(lv) if lv else None  # 참고: 저부하 시행만의 중앙값
         only = bool(lowruns) and len(lowruns) == len(d.get("runs", []))
-        m.append(_meas("closed_low_load_only", only, only))
-        det.update(low_load_runs=len(lowruns), total_runs=len(d.get("runs", [])))
+        det.update(closed_low_load_only=only, low_load_runs=len(lowruns), total_runs=len(d.get("runs", [])))  # 참고 기록
     return m, det, docs
 
 
@@ -357,8 +358,18 @@ def _self_test():
         assert m and all(x["pass"] for x in m), (it, m)
         assert det["load1_per_run"] and all(v < 8 for v in det["load1_per_run"])
     runs[0]["low_load"] = False
-    m, _, _ = build_result("P3", {"closed": d})
-    assert not [x for x in m if x["name"] == "closed_low_load_only"][0]["pass"]
+    m, det, _ = build_result("P3", {"closed": d})
+    assert m and all(x["pass"] for x in m), m  # 저부하 시행 일부 미달이어도 P3 measurements 는 전부 pass
+    assert det["closed_low_load_only"] is False and det["low_load_runs"] == 9 and det["total_runs"] == 10
+    for r in runs:  # 저부하 전부 미달·load1 9.5 인 10회 시행도 실제 동작시간이 기준 안이면 P1·P3 PASS(UTODO-0017)
+        r.update(low_load=False, load1=9.5)
+    for it, raws in (("P1", {"open": d, "closed": d}), ("P3", {"closed": d})):
+        m, det, _ = build_result(it, raws)
+        assert m and all(x["pass"] for x in m), (it, m)
+        assert not [x for x in m if x["name"] in ("fold5_runs_low_load", "closed_low_load_only")], (it, m)
+    assert det["closed_low_load_only"] is False and det["low_load_runs"] == 0
+    m, det, _ = build_result("P1", {"open": d, "closed": d})
+    assert det["fold5_runs_low_load"] == 0, det
     fe = [{"name": "DrawFrame", "ts": t * 16000} for t in range(20)] + [{"name": "DrawFrame", "ts": 2000000}]
     assert len(frame_intervals(fe)) == 19
     print("self-test OK")
