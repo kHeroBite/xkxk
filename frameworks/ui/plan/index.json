@@ -1,7 +1,7 @@
 {
   "schema": "plan-index/1",
   "project": "ui",
-  "updated": "2026-11-25",
+  "updated": "2026-11-26",
   "profile": "product",
   "active_docs": [
     "requirements_raw",
@@ -38,8 +38,13 @@
     },
     {
       "id": "REQ-120",
-      "topic": "별별UI 프레임워크화 계획(구현 결정은 사용자)",
-      "status": "확정(계획)·구현 보류"
+      "topic": "별별UI 프레임워크화 계획",
+      "status": "확정·구현중"
+    },
+    {
+      "id": "REQ-121",
+      "topic": "프레임워크와 분리된 시험대(testbed)와 검증 스크립트로 프레임워크 자동 검증",
+      "status": "확정"
     }
   ],
   "decisions": [
@@ -56,6 +61,16 @@
     {
       "id": "UADR-0006",
       "topic": "명령 아이콘 키 PdCmdIcon* 와 창 아이콘 일치",
+      "status": "채택"
+    },
+    {
+      "id": "UADR-0007",
+      "topic": "별별UI 프레임워크화 진행·전체안(층별 NuGet 패키지) 확정, F0 13항 확정",
+      "status": "채택"
+    },
+    {
+      "id": "UADR-0008",
+      "topic": "시험대(testbed) 분리·위치·검증 체계",
       "status": "채택"
     }
   ],
@@ -103,7 +118,9 @@
     ],
     "architecture_appendix": [
       "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a1_방법론_전수조사.md",
-      "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a2_현행구조_진단.md"
+      "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a2_현행구조_진단.md",
+      "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a3_시험대_검증계획.md",
+      "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a4_단계별_배치계획.md"
     ],
     "screens": [
       "09_화면설계/01_화면설계_공통원칙.md",
@@ -166,5 +183,5 @@
     "tools_root": "tools"
   },
   "archived": [],
-  "note": "2026-11-24 Pd 에서 옮긴 UI 문서를 Pd 번호 체계 그대로 등재했다. 추가 키는 analysis·tech_stack·architecture·screens·decisions_appendix·pending_appendix·requirements_raw_appendix·migration_record 다. 결정 기록 정본은 decisions 이고 UADR-0001 이 있다. 2026-11-25 architecture_appendix 키(프레임워크화 계획 부록)를 추가했다. requirements·decisions 배열은 이 날부터 새로 생긴 항목만 짧게 색인한다(그 전 항목은 본문 문서가 정본)."
+  "note": "2026-11-24 Pd 에서 옮긴 UI 문서를 Pd 번호 체계 그대로 등재했다. 추가 키는 analysis·tech_stack·architecture·screens·decisions_appendix·pending_appendix·requirements_raw_appendix·migration_record 다. 결정 기록 정본은 decisions 이고 UADR-0001 이 있다. 2026-11-25 architecture_appendix 키(프레임워크화 계획 부록)를 추가했다. requirements·decisions 배열은 이 날부터 새로 생긴 항목만 짧게 색인한다(그 전 항목은 본문 문서가 정본). 2026-11-26 architecture_appendix 에 a3(시험대 검증계획)·a4(단계별 배치계획)를 더하고 REQ-121·UADR-0007·UADR-0008 을 색인했다."
 }

@@ -49,9 +49,19 @@
 │   ├── HISTORY.md · LESSONS.md · README.md · LAYERS.md · xkxk.frameworks.ui.slnx · Directory.Build.props · global.json
 │   ├── .claude/ (링크 · rules/docs-map.md · docs_gate.json)
 │   ├── plan/ (README.md · index.json · 00·01·04·05·09·90 · _build[menu_icons·menu_icon_data·icon_glyphs·menu_data])
-│   ├── src/ · test/(README.md) · tools/(README.md 신규) · assets/ · vendor/ · ref/README.md
+│   ├── src/                               # 프레임워크(패키지 대상)만
+│   │   ├── xkxk.frameworks.ui · .data · .shell · .views · .fonts
+│   │   └── xkxk.frameworks.ui.hosting.desktop · .browser · .android   # 호스트 공통 코드(F3 B11 소스 분리, 패키지화는 F5)
+│   ├── testbed/                           # 시험대(IsPackable=false) — 모듈 1·호스트 3·consumer·scenarios/ (F3 B10~)
+│   ├── test/(README.md)
+│   │   └── framework/                     # 프레임워크 검증 스크립트·일괄 실행기 verify_framework (B02~)
+│   ├── tools/(README.md 신규) · assets/ · vendor/ · ref/README.md
 ├── modules/README.md · apps/README.md · libraries/README.md · tooling/README.md
 ```
+
+- 시험대 `testbed/` 와 검증 스크립트 `test/framework/` 는 2026-11-26 프레임워크화 F0 에서 정했다(UADR-0008). 구성·검증 표는 `/mnt/c/DATA/Project/xkxk/frameworks/ui/plan/05_아키텍처/02_별별UI_프레임워크화_계획_부록/a3_시험대_검증계획.md` 가 정본이다. 두 폴더는 각 batch 에서 생긴다.
+- 시험대를 저장소 루트 `apps/` 에 두지 않는다. `apps/` 는 제품 앱 자리(§1·§2 의 GPT 제안 구조)이고, 시험대는 제품이 아니라 프레임워크를 공개 API 만으로 검증하는 영역 내부 자산이다. 영역 안에 두면 test_root·tools_root·빌드 스크립트·빌드 잠금을 그대로 쓴다.
+- `src/xkxk.frameworks.ui.hosting.*` 는 a4 Q3 확정에 따라 F3(B11)에서 지금 호스트의 공통 코드(Win32 훅·SDI 창·저장소)를 소스로만 분리한 자리다. 남는 Program·csproj 는 `testbed/` 의 실행 호스트로 옮긴다. NuGet 패키지화는 F5 에서 한다.
 
 ## 5. 하네스 산출물과의 대응
 
@@ -68,6 +78,7 @@
 
 ## 6. 이번에 하지 않은 것
 
-- `Pd.Poc.*` 이름 전환은 2026-11-24 `xkxk.frameworks.ui.*` 로 했다(UTODO-0007, UADR-0002). 데이터 폴더·단일 인스턴스·Android 패키지도 2026-11-25 같은 규칙으로 전환했다(UTODO-0013·0014, UADR-0003). NuGet 패키지화, `apps/pd` 이전, 루트 공통 표준 본문 작성은 하지 않았다.
+- `Pd.Poc.*` 이름 전환은 2026-11-24 `xkxk.frameworks.ui.*` 로 했다(UTODO-0007, UADR-0002). 데이터 폴더·단일 인스턴스·Android 패키지도 2026-11-25 같은 규칙으로 전환했다(UTODO-0013·0014, UADR-0003). `apps/pd` 이전, 루트 공통 표준 본문 작성은 하지 않았다.
+- NuGet 패키지화는 이 문서 작성 때 하지 않았다. 2026-11-26 프레임워크화 F5 에서 층별 패키지로 하기로 정했다(UADR-0007, 계획 `/mnt/c/DATA/Project/xkxk/frameworks/ui/plan/05_아키텍처/02_별별UI_프레임워크화_계획.md` §11).
 - 경로가 박힌 시험 스크립트는 고치지 않고 `/mnt/c/DATA/Project/xkxk/frameworks/ui/plan/90_결정관리/이전기록_2026-11-24_경로고정목록.md` 에 UTODO-0001 로 남겼다.
 - `plan/09_화면설계/02_메뉴구조.md` 생성기(`menu_tree.py`)는 옮기지 않았다. 재생성은 Pd 저장소에서 한다.
