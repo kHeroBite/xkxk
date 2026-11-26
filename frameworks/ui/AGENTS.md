@@ -30,6 +30,7 @@
 - 빌드는 한 번에 한 명만 돌린다(obj 잠금). 실행·포트·프로세스 규칙은 `INFRA.md` 4절을 따른다. 실행 파일 이름은 `xkxk.frameworks.ui.desktop.exe` 이고, 데이터 폴더(`%LOCALAPPDATA%\xkxk\frameworks\ui`)·단일 인스턴스 이름(`xkxk.frameworks.ui.<채널>.Instance`)도 옛 Pd 앱과 분리됐다. 같은 이름의 다른 프로세스는 사용자가 띄웠을 수 있으므로 자기 PID 외 프로세스는 건드리지 않는다.
 
 ## 5. 레이어 원칙
+- 저장소 공통 원칙은 `/mnt/c/DATA/Project/xkxk/docs/standards/01_소스구조_공통원칙.md` 이고, 아래는 별별UI 영역 고유 규칙이다.
 - UI/UX(화면 조립)·컨트롤·데이터 층을 철저히 나눈다. 시험·PoC 코드도 같은 규칙을 따른다.
 
 | 층 | 참조할 수 있는 것 | 참조하면 안 되는 것 |

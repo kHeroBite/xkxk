@@ -4,6 +4,11 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-26 — 사후 질문 결정 반영·소스 구조 공통 표준 승격(O2, conv_179564427958)
+- 사용자 결정(2026-11-26). UTODO-0008(NuGet 배포)·0009(Pd 앱 apps/pd 이전)·0011(menu_tree.py 이전)은 '지금은 하지 않음'으로 결정해 재검토 조건과 함께 닫았다. UTODO-0010 은 완료했다.
+- 공통 표준. 층 분리 일반 원칙과 소스 파일 300줄·책임 분할을 `docs/standards/01_소스구조_공통원칙.md` 로 올리고 `docs/standards/README.md` 색인에 등재했다. 별별UI 층 표·검사 도구는 영역 `AGENTS.md` §5 에 남기고 공통 표준 참조 1줄을 더했다. 첫 줄 한국어 헤더 주석은 CLAUDE.md 에 이미 있어 포인터만 두었다.
+- 검증. md_audit 는 영역·저장소 루트 모두 rc=0 이다. 문서만 바꿔 빌드·실행 확인은 대상이 없다.
+
 ## 2026-11-25 — 메뉴 아이콘·설정창 모달·메인 글자 크기·프레임워크화 계획(O4, conv_1795611347, c27)
 - 사용자 요청 2~5. (2) 상단 메뉴(파일·창·보기·시스템·트레이) 항목마다 아이콘을 넣고, 메뉴로 띄운 창의 창 아이콘(MDI·SDI·작업표시줄)을 그 메뉴 아이콘과 같게 했다. 창 메뉴의 활성 창은 토글 칸에 ✓ 로 표시한다(D-5, B10). (3) 설정창은 모달이다. 닫기 전까지 메인·MDI·SDI 의 컨트롤과 클릭이 막힌다. 수단은 `ModalScope`(터널 관문 + IsHitTestVisible 히트 차단 + Win32 EnableWindow 재차단 + 트레이 가드 + 원격 포인터 차단)이다. (4) 메인창 Ctrl+휠로 메인창 전체 글자 크기(ShellFontSize 10~24)를 바꾼다. (5) 프레임워크화 계획 문서만 만들었고 구현은 하지 않았다.
 - 코드. `MenuIcon`·`MenuIconStyles.axaml`·`MenuIconBitmap`·`SdiDocumentIcon`·`CmdIconKeys.Generated.cs`(아이콘 키는 `plan/_build/icon_glyphs_cmd.py` 가 생성), `ModalScope*.cs`·`Win32ModalBlock.cs`·`RemoteModalCommands.cs`·`RemoteMenuIconCommands.cs`, 창·입력 쪽 `WindowCommands`·`WindowStateOps`·`SettingsInput`·`ShellPlatform` 수정.
