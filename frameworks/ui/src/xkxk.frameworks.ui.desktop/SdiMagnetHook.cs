@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using xkxk.frameworks.ui.shell.Diagnostics;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.desktop;
 
@@ -85,7 +86,7 @@ internal sealed class SdiMagnetHook
         _snapper = null;
         _snaps = 0;
         _maxMs = 0;
-        var range = UiSettings.Current.EffectiveMagnetRange;
+        var range = XkxkUi.Current.Settings.EffectiveMagnetRange;
         if (_window is not { WindowState: WindowState.Normal } w || range <= 0 || !TryFrames(hWnd, out var win, out var vis)
             || w.Screens?.All is not { Count: > 0 } screens || !GetCursorPos(out _startCursor))
         {

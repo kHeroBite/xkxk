@@ -9,6 +9,7 @@ using Avalonia.Threading;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -66,7 +67,7 @@ public sealed partial class WindowIcon
 
     private void UpdateBusy()
     {
-        var settings = UiSettings.Current;
+        var settings = XkxkUi.Current.Settings;
         if (_watched is { IsLoading: true } && settings.BusyIconEnabled)
         {
             Cancel(ref _hideTimer);
@@ -122,7 +123,7 @@ public sealed partial class WindowIcon
     private void UpdateError()
     {
         Cancel(ref _errorTimer);
-        int seconds = UiSettings.Current.BusyIconErrorBadgeSeconds;
+        int seconds = XkxkUi.Current.Settings.BusyIconErrorBadgeSeconds;
         _badge.Error = _watched?.LastLoadError is not null && seconds > 0;
         if (_badge.Error)
         {

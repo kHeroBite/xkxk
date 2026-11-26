@@ -5,6 +5,7 @@ using System.IO;
 using System.Text.Json.Nodes;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -92,7 +93,7 @@ internal static class RemoteSnapAssistCommands
 
     private static JsonObject Snapshot()
     {
-        var s = UiSettings.Current;
+        var s = XkxkUi.Current.Settings;
         var thumbs = new JsonArray();
         foreach (var t in SnapAssistSession.ThumbDiagnostics)
         {

@@ -9,6 +9,7 @@ using xkxk.frameworks.ui.data.Navigation;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -103,7 +104,7 @@ public sealed partial class WindowIcon : Control
     {
         base.OnAttachedToVisualTree(e);
         _attached = true;
-        UiSettings.Current.PropertyChanged += OnSettingsChanged;
+        XkxkUi.Current.Settings.PropertyChanged += OnSettingsChanged;
         DesignThemeResolver.Changed += Apply;
         Watch(Document);
         RefreshResources();
@@ -113,7 +114,7 @@ public sealed partial class WindowIcon : Control
     {
         base.OnDetachedFromVisualTree(e);
         _attached = false;
-        UiSettings.Current.PropertyChanged -= OnSettingsChanged;
+        XkxkUi.Current.Settings.PropertyChanged -= OnSettingsChanged;
         DesignThemeResolver.Changed -= Apply;
         Watch(null);
     }

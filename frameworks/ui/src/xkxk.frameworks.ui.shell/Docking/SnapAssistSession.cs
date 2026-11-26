@@ -8,6 +8,7 @@ using Avalonia;
 using Avalonia.Controls;
 using xkxk.frameworks.ui.data.Logging;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -103,7 +104,7 @@ public static partial class SnapAssistSession
     /// <summary>세션 열기. 띄웠으면 null, 아니면 skip 사유.</summary>
     private static string? Start(WindowMenuTarget placed, string layoutId, int cell, SnapAssistSource source, SnapAssistScope scope, object anchor)
     {
-        var settings = UiSettings.Current;
+        var settings = XkxkUi.Current.Settings;
         if (!settings.EffectiveSnapAssistEnabled)
         {
             return "disabled";

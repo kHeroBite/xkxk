@@ -12,6 +12,7 @@ using Dock.Avalonia.Controls;
 using Dock.Model.Controls;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -53,7 +54,7 @@ internal static class SdiScreenPlacement
     {
         if (PlacementRecovery.IsSuppressed(SystemDialogHost.BackgroundMode) || window?.Host is not Window { IsVisible: true } w
             || (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow is not { IsVisible: true } main
-            || ViewModels.MonitorMenuViewModel.Provider?.GetMonitors() is not { Count: > 1 } monitors)
+            || XkxkUi.Current.Monitors.CurrentProvider?.GetMonitors() is not { Count: > 1 } monitors)
         {
             return;
         }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Theming;
 
@@ -138,7 +139,7 @@ public sealed partial class ThemeCatalog
     /// <summary>디자인 값만 바뀐 경우: 활성 테마면 디자인 리소스만 다시 쓴다(색·글꼴 단계 생략, 같은 값은 Applier 서명 비교가 생략).</summary>
     private void ReapplyDesignIfActive(ThemeDefinition theme)
     {
-        if (ReferenceEquals(Requested, theme) && UiSettings.Current.AppInstance is { } app)
+        if (ReferenceEquals(Requested, theme) && XkxkUi.Current.Settings.AppInstance is { } app)
         {
             ThemeDesignApplier.Apply(app, theme);
             DesignEffectsApplier.Apply(app); // 사용자 요소 값이 디자인 테마 효과(chrome=pill)보다 우선하도록 효과도 다시 맞춘다(서명이 같으면 생략)

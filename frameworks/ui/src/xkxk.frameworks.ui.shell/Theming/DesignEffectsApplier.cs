@@ -11,6 +11,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Theming;
 
@@ -95,7 +96,7 @@ public static partial class DesignEffectsApplier
 
         _hooked = true;
         DesignThemeResolver.Changed += OnResolverChanged;
-        UiSettings.Current.PropertyChanged += OnUiSettingChanged; // 배경 이미지 설정(BackgroundImage*)은 저장만 하므로 여기서 다시 적용한다
+        XkxkUi.Current.Settings.PropertyChanged += OnUiSettingChanged; // 배경 이미지 설정(BackgroundImage*)은 저장만 하므로 여기서 다시 적용한다
         WindowChromeStyle.DesignShadowOverride = () => _shadowOverride; // 크롬 스타일이 그림자를 계산할 때 디자인 테마 값을 함께 쓴다(덮어쓰기 왕복 없음, K13)
         Control.LoadedEvent.AddClassHandler<TopLevel>((top, _) => SyncClass(top), RoutingStrategies.Direct); // 뒤에 열린 SDI 창에도 chrome 클래스
     }
@@ -111,7 +112,7 @@ public static partial class DesignEffectsApplier
 
         if (Application.Current is { } app)
         {
-            ThemeDesignApplier.Apply(app, ThemeCatalog.Current.Requested);
+            ThemeDesignApplier.Apply(app, XkxkUi.Current.Themes.Requested);
             Apply(app);
         }
     }
@@ -201,7 +202,7 @@ public static partial class DesignEffectsApplier
     /// pill 은 클래스를 달지 않고, minimal 은 클래스(계약 이름)는 두고 요소별 표식 클래스로 해당 셀렉터만 뺀다(DesignEffects.axaml).
     /// </summary>
     private static bool Pinned(string el, string prop) =>
-        ThemeElements.Resolve(ThemeCatalog.Current.Requested, el, prop, out _) is DesignLayer.User or DesignLayer.Company;
+        ThemeElements.Resolve(XkxkUi.Current.Themes.Requested, el, prop, out _) is DesignLayer.User or DesignLayer.Company;
 
     private static void SyncClass(StyledElement root)
     {

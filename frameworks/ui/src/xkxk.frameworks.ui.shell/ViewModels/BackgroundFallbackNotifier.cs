@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Avalonia.Threading;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -33,7 +34,7 @@ internal sealed class BackgroundFallbackNotifier
 
     private void Notify(string reasonKey)
     {
-        if (_ready && _sent.Add((UiSettings.Current.BackgroundImageFile ?? "", reasonKey)))
+        if (_ready && _sent.Add((XkxkUi.Current.Settings.BackgroundImageFile ?? "", reasonKey)))
         {
             _panel.Push("notify.cat.system", "notify.background.title", reasonKey);
         }

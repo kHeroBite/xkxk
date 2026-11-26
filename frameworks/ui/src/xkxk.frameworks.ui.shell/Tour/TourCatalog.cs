@@ -46,21 +46,16 @@ public static class TourCatalog
     /// <summary>문서 본문 앵커. AutomationId 가 없는 문서 래퍼를 TourTargets 가 찾는다.</summary>
     public const string ContentAnchor = "@content";
 
-    private static ITourCatalogSource s_source = new EmbeddedTourCatalogSource();
-    private static TourCatalogData? s_current;
+    // 소스·캐시 상태는 앱 컨텍스트(UiAppContext)가 소유한다(B05). 아래 정적 접근자는 위임만 한다(B16 Obsolete 예고·B21 제거).
 
     /// <summary>지금 카탈로그(처음 쓸 때 읽는다). 읽기 실패도 앱을 멈추지 않고 빈 목록으로 간다. 그때 투어는 마지막 레이어만 보여 준다.</summary>
-    public static TourCatalogData Current => s_current ??= Load(s_source);
+    public static TourCatalogData Current => XkxkUi.Current.Tour;
 
     /// <summary>모든 단계(카탈로그 순서).</summary>
-    public static IEnumerable<TourStep> All => Current.Steps;
+    public static IEnumerable<TourStep> All => XkxkUi.Current.Tour.Steps;
 
-    /// <summary>소스를 바꾼다. 진행 중 세션은 시작할 때 받은 단계를 그대로 쓰고, 다음 시작부터 적용된다.</summary>
-    public static void UseSource(ITourCatalogSource? source)
-    {
-        s_source = source ?? new EmbeddedTourCatalogSource();
-        s_current = null;
-    }
+    /// <summary>소스를 바꾼다(null 이면 내장). 진행 중 세션은 시작할 때 받은 단계를 그대로 쓰고, 다음 시작부터 적용된다.</summary>
+    public static void UseSource(ITourCatalogSource? source) => UiAppContext.Instance.UseTourSource(source);
 
     /// <summary>해당 창·UI 방식·플랫폼·조건에 적용되는 단계와 빠진 단계(대상 가시성 판정 전, 카탈로그 순서).</summary>
     public static TourPlan Plan(TourScope scope, TourModes mode, TourPlatforms platform)
@@ -91,9 +86,10 @@ public static class TourCatalog
 
     /// <summary>문구: 카탈로그 소스가 가진 문구가 있으면 그것, 없으면 앱 사전. 저장소 카탈로그는 texts 를 갖지 않는다(검사기가 막는다).</summary>
     public static string Tr(string key) =>
-        Current.Texts.TryGetValue(XkxkUi.Current.Localization.Language, out var texts) && texts.TryGetValue(key, out var text) ? text : Loc.Tr(key);
+        XkxkUi.Current.Tour.Texts.TryGetValue(XkxkUi.Current.Localization.Language, out var texts) && texts.TryGetValue(key, out var text) ? text : Loc.Tr(key);
 
-    private static TourCatalogData Load(ITourCatalogSource source)
+    /// <summary>소스에서 카탈로그를 읽는다(앱 컨텍스트가 지연 로드 때 부른다). 오류는 로그로 남기고 파서 결과를 그대로 돌려준다.</summary>
+    internal static TourCatalogData Load(ITourCatalogSource source)
     {
         var data = TourCatalogParser.Parse(source.ReadJson(), source.Name);
         foreach (var error in data.Errors)

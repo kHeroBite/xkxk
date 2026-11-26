@@ -2,6 +2,7 @@
 using System;
 using Dock.Model.Core;
 using Dock.Model.Mvvm.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -14,7 +15,7 @@ public sealed class PocDocument : Document, Dock.Controls.DeferredContentControl
     /// 문서 전환 가속(UiSettings.FastDocumentSwitch, 기본 켬)이면 false 를 돌려 바로 붙인다 — 뷰 생성은 여전히 DocumentViewLocator 가 스피너 뒤로 미룬다.
     /// </summary>
     bool Dock.Controls.DeferredContentControl.IDeferredContentPresentation.DeferContentPresentation =>
-        !xkxk.frameworks.ui.shell.Theming.UiSettings.Current.FastDocumentSwitch;
+        !XkxkUi.Current.Settings.FastDocumentSwitch;
 
     public DocumentKind Kind { get; init; }
 

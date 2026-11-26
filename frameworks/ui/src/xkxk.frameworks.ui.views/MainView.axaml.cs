@@ -17,6 +17,7 @@ using xkxk.frameworks.ui.shell.Lifecycle;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.shell.ViewModels;
 using xkxk.frameworks.ui.views.Depth;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -172,8 +173,8 @@ public partial class MainView : UserControl
     {
         base.OnLoaded(e);
         // 제목 탭 × 표시 방식: 지금 값 반영 + 실행 중 변경 즉시 반영(OnUnloaded 에서 해제)
-        xkxk.frameworks.ui.shell.Theming.UiSettings.Current.PropertyChanged -= OnUiSettingChanged;
-        xkxk.frameworks.ui.shell.Theming.UiSettings.Current.PropertyChanged += OnUiSettingChanged;
+        XkxkUi.Current.Settings.PropertyChanged -= OnUiSettingChanged;
+        XkxkUi.Current.Settings.PropertyChanged += OnUiSettingChanged;
         ApplyTabCloseMode();
         if (_started)
         {
@@ -201,14 +202,14 @@ public partial class MainView : UserControl
         // 진행 표시(요건 2): 메인 창 첫 열림 스코프. 브라우저·모바일의 포인터 추적 스피너도 여기서 잇는다
         // 바쁨 표시 시간은 설정값(BusyShowDelayMs·BusyMinVisibleMs)을 호출 때마다 읽어 변경이 즉시 반영된다
         xkxk.frameworks.ui.shell.Busy.BusyService.ConfigureTiming(
-            () => xkxk.frameworks.ui.shell.Theming.UiSettings.Current.BusyShowDelayMs,
-            () => xkxk.frameworks.ui.shell.Theming.UiSettings.Current.BusyMinVisibleMs);
+            () => XkxkUi.Current.Settings.BusyShowDelayMs,
+            () => XkxkUi.Current.Settings.BusyMinVisibleMs);
         // MDI 창 끌기 잡을 곳 폭(F08): 설정값(MdiMinGrabDip)을 호출 때마다 읽는다 — Docking 은 설정 레이어를 직접 참조하지 않는다
         xkxk.frameworks.ui.shell.Docking.MdiDragLimit.ConfigureMinGrab(
-            () => xkxk.frameworks.ui.shell.Theming.UiSettings.Current.MdiMinGrabDip);
+            () => XkxkUi.Current.Settings.MdiMinGrabDip);
         // MDI 창 끌기 잔존 비율(01 §4.3): 설정값(MdiMinVisiblePercent, %)을 비율로 바꿔 호출 때마다 읽는다 — 같은 레이어 분리
         xkxk.frameworks.ui.shell.Docking.MdiDragLimit.ConfigureMinVisibleRatio(
-            () => xkxk.frameworks.ui.shell.Theming.UiSettings.Current.MdiMinVisiblePercent / 100.0);
+            () => XkxkUi.Current.Settings.MdiMinVisiblePercent / 100.0);
         xkxk.frameworks.ui.shell.Busy.BusyHooks.AttachMain(BusyFollower);
         xkxk.frameworks.ui.shell.Busy.BusyHooks.BeginUntilLaid(xkxk.frameworks.ui.shell.Busy.BusyHooks.MainScope, "open");
 
@@ -228,7 +229,7 @@ public partial class MainView : UserControl
 
     protected override void OnUnloaded(RoutedEventArgs e)
     {
-        xkxk.frameworks.ui.shell.Theming.UiSettings.Current.PropertyChanged -= OnUiSettingChanged;
+        XkxkUi.Current.Settings.PropertyChanged -= OnUiSettingChanged;
         _perfFps?.Dispose();
         _styleTransition?.Dispose();
         (DataContext as MainViewModel)?.Compact.Style.Cancel();

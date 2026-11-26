@@ -104,7 +104,7 @@ public static class ManagedSnapDrag
             if (!TabJoinRules.IsDrag(s_press, point)) { return; }
             s_dragging = true;
             // 끌기 시작 때 1회: 기준 영역(레이어 패널)·옵션·막대·칸 사각형, 탭 합치기 표적 후보(같은 레이어의 다른 관리형 창)
-            s_context = UiSettings.Current.CreateSnapContext(new Rect(area.Bounds.Size), WindowMinSize.Current);
+            s_context = xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Settings.CreateSnapContext(new Rect(area.Bounds.Size), WindowMinSize.Current);
             // 패널의 직계 자식은 창 크기 래퍼(ContentPresenter 등)라 후손에서 찾는다 — 관리형 창 래퍼(ManagedDockWindowDocument)만이라 창 안 MDI 창은 섞이지 않는다
             s_others = area.GetVisualDescendants().OfType<MdiDocumentWindow>().Where(w => !ReferenceEquals(w, window) && w.DataContext is ManagedDockWindowDocument).ToList();
             s_overlay = s_context.Enabled ? SnapOverlayHost.For(area) : null; // 화면 트리에 붙은 지금 받는다(MdiSnapDrag 와 같음)
@@ -140,7 +140,7 @@ public static class ManagedSnapDrag
     private static void ScheduleBar()
     {
         if (s_barTimer is not null) { return; }
-        var delay = UiSettings.Current.SnapBarDelayMs;
+        var delay = xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Settings.SnapBarDelayMs;
         if (delay <= 0) { ShowBarNow(); return; }
         s_barTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(delay) };
         s_barTimer.Tick += (_, _) => { CancelBarTimer(); ShowBarNow(); };

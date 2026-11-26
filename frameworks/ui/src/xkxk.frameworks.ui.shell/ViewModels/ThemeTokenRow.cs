@@ -3,6 +3,7 @@ using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -27,7 +28,7 @@ public sealed class ThemeTokenRow : ObservableObject
     public IRelayCommand ResetToTemplateCommand => _resetCommand ??= new RelayCommand(
         () =>
         {
-            var template = ThemeCatalog.Current.BaseTemplateOf(_theme);
+            var template = XkxkUi.Current.Themes.BaseTemplateOf(_theme);
             if (template.Colors.TryGetValue(Key, out var hex))
             {
                 Hex = hex;
@@ -65,7 +66,7 @@ public sealed class ThemeTokenRow : ObservableObject
                 return;
             }
 
-            IsValid = ThemeCatalog.Current.SetColor(_theme, Key, _hex.Trim());
+            IsValid = XkxkUi.Current.Themes.SetColor(_theme, Key, _hex.Trim());
             if (IsValid)
             {
                 Swatch.Color = _theme.GetColor(Key, Swatch.Color);

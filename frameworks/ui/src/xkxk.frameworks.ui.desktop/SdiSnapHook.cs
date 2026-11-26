@@ -109,10 +109,10 @@ internal sealed class SdiSnapHook
             return;
         }
 
-        var owner = UiSettings.Current.EffectiveSdiOwner(OsSnapProbe.IsOsSnapOn());
+        var owner = xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Settings.EffectiveSdiOwner(OsSnapProbe.IsOsSnapOn());
         if (owner != SnapSdiOwner.App)
         {
-            Program.Log($"sdi snap skip '{_window.Title}' owner={owner} mode={UiSettings.Current.SnapSdiMode} {OsSnapProbe.Describe()}");
+            Program.Log($"sdi snap skip '{_window.Title}' owner={owner} mode={xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Settings.SnapSdiMode} {OsSnapProbe.Describe()}");
             return;
         }
 
@@ -150,7 +150,7 @@ internal sealed class SdiSnapHook
         var area = new Rect(0, 0, _work.Width / _scale, _work.Height / _scale);
         var min = WindowMinSize.Current;
         var minSize = new Size(Math.Max(min.Width, w.MinWidth), Math.Max(min.Height, w.MinHeight));
-        _ctx = UiSettings.Current.CreateSnapContext(area, minSize);
+        _ctx = xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Settings.CreateSnapContext(area, minSize);
         _barSince = -1;
         var host = SdiSnapBarHost.Shared;
         host.Prepare(_work, _scale);
@@ -173,7 +173,7 @@ internal sealed class SdiSnapHook
                 StartBarTimer();
             }
 
-            if (Stopwatch.GetElapsedTime(_barSince).TotalMilliseconds >= UiSettings.Current.SnapBarDelayMs)
+            if (Stopwatch.GetElapsedTime(_barSince).TotalMilliseconds >= xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Settings.SnapBarDelayMs)
             {
                 _barTimer?.Stop();
                 host.ShowBar(_ctx);
@@ -197,7 +197,7 @@ internal sealed class SdiSnapHook
     // 포인터가 멈춰 WM_MOVING 이 오지 않아도 지연 뒤 막대를 띄운다(이동 루프 중 타이머 동작은 실기 확인 대상).
     private void StartBarTimer()
     {
-        var delay = UiSettings.Current.SnapBarDelayMs;
+        var delay = xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Settings.SnapBarDelayMs;
         if (delay <= 0)
         {
             return;
@@ -285,9 +285,9 @@ internal sealed class SdiSnapHook
     /// </summary>
     private static void StartAssist(Window window, SnapZone zone, PixelRect work, double scale)
     {
-        if (UiSettings.Current.SnapSdiMode is SnapSdiMode.Os or SnapSdiMode.Off)
+        if (xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Settings.SnapSdiMode is SnapSdiMode.Os or SnapSdiMode.Off)
         {
-            Program.Log($"sdi snap assist skip '{window.Title}' mode={UiSettings.Current.SnapSdiMode}");
+            Program.Log($"sdi snap assist skip '{window.Title}' mode={xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Settings.SnapSdiMode}");
             return;
         }
 

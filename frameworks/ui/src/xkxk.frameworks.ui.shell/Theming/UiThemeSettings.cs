@@ -2,6 +2,7 @@
 using Avalonia;
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Theming;
 
@@ -140,7 +141,7 @@ internal sealed class UiThemeSettings : ObservableObject
     /// <summary>Install 때 1회(창 크롬 옵션 설치 뒤): 사용자 테마 편집 시 저장, OS 라이트/다크 변경 시(System 모드) 재적용.</summary>
     public void InstallWatchers(Application app)
     {
-        ThemeCatalog.Current.Changed += () =>
+        XkxkUi.Current.Themes.Changed += () =>
         {
             if (!_owner.IsLoading)
             {
@@ -161,7 +162,7 @@ internal sealed class UiThemeSettings : ObservableObject
         dto.ThemeId = _themeId;
         dto.SystemLightThemeId = _systemLightThemeId;
         dto.SystemDarkThemeId = _systemDarkThemeId;
-        dto.UserThemesJson = ThemeCatalog.Current.ExportUserThemesJson();
+        dto.UserThemesJson = XkxkUi.Current.Themes.ExportUserThemesJson();
         dto.DesignThemeId = _designThemeId == DefaultDesignThemeId ? null : _designThemeId; // 기본값이면 쓰지 않음(희소)
         dto.MotionLevel = _motionLevel == MotionLevel.System ? null : _motionLevel;
         dto.EffectOverrides = _effectOverrides.Count == 0 ? null : new Dictionary<string, string>(_effectOverrides);
@@ -173,7 +174,7 @@ internal sealed class UiThemeSettings : ObservableObject
     /// <summary>복원 시작 직후, 다른 값보다 먼저 호출(사용자 테마가 있어야 Id 해석 가능). 옛 저장본(null)은 기본값.</summary>
     public void LoadDto(UiSettingsDto dto)
     {
-        ThemeCatalog.Current.LoadUserThemesJson(dto.UserThemesJson);
+        XkxkUi.Current.Themes.LoadUserThemesJson(dto.UserThemesJson);
         ThemeId = dto.ThemeId ?? BuiltinThemes.LightId;
         SystemLightThemeId = dto.SystemLightThemeId ?? BuiltinThemes.LightId;
         SystemDarkThemeId = dto.SystemDarkThemeId ?? BuiltinThemes.DarkId;

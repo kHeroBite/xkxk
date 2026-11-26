@@ -112,7 +112,7 @@ internal static partial class WindowChromeStyle
         if (!s_hooked)
         {
             s_hooked = true;
-            UiSettings.Current.Changed += OnSettingsChanged; // 입력이 같으면 생략(WindowChromeStyle.Design.cs, K13)
+            XkxkUi.Current.Settings.Changed += OnSettingsChanged; // 입력이 같으면 생략(WindowChromeStyle.Design.cs, K13)
         }
 
         var eff = EffectiveStyle; // 강제 지정 → 설정값(Auto 면 실행 OS) — ChromePlatform

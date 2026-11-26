@@ -12,7 +12,7 @@ namespace xkxk.frameworks.ui.shell.ViewModels;
 /// <summary>테마 편집기. 언어 전환을 구독해 토큰 표시명·짝 목록을 즉시 갱신한다 — 화면이 닫히면 Dispose 로 구독 해제(ThemeEditorView).</summary>
 public sealed class ThemeEditorViewModel : ObservableObject, IDisposable
 {
-    private readonly ThemeCatalog _catalog = ThemeCatalog.Current;
+    private readonly ThemeCatalog _catalog = XkxkUi.Current.Themes;
     private ThemeDefinition? _selected;
     private string _editName = "";
     private bool _editIsDark;

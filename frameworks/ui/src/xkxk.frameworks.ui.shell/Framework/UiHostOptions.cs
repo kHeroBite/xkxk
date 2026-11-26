@@ -43,4 +43,10 @@ public sealed class UiHostOptions
 
     /// <summary>윈도우 메뉴 ④~⑩·⑬ 실행 호스트(데스크톱 / 브라우저 관리형 창). null 이면 셸 기본 경로만 쓴다.</summary>
     public IWindowHostCommands? WindowHost { get; set; }
+
+    /// <summary>
+    /// 모니터 정보 공급자(데스크톱 호스트가 준다). 기본값은 null 이며, null 이면 모니터 정보가 없다(모니터 메뉴는 빈 목록, HasMonitors=false — 웹·Android).
+    /// UseXkxkUi 때 비 null 이면 <see cref="IUiAppContext.Monitors"/> 에 1회 연결한다. null 이면 이미 연결된 공급자를 바꾸지 않는다(B05).
+    /// </summary>
+    public IMonitorProvider? MonitorProvider { get; set; }
 }

@@ -56,7 +56,7 @@ public static class SettingsInput
             return false;
         }
 
-        var settings = UiSettings.Current;
+        var settings = XkxkUi.Current.Settings;
         if (settings.WheelMode == CtrlWheelMode.WindowZoom)
         {
             return WindowZoomHandler?.Invoke(source, delta) == true;
@@ -105,7 +105,7 @@ public static class SettingsInput
             return false;
         }
 
-        var settings = UiSettings.Current;
+        var settings = XkxkUi.Current.Settings;
         settings.ShellFontSize += delta > 0 ? 1 : -1; // setter 가 범위 맞춤·적용(ui.font.shellSize 계측)·저장한다
         return true;
     }

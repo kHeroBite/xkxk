@@ -13,6 +13,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -39,7 +40,7 @@ internal static class RemoteThemeDesignCommands
     // 창 탭 제목 단추의 스타일 클래스(MainView.axaml 탭 템플릿)
     private const string WindowTabClass = "tabTitle";
 
-    private static ThemeCatalog Catalog => ThemeCatalog.Current;
+    private static ThemeCatalog Catalog => XkxkUi.Current.Themes;
 
     internal static void Register(RemoteCommandRouter r)
     {
@@ -115,7 +116,7 @@ internal static class RemoteThemeDesignCommands
 
     private static JsonNode Contrast(string el)
     {
-        var size = FindTarget(el) is { } target ? TextElement.GetFontSize(target) : UiSettings.Current.ShellFontSize;
+        var size = FindTarget(el) is { } target ? TextElement.GetFontSize(target) : XkxkUi.Current.Settings.ShellFontSize;
         var (ratio, min, warn) = ThemeElements.Contrast(Catalog.Requested, el, size);
         return new JsonObject { ["ratio"] = Math.Round(ratio, 2), ["min"] = min, ["warn"] = warn };
     }

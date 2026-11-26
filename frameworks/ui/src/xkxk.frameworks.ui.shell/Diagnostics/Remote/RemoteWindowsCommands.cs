@@ -46,8 +46,8 @@ internal static partial class RemoteWindowsCommands
             ["pid"] = Environment.ProcessId, ["platform"] = AutomationBridge.Platform,
             ["windows"] = VisualTreeInspector.TopLevels().Count, ["docCount"] = Shell.Documents.Count,
             ["active"] = Shell.ActiveDocument is { } ad ? DocJson(ad) : null,
-            ["theme"] = UiSettings.Current.Theme.ToString(), ["baseFontSize"] = UiSettings.Current.BaseFontSize,
-            ["font"] = UiSettings.Current.FontName, ["wheelMode"] = UiSettings.Current.WheelMode.ToString(),
+            ["theme"] = XkxkUi.Current.Settings.Theme.ToString(), ["baseFontSize"] = XkxkUi.Current.Settings.BaseFontSize,
+            ["font"] = XkxkUi.Current.Settings.FontName, ["wheelMode"] = XkxkUi.Current.Settings.WheelMode.ToString(),
             ["remotePort"] = RemoteControlServer.Current?.Port,
         });
         r.Register("ping", "생존 확인", _ => JsonValue.Create("pong"));

@@ -186,6 +186,7 @@ internal static class Program
         SdiDocumentIcon.Install(); // B2: SDI OS 창 아이콘 = 활성 문서 메뉴 아이콘(AppWindowIcon 은 SDI 를 건너뛴다)
         AppWindowIcon.Install(); // AC-026: 작업 표시줄에 뜨는 창 전부에 앱 아이콘(창 생성 전 등록)
         Win32ModalBlock.Install(); // B3: 설정 창 앱 모달의 OS 수준 차단(ModalScope.PlatformBlock = EnableWindow, Windows 만)
+        var windowHost = new DesktopWindowHost(); // B05: 윈도우 메뉴 호스트도 합성 지점에서 1회 만든다(진단 자동화와 공유)
         h.ConfigureMainWindow = w =>
         {
             s_main = BgWindowPolicy.Main = w;
@@ -201,7 +202,7 @@ internal static class Program
 
             if (host.Get("--host-cmd") is { Length: > 0 } hostCmd)
             {
-                DesktopWindowHost.RunScripted(w, hostCmd); // 시험 전용 호스트 자동화
+                DesktopWindowHost.RunScripted(windowHost, w, hostCmd); // 시험 전용 호스트 자동화
             }
 #endif
             w.Opened += (_, _) => HostRenderOptions.LogActive(w, Log);
@@ -215,8 +216,10 @@ internal static class Program
             }
         };
         h.CreateHostWindow = () => new SdiWindowHost();
-        h.WindowHost = DesktopWindowHost.Instance; // 윈도우 메뉴 ④~⑦·⑬ 호스트 계약(IWindowHostCommands)
-        MonitorFitService.Register(h); // U20 모니터 목록 제공자(창 ▸ 멀티 모니터) + 최대화 때 선택 모니터로 옮김
+        var monitors = new DesktopMonitorProvider(); // B05: 호스트 인스턴스는 합성 지점에서 1회 만든다(옛 단일 인스턴스 접근자 제거)
+        h.WindowHost = windowHost; // 윈도우 메뉴 ④~⑦·⑬ 호스트 계약(IWindowHostCommands)
+        h.MonitorProvider = monitors; // U20 모니터 목록 제공자(창 ▸ 멀티 모니터) — UseXkxkUi 가 앱 컨텍스트에 연결(B05)
+        MonitorFitService.Register(h, monitors); // 최대화 때 선택 모니터로 옮김 + 호스트 내부 도우미 공유
 #if PD_DIAGNOSTICS
         DesktopDiagHooks.Install(); // 원격 판정 훅(캡처 방지·SDI OS Z 순서) — 진단 빌드 전용
 #endif

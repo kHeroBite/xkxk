@@ -5,6 +5,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -30,7 +31,7 @@ internal static class MdiGrabZoneCache
 
     static MdiGrabZoneCache()
     {
-        UiSettings.Current.PropertyChanged += (_, _) => s_global++;
+        XkxkUi.Current.Settings.PropertyChanged += (_, _) => s_global++;
     }
 
     private sealed class Entry

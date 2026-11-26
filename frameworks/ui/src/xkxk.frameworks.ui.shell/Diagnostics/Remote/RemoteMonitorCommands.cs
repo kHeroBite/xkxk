@@ -8,6 +8,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.shell.ViewModels;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -20,7 +21,7 @@ internal static class RemoteMonitorCommands
         r.Register("monitor.select", "U20 모니터 선택 id=<monitor.list 의 id> — 메뉴 라디오와 같은 SelectCommand 실행(저장·최대화 중이면 즉시 이동) → monitor.list", a =>
         {
             var id = a.Str("id") ?? throw new RemoteCommandException("인자 'id'가 필요합니다.");
-            var item = MonitorMenuViewModel.Instance.Items.FirstOrDefault(x => string.Equals(x.Id, id, StringComparison.OrdinalIgnoreCase))
+            var item = XkxkUi.Current.Monitors.Items.FirstOrDefault(x => string.Equals(x.Id, id, StringComparison.OrdinalIgnoreCase))
                 ?? throw new RemoteCommandException($"메뉴에 없는 모니터 id: {id}");
             item.SelectCommand.Execute(null);
             return ListJson();
@@ -78,14 +79,14 @@ internal static class RemoteMonitorCommands
 
     private static JsonObject ListJson()
     {
-        var vm = MonitorMenuViewModel.Instance;
+        var vm = XkxkUi.Current.Monitors;
         var main = MainWindow();
         return new JsonObject
         {
-            ["provider"] = MonitorMenuViewModel.Provider is not null,
+            ["provider"] = XkxkUi.Current.Monitors.CurrentProvider is not null,
             ["hasMonitors"] = vm.HasMonitors,
             ["count"] = vm.Items.Count,
-            ["selectedSetting"] = UiSettings.Current.SelectedMonitorId,
+            ["selectedSetting"] = XkxkUi.Current.Settings.SelectedMonitorId,
             ["items"] = new JsonArray(vm.Items.Select(x => (JsonNode?)new JsonObject
             {
                 ["id"] = x.Id,

@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels.Settings;
 
@@ -27,7 +28,7 @@ public sealed class AppearancePageViewModel : SettingsPageViewModel
     public AppearancePageViewModel(MainViewModel main)
         : base(main)
     {
-        SystemPair = new SystemThemePairViewModel(ThemeCatalog.Current, () => ThemeCatalog.Current.Requested);
+        SystemPair = new SystemThemePairViewModel(XkxkUi.Current.Themes, () => XkxkUi.Current.Themes.Requested);
         FontNames = Settings.FontNames; // 글꼴 목록은 호출마다 새로 만들어지므로 창이 열릴 때 1회만 읽는다
         OpenThemeEditorCommand = new RelayCommand(() => OpenThemeEditor?.Invoke());
         Settings.Changed += OnThemeApplied;
@@ -59,7 +60,7 @@ public sealed class AppearancePageViewModel : SettingsPageViewModel
         }
     }
 
-    public ObservableCollection<ThemeDefinition> ColorThemes => ThemeCatalog.Current.Themes;
+    public ObservableCollection<ThemeDefinition> ColorThemes => XkxkUi.Current.Themes.Themes;
 
     /// <summary>선택한 색 테마 Id(저장값). 원격·시험 대조용으로도 쓴다.</summary>
     public string ThemeId => Settings.ThemeId;
@@ -67,12 +68,12 @@ public sealed class AppearancePageViewModel : SettingsPageViewModel
     /// <summary>요청된 색 테마(적용은 프레임 뒤로 미뤄진다). 고르면 ThemeCatalog.Select 로 적용·저장하고 모드는 테마 기반을 따른다. 콤보가 되쓴 값은 같은 값이라 무시된다.</summary>
     public ThemeDefinition? SelectedColorTheme
     {
-        get => ThemeCatalog.Current.Requested;
+        get => XkxkUi.Current.Themes.Requested;
         set
         {
-            if (value is not null && !ReferenceEquals(value, ThemeCatalog.Current.Requested))
+            if (value is not null && !ReferenceEquals(value, XkxkUi.Current.Themes.Requested))
             {
-                ThemeCatalog.Current.Select(value.Id);
+                XkxkUi.Current.Themes.Select(value.Id);
             }
         }
     }
@@ -158,7 +159,7 @@ public sealed class AppearancePageViewModel : SettingsPageViewModel
     {
         Settings.Theme = ThemeMode.System;
         Settings.ThemeId = BuiltinThemes.LightId;
-        ThemeCatalog.Current.SetSystemPair(BuiltinThemes.LightId, BuiltinThemes.DarkId);
+        XkxkUi.Current.Themes.SetSystemPair(BuiltinThemes.LightId, BuiltinThemes.DarkId);
         Settings.FontName = UiSettings.DefaultFontName;
         Settings.DocumentDefaultFontSize = UiSettings.DefaultFontSize;
         Settings.BaseFontSize = UiSettings.DefaultFontSize; // 문서 기본값이 이미 같으면 현재 크기가 따라오지 않으므로 직접 맞춘다

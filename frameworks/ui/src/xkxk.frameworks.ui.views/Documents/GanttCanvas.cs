@@ -145,13 +145,13 @@ public sealed partial class GanttCanvas : Control
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
-        UiSettings.Current.Changed += InvalidateVisual;
+        XkxkUi.Current.Settings.Changed += InvalidateVisual;
         xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Localization.LanguageChanged += InvalidateVisual; // 머리글("작업") 언어 전환
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
-        UiSettings.Current.Changed -= InvalidateVisual;
+        XkxkUi.Current.Settings.Changed -= InvalidateVisual;
         xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Localization.LanguageChanged -= InvalidateVisual;
         base.OnDetachedFromVisualTree(e);
     }

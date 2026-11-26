@@ -8,7 +8,7 @@
              xmlns:loc="using:xkxk.frameworks.ui.shell.Localization"
              xmlns:depth="using:xkxk.frameworks.ui.views.Depth"
              xmlns:views="using:xkxk.frameworks.ui.views"
-             xmlns:theming="using:xkxk.frameworks.ui.shell.Theming"
+             xmlns:fw="using:xkxk.frameworks.ui.shell.Framework"
              x:Class="xkxk.frameworks.ui.views.MobileNavView"
              x:Name="Root">
   <Grid x:Name="NavRoot" x:DataType="vm:MobileNavViewModel">
@@ -82,7 +82,7 @@
                       <StackPanel Orientation="Horizontal" Spacing="6">
                         <Border Width="{Binding IndentPx}" />
                         <TextBlock Text="{Binding Mark}" Width="14" />
-                        <Panel IsVisible="{Binding MenuIconVisible, Source={x:Static theming:UiSettings.Current}}">
+                        <Panel IsVisible="{Binding Settings.MenuIconVisible, Source={x:Static fw:XkxkUi.Current}}">
                           <views:WindowIcon Width="16" Height="16" VerticalAlignment="Center"
                                             IconKey="{Binding Entry, Converter={x:Static views:WindowIcon.NavIconKey}}"
                                             IsVisible="{Binding Entry, Converter={x:Static views:WindowIcon.NavHasIcon}}" />

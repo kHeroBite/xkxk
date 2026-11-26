@@ -22,11 +22,8 @@ public static partial class DesignThemeResolver
         ("depth.open", "tilt", "tilt3d"),
     };
 
-    private static string _effectLevel = "";
-
-    /// <summary>지금 플랫폼(잘라냄 효과 플랫폼 낮춤 판정). 기본은 실행 중인 OS 판정이고 시험만 바꾼다.</summary>
-    public static MotionPlatform Platform { get; set; } =
-        System.OperatingSystem.IsBrowser() ? MotionPlatform.Web : System.OperatingSystem.IsAndroid() ? MotionPlatform.Android : MotionPlatform.Desktop;
+    /// <summary>지금 플랫폼(잘라냄 효과 플랫폼 낮춤 판정). 기본은 실행 중인 OS 판정이고 시험만 바꾼다(상태는 DesignThemeState).</summary>
+    public static MotionPlatform Platform { get => S.Platform; set => S.Platform = value; }
 
     /// <summary>효과 단계 실효값(theme|high|medium|low). 잠금이면 회사 값 ?? theme.</summary>
     public static string EffectLevel => Stored(DesignThemes.EffectLevelKey);
@@ -34,7 +31,7 @@ public static partial class DesignThemeResolver
     /// <summary>사용자가 고른 효과 단계 공급(UiSettings 적용 경로). 덮어쓰기 저장소와 따로 둔다. 바뀌었으면 Changed.</summary>
     public static void SetEffectLevel(string? level)
     {
-        _effectLevel = level?.Trim() ?? "";
+        S._effectLevel = level?.Trim() ?? "";
         Refresh();
     }
 
@@ -132,8 +129,8 @@ public static partial class DesignThemeResolver
         }
 
         // Locked 는 회사 원본 값을 직접 읽어 Resolve 를 다시 부르지 않는다(순환 없음). 효과·단계 키에서만 잠금을 적용한다
-        var userRaw = spec.Key == DesignThemes.MotionLevelKey ? _motionLevel
-            : spec.Key == DesignThemes.EffectLevelKey ? (!Locked ? _effectLevel : null)
+        var userRaw = spec.Key == DesignThemes.MotionLevelKey ? S._motionLevel
+            : spec.Key == DesignThemes.EffectLevelKey ? (!Locked ? S._effectLevel : null)
             : spec.IsEffect && !Locked ? Override(spec) ?? AliasRaw(spec, Override) : null;
         if (DesignThemes.TryNormalize(spec.Key, userRaw, out var user))
         {

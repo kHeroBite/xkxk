@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -92,7 +93,7 @@ public sealed class ThemeDesignRow : ObservableObject
     public decimal Increment => 1;
 
     /// <summary>글꼴 후보(편집 가능 콤보). 웹은 번들 글꼴만 들어 있다(UiSettings.FontNames).</summary>
-    public IReadOnlyList<string> FontOptions => IsFontEditor ? UiSettings.Current.FontNames : Array.Empty<string>();
+    public IReadOnlyList<string> FontOptions => IsFontEditor ? XkxkUi.Current.Settings.FontNames : Array.Empty<string>();
 
     /// <summary>굵기 후보. 항목은 ThemeElements.TryNormalize 가 받아 주는 FontWeight 이름만(목록을 따로 박지 않음).</summary>
     public IReadOnlyList<LocalizedOption> WeightOptions { get; }

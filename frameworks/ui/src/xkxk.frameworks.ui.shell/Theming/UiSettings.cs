@@ -12,6 +12,7 @@ using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using xkxk.frameworks.ui.shell.Diagnostics;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 using xkxk.frameworks.ui.shell.Rendering;
 
 namespace xkxk.frameworks.ui.shell.Theming;
@@ -69,7 +70,7 @@ public sealed partial class UiSettings : ObservableObject
         }
     }
 
-    public static UiSettings Current { get; } = new();
+    public static UiSettings Current => XkxkUi.Current.Settings;
 
     /// <summary>폰트 이름 → FontFamily. 브라우저 호스트는 임베드 폰트 URI 로 바꿔 끼운다.</summary>
     public static Func<string, FontFamily> FontResolver { get; set; } = name => new FontFamily(name);
@@ -181,7 +182,7 @@ public sealed partial class UiSettings : ObservableObject
     /// <summary>시작 3단계(휠·키 처리기 등록 뒤): 저장값 비동기 복원. 끝나면 Loaded 완료.</summary>
     public void StartLoad() => _ = _persist.LoadAndSignalAsync();
 
-    private static bool EffectiveIsDark() => ThemeCatalog.Current.Requested.Base == ThemeBase.Dark;
+    private static bool EffectiveIsDark() => XkxkUi.Current.Themes.Requested.Base == ThemeBase.Dark;
 
     /// <summary>종료 시 플러시(App Closing) — UiSettingsStore.FlushAsync.</summary>
     public Task FlushAsync(TimeSpan max) => _persist.FlushAsync(max);

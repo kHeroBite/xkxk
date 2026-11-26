@@ -11,6 +11,7 @@ using xkxk.frameworks.ui.data.Logging;
 using xkxk.frameworks.ui.shell.Busy;
 using xkxk.frameworks.ui.shell.Diagnostics;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -43,7 +44,7 @@ public static partial class RestoreViewDeferral
     /// <summary>설정이 지연일 때만 복원 수집 구간을 연다(지연이 아니면 null). 반환값을 using 으로 닫는다.</summary>
     internal static IDisposable? BeginCollect(WindowSession session)
     {
-        if (UiSettings.Current.RestoreViewCreation != RestoreViewCreation.Deferred)
+        if (XkxkUi.Current.Settings.RestoreViewCreation != RestoreViewCreation.Deferred)
         {
             return null;
         }

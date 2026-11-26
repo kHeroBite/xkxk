@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -14,7 +15,7 @@ namespace xkxk.frameworks.ui.shell.Docking;
 public static class SnapFlyoutState
 {
     /// <summary>팝업을 띄울 수 있는 옵션 상태인가(SnapEnabled 와 SnapFlyoutEnabled 가 모두 켜짐).</summary>
-    public static bool Enabled => UiSettings.Current.EffectiveSnapFlyoutEnabled;
+    public static bool Enabled => XkxkUi.Current.Settings.EffectiveSnapFlyoutEnabled;
 
     /// <summary>지금 머무름 지연을 재는 중인가(포인터가 단추 위, 아직 팝업 전).</summary>
     public static bool Pending { get; set; }

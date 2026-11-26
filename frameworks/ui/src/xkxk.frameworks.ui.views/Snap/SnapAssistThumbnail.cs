@@ -10,6 +10,7 @@ using Avalonia.Media.Imaging;
 using xkxk.frameworks.ui.data.Logging;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Snap;
 
@@ -45,7 +46,7 @@ public static partial class SnapAssistThumbnail
     {
         image = null;
         LastDetail = $"src={source?.GetType().Name ?? "null"}";
-        if (!UiSettings.Current.EffectiveSnapAssistThumbnails)
+        if (!XkxkUi.Current.Settings.EffectiveSnapAssistThumbnails)
         {
             reason = "off";
             return false;

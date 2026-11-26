@@ -2,6 +2,7 @@
 using System;
 using Avalonia.Controls;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -17,7 +18,7 @@ public partial class MainView
     /// <summary>설정을 제목 줄에 반영한다. 로드 때(ApplyTabCloseMode 경유)와 관련 설정이 바뀔 때 부른다.</summary>
     private void ApplyTitleStripOptions()
     {
-        var settings = UiSettings.Current;
+        var settings = XkxkUi.Current.Settings;
 
         // 표시 방식(ui.shell.title_tab.display): 클래스는 MainView.axaml ListBox 스타일이 읽는다
         var display = settings.TitleTabDisplay;
@@ -49,6 +50,6 @@ public partial class MainView
     private void UpdateFavoriteBarWidth()
     {
         var width = TitleStripGrid.Bounds.Width;
-        FavoriteBarHost.MaxAllowedWidth = width > 0 ? Math.Floor(width * UiSettings.Current.FavoriteBarMaxWidthPct / 100.0) : double.PositiveInfinity;
+        FavoriteBarHost.MaxAllowedWidth = width > 0 ? Math.Floor(width * XkxkUi.Current.Settings.FavoriteBarMaxWidthPct / 100.0) : double.PositiveInfinity;
     }
 }

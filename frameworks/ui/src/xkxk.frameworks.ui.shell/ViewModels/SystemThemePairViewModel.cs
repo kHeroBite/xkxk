@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -21,12 +22,12 @@ public sealed class SystemThemePairViewModel : ObservableObject
     /// <summary>체크 = OS 라이트/다크를 따라 아래 짝 테마 적용. 해제 = 선택 테마 고정.</summary>
     public bool FollowSystem
     {
-        get => UiSettings.Current.Theme == ThemeMode.System;
+        get => XkxkUi.Current.Settings.Theme == ThemeMode.System;
         set
         {
             if (value)
             {
-                UiSettings.Current.Theme = ThemeMode.System;
+                XkxkUi.Current.Settings.Theme = ThemeMode.System;
             }
             else if (_selected() is { } t)
             {
@@ -44,7 +45,7 @@ public sealed class SystemThemePairViewModel : ObservableObject
     /// <summary>시스템 모드에서 OS 가 라이트일 때 쓸 테마.</summary>
     public ThemeDefinition? SystemLightTheme
     {
-        get => _catalog.Find(UiSettings.Current.SystemLightThemeId) ?? _catalog.Find(BuiltinThemes.LightId);
+        get => _catalog.Find(XkxkUi.Current.Settings.SystemLightThemeId) ?? _catalog.Find(BuiltinThemes.LightId);
         set
         {
             if (value is not null)
@@ -58,7 +59,7 @@ public sealed class SystemThemePairViewModel : ObservableObject
     /// <summary>시스템 모드에서 OS 가 다크일 때 쓸 테마.</summary>
     public ThemeDefinition? SystemDarkTheme
     {
-        get => _catalog.Find(UiSettings.Current.SystemDarkThemeId) ?? _catalog.Find(BuiltinThemes.DarkId);
+        get => _catalog.Find(XkxkUi.Current.Settings.SystemDarkThemeId) ?? _catalog.Find(BuiltinThemes.DarkId);
         set
         {
             if (value is not null)

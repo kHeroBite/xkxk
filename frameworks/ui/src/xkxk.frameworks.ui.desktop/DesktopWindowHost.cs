@@ -38,8 +38,6 @@ public sealed class DesktopWindowHost : IWindowHostCommands
     private static readonly List<Window> s_sdi = new();
     private static Window? s_main;
 
-    public static DesktopWindowHost Instance { get; } = new();
-
     /// <summary>App.ConfigureMainWindow 에서 호출.</summary>
     public static void AttachMain(Window main)
     {
@@ -84,8 +82,9 @@ public sealed class DesktopWindowHost : IWindowHostCommands
     /// <summary>
     /// 호스트 자동화(--host-cmd, 시험 전용): 메인 창이 열린 뒤 쉼표 목록을 간격을 두고 실행하고 각 단계 뒤 창 사각형을 로그로 남긴다.
     /// 항목: WindowHostCommand 이름 또는 capture-on / capture-off. 예: --host-cmd FitMultiMonitor,ResetMainWindow,capture-on
+    /// host 는 Program 합성 지점이 만든 호스트 인스턴스(UiHostOptions.WindowHost)다(B05, 옛 단일 인스턴스 접근자 제거).
     /// </summary>
-    public static void RunScripted(Window main, string spec, int intervalMs = 1500)
+    public static void RunScripted(IWindowHostCommands host, Window main, string spec, int intervalMs = 1500)
     {
         var steps = spec.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         main.Opened += async (_, _) =>
@@ -96,11 +95,11 @@ public sealed class DesktopWindowHost : IWindowHostCommands
                 bool ok;
                 if (step.Equals("capture-on", StringComparison.OrdinalIgnoreCase) || step.Equals("capture-off", StringComparison.OrdinalIgnoreCase))
                 {
-                    ok = Instance.SetCaptureProtection(step.EndsWith("on", StringComparison.OrdinalIgnoreCase));
+                    ok = host.SetCaptureProtection(step.EndsWith("on", StringComparison.OrdinalIgnoreCase));
                 }
                 else if (Enum.TryParse<WindowHostCommand>(step, true, out var cmd))
                 {
-                    ok = Instance.CanExecute(cmd) && Instance.Execute(cmd);
+                    ok = host.CanExecute(cmd) && host.Execute(cmd);
                 }
                 else
                 {
@@ -110,7 +109,7 @@ public sealed class DesktopWindowHost : IWindowHostCommands
 
                 await Task.Delay(300); // OS 가 위치·크기를 반영한 뒤 기록
                 var sdi = string.Join(" ", s_sdi.Select(w => $"[{w.Title} {w.Position.X},{w.Position.Y} {w.WindowState}]"));
-                Log($"host-cmd {step} ok={ok} main=({main.Position.X},{main.Position.Y}) frame={main.FrameSize?.Width:F0}x{main.FrameSize?.Height:F0}dip state={main.WindowState} capture={Instance.GetCaptureProtection()} sdi={sdi}");
+                Log($"host-cmd {step} ok={ok} main=({main.Position.X},{main.Position.Y}) frame={main.FrameSize?.Width:F0}x{main.FrameSize?.Height:F0}dip state={main.WindowState} capture={host.GetCaptureProtection()} sdi={sdi}");
             }
         };
     }

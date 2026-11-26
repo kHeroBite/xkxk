@@ -28,7 +28,7 @@ namespace xkxk.frameworks.ui.shell.Docking;
 public static partial class WindowMenuOps
 {
     /// <summary>'배치' 하위 메뉴에 보일 칸 종류(옵션 SnapLayouts·SnapEnabled 반영, 목록 순서).</summary>
-    public static IReadOnlyList<SnapLayout> PlacementLayouts => UiSettings.Current.EffectiveSnapLayouts;
+    public static IReadOnlyList<SnapLayout> PlacementLayouts => XkxkUi.Current.Settings.EffectiveSnapLayouts;
 
     /// <summary>대상에 그 칸을 적용할 수 있는가(메뉴 항목 활성). 칸이 최소 크기보다 작거나 스냅이 꺼졌으면 false.</summary>
     public static bool CanApplyCell(WindowMenuTarget target, string layoutId, int cell) =>
@@ -94,7 +94,7 @@ public static partial class WindowMenuOps
         {
             if (window.Host is Window host)
             {
-                if (UiSettings.Current.SnapSdiMode is SnapSdiMode.Os or SnapSdiMode.Off)
+                if (XkxkUi.Current.Settings.SnapSdiMode is SnapSdiMode.Os or SnapSdiMode.Off)
                 {
                     return;
                 }

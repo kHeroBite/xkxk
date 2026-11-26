@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using Avalonia.Media;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Theming;
 
@@ -238,7 +239,7 @@ public static partial class ThemeElements
             return t;
         }
 
-        var catalog = ThemeCatalog.Current;
+        var catalog = XkxkUi.Current.Themes;
         return catalog.Find(t.BaseTemplateId) is { IsBuiltin: true } b ? b
             : catalog.Find(t.Base == ThemeBase.Dark ? BuiltinThemes.DarkId : BuiltinThemes.LightId);
     }

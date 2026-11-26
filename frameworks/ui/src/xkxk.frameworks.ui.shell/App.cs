@@ -102,14 +102,14 @@ public class App : Application
         ModalScope.InstallGate();
 
         // 테마·글자 크기·폰트를 화면 생성 전에 반영하고 Ctrl+휠/Ctrl+0 전역 처리를 등록한다.
-        Input.SettingsInput.Install(UiSettings.Current, this, SettingsStore); // 설정 시작 순서·전역 입력 처리기(컨트롤 계층)
+        Input.SettingsInput.Install(XkxkUi.Current.Settings, this, SettingsStore); // 설정 시작 순서·전역 입력 처리기(컨트롤 계층)
 
         var vm = new MainViewModel(LayoutStore);
         UiAppContext.Instance.SetMain(vm);
         ApplyStartupArgs();
         UiAppContext.Instance.SetShell(vm.Commands);
         Layouts = new LayoutLibrary(LayoutLibraryStore ?? new MemoryKeyValueStore(), vm.Commands, LayoutStore, vm.AddLog,
-            UiSettings.Current.BackupSource); // ⑫ 전체 백업·복원에 설정 포함(설정 파일 없으면 현재 설정, D-BACKUP-NOSET)
+            XkxkUi.Current.Settings.BackupSource); // ⑫ 전체 백업·복원에 설정 포함(설정 파일 없으면 현재 설정, D-BACKUP-NOSET)
         XkxkUi.Current.Views.InstallInput(vm); // ② Esc 창닫기 — 메인·SDI 창 공통
         ViewModels.SystemMenu.SystemInfo.ChannelProvider = () => AppChannel.Current; // UI-17 프로그램 정보·업데이트 확인(odev-1r)
         ViewModels.SystemMenu.SystemInfo.RendererProvider = ViewModels.SystemMenuViewModel.RendererText;
@@ -182,6 +182,7 @@ public class App : Application
         if (host.VisibleFrameOf is { } frame) { VisibleFrameOf = frame; }
         if (host.CreateHostWindow is { } create) { CreateHostWindow = create; }
         if (host.WindowHost is { } windowHost) { WindowHost = windowHost; }
+        if (host.MonitorProvider is { } monitors) { UiAppContext.Instance.Monitors.Attach(monitors); } // B05 모니터 공급자(옛 MonitorMenuViewModel.Provider 정적 대입 대체)
     }
 
     /// <summary>--fresh 를 소비(자동화 인자에서 뺌)하고 임시 설정 인자(--theme·--font 등 — settings.json 에 저장하지 않음)를 지정한다.</summary>
@@ -200,7 +201,7 @@ public class App : Application
         StartupArgs = xkxk.frameworks.ui.shell.Platform.InputFormFactor.TakeArg(StartupArgs); // 시험 인자 --form-factor touch|desktop: 폼팩터 강제(D-UX1 — 강제값 > 플랫폼)
         StartupArgs = UiSettings.TakeUiModeArg(StartupArgs); // 시험 인자 --ui-mode tablet|phone: 화면 모드를 이번 실행만 강제(저장 안 함)
         StartupArgs = UiSettings.TakeUiStyleArg(StartupArgs); // 시험 인자 --ui-style auto|pc|tablet|mobile: UI 형을 이번 실행만 강제(저장 안 함, --ui-mode 보다 우선)
-        UiSettings.Current.SetTransient(AutomationBridge.TransientSettingArgs(StartupArgs));
+        XkxkUi.Current.Settings.SetTransient(AutomationBridge.TransientSettingArgs(StartupArgs));
     }
 
     /// <summary>앱 종료 요청(자동화 --exit-after·원격). 데스크톱은 메인 창 Close → 위 종료 처리(저장·플러시) → Shutdown. 브라우저는 무동작.</summary>

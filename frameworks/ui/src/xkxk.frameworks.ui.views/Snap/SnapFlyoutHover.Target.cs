@@ -6,6 +6,7 @@ using Dock.Avalonia.Controls;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Platform;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Snap;
 
@@ -42,7 +43,7 @@ public static partial class SnapFlyoutHover
     /// </summary>
     private static string? BlockReason(WindowMenuTarget target) => target.Kind switch
     {
-        WindowMenuKind.Sdi when ShellPlatform.IsSdiWindowSupported && UiSettings.Current.SnapSdiMode == SnapSdiMode.Off => "sdi-off",
+        WindowMenuKind.Sdi when ShellPlatform.IsSdiWindowSupported && XkxkUi.Current.Settings.SnapSdiMode == SnapSdiMode.Off => "sdi-off",
         WindowMenuKind.Main when OperatingSystem.IsWindows() => "os-flyout",
         _ => null,
     };

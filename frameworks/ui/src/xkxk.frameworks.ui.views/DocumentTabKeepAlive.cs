@@ -12,6 +12,7 @@ using Avalonia.Threading;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Platform;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -47,7 +48,7 @@ public static class DocumentTabKeepAlive
     /// 다음 프레임 뒤로 미뤄 누른 탭의 선택 표시가 먼저 그려진다(첫 반응 단축). 대가: 새 본문은 약 1프레임 늦게 보인다(그동안 이전 본문이 남는다).
     /// 웹은 렌더 스레드가 없어 무거운 본문 교체가 끝날 때까지 탭 선택 표시도 그려지지 않는다(final8 Fold5 웹 첫 반응 96ms, 앱 8ms). 다음 탭 전환부터 적용된다.
     /// </summary>
-    private static bool HeaderFirst => UiSettings.Current.TabHeaderFirst;
+    private static bool HeaderFirst => XkxkUi.Current.Settings.TabHeaderFirst;
 
     /// <summary>
     /// 탭 전환으로 보이던 문서 뷰를 숨기기 직전(인자 = 그 뷰). 창 움직임 효과(Depth/WindowTransitions)가 나가는 모습을 찍는다(21 §4 DOCK 짝 나감).
@@ -70,7 +71,7 @@ public static class DocumentTabKeepAlive
 
     private static void OnTemplateApplied(object? sender, TemplateAppliedEventArgs e)
     {
-        if (sender is not Control owner || !UiSettings.Current.FastDocumentSwitch)
+        if (sender is not Control owner || !XkxkUi.Current.Settings.FastDocumentSwitch)
         {
             return;
         }

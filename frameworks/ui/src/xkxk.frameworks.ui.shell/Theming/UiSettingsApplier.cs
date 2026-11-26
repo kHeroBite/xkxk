@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Media;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Theming;
 
@@ -123,7 +124,7 @@ internal sealed class UiSettingsApplier
         DesignThemeResolver.SetEffectLevel(_owner.EffectLevel); // 효과 단계(D-591 해석 층) — 덮어쓰기와 따로, Update 보다 먼저 공급
         DesignThemeResolver.Update(_owner.DesignThemeId, _owner.MotionLevel.ToString().ToLowerInvariant(), _owner.EffectOverrides); // 디자인 테마 저장값 공급(호출 지점 1곳) — 요소 디자인 합성 전에
         ApplyMoveShadow(); // 사용자 값만 바뀌면 Resolver 서명이 같아 Changed 가 없으므로 여기서도 부른다
-        using (UiSettings.Op("ui.apply.design")) { ThemeDesignApplier.Apply(app, ThemeCatalog.Current.Requested); }
+        using (UiSettings.Op("ui.apply.design")) { ThemeDesignApplier.Apply(app, XkxkUi.Current.Themes.Requested); }
         using (UiSettings.Op("ui.apply.style")) { DesignEffectsApplier.Apply(app); } // 디자인 테마 효과(REQ-104) — 색 토큰 반영 뒤, 서명이 같으면 생략
 
         // 문서 래퍼·간트 다시 그리기·그림자·VM 이 구독. 래퍼는 값이 같으면 건너뛰므로 테마만 바뀔 때는 거의 비용이 없다.
@@ -213,7 +214,7 @@ internal sealed class UiSettingsApplier
     /// <summary>색 테마 적용(라이트/다크 기반 RequestedThemeVariant 포함).</summary>
     private void ApplyColorTheme(Application app)
     {
-        ThemeApplier.Apply(app, ThemeCatalog.Current.Requested);
+        ThemeApplier.Apply(app, XkxkUi.Current.Themes.Requested);
     }
 
     /// <summary>

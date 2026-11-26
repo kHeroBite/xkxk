@@ -10,6 +10,7 @@ using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Platform;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.views.Snap;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.desktop;
 
@@ -151,7 +152,7 @@ internal sealed class SdiSnapAssistHost : ISnapAssistOverlay
         _reactivated = 0;
     }
 
-    private bool InGrace => Stopwatch.GetElapsedTime(_graceSince).TotalMilliseconds < UiSettings.Current.SnapAssistSdiGraceMs;
+    private bool InGrace => Stopwatch.GetElapsedTime(_graceSince).TotalMilliseconds < XkxkUi.Current.Settings.SnapAssistSdiGraceMs;
 
     private void OnDeactivated(object? sender, EventArgs e)
     {

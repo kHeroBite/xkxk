@@ -51,8 +51,8 @@ public static class PinchZoomDiag
         ["lastScale"] = PinchZoom.LastScale,
         ["activeDoc"] = XkxkUi.Current.Shell?.ActiveDocument?.Title,
         ["zoom"] = XkxkUi.Current.Shell?.ActiveDocument?.Zoom,
-        ["fontSize"] = UiSettings.Current.BaseFontSize,
-        ["wheelMode"] = UiSettings.Current.WheelMode.ToString(),
+        ["fontSize"] = XkxkUi.Current.Settings.BaseFontSize,
+        ["wheelMode"] = XkxkUi.Current.Settings.WheelMode.ToString(),
     };
 }
 #endif

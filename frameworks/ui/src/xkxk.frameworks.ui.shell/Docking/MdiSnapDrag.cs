@@ -149,7 +149,7 @@ public static partial class MdiSnapDrag
             if (!TabJoinRules.IsDrag(s_press, point)) { return; }
             s_dragging = true;
             // 끌기 시작 때 1회: 기준 영역(MDI 문서 칸, host 좌표)·옵션·막대·칸 사각형
-            s_context = UiSettings.Current.CreateSnapContext(s_areaRect, WindowMinSize.Current);
+            s_context = xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Settings.CreateSnapContext(s_areaRect, WindowMinSize.Current);
             s_overlay = s_context.Enabled ? SnapOverlayHost.For(area) : null;
         }
 
@@ -181,7 +181,7 @@ public static partial class MdiSnapDrag
     private static void ScheduleBar()
     {
         if (s_barTimer is not null) { return; }
-        var delay = UiSettings.Current.SnapBarDelayMs;
+        var delay = xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Settings.SnapBarDelayMs;
         if (delay <= 0) { ShowBarNow(); return; }
         s_barTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(delay) };
         s_barTimer.Tick += (_, _) => { CancelBarTimer(); ShowBarNow(); };

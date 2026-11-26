@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using xkxk.frameworks.ui.data.Theming;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -26,7 +27,7 @@ internal static class RemoteBackgroundCommands
     private static async Task<JsonNode?> Import(string path)
     {
         var blobs = DesignEffectsApplier.BlobStore ?? throw new RemoteCommandException("배경 이미지 저장소(BlobStore)가 연결되지 않았습니다.");
-        var s = UiSettings.Current;
+        var s = XkxkUi.Current.Settings;
         var data = await File.ReadAllBytesAsync(path);
         var r = await new BackgroundImageStore(blobs, s.BackgroundImageLimits).ImportAsync(Path.GetFileName(path), data, s.BackgroundImageFile);
         if (r.Ok)
@@ -40,7 +41,7 @@ internal static class RemoteBackgroundCommands
 
     private static JsonNode Set(JsonObject a)
     {
-        var s = UiSettings.Current;
+        var s = XkxkUi.Current.Settings;
         if (a.Str("fit") is { } fit) { s.BackgroundImageFit = UiKeyNames.Parse(fit, s.BackgroundImageFit); }
         if (Num(a, "opacity") is { } o) { s.BackgroundImageOpacity = o; }
         if (Num(a, "dim") is { } d) { s.BackgroundImageDim = d; }
@@ -50,7 +51,7 @@ internal static class RemoteBackgroundCommands
 
     private static async Task<JsonNode?> Corrupt()
     {
-        var file = UiSettings.Current.BackgroundImageFile ?? throw new RemoteCommandException("배경 이미지가 선택되지 않았습니다.");
+        var file = XkxkUi.Current.Settings.BackgroundImageFile ?? throw new RemoteCommandException("배경 이미지가 선택되지 않았습니다.");
         var blobs = DesignEffectsApplier.BlobStore ?? throw new RemoteCommandException("배경 이미지 저장소(BlobStore)가 연결되지 않았습니다.");
         await blobs.WriteAsync(file, new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 });
         DesignEffectsApplier.ResetBackgroundImage();
@@ -59,7 +60,7 @@ internal static class RemoteBackgroundCommands
 
     private static JsonNode State()
     {
-        var s = UiSettings.Current;
+        var s = XkxkUi.Current.Settings;
         return new JsonObject
         {
             ["decorStored"] = DesignThemeResolver.Stored("decor"),

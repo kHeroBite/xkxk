@@ -10,6 +10,7 @@ using System.Linq;
 using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Rendering;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels.Settings;
 
@@ -52,7 +53,7 @@ public sealed class SystemPageViewModel : SettingsPageViewModel
     public string DuplicateTip => Main.SystemMenu.SysDuplicateTip;
 
     /// <summary>모니터 목록(호스트 제공, 메뉴와 같은 항목). 웹·모바일은 비어 있어 행이 비활성이다.</summary>
-    public ObservableCollection<MonitorItemViewModel> Monitors => MonitorMenuViewModel.Instance.Items;
+    public ObservableCollection<MonitorItemViewModel> Monitors => XkxkUi.Current.Monitors.Items;
 
     public bool HasMonitors => Monitors.Count > 0;
 
@@ -64,7 +65,7 @@ public sealed class SystemPageViewModel : SettingsPageViewModel
         {
             if (value is not null && value.Id != Settings.SelectedMonitorId)
             {
-                MonitorMenuViewModel.Instance.Select(value.Id);
+                XkxkUi.Current.Monitors.Select(value.Id);
             }
         }
     }

@@ -1,6 +1,7 @@
 // 단축키·기능 레코드와 조회(요건 6) — 목록은 tour_catalog.json 이 정본이고, 메인 화면 키 바인딩과 투어 마지막 레이어가 같은 목록을 읽는다
 using System.Collections.Generic;
 using System.Linq;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Tour;
 
@@ -19,10 +20,10 @@ public sealed record FeatureEntry(string Id, string TitleKey, string BodyKey, To
 public static class ShortcutCatalog
 {
     /// <summary>등록된 전체 단축키.</summary>
-    public static IReadOnlyList<ShortcutEntry> Shortcuts => TourCatalog.Current.Shortcuts;
+    public static IReadOnlyList<ShortcutEntry> Shortcuts => XkxkUi.Current.Tour.Shortcuts;
 
     /// <summary>등록된 전체 기능 설명.</summary>
-    public static IReadOnlyList<FeatureEntry> Features => TourCatalog.Current.Features;
+    public static IReadOnlyList<FeatureEntry> Features => XkxkUi.Current.Tour.Features;
 
     /// <summary>이 플랫폼에서 보여 줄 단축키. 웹 예약키(WebUnavailable)는 숨기지 않고 '웹에서는 사용 불가' 로 표기한다.</summary>
     public static IEnumerable<ShortcutEntry> For(TourPlatforms platform, bool isMac)

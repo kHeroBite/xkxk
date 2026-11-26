@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Media;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -55,7 +56,7 @@ internal static class RemoteDesignThemeCommands
             return new JsonObject { ["applied"] = false, ["locked"] = true, ["id"] = DesignThemeResolver.Current };
         }
 
-        UiSettings.Current.DesignThemeId = theme.Id;
+        XkxkUi.Current.Settings.DesignThemeId = theme.Id;
         return new JsonObject { ["applied"] = true, ["locked"] = false, ["id"] = DesignThemeResolver.Current };
     }
 
@@ -71,7 +72,7 @@ internal static class RemoteDesignThemeCommands
                 return new JsonObject { ["applied"] = false, ["reason"] = "invalidValue" };
             }
 
-            UiSettings.Current.EffectLevel = id;
+            XkxkUi.Current.Settings.EffectLevel = id;
             return new JsonObject { ["applied"] = true, ["cleared"] = false, ["value"] = id };
         }
 
@@ -82,7 +83,7 @@ internal static class RemoteDesignThemeCommands
 
         if (string.IsNullOrWhiteSpace(value))
         {
-            UiSettings.Current.SetEffectOverride(spec.Key, null);
+            XkxkUi.Current.Settings.SetEffectOverride(spec.Key, null);
             return new JsonObject { ["applied"] = true, ["cleared"] = true };
         }
 
@@ -91,7 +92,7 @@ internal static class RemoteDesignThemeCommands
             return new JsonObject { ["applied"] = false, ["reason"] = "invalidValue" }; // 허용 밖 값은 저장하지 않는다(기존 덮어쓰기 보존)
         }
 
-        UiSettings.Current.SetEffectOverride(spec.Key, normalized);
+        XkxkUi.Current.Settings.SetEffectOverride(spec.Key, normalized);
         return new JsonObject { ["applied"] = true, ["cleared"] = false, ["value"] = normalized };
     }
 
@@ -114,13 +115,13 @@ internal static class RemoteDesignThemeCommands
         }
 
         var overrides = new JsonObject();
-        foreach (var (k, v) in UiSettings.Current.EffectOverrides)
+        foreach (var (k, v) in XkxkUi.Current.Settings.EffectOverrides)
         {
             overrides[k] = v;
         }
 
         var shell = RemoteShellAccess.Shell;
-        var (level, customized) = DesignThemeResolver.LevelDisplay(UiSettings.Current.MoveShadowUserOverrideCount);
+        var (level, customized) = DesignThemeResolver.LevelDisplay(XkxkUi.Current.Settings.MoveShadowUserOverrideCount);
         return new JsonObject
         {
             ["id"] = DesignThemeResolver.Current,

@@ -10,6 +10,7 @@ using Avalonia.Threading;
 using xkxk.frameworks.ui.data.Logging;
 using xkxk.frameworks.ui.data.Theming;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Theming;
 
@@ -32,7 +33,7 @@ public static partial class DesignEffectsApplier
     /// <summary>이미지 브러시. 파일이 없거나 아직 읽는 중이거나 실패했으면 투명(none)이고, 읽기가 끝나면 다시 적용한다.</summary>
     private static IBrush ImageOf()
     {
-        var s = UiSettings.Current;
+        var s = XkxkUi.Current.Settings;
         if (s.BackgroundImageFile is not { } file)
         {
             return Brushes.Transparent; // 아직 고르지 않음 — 실패가 아니므로 알리지 않는다
@@ -64,7 +65,7 @@ public static partial class DesignEffectsApplier
     /// <summary>서명에 넣을 이미지 상태(설정 4값 + 준비 여부). 읽기가 끝나면 서명이 바뀌어 다시 쓴다.</summary>
     private static string ImageSignature()
     {
-        var s = UiSettings.Current;
+        var s = XkxkUi.Current.Settings;
         return string.Join(",", s.BackgroundImageFile ?? "-", s.BackgroundImageFit, s.BackgroundImageOpacity, s.BackgroundImageDim, s.BackgroundImageMaxDimPx, _imageBitmap is null ? 0 : 1);
     }
 

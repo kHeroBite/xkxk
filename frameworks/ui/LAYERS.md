@@ -8,13 +8,13 @@
 | 층 | 파일 수 |
 |---|---:|
 | Control | 286 |
-| Data | 46 |
+| Data | 47 |
 | Diag | 90 |
 | Host | 77 |
 | Ui | 26 |
 | Views | 240 |
 
-합계 765개(.cs·.axaml).
+합계 766개(.cs·.axaml).
 
 ## 끊어야 하는 참조(현재 기준 금지 방향)
 
@@ -434,7 +434,8 @@
 | `xkxk.frameworks.ui.shell/Theming/DesignThemeDefinition.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(Loc.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Theming/DesignThemeResolver.Elements.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(ThemeDefinition.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Theming/DesignThemeResolver.Motion.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(DesignThemeDefinition.cs) |  |  |  |
-| `xkxk.frameworks.ui.shell/Theming/DesignThemeResolver.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(DesignThemeDefinition.cs) |  |  |  |
+| `xkxk.frameworks.ui.shell/Theming/DesignThemeResolver.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiAppContext.cs) |  |  |  |
+| `xkxk.frameworks.ui.shell/Theming/DesignThemeState.cs` | Data | xkxk.frameworks.ui.data/Theming/DesignThemeState.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  | DesignThemeState |
 | `xkxk.frameworks.ui.shell/Theming/DesignThemes.Levels.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(DesignThemeDefinition.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Theming/DesignThemes.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(BuiltinThemes.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Theming/FluentDynamicSync.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  | FluentDynamicSync |
@@ -444,7 +445,7 @@
 | `xkxk.frameworks.ui.shell/Theming/ThemeApplier.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Theming/ThemeApplierDiag.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  | ThemeApplierDiag |
 | `xkxk.frameworks.ui.shell/Theming/ThemeAutomation.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  |  |  |
-| `xkxk.frameworks.ui.shell/Theming/ThemeCatalog.Custom.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(Loc.cs) |  |  |  |
+| `xkxk.frameworks.ui.shell/Theming/ThemeCatalog.Custom.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Theming/ThemeCatalog.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Theming/ThemeDefinition.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  | ThemeJsonContext |
 | `xkxk.frameworks.ui.shell/Theming/ThemeDesignApplier.Diag.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
@@ -463,7 +464,7 @@
 | `xkxk.frameworks.ui.shell/Theming/UiSettingsDto.cs` | Control |  | 저장 DTO 지만 Data 로 내리지 않았다: UiSettings 기본값과 제어층 어휘(ChromeStyleKind·UiStyle)를 참조한다. 옮기려면 별도 리팩터링이 필요하다 |  |  | UiSettingsJsonContext |
 | `xkxk.frameworks.ui.shell/Theming/UiSettingsStore.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  | UiSettingsStore |
 | `xkxk.frameworks.ui.shell/Theming/UiStyleRules.cs` | Control |  | UI 형 판정 논리 |  |  |  |
-| `xkxk.frameworks.ui.shell/Theming/UiSystemSettings.Args.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiSettings.Parts.cs) |  |  | UiSystemSettings |
+| `xkxk.frameworks.ui.shell/Theming/UiSystemSettings.Args.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  |  | UiSystemSettings |
 | `xkxk.frameworks.ui.shell/Theming/UiSystemSettings.Grid.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiSettingsDto.Motion.cs) |  |  | UiSystemSettings |
 | `xkxk.frameworks.ui.shell/Theming/UiSystemSettings.Mdi.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiSettingsDto.Motion.cs) |  |  | UiSystemSettings |
 | `xkxk.frameworks.ui.shell/Theming/UiSystemSettings.Restore.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiSettingsDto.Motion.cs) |  |  | UiSystemSettings |
@@ -479,7 +480,7 @@
 | `xkxk.frameworks.ui.shell/Tour/TourConditions.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Tour/TourController.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Tour/TourInputGate.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
-| `xkxk.frameworks.ui.shell/Tour/TourLayerContent.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(Loc.cs) |  |  | TourLayerContent |
+| `xkxk.frameworks.ui.shell/Tour/TourLayerContent.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  |  | TourLayerContent |
 | `xkxk.frameworks.ui.shell/Tour/TourScopeResolver.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  | TourScopeResolver |
 | `xkxk.frameworks.ui.shell/Tour/TourSkipLog.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(TourStep.cs) |  |  | TourSkipLog |
 | `xkxk.frameworks.ui.shell/Tour/TourStep.cs` | Control |  | TourCatalog 의 레코드. 카탈로그와 같은 층 |  |  |  |
@@ -505,13 +506,13 @@
 | `xkxk.frameworks.ui.shell/ViewModels/NotifyBadgeViewModel.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
 | `xkxk.frameworks.ui.shell/ViewModels/OpenWindowListViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(WindowCommands.Origin.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/OpenWindowSlot.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(PocDocument.cs) |  |  |  |
-| `xkxk.frameworks.ui.shell/ViewModels/Settings/AppearancePageViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(BuiltinThemes.cs) |  |  |  |
+| `xkxk.frameworks.ui.shell/ViewModels/Settings/AppearancePageViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/Settings/ISettingsRootView.cs` | Control |  | 설정 화면 표식 계약 |  |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/Settings/LanguagePageViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/Settings/LayoutPageViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(MainViewModel.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/Settings/SettingsInventory.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(Loc.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/Settings/SettingsWindowViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  |  |  |
-| `xkxk.frameworks.ui.shell/ViewModels/Settings/SystemPageViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiSettings.Parts.cs) |  |  |  |
+| `xkxk.frameworks.ui.shell/ViewModels/Settings/SystemPageViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/Settings/WindowPageViewModel.Shell.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(MdiMoveLight.RestoreSpread.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/Settings/WindowPageViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/SettingsPanelViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  |  |  |
@@ -525,7 +526,7 @@
 | `xkxk.frameworks.ui.shell/ViewModels/SystemMenu/LogViewerViewModel.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/SystemMenu/SystemInfo.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/SystemMenuViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  |  |  |
-| `xkxk.frameworks.ui.shell/ViewModels/SystemThemePairViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(BuiltinThemes.cs) |  |  |  |
+| `xkxk.frameworks.ui.shell/ViewModels/SystemThemePairViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/ThemeDesignRow.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/ThemeDesignViewModel.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/ThemeEditorViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  |  |  |

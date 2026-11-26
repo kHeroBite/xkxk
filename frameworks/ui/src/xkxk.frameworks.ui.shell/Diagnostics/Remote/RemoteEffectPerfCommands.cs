@@ -15,14 +15,14 @@ internal static class RemoteEffectPerfCommands
     {
         r.Register("background.reload", "배경 이미지 캐시를 비우고 다시 읽어 적용(PERF-15 표본 1건) → {started,file}", _ =>
         {
-            var file = UiSettings.Current.BackgroundImageFile ?? throw new RemoteCommandException("배경 이미지가 선택되지 않았습니다.");
+            var file = XkxkUi.Current.Settings.BackgroundImageFile ?? throw new RemoteCommandException("배경 이미지가 선택되지 않았습니다.");
             DesignEffectsApplier.ResetBackgroundImage();
             return new JsonObject { ["started"] = true, ["file"] = file };
         });
         r.Register("style.moveShadow.set", "끌기 중 그림자 사용자 값 value=hide|keep(생략=고르지 않음) → {user,effective}", a =>
         {
             var value = a.Str("value");
-            UiSettings.Current.MdiMoveLightShadowUser = value switch
+            XkxkUi.Current.Settings.MdiMoveLightShadowUser = value switch
             {
                 null or "" => null,
                 "hide" => MoveShadowMode.Hide,
@@ -31,7 +31,7 @@ internal static class RemoteEffectPerfCommands
             };
             return new JsonObject
             {
-                ["user"] = UiSettings.Current.MdiMoveLightShadowUser is { } u ? MdiMoveLight.ShadowKey(u) : null,
+                ["user"] = XkxkUi.Current.Settings.MdiMoveLightShadowUser is { } u ? MdiMoveLight.ShadowKey(u) : null,
                 ["effective"] = MdiMoveLight.ShadowKey(MdiMoveLight.Shadow),
             };
         });

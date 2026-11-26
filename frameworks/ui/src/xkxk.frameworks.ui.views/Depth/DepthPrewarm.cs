@@ -11,6 +11,7 @@ using xkxk.frameworks.ui.data.Logging;
 using xkxk.frameworks.ui.shell.Diagnostics;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Depth;
 
@@ -82,7 +83,7 @@ public static class DepthPrewarm
     private static bool Wanted() =>
         (Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime
          || (OperatingSystem.IsBrowser() && DepthDiag.WebPrewarm))
-        && UiSettings.Current.PrewarmViews && DepthTransitions.OpenAllowed();
+        && XkxkUi.Current.Settings.PrewarmViews && DepthTransitions.OpenAllowed();
 
     private static void Run()
     {

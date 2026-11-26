@@ -10,6 +10,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Styling;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Theming;
 
@@ -39,7 +40,7 @@ public static partial class ThemeDesignApplier
         string text;
         using (UiSettings.Op("ui.apply.design.rules"))
         {
-            (rules, switchable) = Plan(t, UiSettings.Current);
+            (rules, switchable) = Plan(t, XkxkUi.Current.Settings);
             var signature = new StringBuilder(switchable ? "switchable\n" : "");
             foreach (var (selector, property, value) in rules)
             {

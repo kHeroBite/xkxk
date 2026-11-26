@@ -79,11 +79,11 @@ internal static class AutomationCommandRunner
             case "dblclick-close": // MainView.OnTabDoubleTapped 와 같은 조건·동작(옵션 켜짐 → CloseDocument)
                 if (XkxkUi.Current.MainViewModel is { DoubleClickCloseEnabled: true } && Target(shell, false) is { } dc) { shell.CloseDocument(dc); }
                 break;
-            case "theme-dark": UiSettings.Current.Theme = ThemeMode.Dark; break;
-            case "theme-light": UiSettings.Current.Theme = ThemeMode.Light; break;
-            case "font-up": UiSettings.Current.Increase(); break; // Ctrl+휠 위·Ctrl++ 와 같은 경로
-            case "font-down": UiSettings.Current.Decrease(); break;
-            case "font-reset": UiSettings.Current.ResetFontSize(); break; // Ctrl+0
+            case "theme-dark": XkxkUi.Current.Settings.Theme = ThemeMode.Dark; break;
+            case "theme-light": XkxkUi.Current.Settings.Theme = ThemeMode.Light; break;
+            case "font-up": XkxkUi.Current.Settings.Increase(); break; // Ctrl+휠 위·Ctrl++ 와 같은 경로
+            case "font-down": XkxkUi.Current.Settings.Decrease(); break;
+            case "font-reset": XkxkUi.Current.Settings.ResetFontSize(); break; // Ctrl+0
             case "wheel-up": WheelStep(shell, top, 1); break; // 순수 Ctrl+휠 위와 같은 경로(SettingsInput.Step)
             case "wheel-down": WheelStep(shell, top, -1); break;
             case "reset-font": WheelStep(shell, top, 0); break; // Ctrl+0
@@ -98,7 +98,7 @@ internal static class AutomationCommandRunner
         if (lower.StartsWith("theme-", StringComparison.Ordinal) || lower.StartsWith("font-", StringComparison.Ordinal)
             || lower.StartsWith("wheel-", StringComparison.Ordinal) || lower.StartsWith("zoom-", StringComparison.Ordinal) || lower == "reset-font")
         {
-            PerfProbe.Current.SetMetric("font_after_" + cmd, UiSettings.Current.BaseFontSize);
+            PerfProbe.Current.SetMetric("font_after_" + cmd, XkxkUi.Current.Settings.BaseFontSize);
             PerfProbe.Current.SetText("theme_after_" + cmd, ThemeApplier.Active?.Id ?? CurrentThemeName());
             PerfProbe.Current.SetMetric("zoom_after_" + cmd, Target(shell, false)?.Zoom ?? 1);
         }
@@ -179,8 +179,8 @@ internal static class AutomationCommandRunner
     /// <summary>--font-size / --font 적용(설정 서비스 경유 → 모든 화면 토큰 즉시 갱신).</summary>
     private static void ApplyFont(double? size, string? font)
     {
-        if (size is { } s) { UiSettings.Current.BaseFontSize = s; }
-        if (!string.IsNullOrWhiteSpace(font)) { UiSettings.Current.FontName = font; }
+        if (size is { } s) { XkxkUi.Current.Settings.BaseFontSize = s; }
+        if (!string.IsNullOrWhiteSpace(font)) { XkxkUi.Current.Settings.FontName = font; }
     }
 
     /// <summary>현재 테마·기준 글자 크기·폰트를 perf JSON 에 기록.</summary>
@@ -205,10 +205,10 @@ internal static class AutomationCommandRunner
         PerfProbe.Current.SetText("render_kind", Rendering.RenderInfo.ActiveKind); // 웹은 호스트 판정(캔버스 컨텍스트) 우선
         PerfProbe.Current.SetText("gpu_mode", $"{xkxk.frameworks.ui.data.Rendering.GpuSetting.Applied}/{xkxk.frameworks.ui.data.Rendering.GpuSetting.AppliedSource}");
         PerfProbe.Current.SetText("theme_id", ThemeApplier.Active?.Id ?? "");
-        PerfProbe.Current.SetText("theme_setting", UiSettings.Current.Theme.ToString());
-        PerfProbe.Current.SetMetric("base_font_size", UiSettings.Current.BaseFontSize);
-        PerfProbe.Current.SetText("font_family", UiSettings.Current.FontName);
-        PerfProbe.Current.SetText("wheel_mode", UiSettings.Current.WheelMode.ToString());
+        PerfProbe.Current.SetText("theme_setting", XkxkUi.Current.Settings.Theme.ToString());
+        PerfProbe.Current.SetMetric("base_font_size", XkxkUi.Current.Settings.BaseFontSize);
+        PerfProbe.Current.SetText("font_family", XkxkUi.Current.Settings.FontName);
+        PerfProbe.Current.SetText("wheel_mode", XkxkUi.Current.Settings.WheelMode.ToString());
         PerfProbe.Current.SetMetric("shadow", WindowCommands.ShadowEnabled ? 1 : 0);
         PerfProbe.Current.SetText("frame", WindowCommands.MarsFrame ? "mars" : "pd");
         PerfProbe.Current.SetText("chrome_buttons", WindowCommands.ChromeButtonsMode); // full|min(odev-7c 진단 스위치)

@@ -65,8 +65,8 @@ public class PdDataGrid : DataGrid
             DenseWheel.Attach(this, new GridDenseTarget(this, _columnScaler, ApplyFontScale));
         }
 
-        UiSettings.Current.Changed += RefreshStripes;
-        UiSettings.Current.Changed += ApplyFontScale; // 폰트 종류가 바뀌면 머리글 폭도 달라진다(캐시 적중이면 측정 없음)
+        XkxkUi.Current.Settings.Changed += RefreshStripes;
+        XkxkUi.Current.Settings.Changed += ApplyFontScale; // 폰트 종류가 바뀌면 머리글 폭도 달라진다(캐시 적중이면 측정 없음)
         XkxkUi.Current.Localization.LanguageChanged += OnLanguageChanged;
         RefreshStripes();
         OnLanguageChanged(); // 떨어져 있던 동안 바뀐 언어 반영
@@ -74,8 +74,8 @@ public class PdDataGrid : DataGrid
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
-        UiSettings.Current.Changed -= RefreshStripes;
-        UiSettings.Current.Changed -= ApplyFontScale;
+        XkxkUi.Current.Settings.Changed -= RefreshStripes;
+        XkxkUi.Current.Settings.Changed -= ApplyFontScale;
         XkxkUi.Current.Localization.LanguageChanged -= OnLanguageChanged;
         base.OnDetachedFromVisualTree(e);
     }
@@ -140,7 +140,7 @@ public class PdDataGrid : DataGrid
     /// A16 화면 밖 열 셀 지연 실현(01 §5.4, 옵션 GridDeferOffscreenCells 기본 켬)을 이 표에 쓰는가. 셀 템플릿이 PdCellTemplate 일 때만 쓴다 —
     /// 미룬 내용은 그 템플릿이 적용될 때 만들어지므로, 진단 대조(GridColumnDrafts fluentcell·litecell)로 셀 템플릿이 바뀐 표에는 걸면 안 된다.
     /// </summary>
-    internal bool DeferOffscreenCells => _deferOffscreenCells ??= UiSettings.Current.GridDeferOffscreenCells && CellTemplateIsOurs();
+    internal bool DeferOffscreenCells => _deferOffscreenCells ??= XkxkUi.Current.Settings.GridDeferOffscreenCells && CellTemplateIsOurs();
 
     /// <summary>표 Styles 에서 템플릿을 거는 스타일 중 마지막(이기는 것)이 우리 셀 스타일인가. 우리 행 스타일은 건너뛴다.</summary>
     private bool CellTemplateIsOurs()
@@ -208,7 +208,7 @@ public class PdDataGrid : DataGrid
 
     // A16 단일 요소 셀(01 §5.4, 옵션 GridCompactCells 기본 켬 — 기본값 정본 UiSystemSettings.DefaultGridCompactCells): 세로선 없는 표의 셀 템플릿을 PdCellChrome 하나로 만든다(PdCellChrome.cs).
     // 표를 만들 때 한 번 정한다(설정을 바꾸면 다음에 여는 표부터 — GridDeferOffscreenCells 와 같은 규칙)
-    private bool _compactCells = UiSettings.Current.GridCompactCells;
+    private bool _compactCells = XkxkUi.Current.Settings.GridCompactCells;
 
     private static PdCellTextLook? s_cellTextLook;
     private bool? _drawnCellText; // 첫 셀 생성 때 한 번 정한다(설정을 바꾸면 다음에 여는 표부터)
@@ -221,7 +221,7 @@ public class PdDataGrid : DataGrid
     /// 단일 요소 셀 판(PdCellTemplate.Compact)이 이기는 표만 쓴다 — 글자는 그 판의 뿌리(PdCellChrome)가 그린다. 진단 대조 grid-open=tbcell 이면 끈다.
     /// </summary>
     internal bool DrawnCellText =>
-        (_drawnCellText ??= UiSettings.Current.GridDrawnCellText && s_cellTextLook is not null && CellTemplateIsOurs())
+        (_drawnCellText ??= XkxkUi.Current.Settings.GridDrawnCellText && s_cellTextLook is not null && CellTemplateIsOurs())
         && _compactCells && _cellStyle is { } s && PdCellTemplate.IsCompact(s);
 
     /// <summary>그리는 셀 글자를 끈다(진단 대조 grid-open=tbcell — TextBlock 판). 행이 만들어지기 전(생성자 직후)에 불러야 한다.</summary>

@@ -35,7 +35,7 @@ public sealed class FavoriteBarViewModel : ObservableObject
         _store = store;
         store.Changed += () => Dispatcher.UIThread.Post(Reload); // 저장소는 어느 스레드에서든 알린다
         XkxkUi.Current.Localization.LanguageChanged += Reload; // 이름(종류 표시명)이 언어를 따른다
-        UiSettings.Current.PropertyChanged += (_, e) =>
+        XkxkUi.Current.Settings.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName is nameof(UiSettings.FavoriteBarVisible) or nameof(UiSettings.FavoriteBarPosition))
             {
@@ -64,10 +64,10 @@ public sealed class FavoriteBarViewModel : ObservableObject
     public bool HasItems => Items.Count > 0;
 
     /// <summary>영역 표시 여부 — 설정 ui.shell.favorite_bar.visible 이 켜져 있고 항목이 1개 이상(빈 영역·구분선은 그리지 않는다).</summary>
-    public bool IsShown => UiSettings.Current.FavoriteBarVisible && Items.Count > 0;
+    public bool IsShown => XkxkUi.Current.Settings.FavoriteBarVisible && Items.Count > 0;
 
     /// <summary>자리(ui.shell.favorite_bar.position) — End: 독립 창 아이콘 오른쪽, BeforeSdi: 독립 창 아이콘 왼쪽.</summary>
-    public FavoriteBarPosition Position => UiSettings.Current.FavoriteBarPosition;
+    public FavoriteBarPosition Position => XkxkUi.Current.Settings.FavoriteBarPosition;
 
     public RelayCommand<FavoriteItem> OpenCommand { get; }
 
@@ -133,7 +133,7 @@ public sealed class FavoriteBarViewModel : ObservableObject
         }
 
         var commands = _ctx.Commands;
-        if (UiSettings.Current.FavoriteBarClick == FavoriteBarClick.ActivateOrOpen
+        if (XkxkUi.Current.Settings.FavoriteBarClick == FavoriteBarClick.ActivateOrOpen
             && commands.MostRecentOpen(d => ScreenIdOf(d) == item.ScreenId) is { } open)
         {
             commands.Activate(open, ActivationOrigin.WindowList); // 22 §4.3 — 여러 개면 최근 활성 창, 출처는 window_list
@@ -146,7 +146,7 @@ public sealed class FavoriteBarViewModel : ObservableObject
             return;
         }
 
-        var doc = commands.OpenDocument(kind, allowDuplicate: UiSettings.Current.FavoriteBarClick == FavoriteBarClick.AlwaysNew);
+        var doc = commands.OpenDocument(kind, allowDuplicate: XkxkUi.Current.Settings.FavoriteBarClick == FavoriteBarClick.AlwaysNew);
         doc.ScreenId ??= item.ScreenId;
     }
 

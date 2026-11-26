@@ -95,7 +95,7 @@ public sealed class MainViewModel : ObservableObject
     public WindowCommands Commands { get; }
 
     /// <summary>UI 설정 서비스(테마·글자 크기·폰트). 값 변경은 즉시 전 창에 반영된다.</summary>
-    public UiSettings Settings => UiSettings.Current;
+    public UiSettings Settings => XkxkUi.Current.Settings;
 
     /// <summary>단일 문서 모드·화면 모드(태블릿/폰).</summary>
     public CompactModeViewModel Compact { get; }

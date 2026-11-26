@@ -21,21 +21,25 @@ public sealed class MonitorMenuViewModel : ObservableObject
 {
     private IMonitorProvider? _provider;
 
-    private MonitorMenuViewModel()
+    // 앱 컨텍스트(UiAppContext)만 만든다(B05). 생성자에서 XkxkUi.Current.Monitors 를 다시 읽지 않는다(Lazy 재진입 금지).
+    internal MonitorMenuViewModel()
     {
         XkxkUi.Current.Localization.LanguageChanged += Refresh;
-        UiSettings.Current.PropertyChanged += OnSettingChanged;
+        XkxkUi.Current.Settings.PropertyChanged += OnSettingChanged;
     }
 
-    /// <summary>바인딩 진입점(x:Static). 셸 전체에 하나.</summary>
-    public static MonitorMenuViewModel Instance { get; } = new();
+    /// <summary>옛 정적 접근자. 앱 컨텍스트(XkxkUi.Current.Monitors)로 위임한다(B05, B16 Obsolete 예고·B21 제거).</summary>
+    public static MonitorMenuViewModel Instance => XkxkUi.Current.Monitors;
 
-    /// <summary>호스트 등록(데스크톱 Program 1줄). 바꾸면 목록을 다시 만든다.</summary>
+    /// <summary>옛 호스트 등록 접근자. 앱 컨텍스트로 위임한다(B05, 새 호스트는 UiHostOptions.MonitorProvider, B16 Obsolete 예고·B21 제거).</summary>
     public static IMonitorProvider? Provider
     {
-        get => Instance._provider;
-        set => Instance.Attach(value);
+        get => XkxkUi.Current.Monitors.CurrentProvider;
+        set => XkxkUi.Current.Monitors.Attach(value);
     }
+
+    /// <summary>지금 연결된 모니터 공급자(없으면 null).</summary>
+    public IMonitorProvider? CurrentProvider => _provider;
 
     /// <summary>메뉴 항목(모니터 1, 모니터 2 …). 비어 있으면 메뉴가 '모니터 정보 없음'을 보인다.</summary>
     public ObservableCollection<MonitorItemViewModel> Items { get; } = new();
@@ -43,7 +47,7 @@ public sealed class MonitorMenuViewModel : ObservableObject
     public bool HasMonitors => Items.Count > 0;
 
     /// <summary>현재 저장된 선택 id(null = 주 모니터).</summary>
-    public static string? SelectedId => UiSettings.Current.SelectedMonitorId;
+    public static string? SelectedId => XkxkUi.Current.Settings.SelectedMonitorId;
 
     /// <summary>원격·시험용 선택 진입점: 메뉴 클릭과 같은 경로. 목록에 없는 id 면 false.</summary>
     public bool Select(string id)
@@ -52,7 +56,7 @@ public sealed class MonitorMenuViewModel : ObservableObject
         {
             if (string.Equals(item.Id, id, StringComparison.OrdinalIgnoreCase))
             {
-                UiSettings.Current.SelectedMonitorId = item.Id;
+                XkxkUi.Current.Settings.SelectedMonitorId = item.Id;
                 PdLog.Write(PdLogLevel.Information, PdLogCategory.User, $"monitor-select id={item.Id} header='{item.Header}'");
                 return true;
             }
@@ -81,7 +85,8 @@ public sealed class MonitorMenuViewModel : ObservableObject
             $"monitor-menu items={Items.Count} provider={(_provider is null ? "none" : "set")} [{string.Join(" | ", System.Linq.Enumerable.Select(Items, x => (x.IsSelected ? "(*)" : "( )") + x.Header))}]");
     }
 
-    private void Attach(IMonitorProvider? provider)
+    /// <summary>공급자를 바꾸고 목록을 다시 만든다. 호스트 연결(App.BindHost)과 옛 Provider setter 가 부른다.</summary>
+    internal void Attach(IMonitorProvider? provider)
     {
         if (_provider is not null)
         {

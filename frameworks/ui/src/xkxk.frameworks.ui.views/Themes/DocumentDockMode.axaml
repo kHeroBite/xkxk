@@ -11,7 +11,6 @@
                     xmlns:controls="using:Dock.Avalonia.Controls"
                     xmlns:dmc="using:Dock.Model.Controls"
                     xmlns:core="using:Dock.Model.Core"
-                    xmlns:theming="using:xkxk.frameworks.ui.shell.Theming"
                     xmlns:docking="using:xkxk.frameworks.ui.shell.Docking"
                     xmlns:shell="using:xkxk.frameworks.ui.shell"
                     xmlns:fw="using:xkxk.frameworks.ui.shell.Framework"
@@ -66,8 +65,8 @@
                                 <views:WindowIcon Classes="dockTabIcon" Document="{Binding}" Width="14" Height="14" Margin="4,0,0,0" VerticalAlignment="Center">
                                   <views:WindowIcon.IsVisible>
                                   <MultiBinding Converter="{x:Static views:WindowIcon.TabIconVisible}">
-                                    <Binding Path="TitleTabDisplay" Source="{x:Static theming:UiSettings.Current}" />
-                                    <Binding Path="BusyIconTitleOnly" Source="{x:Static theming:UiSettings.Current}" />
+                                    <Binding Path="Settings.TitleTabDisplay" Source="{x:Static fw:XkxkUi.Current}" />
+                                    <Binding Path="Settings.BusyIconTitleOnly" Source="{x:Static fw:XkxkUi.Current}" />
                                     <Binding Path="$self.IsBusyShown" />
                                   </MultiBinding>
                                   </views:WindowIcon.IsVisible>
@@ -84,14 +83,14 @@
                         <ContentControl Content="{Binding}" VerticalAlignment="Center">
                           <ContentControl.DataTemplates>
                             <DataTemplate DataType="docking:PocDocument">
-                              <Panel IsVisible="{Binding TitleTabDisplay, Source={x:Static theming:UiSettings.Current}, Converter={x:Static views:WindowIcon.TabTitleVisible}}">
+                              <Panel IsVisible="{Binding Settings.TitleTabDisplay, Source={x:Static fw:XkxkUi.Current}, Converter={x:Static views:WindowIcon.TabTitleVisible}}">
                                 <TextBlock Text="{Binding Title}" Padding="{DynamicResource DockHeaderContentPadding}" VerticalAlignment="Center" />
                                 <views:WindowIcon x:Name="HeaderBusy" Document="{Binding}" IsVisible="False" /><!-- 표시 시간 판정(23 §3)만 빌린다 -->
                                 <Border Classes="dockTabUnderline" Height="2" VerticalAlignment="Bottom" Background="{DynamicResource PdBrushAccent}">
                                   <Border.IsVisible>
                                   <MultiBinding Converter="{x:Static views:WindowIcon.TabUnderlineVisible}">
-                                    <Binding Path="TitleTabDisplay" Source="{x:Static theming:UiSettings.Current}" />
-                                    <Binding Path="BusyIconTitleOnly" Source="{x:Static theming:UiSettings.Current}" />
+                                    <Binding Path="Settings.TitleTabDisplay" Source="{x:Static fw:XkxkUi.Current}" />
+                                    <Binding Path="Settings.BusyIconTitleOnly" Source="{x:Static fw:XkxkUi.Current}" />
                                     <Binding Path="#HeaderBusy.IsBusyShown" />
                                   </MultiBinding>
                                   </Border.IsVisible>

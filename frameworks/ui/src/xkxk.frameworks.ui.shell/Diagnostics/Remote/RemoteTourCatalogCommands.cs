@@ -7,6 +7,7 @@ using System.Text.Json.Nodes;
 using Avalonia.Input;
 using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Tour;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -56,7 +57,7 @@ internal static class RemoteTourCatalogCommands
 
     private static JsonObject Info()
     {
-        var data = TourCatalog.Current;
+        var data = XkxkUi.Current.Tour;
         return new JsonObject
         {
             ["version"] = data.Version,

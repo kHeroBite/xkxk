@@ -8,6 +8,7 @@ using xkxk.frameworks.ui.shell.Diagnostics.Remote;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.shell.ViewModels;
 using xkxk.frameworks.ui.Text;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Lifecycle;
 
@@ -39,7 +40,7 @@ public static class ShellStartup
             {
                 // 자동화 인자 없이 기동했고 '윈도우 자동저장'이 켜져 있으면 지난 종료 시 레이아웃을 복원(MDI-10).
                 // 저장된 설정을 읽은 뒤 판단한다(설정 복원은 비동기 — 끈 값이 늦게 오면 복원해 버리던 순서 문제 방지).
-                await UiSettings.Current.Loaded;
+                await XkxkUi.Current.Settings.Loaded;
                 App.ApplyStartupArgs(); // Android 는 앱 초기화 뒤에 pdargs 가 들어온다 — 판단 직전에 다시 읽는다
                 if (vm.WindowMenu.ShouldAutoSave) // --fresh·자동화 인자 실행이면 SuppressAutoSave 로 꺼져 있다
                 {

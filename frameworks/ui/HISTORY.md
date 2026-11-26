@@ -4,6 +4,12 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-26 — 별별UI B05 컨텍스트 서비스 이전(UADR-0012)·데스크톱 Instance 2종 제거(O4, B05, conv_179565999934)
+- 결정(UADR-0012). 설정·테마·투어·모니터 싱글톤을 앱 컨텍스트 서비스로 옮긴다. `IUiAppContext` 에 `Settings`·`Themes`·`Tour`·`Monitors` 4종을 더했고(멤버 추가만), 구현은 `MonitorProvider`·`DesignThemeState` 를 포함해 internal 이다. `DesignThemeResolver` 는 정적 조회 함수로 유지한다. 옛 정적 접근자는 위임만 하며 B16 에 `[Obsolete]`, B21 에 제거한다.
+- 호스트. 데스크톱 `Instance` 2종(단일 인스턴스 접근자)을 제거하고 합성 지점에서 생성한다. 호출부 87파일을 치환했고 직접 참조는 0건이다.
+- 결과. 빌드 4종 rc=0, 계약 시험 32/32 PASS, 회귀 새 FAIL 0(기존 결함 3건은 동일 FAIL), 스모크 데스크톱·웹·Fold5 3축 PASS.
+- 대기. 성능 측정(기준선 25c31b6 대비)과 데스크톱 포그라운드 F1·H16 은 `user_returned.flag` 로 WAIT 이다. 근거는 `logs/b05_perf.json`·`logs/b05_fg.json` 이고 이월 과제는 UTODO-0030·UTODO-0029 다. 포그라운드와 성능 시험을 같은 PC 에서 겹쳐 돌려 복귀 판정이 난 것으로 추정한다(확정 아님).
+
 ## 2026-11-26 — 별별UI B04 앱 컨텍스트 공개 계약(UADR-0011)·셸 전역 상태 직접 참조 0건(O4, B04, conv_179565999934)
 - 결정(UADR-0011). 프로세스 전역 상태 4종(`App.MainViewModel`·`App.Shell`·`ViewRegistry.Current`·`Loc.Instance`)을 단일 앱 컨텍스트 `XkxkUi.Current` 가 소유한다. 옛 정적 접근자는 컨텍스트로 위임만 하며 B16 에 `[Obsolete]` 로 예고하고 B21 에 제거한다. `Loc.Tr` 는 상태 없는 편의 함수라 유지한다.
 - 공개 계약. `IUiAppContext`·`IUiLocalizer`(최소 표면)·`UiLanguage`(`Deconstruct` 로 튜플 분해 호환)를 `Framework/` 에 새로 만들고 `XkxkUi.Current` 를 더했다. 구현 `UiAppContext` 는 internal 이다. `PublicAPI.Unshipped.txt` 에 반영했다(Shipped 무변경).

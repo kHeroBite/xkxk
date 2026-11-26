@@ -8,6 +8,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Depth;
 
@@ -131,7 +132,7 @@ public static partial class WindowTransitions
             .Append(",\"ghost\":").Append(n.Ghost is null ? "null" : "\"" + n.Ghost + "\"")
             .Append(",\"enter\":\"").Append(n.Enter ?? "none").Append('"')
             .Append(",\"origin\":\"").Append(n.Origin ?? "none").Append('"')
-            .Append(",\"tabHeaderFirst\":").Append(B(UiSettings.Current.TabHeaderFirst))
+            .Append(",\"tabHeaderFirst\":").Append(B(XkxkUi.Current.Settings.TabHeaderFirst))
             .Append('}').ToString();
     }
 

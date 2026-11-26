@@ -9,6 +9,7 @@ using Dock.Model.Core;
 using Dock.Settings;
 using xkxk.frameworks.ui.shell.Diagnostics;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -87,7 +88,7 @@ public sealed class MagnetMdiLayoutManager : IMdiLayoutManager
 
         var zone = _dragZone;
         var moved = MdiDragLimit.ClampMove(startBounds.Translate(delta), finalSize, zone);
-        var range = UiSettings.Current.EffectiveMagnetRange;
+        var range = XkxkUi.Current.Settings.EffectiveMagnetRange;
         if (range <= 0)
         {
             return Fold(document, moved, finalSize, entries);
@@ -120,7 +121,7 @@ public sealed class MagnetMdiLayoutManager : IMdiLayoutManager
         Dispatcher.UIThread.Post(static () =>
         {
             s_restorePending = false;
-            DockSettings.EnableWindowMagnetism = UiSettings.Current.EffectiveMagnetRange > 0;
+            DockSettings.EnableWindowMagnetism = XkxkUi.Current.Settings.EffectiveMagnetRange > 0;
         }, DispatcherPriority.Send);
     }
 
@@ -208,7 +209,7 @@ public sealed class MagnetMdiLayoutManager : IMdiLayoutManager
 
         var zone = ZoneOf(document, entries);
         var resized = ResizeWithin(document, startBounds, delta, direction, finalSize, zone, entries);
-        var range = UiSettings.Current.EffectiveMagnetRange;
+        var range = XkxkUi.Current.Settings.EffectiveMagnetRange;
         if (range <= 0)
         {
             return resized;

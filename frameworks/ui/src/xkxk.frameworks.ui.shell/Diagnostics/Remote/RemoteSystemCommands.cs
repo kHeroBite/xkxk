@@ -15,6 +15,7 @@ using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.shell.ViewModels;
 using xkxk.frameworks.ui.shell.ViewModels.SystemMenu;
 using xkxk.frameworks.ui.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -55,7 +56,7 @@ internal static class RemoteSystemCommands
 
     private static JsonNode? SysGet(JsonObject a)
     {
-        var s = UiSettings.Current;
+        var s = XkxkUi.Current.Settings;
         var tail = Math.Clamp(a.Int("tail") ?? 20, 0, 500);
         var log = PdLog.Memory.Snapshot();
         return new JsonObject

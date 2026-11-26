@@ -4,6 +4,7 @@ using System.Linq;
 using xkxk.frameworks.ui.data.Navigation;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Tour;
 
@@ -60,7 +61,7 @@ internal static class TourLayerContent
 
     private static bool IsShown(NavEntry entry, TourModes mode)
     {
-        var rules = TourCatalog.Current.MenuRows;
+        var rules = XkxkUi.Current.Tour.MenuRows;
         return !rules.Skip.Contains(entry.Id)
             && (!rules.Requires.TryGetValue(entry.Id, out var needs) || TourConditions.IsMet(needs))
             && (mode != TourModes.Nav || entry.Applicable);

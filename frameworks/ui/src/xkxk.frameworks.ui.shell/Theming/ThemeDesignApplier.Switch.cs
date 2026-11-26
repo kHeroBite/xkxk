@@ -7,6 +7,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Theming;
 
@@ -274,7 +275,7 @@ public static partial class ThemeDesignApplier
         // 훅 등록 전에 템플릿이 붙은 창(기동 초 단일 뷰 TopLevel)은 이 훅이 첫 프레임을 맡지 못했으므로 폴백 판정에서 뺀다(표식만 맞춘다)
         if (!ok && !_singleOnly && top is not PopupRoot && SeenTemplated.TryGetValue(top, out _) && Application.Current is { } app)
         {
-            FallBackToSingle(app, ThemeCatalog.Current.Requested);
+            FallBackToSingle(app, XkxkUi.Current.Themes.Requested);
         }
     }
 

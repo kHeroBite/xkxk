@@ -200,7 +200,7 @@ public static partial class SnapAssistSession
             shell.OpenDocuments.CollectionChanged += OnDocumentsChanged;
         }
 
-        UiSettings.Current.PropertyChanged += OnSettingsChanged;
+        XkxkUi.Current.Settings.PropertyChanged += OnSettingsChanged;
         switch (r.Anchor)
         {
             case Window w:
@@ -219,7 +219,7 @@ public static partial class SnapAssistSession
             shell.OpenDocuments.CollectionChanged -= OnDocumentsChanged;
         }
 
-        UiSettings.Current.PropertyChanged -= OnSettingsChanged;
+        XkxkUi.Current.Settings.PropertyChanged -= OnSettingsChanged;
         switch (r.Anchor)
         {
             case Window w:
@@ -256,7 +256,7 @@ public static partial class SnapAssistSession
             return;
         }
 
-        var s = UiSettings.Current;
+        var s = XkxkUi.Current.Settings;
         if (e.PropertyName == nameof(UiSettings.EffectiveUiStyle) && s.EffectiveUiStyle is UiStyle.Tablet or UiStyle.Mobile)
         {
             Cancel(SnapAssistEndReason.Mode);

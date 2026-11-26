@@ -9,6 +9,7 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using xkxk.frameworks.ui.data.Logging;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Snap;
 
@@ -109,7 +110,7 @@ public static partial class SnapFlyoutHover
         s_button = b;
         SnapFlyoutState.Target = target;
         SnapFlyoutState.Pending = true;
-        var delay = xkxk.frameworks.ui.shell.Theming.UiSettings.Current.SnapFlyoutDelayMs;
+        var delay = XkxkUi.Current.Settings.SnapFlyoutDelayMs;
         if (delay <= 0)
         {
             s_delay.Stop();

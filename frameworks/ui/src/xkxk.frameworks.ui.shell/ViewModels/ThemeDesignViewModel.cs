@@ -19,7 +19,7 @@ namespace xkxk.frameworks.ui.shell.ViewModels;
 /// </summary>
 public sealed class ThemeDesignViewModel : ObservableObject, IDisposable
 {
-    private readonly ThemeCatalog _catalog = ThemeCatalog.Current;
+    private readonly ThemeCatalog _catalog = xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Themes;
     private readonly Action<bool>? _afterChange;
     private ThemeDesignElement? _selected;
     private bool _busy; // 자기 호출 중 — Catalog.Changed 재진입 갱신 생략(끝난 뒤 한 번만 갱신)
@@ -279,7 +279,7 @@ public sealed class ThemeDesignViewModel : ObservableObject, IDisposable
 
         var layer = ThemeElements.Resolve(t, row.ElementKey, row.PropKey, out var effective);
         var stored = !t.IsBuiltin && t.Design.ContainsKey(ThemeElements.DesignKey(row.ElementKey, row.PropKey));
-        var shown = row.Kind == DesignPropKind.Weight && ThemeDesignApplier.Convert(t, ThemeElements.Element(row.ElementKey)!, row.PropKey, effective, UiSettings.Current) is FontWeight w // 굵기는 실제 그리는 굵기(§3 실효값 — 합성 금지 강등, 예 Android 번들 글꼴은 Regular 뿐이라 Bold → Normal)
+        var shown = row.Kind == DesignPropKind.Weight && ThemeDesignApplier.Convert(t, ThemeElements.Element(row.ElementKey)!, row.PropKey, effective, xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Settings) is FontWeight w // 굵기는 실제 그리는 굵기(§3 실효값 — 합성 금지 강등, 예 Android 번들 글꼴은 Regular 뿐이라 Bold → Normal)
             ? Enum.GetNames<FontWeight>().FirstOrDefault(n => Enum.Parse<FontWeight>(n) == w && ThemeElements.TryNormalize(row.ElementKey, row.PropKey, n, out _)) ?? effective : effective;
         row.Load(effective, shown, layer == DesignLayer.User, locked, stored && !locked, warn, keepInput);
     }
@@ -291,7 +291,7 @@ public sealed class ThemeDesignViewModel : ObservableObject, IDisposable
     /// <summary>대비 기준 판정용 실효 글자 크기 = 요소 자기 기본 크기(ThemeElements.BaseFontSize) + 요소 오프셋(적용기와 같은 계산, D-3).</summary>
     private static double EffectiveFontSize(ThemeDefinition t, string el)
     {
-        var s = UiSettings.Current;
+        var s = xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Settings;
         var spec = ThemeElements.Element(el)!;
         var size = ThemeElements.BaseFontSize(el, s);
         return ThemeElements.Has(el, "fontSize")

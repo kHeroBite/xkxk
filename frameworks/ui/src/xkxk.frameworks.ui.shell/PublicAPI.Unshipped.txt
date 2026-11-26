@@ -18,8 +18,12 @@ static xkxk.frameworks.ui.shell.Framework.XkxkUiAppBuilderExtensions.UseXkxkUi(t
 xkxk.frameworks.ui.shell.Framework.IUiAppContext
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.Localization.get -> xkxk.frameworks.ui.shell.Framework.IUiLocalizer!
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.MainViewModel.get -> xkxk.frameworks.ui.shell.ViewModels.MainViewModel?
+xkxk.frameworks.ui.shell.Framework.IUiAppContext.Monitors.get -> xkxk.frameworks.ui.shell.ViewModels.MonitorMenuViewModel!
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.RegisterViews(xkxk.frameworks.ui.shell.IViewRegistry! views) -> void
+xkxk.frameworks.ui.shell.Framework.IUiAppContext.Settings.get -> xkxk.frameworks.ui.shell.Theming.UiSettings!
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.Shell.get -> xkxk.frameworks.ui.shell.Docking.IShellCommands?
+xkxk.frameworks.ui.shell.Framework.IUiAppContext.Themes.get -> xkxk.frameworks.ui.shell.Theming.ThemeCatalog!
+xkxk.frameworks.ui.shell.Framework.IUiAppContext.Tour.get -> xkxk.frameworks.ui.shell.Tour.TourCatalogData!
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.Views.get -> xkxk.frameworks.ui.shell.IViewRegistry!
 xkxk.frameworks.ui.shell.Framework.IUiLocalizer
 xkxk.frameworks.ui.shell.Framework.IUiLocalizer.Format(string! key, params object?[]! args) -> string!
@@ -78,6 +82,8 @@ xkxk.frameworks.ui.shell.Framework.UiHostOptions.LayoutLibraryStore.get -> xkxk.
 xkxk.frameworks.ui.shell.Framework.UiHostOptions.LayoutLibraryStore.set -> void
 xkxk.frameworks.ui.shell.Framework.UiHostOptions.LayoutStore.get -> xkxk.frameworks.ui.data.Layout.ILayoutStore?
 xkxk.frameworks.ui.shell.Framework.UiHostOptions.LayoutStore.set -> void
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.MonitorProvider.get -> xkxk.frameworks.ui.shell.Docking.IMonitorProvider?
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.MonitorProvider.set -> void
 xkxk.frameworks.ui.shell.Framework.UiHostOptions.SettingsStore.get -> xkxk.frameworks.ui.data.Layout.ILayoutStore?
 xkxk.frameworks.ui.shell.Framework.UiHostOptions.SettingsStore.set -> void
 xkxk.frameworks.ui.shell.Framework.UiHostOptions.UiHostOptions() -> void

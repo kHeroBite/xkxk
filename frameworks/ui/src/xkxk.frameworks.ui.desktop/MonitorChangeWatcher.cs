@@ -30,7 +30,7 @@ internal static class MonitorChangeWatcher
         main.Opened += (_, _) => Subscribe(main); // 표시 전에는 Screens 가 비어 있을 수 있다. 트레이 복원으로 다시 와도 구독은 1번
         main.Resized += (_, _) => s_debounce.Trigger();
 #if PD_DIAGNOSTICS
-        PlacementDiagHooks.SetVirtualMonitors = DesktopMonitorProvider.Instance.SetVirtual;
+        PlacementDiagHooks.SetVirtualMonitors = MonitorFitService.Monitors.SetVirtual;
         PlacementDiagHooks.MonitorsApplied = OnMonitorsChanged;
         PlacementDiagHooks.ResizeMain = ResizeMainPinned;
 #endif
@@ -84,7 +84,7 @@ internal static class MonitorChangeWatcher
             return;
         }
 
-        var areas = DesktopMonitorProvider.Instance.GetMonitors().Select(m => ToRect(m.WorkingArea)).ToArray();
+        var areas = MonitorFitService.Monitors.GetMonitors().Select(m => ToRect(m.WorkingArea)).ToArray();
         if (areas.Length == 0)
         {
             Program.Log("placement-recovery skip: no monitor info");

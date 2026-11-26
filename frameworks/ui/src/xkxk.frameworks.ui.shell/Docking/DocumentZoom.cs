@@ -5,6 +5,7 @@ using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Diagnostics;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -22,8 +23,8 @@ internal sealed class DocumentZoom
     /// <summary>true = Ctrl+휠이 현재 창 확대·축소(UI-06), false = 전체 기준 글자 크기(UI-05). 설정에 저장된다.</summary>
     public bool WindowZoomMode
     {
-        get => UiSettings.Current.WheelMode == CtrlWheelMode.WindowZoom;
-        set => UiSettings.Current.WheelMode = value ? CtrlWheelMode.WindowZoom : CtrlWheelMode.FontSize;
+        get => XkxkUi.Current.Settings.WheelMode == CtrlWheelMode.WindowZoom;
+        set => XkxkUi.Current.Settings.WheelMode = value ? CtrlWheelMode.WindowZoom : CtrlWheelMode.FontSize;
     }
 
     public void SetDocumentZoom(PocDocument document, double zoom)

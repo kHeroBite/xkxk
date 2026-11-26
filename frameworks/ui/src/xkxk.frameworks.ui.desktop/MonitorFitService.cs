@@ -7,7 +7,6 @@ using xkxk.frameworks.ui.shell;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Framework;
 using xkxk.frameworks.ui.shell.Theming;
-using xkxk.frameworks.ui.shell.ViewModels;
 
 namespace xkxk.frameworks.ui.desktop;
 
@@ -23,10 +22,15 @@ internal static class MonitorFitService
 
     private static Window? s_main;
     private static bool s_applying;
+    private static DesktopMonitorProvider? s_monitors;
 
-    /// <summary>Program.ConfigureHost 등록 1줄: 메뉴 제공자 등록 + 메인 창 생성 때 연결(호스트 값 ConfigureMainWindow 뒤에 이어 붙임, B03).</summary>
-    public static void Register(UiHostOptions host)
+    /// <summary>합성 지점(Program)이 만든 모니터 공급자 — 호스트 내부 도우미가 공유한다(B05, 옛 단일 인스턴스 접근자 대체). Register 전 접근은 개발자 오류다.</summary>
+    internal static DesktopMonitorProvider Monitors => s_monitors ?? throw new InvalidOperationException("MonitorFitService.Register 전에 Monitors 에 접근했다");
+
+    /// <summary>Program.ConfigureHost 등록 1줄: 모니터 공급자 보관 + 메인 창 생성 때 연결(호스트 값 ConfigureMainWindow 뒤에 이어 붙임, B03). 메뉴 연결은 UiHostOptions.MonitorProvider(B05).</summary>
+    public static void Register(UiHostOptions host, DesktopMonitorProvider monitors)
     {
+        s_monitors = monitors;
 #if PD_DIAGNOSTICS
         // 진단 전용 가상 모니터 수(환경변수 — 호스트 인자는 셸 StartupArgs 로 넘어가 자동 저장을 끄므로 쓰지 않는다). --primary-override 와 함께여야 켜진다.
         if (int.TryParse(Environment.GetEnvironmentVariable("PD_VIRTUAL_MONITORS"), out var vc) && vc >= 2)
@@ -35,7 +39,6 @@ internal static class MonitorFitService
             Program.Log($"virtual-monitors {vc} override={DesktopWindowHost.PrimaryOverride}");
         }
 #endif
-        MonitorMenuViewModel.Provider = DesktopMonitorProvider.Instance;
         var previous = host.ConfigureMainWindow;
         host.ConfigureMainWindow = w =>
         {
@@ -47,10 +50,10 @@ internal static class MonitorFitService
     private static void Attach(Window main)
     {
         s_main = main;
-        DesktopMonitorProvider.Instance.Attach(main);
-        main.Opened += (_, _) => DesktopMonitorProvider.Instance.Attach(main); // 표시 전에는 Screens 가 비어 있을 수 있다 — 열린 뒤 목록 다시 알림
+        Monitors.Attach(main);
+        main.Opened += (_, _) => Monitors.Attach(main); // 표시 전에는 Screens 가 비어 있을 수 있다 — 열린 뒤 목록 다시 알림
         TrackMaximize(main, "main");
-        UiSettings.Current.PropertyChanged += (_, e) =>
+        XkxkUi.Current.Settings.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(UiSettings.SelectedMonitorId) && main.WindowState == WindowState.Maximized)
             {
@@ -74,7 +77,7 @@ internal static class MonitorFitService
     private static void OnMaximized(Window window, string kind)
     {
         var normal = NormalRect(window);
-        var owner = MonitorSelection.LargestOverlap(DesktopMonitorProvider.Instance.GetMonitors(), normal);
+        var owner = MonitorSelection.LargestOverlap(Monitors.GetMonitors(), normal);
         if (owner is null)
         {
             Program.Log($"monitor-max {kind} 실패: 모니터 정보 없음");
@@ -121,14 +124,15 @@ internal static class MonitorFitService
 
     private static bool Apply(Window main, string tag)
     {
-        var monitors = DesktopMonitorProvider.Instance.GetMonitors();
-        if (MonitorSelection.Resolve(monitors, UiSettings.Current.SelectedMonitorId, out var fallback) is not { } target)
+        var monitors = Monitors.GetMonitors();
+        var selected = XkxkUi.Current.Settings.SelectedMonitorId;
+        if (MonitorSelection.Resolve(monitors, selected, out var fallback) is not { } target)
         {
             Program.Log($"monitor-max {tag} 실패: 모니터 정보 없음");
             return false;
         }
 
-        var head = $"monitor-max {tag} selected={UiSettings.Current.SelectedMonitorId ?? "(none)"} target={target.Id} fallback={fallback} work={Rect(target.WorkingArea)}";
+        var head = $"monitor-max {tag} selected={selected ?? "(none)"} target={target.Id} fallback={fallback} work={Rect(target.WorkingArea)}";
         s_applying = true;
         try
         {

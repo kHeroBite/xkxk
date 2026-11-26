@@ -1,6 +1,7 @@
 // 창 배치(스냅) 키보드 대안 명령 — 방향 → 칸 적용·복원 변환(단축키·메뉴·원격 공용, 11_창배치_스냅레이아웃.md §6)
 using xkxk.frameworks.ui.data.Logging;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -27,7 +28,7 @@ public enum SnapKeyDirection
 public static class SnapKeyboardCommands
 {
     /// <summary>단축키가 켜져 있는가.</summary>
-    public static bool Enabled => UiSettings.Current.EffectiveSnapKeyboard;
+    public static bool Enabled => XkxkUi.Current.Settings.EffectiveSnapKeyboard;
 
     /// <summary>대상 창에 방향 명령을 적용한다. 옵션이 꺼졌거나 대상이 없거나 적용할 것이 없으면 false.</summary>
     public static bool Execute(WindowMenuTarget? target, SnapKeyDirection direction)

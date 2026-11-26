@@ -2,6 +2,7 @@
 <MenuItem xmlns="https://github.com/avaloniaui"
           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
           xmlns:vm="using:xkxk.frameworks.ui.shell.ViewModels"
+          xmlns:fw="using:xkxk.frameworks.ui.shell.Framework"
           xmlns:loc="using:xkxk.frameworks.ui.shell.Localization"
           xmlns:nav="using:xkxk.frameworks.ui.data.Navigation"
           xmlns:menus="using:xkxk.frameworks.ui.views.Menus"
@@ -75,8 +76,8 @@
   <MenuItem Header="{loc:Tr menu.window.monitor}" menus:MenuIcon.Key="{x:Static nav:CmdIconKeys.Monitor}" AutomationProperties.AutomationId="shell.mnuMonitor">
     <MenuItem Header="{loc:Tr menu.ws.singleMonitor}" Command="{Binding WindowMenu.WindowMenuCommand}" CommandParameter="FitSingleMonitor"
               ToolTip.Tip="{Binding WindowMenu.SingleMonitorTip}" ToolTip.ShowOnDisabled="True" menus:MenuIcon.Key="{x:Static nav:CmdIconKeys.SingleMonitor}" AutomationProperties.AutomationId="shell.mnuWinSingleMonitor" />
-    <MenuItem x:Name="MonitorMenu" Header="{loc:Tr menu.ws.multiMonitor}" IsVisible="{Binding HasMonitors, Source={x:Static vm:MonitorMenuViewModel.Instance}}"
-              ItemsSource="{Binding Items, Source={x:Static vm:MonitorMenuViewModel.Instance}}" menus:MenuIcon.Key="{x:Static nav:CmdIconKeys.MultiMonitor}" AutomationProperties.AutomationId="shell.mnuWinMultiMonitor">
+    <MenuItem x:Name="MonitorMenu" Header="{loc:Tr menu.ws.multiMonitor}" IsVisible="{Binding Monitors.HasMonitors, Source={x:Static fw:XkxkUi.Current}}"
+              ItemsSource="{Binding Monitors.Items, Source={x:Static fw:XkxkUi.Current}}" menus:MenuIcon.Key="{x:Static nav:CmdIconKeys.MultiMonitor}" AutomationProperties.AutomationId="shell.mnuWinMultiMonitor">
       <MenuItem.Styles>
         <!-- 목록이 만든 항목(모니터 1개 = 라디오 1개). '>' 는 논리 트리 직계 자식이라 이 메뉴 자신에는 걸리지 않는다 -->
         <Style Selector="MenuItem#MonitorMenu > MenuItem" x:DataType="vm:MonitorItemViewModel">
@@ -92,7 +93,7 @@
       </MenuItem.Styles>
     </MenuItem>
     <!-- 모니터 목록을 못 얻은 경우(웹·정보 없음) 안내 1줄 -->
-    <MenuItem Header="{loc:Tr menu.monitor.none}" IsEnabled="False" IsVisible="{Binding !HasMonitors, Source={x:Static vm:MonitorMenuViewModel.Instance}}"
+    <MenuItem Header="{loc:Tr menu.monitor.none}" IsEnabled="False" IsVisible="{Binding !Monitors.HasMonitors, Source={x:Static fw:XkxkUi.Current}}"
               menus:MenuIcon.Key="{x:Static nav:CmdIconKeys.MonitorNone}" AutomationProperties.AutomationId="shell.mnuWinMonitorNone" />
     <Separator />
     <MenuItem Header="{loc:Tr menu.monitor.maximize}" Command="{Binding WindowMenu.WindowMenuCommand}" CommandParameter="MaximizeOnSelectedMonitor"

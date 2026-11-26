@@ -158,7 +158,7 @@ public static partial class WindowTransitions
 
     private static string[] SwitchSources()
     {
-        var flags = UiSettings.Current.MotionSwitchSources;
+        var flags = XkxkUi.Current.Settings.MotionSwitchSources;
         return Enum.GetValues<MotionSwitchSources>().Where(f => f != MotionSwitchSources.None && flags.HasFlag(f)).Select(f => UiKeyNames.Of(f)).ToArray();
     }
 

@@ -7,6 +7,7 @@ using Avalonia.Input;
 using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.ViewModels;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -80,7 +81,7 @@ public partial class MainView
     /// <summary>설정(TitleTabCloseMode)을 실제 방식으로 풀어 탭 목록 클래스를 단다. 없음=항상, closeHover, closeActive(MainView.axaml 스타일).</summary>
     private void ApplyTabCloseMode()
     {
-        var mode = xkxk.frameworks.ui.shell.Theming.UiSettings.Current.EffectiveTitleTabCloseMode;
+        var mode = XkxkUi.Current.Settings.EffectiveTitleTabCloseMode;
         TaskbarTabs.Classes.Set("closeHover", mode == xkxk.frameworks.ui.shell.Theming.TitleTabCloseMode.Hover);
         TaskbarTabs.Classes.Set("closeActive", mode == xkxk.frameworks.ui.shell.Theming.TitleTabCloseMode.ActiveAndHover);
         ApplyTitleStripOptions(); // 표시 방식·즐겨찾기 자리도 같은 시점(로드·설정 변경)에 맞춘다(MainView.FavoriteBar.cs)

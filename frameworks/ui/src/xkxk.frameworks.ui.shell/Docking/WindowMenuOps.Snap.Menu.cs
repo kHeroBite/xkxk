@@ -53,7 +53,7 @@ public static partial class WindowMenuOps
             return null;
         }
 
-        return new SnapPlacement(UiSettings.Current.CreateSnapContext(new Rect(panel.Bounds.Size), WindowMinSize.Current), win,
+        return new SnapPlacement(XkxkUi.Current.Settings.CreateSnapContext(new Rect(panel.Bounds.Size), WindowMinSize.Current), win,
             () => new Rect(win.MdiBounds.X, win.MdiBounds.Y, win.MdiBounds.Width, win.MdiBounds.Height),
             r =>
             {
@@ -72,7 +72,7 @@ public static partial class WindowMenuOps
         }
 
         var managed = ManagedWindowRect.FindManaged(window);
-        return new SnapPlacement(UiSettings.Current.CreateSnapContext(area, WindowMinSize.Current), window,
+        return new SnapPlacement(XkxkUi.Current.Settings.CreateSnapContext(area, WindowMinSize.Current), window,
             () => ManagedWindowRect.RectOf(managed, window), r => ManagedWindowRect.SetRect(window, r), 0.5);
     }
 
@@ -90,7 +90,7 @@ public static partial class WindowMenuOps
         var s = screen.Scaling > 0 ? screen.Scaling : 1;
         var wa = screen.WorkingArea;
         var area = new Rect(wa.X / s, wa.Y / s, wa.Width / s, wa.Height / s);
-        return new SnapPlacement(UiSettings.Current.CreateSnapContext(area, minSize), w, () => VisibleDip(w, s), r => PlaceOs(w, r, s), 1.5);
+        return new SnapPlacement(XkxkUi.Current.Settings.CreateSnapContext(area, minSize), w, () => VisibleDip(w, s), r => PlaceOs(w, r, s), 1.5);
     }
 
     private static PixelRect VisibleFrame(Window w) =>

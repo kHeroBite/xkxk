@@ -22,8 +22,8 @@ public sealed partial class DesignThemeViewModel : ObservableObject, IDisposable
     private static readonly string[] StateProps =
         { nameof(IsLocked), nameof(IsEditable), nameof(HasSuggestion), nameof(SuggestionText), nameof(FallbackText), nameof(HasFallback), nameof(HasOverrides) };
 
-    private readonly UiSettings _settings = UiSettings.Current;
-    private readonly ThemeCatalog _catalog = ThemeCatalog.Current;
+    private readonly UiSettings _settings = XkxkUi.Current.Settings;
+    private readonly ThemeCatalog _catalog = XkxkUi.Current.Themes;
     private bool _loading; // 상태 다시 읽는 중 — 선택 속성 setter 가 저장하지 않게
     private DesignThemeCard? _selectedCard;
     private DesignChoice? _selectedMotion;

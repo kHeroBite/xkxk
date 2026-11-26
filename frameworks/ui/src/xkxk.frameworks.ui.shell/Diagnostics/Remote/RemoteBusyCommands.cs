@@ -65,8 +65,8 @@ internal static partial class RemoteBusyCommands
         {
             var shell = XkxkUi.Current.Shell ?? throw new RemoteCommandException("셸이 없습니다.");
             var doc = shell.Documents.FirstOrDefault(d => d.Id == a.ReqStr("doc")) ?? throw new RemoteCommandException("문서가 없습니다.");
-            xkxk.frameworks.ui.shell.Theming.UiSettings.Current.ToggleTheme();
-            xkxk.frameworks.ui.shell.Theming.UiSettings.Current.ToggleTheme();
+            XkxkUi.Current.Settings.ToggleTheme();
+            XkxkUi.Current.Settings.ToggleTheme();
             BusyHooks.RunAfterFrame(doc.Id, "sdi", () => shell.ToggleSdi(doc));
             BusyHooks.RunAfterFrame(doc.Id, "sdi", () => shell.ToggleSdi(doc));
             return new JsonObject { ["themeToggles"] = 2, ["sdiToggles"] = 2 };

@@ -6,6 +6,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -63,8 +64,8 @@ internal static partial class WindowChromeStyle
     private static string Inputs(Application app)
     {
         var shadow = app.TryGetResource("PdBrushWindowShadow", app.ActualThemeVariant, out var res) && res is ISolidColorBrush b ? b.Color.ToString() : "-";
-        return string.Join("|", EffectiveStyle, app.ActualThemeVariant, ThemeCatalog.Current.Requested.Id, ThemeApplier.BrushGeneration, shadow,
-            UiSettings.Current.BaseFontSize, xkxk.frameworks.ui.shell.Platform.InputFormFactor.IsTouchDevice);
+        return string.Join("|", EffectiveStyle, app.ActualThemeVariant, XkxkUi.Current.Themes.Requested.Id, ThemeApplier.BrushGeneration, shadow,
+            XkxkUi.Current.Settings.BaseFontSize, xkxk.frameworks.ui.shell.Platform.InputFormFactor.IsTouchDevice);
     }
 
     /// <summary>바뀐 키만 한 번에 쓴다(키마다 쓰면 키 수만큼 앱 전체 리소스 알림 — perf15 C). 같으면 쓰지 않는다.</summary>

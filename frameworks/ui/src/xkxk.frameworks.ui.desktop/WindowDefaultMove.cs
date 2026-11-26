@@ -94,7 +94,7 @@ internal static class WindowDefaultMove
             return new List<Rect> { new(po.X, po.Y, po.Width, po.Height) };
         }
 
-        var monitors = DesktopMonitorProvider.Instance.GetMonitors();
+        var monitors = MonitorFitService.Monitors.GetMonitors();
         var size = main.FrameSize ?? main.ClientSize;
         var frame = new PixelRect(main.Position.X, main.Position.Y, (int)(size.Width * main.DesktopScaling), (int)(size.Height * main.DesktopScaling));
         var owner = MonitorSelection.LargestOverlap(monitors, frame);

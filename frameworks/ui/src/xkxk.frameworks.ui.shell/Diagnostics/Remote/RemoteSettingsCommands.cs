@@ -18,7 +18,7 @@ internal static class RemoteSettingsCommands
     // 공용 멤버 전달자(W2) — 본문은 옛 이름 그대로 쓴다.
     private static xkxk.frameworks.ui.shell.Docking.PocDocument Doc(JsonObject a, string key = "doc") => RemoteShellAccess.Doc(a, key);
 
-    private static UiSettings Settings => UiSettings.Current;
+    private static UiSettings Settings => XkxkUi.Current.Settings;
 
     // (원격 명령, ThemeAutomation 명령, 인자 키, 설명)
     private static readonly (string Name, string Verb, string? ArgKey, string Help)[] ThemeVerbs =
@@ -75,7 +75,7 @@ internal static class RemoteSettingsCommands
         ["gridDrawnCellText"] = Settings.GridDrawnCellText, // 그리는 셀 글자(기본 켬, K15)
         ["prewarmViews"] = Settings.PrewarmViews, // 문서 뷰 예열
         // 사용자 테마 저장 JSON(UiThemeSettings 가 저장 때 쓰는 것과 같은 직렬화) — 설정 파일 경로가 없는 웹에서도 희소 저장(sparse_save)을 판정하게 한다
-        ["userThemesJson"] = ThemeCatalog.Current.ExportUserThemesJson(),
+        ["userThemesJson"] = XkxkUi.Current.Themes.ExportUserThemesJson(),
     };
 
     /// <summary>
@@ -210,7 +210,7 @@ internal static class RemoteSettingsCommands
             {
                 if (a.EnumArg<ThemeMode>("theme") is { } t) { Settings.Theme = t; }
                 // 테마 Id 는 ThemeCatalog.Select 로(모드도 테마 기반에 맞춰 바뀜 — odev-5t 안내)
-                if (a.Str("themeId") is { Length: > 0 } tid && !ThemeCatalog.Current.Select(tid)) { throw new RemoteCommandException("테마 없음: " + tid); }
+                if (a.Str("themeId") is { Length: > 0 } tid && !XkxkUi.Current.Themes.Select(tid)) { throw new RemoteCommandException("테마 없음: " + tid); }
                 if (a.Num("documentDefaultFontSize") is { } dfs) { Settings.DocumentDefaultFontSize = dfs; }
                 if (a.Num("baseFontSize") is { } fs) { Settings.BaseFontSize = fs; }
                 if (a.Str("fontName") is { Length: > 0 } fn) { Settings.FontName = fn; }

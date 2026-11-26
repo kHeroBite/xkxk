@@ -9,6 +9,7 @@ using xkxk.frameworks.ui.shell.Input;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.shell.ViewModels;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Menus;
 
@@ -35,7 +36,7 @@ public partial class ViewMenu : MenuItem
     // UI-07 색 테마: 다음 테마 순환(MainTitleBar 에서 옮김)
     private void OnNextTheme(object? sender, RoutedEventArgs e)
     {
-        var theme = ThemeCatalog.Current.SelectNext();
+        var theme = XkxkUi.Current.Themes.SelectNext();
         (DataContext as MainViewModel)?.AddLog(Loc.Tr("log.settings.theme", theme.Name));
     }
 }

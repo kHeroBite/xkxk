@@ -16,7 +16,7 @@ namespace xkxk.frameworks.ui.shell.Theming;
 /// </summary>
 public static class ThemeAutomation
 {
-    private static ThemeCatalog Catalog => ThemeCatalog.Current;
+    private static ThemeCatalog Catalog => XkxkUi.Current.Themes;
 
     /// <summary>
     /// 명령 실행. 지원 형식:
@@ -59,7 +59,7 @@ public static class ThemeAutomation
             return (false, $"디자인 테마 없음: {id}"); // i18n-ok 자동화 응답
         }
 
-        UiSettings.Current.DesignThemeId = def.Id;
+        XkxkUi.Current.Settings.DesignThemeId = def.Id;
         return (true, $"디자인 테마 적용: {def.Id}"); // i18n-ok 자동화 응답
     }
 
@@ -76,7 +76,7 @@ public static class ThemeAutomation
 
         if (value.Length == 0)
         {
-            UiSettings.Current.SetEffectOverride(spec.Key, null);
+            XkxkUi.Current.Settings.SetEffectOverride(spec.Key, null);
             return (true, $"효과 덮어쓰기 해제: {spec.Key}"); // i18n-ok 자동화 응답
         }
 
@@ -85,7 +85,7 @@ public static class ThemeAutomation
             return (false, $"효과 값 거부: {spec.Key}={value}"); // i18n-ok 자동화 응답
         }
 
-        UiSettings.Current.SetEffectOverride(spec.Key, normalized);
+        XkxkUi.Current.Settings.SetEffectOverride(spec.Key, normalized);
         return (true, $"효과 지정: {spec.Key}={normalized}"); // i18n-ok 자동화 응답
     }
 
@@ -97,7 +97,7 @@ public static class ThemeAutomation
             return (false, $"움직임 수준 거부: {value}"); // i18n-ok 자동화 응답
         }
 
-        UiSettings.Current.MotionLevel = level;
+        XkxkUi.Current.Settings.MotionLevel = level;
         return (true, $"움직임 수준: {level}"); // i18n-ok 자동화 응답
     }
 
@@ -241,7 +241,7 @@ public static class ThemeAutomation
         using var ms = new MemoryStream();
         using (var w = new Utf8JsonWriter(ms))
         {
-            var s = UiSettings.Current;
+            var s = XkxkUi.Current.Settings;
             w.WriteStartObject();
             w.WriteString("activeThemeId", ThemeApplier.Active?.Id);
             w.WriteString("requestedThemeId", Catalog.Requested.Id);

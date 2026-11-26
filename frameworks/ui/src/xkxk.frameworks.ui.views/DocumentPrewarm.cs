@@ -11,6 +11,7 @@ using xkxk.frameworks.ui.shell.Diagnostics.Remote;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.views.Documents;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -44,7 +45,7 @@ public static class DocumentPrewarm
         s_started = true;
         try
         {
-            if (host is not null && (UiSettings.Current.PrewarmViews || UiSettings.Current.GridViewPool))
+            if (host is not null && (XkxkUi.Current.Settings.PrewarmViews || XkxkUi.Current.Settings.GridViewPool))
             {
                 GridViewPool.AttachHost(host); // 준비된 표 뷰 다시 채우기도 이 호스트를 쓴다
             }
@@ -68,7 +69,7 @@ public static class DocumentPrewarm
     private static IEnumerable<(DocumentKind Kind, Func<Control> Make)> Factories()
     {
         yield return (DocumentKind.Grid, () => new GridDocumentView());
-        if (!UiSettings.Current.PrewarmViews)
+        if (!XkxkUi.Current.Settings.PrewarmViews)
         {
             yield break;
         }
@@ -77,7 +78,7 @@ public static class DocumentPrewarm
         yield return (DocumentKind.Gantt, () => new GanttDocumentView());
     }
 
-    private static bool Enabled => UiSettings.Current.PrewarmViews || UiSettings.Current.GridViewPool;
+    private static bool Enabled => XkxkUi.Current.Settings.PrewarmViews || XkxkUi.Current.Settings.GridViewPool;
 
     /// <summary>복원이 끝났고(StartupRestoreDone 가 false 가 아님) 진행 중 바쁨 스코프가 없으면 true. 상태를 읽기만 한다.</summary>
     private static bool IsQuiet() =>

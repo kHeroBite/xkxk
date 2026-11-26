@@ -7,7 +7,7 @@
              xmlns:vm="using:xkxk.frameworks.ui.shell.ViewModels"
              xmlns:loc="using:xkxk.frameworks.ui.shell.Localization"
              xmlns:views="using:xkxk.frameworks.ui.shell.Platform"
-             xmlns:theming="using:xkxk.frameworks.ui.shell.Theming"
+             xmlns:fw="using:xkxk.frameworks.ui.shell.Framework"
              x:Class="xkxk.frameworks.ui.views.PdApp"
              RequestedThemeVariant="Default">
 
@@ -36,7 +36,7 @@
                 <local:WindowIcon Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center"
                                   IconKey="{Binding Source=Grid, Converter={x:Static local:WindowIcon.KindIconKey}}"
                                   AutomationProperties.AutomationId="shell.explorer.icon.Grid"
-                                  IsVisible="{Binding MenuIconVisible, Source={x:Static theming:UiSettings.Current}}" />
+                                  IsVisible="{Binding Settings.MenuIconVisible, Source={x:Static fw:XkxkUi.Current}}" />
                 <TextBlock Text="{loc:Tr shell.explorer.grid}" VerticalAlignment="Center" />
               </WrapPanel>
             </Button>
@@ -59,7 +59,7 @@
                 <local:WindowIcon Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center"
                                   IconKey="{Binding Source=Gantt, Converter={x:Static local:WindowIcon.KindIconKey}}"
                                   AutomationProperties.AutomationId="shell.explorer.icon.Gantt"
-                                  IsVisible="{Binding MenuIconVisible, Source={x:Static theming:UiSettings.Current}}" />
+                                  IsVisible="{Binding Settings.MenuIconVisible, Source={x:Static fw:XkxkUi.Current}}" />
                 <TextBlock Text="{loc:Tr shell.explorer.gantt}" VerticalAlignment="Center" />
               </WrapPanel>
             </Button>
@@ -82,7 +82,7 @@
                 <local:WindowIcon Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center"
                                   IconKey="{Binding Source=Form, Converter={x:Static local:WindowIcon.KindIconKey}}"
                                   AutomationProperties.AutomationId="shell.explorer.icon.Form"
-                                  IsVisible="{Binding MenuIconVisible, Source={x:Static theming:UiSettings.Current}}" />
+                                  IsVisible="{Binding Settings.MenuIconVisible, Source={x:Static fw:XkxkUi.Current}}" />
                 <TextBlock Text="{loc:Tr shell.explorer.form}" VerticalAlignment="Center" />
               </WrapPanel>
             </Button>
@@ -104,7 +104,7 @@
               <DockPanel>
                 <local:WindowIcon DockPanel.Dock="Left" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center"
                                   IconKey="{Binding Source=Grid, Converter={x:Static local:WindowIcon.KindIconKey}}"
-                                  IsVisible="{Binding MenuIconVisible, Source={x:Static theming:UiSettings.Current}}" />
+                                  IsVisible="{Binding Settings.MenuIconVisible, Source={x:Static fw:XkxkUi.Current}}" />
                 <TextBlock Text="{loc:Tr shell.explorer.gridSdi}" VerticalAlignment="Center" />
               </DockPanel>
           </Button>
@@ -112,7 +112,7 @@
               <DockPanel>
                 <local:WindowIcon DockPanel.Dock="Left" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center"
                                   IconKey="{Binding Source=Gantt, Converter={x:Static local:WindowIcon.KindIconKey}}"
-                                  IsVisible="{Binding MenuIconVisible, Source={x:Static theming:UiSettings.Current}}" />
+                                  IsVisible="{Binding Settings.MenuIconVisible, Source={x:Static fw:XkxkUi.Current}}" />
                 <TextBlock Text="{loc:Tr shell.explorer.ganttSdi}" VerticalAlignment="Center" />
               </DockPanel>
           </Button>
@@ -120,7 +120,7 @@
               <DockPanel>
                 <local:WindowIcon DockPanel.Dock="Left" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center"
                                   IconKey="{Binding Source=Form, Converter={x:Static local:WindowIcon.KindIconKey}}"
-                                  IsVisible="{Binding MenuIconVisible, Source={x:Static theming:UiSettings.Current}}" />
+                                  IsVisible="{Binding Settings.MenuIconVisible, Source={x:Static fw:XkxkUi.Current}}" />
                 <TextBlock Text="{loc:Tr shell.explorer.formSdi}" VerticalAlignment="Center" />
               </DockPanel>
           </Button>

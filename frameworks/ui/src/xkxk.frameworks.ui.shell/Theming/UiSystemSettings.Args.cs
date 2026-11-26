@@ -1,6 +1,7 @@
 // UI 설정 시스템 묶음의 시험 인자 해석 — --ui-mode·--ui-style 을 이번 실행 강제값으로 넣고, 옛 화면 모드를 UI 형으로 옮긴다(UiSystemSettings.cs 에서 줄 수 상한으로 나눔, 동작 동일)
 using System;
 using System.Collections.Generic;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Theming;
 
@@ -34,7 +35,7 @@ internal sealed partial class UiSystemSettings
 
             if (Enum.TryParse<UiStyle>(value?.Trim(), ignoreCase: true, out var style))
             {
-                UiSettings.Current.UiStyleOverride = style;
+                XkxkUi.Current.Settings.UiStyleOverride = style;
             }
         }
 
@@ -65,8 +66,8 @@ internal sealed partial class UiSystemSettings
 
             if (Enum.TryParse<TabletUiMode>(value?.Trim(), ignoreCase: true, out var mode))
             {
-                UiSettings.Current.TabletUiModeOverride = mode;
-                UiSettings.Current.UiStyleOverride ??= FromLegacy(mode); // 호환 별칭(tablet→Tablet, phone→Mobile, auto→Auto). --ui-style 이 먼저 와 있으면 유지, 나중에 오면 덮어쓴다
+                XkxkUi.Current.Settings.TabletUiModeOverride = mode;
+                XkxkUi.Current.Settings.UiStyleOverride ??= FromLegacy(mode); // 호환 별칭(tablet→Tablet, phone→Mobile, auto→Auto). --ui-style 이 먼저 와 있으면 유지, 나중에 오면 덮어쓴다
             }
         }
 

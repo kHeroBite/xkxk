@@ -129,7 +129,7 @@ internal static class RemoteUiCommands
     /// </summary>
     private static JsonNode? TabClose(JsonObject a)
     {
-        var settings = xkxk.frameworks.ui.shell.Theming.UiSettings.Current;
+        var settings = xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Settings;
         if (a.Str("mode") is { } m)
         {
             if (char.IsDigit(m.Trim().FirstOrDefault()) || !Enum.TryParse<xkxk.frameworks.ui.shell.Theming.TitleTabCloseMode>(m, true, out var mode) || !Enum.IsDefined(mode))

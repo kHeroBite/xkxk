@@ -9,9 +9,9 @@ public static partial class DesignThemeResolver
 {
     /// <summary>
     /// 규칙 미리 계산용(UI 스레드, ThemeDesignApplier 전환형 Styles 만 쓴다). null 이 아니면 요소 속성 층 값을 실효 디자인 테마 대신 이 ID 의 테마로 읽는다.
-    /// 쓰는 쪽이 try/finally 로 바로 null 로 되돌린다.
+    /// 쓰는 쪽이 try/finally 로 바로 null 로 되돌린다. 값은 앱 컨텍스트의 DesignThemeState 가 보관한다(B05).
     /// </summary>
-    internal static string? ElementThemeOverride { get; set; }
+    internal static string? ElementThemeOverride { get => S.ElementThemeOverride; set => S.ElementThemeOverride = value; }
 
     /// <summary>
     /// 디자인 테마 층의 요소 속성 값(ThemeElements.Resolve 가 회사 다음·템플릿 앞에서 부른다). 현재 디자인 테마에 값이 없거나

@@ -55,7 +55,7 @@ public static class WindowMinSize
         app.Resources[DragHandleKey] = DragHandleWidth;
         app.Resources[TitleInsetKey] = new Thickness(TitleInsetLeft, 0, 0, 0);
         CaptionLayout.Applied += Recompute;
-        UiSettings.Current.PropertyChanged += (_, e) =>
+        XkxkUi.Current.Settings.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(UiSettings.BaseFontSize))
             {
@@ -131,7 +131,7 @@ public static class WindowMinSize
 
     private static double MeasureTitle()
     {
-        var size = UiSettings.Current.BaseFontSize > 0 ? UiSettings.Current.BaseFontSize : 12;
+        var size = XkxkUi.Current.Settings.BaseFontSize > 0 ? XkxkUi.Current.Settings.BaseFontSize : 12;
         return new FormattedText(TitleProbe, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, Typeface.Default, size, null).Width;
     }
 

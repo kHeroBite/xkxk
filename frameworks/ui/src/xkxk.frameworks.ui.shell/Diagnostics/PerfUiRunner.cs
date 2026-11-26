@@ -7,6 +7,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics;
 
@@ -31,7 +32,7 @@ internal static class PerfUiRunner
     /// </summary>
     internal static async Task RunPerfUiAsync(IShellCommands shell, TopLevel top)
     {
-        var ui = UiSettings.Current;
+        var ui = XkxkUi.Current.Settings;
         var (theme, font, size) = (ThemeApplier.Active?.Id, ui.FontName, ui.BaseFontSize);
         var altFont = ui.FontNames.FirstOrDefault(f => f != font) ?? font;
         PerfProbe.Current.ResetOperations(); // 기동·설정 복원 등 앞선 기록이 표에 섞이지 않게

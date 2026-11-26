@@ -274,16 +274,16 @@ public sealed class DocumentViewLocator : IDataTemplate
         }
 
         // 문서 글자 크기는 이 래퍼 범위에만 적용(메인 창 크롬은 고정, 사용자 지시 21:40)
-        void OnSettings() => UiSettings.Current.ApplyDocumentScope(host);
-        UiSettings.Current.ApplyDocumentScope(host);
+        void OnSettings() => XkxkUi.Current.Settings.ApplyDocumentScope(host);
+        XkxkUi.Current.Settings.ApplyDocumentScope(host);
 
         // 뷰가 화면에 붙어 있는 동안만 구독(재생성·닫기 시 누수 방지)
         host.AttachedToVisualTree += (_, _) =>
         {
             host.Zoom = doc.Zoom; // 떨어져 있던 동안 바뀐 배율·글자 크기 반영
-            UiSettings.Current.ApplyDocumentScope(host);
+            XkxkUi.Current.Settings.ApplyDocumentScope(host);
             doc.PropertyChanged += OnChanged;
-            UiSettings.Current.Changed += OnSettings;
+            XkxkUi.Current.Settings.Changed += OnSettings;
             if (deferred)
             {
                 xkxk.frameworks.ui.shell.Busy.BusyHooks.DocumentRealized(doc.Id); // 진단 지연 실현 경로는 뷰 생성 시점을 알 수 없어 부착으로 끝낸다
@@ -292,7 +292,7 @@ public sealed class DocumentViewLocator : IDataTemplate
         host.DetachedFromVisualTree += (_, _) =>
         {
             doc.PropertyChanged -= OnChanged;
-            UiSettings.Current.Changed -= OnSettings;
+            XkxkUi.Current.Settings.Changed -= OnSettings;
         };
         return frame;
     }

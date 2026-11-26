@@ -92,6 +92,11 @@
       "id": "UADR-0011",
       "topic": "프로세스 전역 상태 4종을 앱 컨텍스트(IUiAppContext·XkxkUi.Current)로 이전, 옛 접근자는 위임, IUiLocalizer 최소 표면·UiLanguage, Loc.Tr 유지",
       "status": "채택"
+    },
+    {
+      "id": "UADR-0012",
+      "topic": "설정·테마·투어·모니터 상태를 앱 컨텍스트가 소유, DesignThemeResolver 는 정적 조회 함수로 유지(a2 §3 예외), 웹·Fold5 성능 기준선은 B12 로 이관",
+      "status": "채택"
     }
   ],
   "documents": {
@@ -142,7 +147,8 @@
       "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a3_시험대_검증계획.md",
       "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a4_단계별_배치계획.md",
       "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a5_호스트_기동단계.md",
-      "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a6_앱컨텍스트_이전대응.md"
+      "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a6_앱컨텍스트_이전대응.md",
+      "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a7_컨텍스트서비스_이전대응.md"
     ],
     "screens": [
       "09_화면설계/01_화면설계_공통원칙.md",
@@ -205,5 +211,5 @@
     "tools_root": "tools"
   },
   "archived": [],
-  "note": "2026-11-24 Pd 에서 옮긴 UI 문서를 Pd 번호 체계 그대로 등재했다. 추가 키는 analysis·tech_stack·architecture·screens·decisions_appendix·pending_appendix·requirements_raw_appendix·migration_record 다. 결정 기록 정본은 decisions 이고 UADR-0001 이 있다. 2026-11-25 architecture_appendix 키(프레임워크화 계획 부록)를 추가했다. requirements·decisions 배열은 이 날부터 새로 생긴 항목만 짧게 색인한다(그 전 항목은 본문 문서가 정본). 2026-11-26 architecture_appendix 에 a3(시험대 검증계획)·a4(단계별 배치계획)를 더하고 REQ-121·UADR-0007·UADR-0008 을 색인했다. 2026-11-26 REQ-122·UADR-0009(공개 API 호환 8원칙)를 색인했다. 2026-11-26 B03 로 architecture_appendix 에 a5(호스트 기동단계)를 더하고 UADR-0010(호스트 값 빌더 옵션 연결)을 색인했다. 2026-11-26 B04 로 architecture_appendix 에 a6(앱 컨텍스트 이전 대응)을 더하고 UADR-0011(앱 컨텍스트 이전·IUiLocalizer 최소 표면)을 색인했다."
+  "note": "2026-11-24 Pd 에서 옮긴 UI 문서를 Pd 번호 체계 그대로 등재했다. 추가 키는 analysis·tech_stack·architecture·screens·decisions_appendix·pending_appendix·requirements_raw_appendix·migration_record 다. 결정 기록 정본은 decisions 이고 UADR-0001 이 있다. 2026-11-25 architecture_appendix 키(프레임워크화 계획 부록)를 추가했다. requirements·decisions 배열은 이 날부터 새로 생긴 항목만 짧게 색인한다(그 전 항목은 본문 문서가 정본). 2026-11-26 architecture_appendix 에 a3(시험대 검증계획)·a4(단계별 배치계획)를 더하고 REQ-121·UADR-0007·UADR-0008 을 색인했다. 2026-11-26 REQ-122·UADR-0009(공개 API 호환 8원칙)를 색인했다. 2026-11-26 B03 로 architecture_appendix 에 a5(호스트 기동단계)를 더하고 UADR-0010(호스트 값 빌더 옵션 연결)을 색인했다. 2026-11-26 B04 로 architecture_appendix 에 a6(앱 컨텍스트 이전 대응)을 더하고 UADR-0011(앱 컨텍스트 이전·IUiLocalizer 최소 표면)을 색인했다. 2026-11-26 B05 로 architecture_appendix 에 a7(컨텍스트 서비스 이전 대응)을 더하고 UADR-0012(설정·테마·투어·모니터 컨텍스트 이전·정적 조회 함수 예외·성능 기준선 B12 이관)를 색인했다."
 }

@@ -17,8 +17,6 @@ public sealed class DesktopMonitorProvider : IMonitorProvider
 
     private Window? _main;
 
-    public static DesktopMonitorProvider Instance { get; } = new();
-
     public event Action? MonitorsChanged;
 
     /// <summary>진단 --virtual-monitors N(2 이상, --primary-override 필요). 실행 중 monitors.setVirtual 은 1 도 줄 수 있다. 0 = 실제 모니터(제품·기본).</summary>

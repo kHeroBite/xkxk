@@ -12,6 +12,7 @@ using xkxk.frameworks.ui.shell.Diagnostics;
 using xkxk.frameworks.ui.shell.Diagnostics.Remote;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.views.Documents;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -39,7 +40,7 @@ public static class GridViewPool
     private static bool s_refillScheduled;
 
     /// <summary>준비된 표 뷰가 있는가(DocumentViewLocator 가 빈 칸 프레임 없이 바로 붙일지 판단).</summary>
-    public static bool HasReady => s_ready is not null && UiSettings.Current.GridViewPool;
+    public static bool HasReady => s_ready is not null && XkxkUi.Current.Settings.GridViewPool;
 
     /// <summary>화면 밖 호스트를 메인 화면 패널 맨 앞에 넣는다(1회). 패널이 DockPanel 이면 위쪽에 높이 0 으로 붙어 배치에 영향이 없다.</summary>
     public static void AttachHost(Panel parent)
@@ -52,11 +53,11 @@ public static class GridViewPool
         var host = new Canvas { Height = 0, ClipToBounds = true, IsHitTestVisible = false, Focusable = false };
         DockPanel.SetDock(host, Avalonia.Controls.Dock.Top);
         KeyboardNavigation.SetTabNavigation(host, KeyboardNavigationMode.None); // Tab 이 화면 밖 뷰(필터 입력칸)로 들어가지 않게
-        UiSettings.Current.ApplyDocumentScope(host); // 문서 범위 글자 토큰을 실제 문서 칸과 같게 — 옮겨 붙일 때 글자 크기가 바뀌어 열 폭을 다시 계산하지 않게
-        UiSettings.Current.Changed += () =>
+        XkxkUi.Current.Settings.ApplyDocumentScope(host); // 문서 범위 글자 토큰을 실제 문서 칸과 같게 — 옮겨 붙일 때 글자 크기가 바뀌어 열 폭을 다시 계산하지 않게
+        XkxkUi.Current.Settings.Changed += () =>
         {
-            UiSettings.Current.ApplyDocumentScope(host);
-            if (!UiSettings.Current.GridViewPool) { Release(); }
+            XkxkUi.Current.Settings.ApplyDocumentScope(host);
+            if (!XkxkUi.Current.Settings.GridViewPool) { Release(); }
         };
         parent.Children.Insert(0, host);
         s_host = host;
@@ -158,7 +159,7 @@ public static class GridViewPool
             return null;
         }
 
-        if (!UiSettings.Current.GridViewPool)
+        if (!XkxkUi.Current.Settings.GridViewPool)
         {
             Release();
             return null;
@@ -196,7 +197,7 @@ public static class GridViewPool
     /// <summary>예열 단계(DocumentPrewarm) 또는 다시 채우기에서 표 뷰 1개를 만들어 데우고, 옵션이 켜져 있으면 보관한다.</summary>
     internal static void BuildGrid()
     {
-        var pool = UiSettings.Current.GridViewPool;
+        var pool = XkxkUi.Current.Settings.GridViewPool;
         GridDocumentView view;
         PerfProbe.SuppressOpenTrack = true;
         try
@@ -248,7 +249,7 @@ public static class GridViewPool
     /// <summary>바쁨 스코프 없음 + 입력 없음이 이어지면 다음 준비 뷰를 만든다. Background 우선순위라 입력·렌더를 앞지르지 않는다.</summary>
     private static void ScheduleRefill()
     {
-        if (s_refillScheduled || !UiSettings.Current.GridViewPool)
+        if (s_refillScheduled || !XkxkUi.Current.Settings.GridViewPool)
         {
             return;
         }
@@ -261,7 +262,7 @@ public static class GridViewPool
     {
         DispatcherTimer.RunOnce(() =>
         {
-            if (!UiSettings.Current.GridViewPool || s_ready is not null || s_host is null)
+            if (!XkxkUi.Current.Settings.GridViewPool || s_ready is not null || s_host is null)
             {
                 s_refillScheduled = false;
                 return;

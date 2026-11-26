@@ -19,7 +19,8 @@ public sealed partial class ThemeCatalog
 {
     private ThemeDefinition? _selecting; // Select 진행 중인 테마
 
-    private ThemeCatalog()
+    // 앱 컨텍스트(UiAppContext)만 만든다(B05). 생성자에서 XkxkUi.Current.Themes 를 다시 읽지 않는다(Lazy 재진입 금지).
+    internal ThemeCatalog()
     {
         foreach (var t in BuiltinThemes.Create())
         {
@@ -36,7 +37,8 @@ public sealed partial class ThemeCatalog
         };
     }
 
-    public static ThemeCatalog Current { get; } = new();
+    /// <summary>옛 정적 접근자. 앱 컨텍스트(XkxkUi.Current.Themes)로 위임한다(B05, B16 Obsolete 예고·B21 제거).</summary>
+    public static ThemeCatalog Current => XkxkUi.Current.Themes;
 
     /// <summary>내장 먼저, 이어서 사용자 테마.</summary>
     public ObservableCollection<ThemeDefinition> Themes { get; } = new();
@@ -68,7 +70,7 @@ public sealed partial class ThemeCatalog
     /// 지금 요청된 테마 = 설정값에서 정해지는 테마. 값을 바꾼 즉시 새 테마를 돌려준다. 적용은 스피너가 그려진 뒤로 미뤄지므로(UiSettingsApplier)
     /// 선택 표시·편집 대상·다음 테마 계산은 이 값을 쓰고, ThemeApplier.Active(적용 완료값)를 그 자리에서 읽지 않는다. 적용이 끝났다는 신호는 UiSettings.Changed 다.
     /// </summary>
-    public ThemeDefinition Requested => _selecting ?? Resolve(UiSettings.Current);
+    public ThemeDefinition Requested => _selecting ?? Resolve(XkxkUi.Current.Settings);
 
     private ThemeDefinition Resolve(UiSettings s) =>
         Resolve(s.Theme, s.ThemeId, s.SystemLightThemeId, s.SystemDarkThemeId, s.AppInstance is { } app && ThemeApplier.IsOsDark(app));
@@ -82,7 +84,7 @@ public sealed partial class ThemeCatalog
         }
 
         using var _ = Diagnostics.PerfProbe.Current.TimeOperation("ui.theme.select"); // PERF-UI 계측(sync·다음 프레임)
-        var s = UiSettings.Current;
+        var s = XkxkUi.Current.Settings;
         _selecting = theme; // Id 와 모드를 차례로 바꾸는 사이의 알림에 중간값(새 Id·옛 모드)이 보이지 않게 한다
         try
         {
@@ -103,12 +105,12 @@ public sealed partial class ThemeCatalog
     {
         if (Find(lightId) is { Base: ThemeBase.Light } l)
         {
-            UiSettings.Current.SystemLightThemeId = l.Id;
+            XkxkUi.Current.Settings.SystemLightThemeId = l.Id;
         }
 
         if (Find(darkId) is { Base: ThemeBase.Dark } d)
         {
-            UiSettings.Current.SystemDarkThemeId = d.Id;
+            XkxkUi.Current.Settings.SystemDarkThemeId = d.Id;
         }
     }
 
@@ -275,7 +277,7 @@ public sealed partial class ThemeCatalog
         if (ReferenceEquals(Requested, theme))
         {
             // 색 편집: Id 가 같아도 반영돼야 하므로 force(셸 계약), 폰트 단계는 불필요(PERF-UI). 같은 색이면 ThemeApplier 서명 비교가 생략한다.
-            UiSettings.Current.Apply(ApplyParts.Theme | ApplyParts.DocScope, force: true);
+            XkxkUi.Current.Settings.Apply(ApplyParts.Theme | ApplyParts.DocScope, force: true);
         }
     }
 

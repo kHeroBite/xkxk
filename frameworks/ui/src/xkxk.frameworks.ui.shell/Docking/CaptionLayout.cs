@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Layout;
 using Avalonia.Media;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -104,7 +105,7 @@ public static class CaptionLayout
         WindowCommands.Set(app, "PdCaptionReserve", mac ? new Thickness(reserve, 0, 0, 0) : new Thickness(0, 0, reserve, 0));
         WindowCommands.Set(app, "PdCaptionAlign", mac ? HorizontalAlignment.Left : HorizontalAlignment.Right);
         // 제목 최소 칸(리드 결정 #7): 기능 버튼 줄은 이 폭 오른쪽에만 놓인다 — WindowMinSize 의 제목 항과 같은 산식("W…" 측정 + 8)
-        var size = UiSettings.Current.BaseFontSize > 0 ? UiSettings.Current.BaseFontSize : 12;
+        var size = XkxkUi.Current.Settings.BaseFontSize > 0 ? XkxkUi.Current.Settings.BaseFontSize : 12;
         var title = new FormattedText("W…", CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, Typeface.Default, size, null).Width + 8;
         WindowCommands.Set(app, "PdTitleMinReserve", new Thickness(Math.Ceiling(title), 0, 0, 0));
     }

@@ -3,6 +3,7 @@
 using System.Text.Json.Nodes;
 using Avalonia.Controls;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -109,7 +110,7 @@ internal static class RemoteSnapCommands
             "팝업 옵션 변경(준 값만, 즉시 저장되므로 시험이 원복한다) [enabled=true|false] [delayMs=0~3000] [snapEnabled=true|false] → {state}",
             a =>
             {
-                var s = xkxk.frameworks.ui.shell.Theming.UiSettings.Current;
+                var s = XkxkUi.Current.Settings;
                 if (a.Str("enabled") is { Length: > 0 } en) { s.SnapFlyoutEnabled = bool.Parse(en); }
                 if (a.Int("delayMs") is { } ms) { s.SnapFlyoutDelayMs = ms; }
                 if (a.Str("snapEnabled") is { Length: > 0 } se) { s.SnapEnabled = bool.Parse(se); }
@@ -144,7 +145,7 @@ internal static class RemoteSnapCommands
         {
             ["installed"] = SnapFlyoutState.Hover is not null,
             ["enabled"] = SnapFlyoutState.Enabled,
-            ["delayMs"] = xkxk.frameworks.ui.shell.Theming.UiSettings.Current.SnapFlyoutDelayMs,
+            ["delayMs"] = XkxkUi.Current.Settings.SnapFlyoutDelayMs,
             ["pending"] = SnapFlyoutState.Pending,
             ["open"] = SnapFlyoutState.IsOpen,
             ["kind"] = target?.Kind.ToString(),

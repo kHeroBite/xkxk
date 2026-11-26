@@ -17,43 +17,44 @@ public static partial class DesignThemeResolver
 {
     private static readonly IReadOnlyDictionary<string, string> NoOverrides = new Dictionary<string, string>(StringComparer.Ordinal);
 
-    private static string _selected = "";
-    private static string _motionLevel = "";
-    private static IReadOnlyDictionary<string, string> _overrides = NoOverrides;
-    private static bool _simulateSoftware;
-    private static string _signature = "";
+    /// <summary>가변 상태는 앱 컨텍스트가 소유한다(B05, UADR-0012). 이 형식은 상태를 두지 않는 정적 조회 표면이다.</summary>
+    private static DesignThemeState S => xkxk.frameworks.ui.shell.Framework.UiAppContext.Instance.DesignTheme;
 
     /// <summary>선택·효과 실효값·폴백 사유 중 하나라도 바뀌면 발생(Update·Refresh 가 서명 비교로 판정).</summary>
-    public static event Action? Changed;
+    public static event Action? Changed
+    {
+        add => S.Changed += value;
+        remove => S.Changed -= value;
+    }
 
     /// <summary>열린 문서 창 수 공급자(화면 층이 등록). 없으면 창 수 폴백을 판정하지 않는다. 창 수가 바뀌면 화면 층이 Refresh 를 부른다.</summary>
-    public static Func<int>? WindowCount { get; set; }
+    public static Func<int>? WindowCount { get => S.WindowCount; set => S.WindowCount = value; }
 
     /// <summary>
     /// 지금 화면이 NAV(폰형·모바일형)인가 공급자(화면 층이 등록). 18 문서 §6 폼팩터 규칙상 NAV 의 전체 보기는 평면 목록이므로
     /// depth.overview 실효값을 flat 으로 낸다(폴백 사유는 아님 — 저장값 보존). 바뀌면 화면 층이 Refresh 를 부른다.
     /// </summary>
-    public static Func<bool>? NavLayout { get; set; }
+    public static Func<bool>? NavLayout { get => S.NavLayout; set => S.NavLayout = value; }
 
     /// <summary>
     /// 사용자 배경 이미지를 읽지 못해 none 으로 낮췄는가(손상·누락·할당량, 21 §6.2). DesignEffectsApplier 가 읽기 결과로 정하고 Refresh 한다.
     /// 참이면 decor=image 의 실효값은 none 이다(상태 보고 = 실제 화면, 저장값은 보존).
     /// </summary>
-    internal static bool DecorImageFailed { get; set; }
+    internal static bool DecorImageFailed { get => S.DecorImageFailed; set => S.DecorImageFailed = value; }
 
     /// <summary>진단 전용 소프트웨어 렌더 흉내(원격 gpu.simulateSoftware). 바꾸면 곧바로 재계산한다.</summary>
     public static bool SimulateSoftware
     {
-        get => _simulateSoftware;
+        get => S._simulateSoftware;
         set
         {
-            _simulateSoftware = value;
+            S._simulateSoftware = value;
             Refresh();
         }
     }
 
     /// <summary>사용자가 저장한 디자인 테마 ID(비면 선택 안 함). 실효 ID 는 Current.</summary>
-    public static string Selected => _selected;
+    public static string Selected => S._selected;
 
     /// <summary>
     /// 회사 잠금 여부(theme.style.locked). 회사만 정하는 값이라 해석 층(Resolve)을 거치지 않고 회사 원본 값 ?? 표 기본값을 직접 읽는다.
@@ -65,7 +66,7 @@ public static partial class DesignThemeResolver
 
     /// <summary>실효 디자인 테마 ID. 잠금이 아니면 사용자 값 ?? 회사 값 ?? ds-classic, 잠금이면 회사 값 ?? ds-classic. 모르는 ID 는 건너뛴다.</summary>
     public static string Current =>
-        (!Locked ? DesignThemes.Find(_selected) : null)?.Id ?? DesignThemes.Find(Company(DesignThemes.SettingPrefix + "id"))?.Id ?? DesignThemes.DefaultId;
+        (!Locked ? DesignThemes.Find(S._selected) : null)?.Id ?? DesignThemes.Find(Company(DesignThemes.SettingPrefix + "id"))?.Id ?? DesignThemes.DefaultId;
 
     /// <summary>움직임 수준 저장 실효값(system|full|reduced|off). 접근성 축이라 디자인 테마 잠금과 무관하다.</summary>
     public static string MotionLevel => Stored(DesignThemes.MotionLevelKey);
@@ -93,9 +94,10 @@ public static partial class DesignThemeResolver
     /// <summary>저장값 공급(UiSettings 적용 경로). id·움직임 수준·효과 덮어쓰기(키 = 짧은 효과 키 또는 전체 설정 키). 바뀌었으면 Changed.</summary>
     public static void Update(string? id, string? motionLevel, IReadOnlyDictionary<string, string>? overrides)
     {
-        _selected = id?.Trim() ?? "";
-        _motionLevel = motionLevel?.Trim() ?? "";
-        _overrides = overrides is null ? NoOverrides : new Dictionary<string, string>(overrides, StringComparer.Ordinal);
+        var state = S;
+        state._selected = id?.Trim() ?? "";
+        state._motionLevel = motionLevel?.Trim() ?? "";
+        state._overrides = overrides is null ? NoOverrides : new Dictionary<string, string>(overrides, StringComparer.Ordinal);
         Refresh();
     }
 
@@ -104,19 +106,20 @@ public static partial class DesignThemeResolver
     {
         var sig = string.Join("|", DesignThemes.Effects.Select(s => Effective(s.Key)))
             + "|" + Current + "|" + EffectiveMotionLevel + "|" + Locked + "|" + FallbackReason + "|" + EffectLevel;
-        if (sig == _signature)
+        var state = S;
+        if (sig == state._signature)
         {
             return;
         }
 
-        _signature = sig;
+        state._signature = sig;
 #if PD_DIAGNOSTICS // 진단판: 구독자별 시간(ui.style.changed.<형식>.<메서드>, K13 분해)
-        foreach (var d in Changed?.GetInvocationList() ?? Array.Empty<Delegate>())
+        foreach (var d in state.Changed?.GetInvocationList() ?? Array.Empty<Delegate>())
         {
             using (UiSettings.Op("ui.style.changed." + d.Method.DeclaringType?.Name + "." + d.Method.Name)) { ((Action)d)(); }
         }
 #else
-        Changed?.Invoke();
+        state.Changed?.Invoke();
 #endif
     }
 
@@ -171,7 +174,7 @@ public static partial class DesignThemeResolver
     }
 
     private static string? Override(DesignEffectSpec spec) =>
-        _overrides.TryGetValue(spec.Key, out var v) ? v : _overrides.TryGetValue(spec.SettingKey, out var full) ? full : null;
+        S._overrides.TryGetValue(spec.Key, out var v) ? v : S._overrides.TryGetValue(spec.SettingKey, out var full) ? full : null;
 
     private static string? Company(string settingKey) =>
         ThemeElements.Policy.Values.TryGetValue(settingKey, out var v) ? v : null;
@@ -179,7 +182,7 @@ public static partial class DesignThemeResolver
     private static List<string> Reasons()
     {
         var reasons = new List<string>(4);
-        if (Flag("depth.softwareFallback") && (_simulateSoftware || GpuSetting.Applied == GpuMode.Off))
+        if (Flag("depth.softwareFallback") && (S._simulateSoftware || GpuSetting.Applied == GpuMode.Off))
         {
             reasons.Add("software");
         }

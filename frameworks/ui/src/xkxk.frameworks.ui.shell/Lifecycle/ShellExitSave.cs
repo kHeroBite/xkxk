@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.shell.ViewModels;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Lifecycle;
 
@@ -46,7 +47,7 @@ public static class ShellExitSave
             vm.AddLog(Localization.Loc.Tr("log.layout.exitSaveFailed", ex.Message));
         }
 
-        await UiSettings.Current.FlushAsync(TimeSpan.FromSeconds(1.5));
+        await XkxkUi.Current.Settings.FlushAsync(TimeSpan.FromSeconds(1.5));
         if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.Shutdown();

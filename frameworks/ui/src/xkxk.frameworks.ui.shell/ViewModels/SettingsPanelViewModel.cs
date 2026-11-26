@@ -71,7 +71,7 @@ public sealed class SettingsPanelViewModel : ObservableObject
     public RelayCommand ToggleThemeCommand { get; }
 
     /// <summary>지금 어두운 테마인가 — 타이틀바 테마 아이콘이 누르면 바뀔 쪽(어두우면 해, 밝으면 달)을 고르는 판정. UiSettings.ToggleTheme 과 같은 기준이다.</summary>
-    public bool IsDarkTheme => Settings.Theme == ThemeMode.Dark || (Settings.Theme != ThemeMode.Light && ThemeCatalog.Current.Requested.Base == ThemeBase.Dark);
+    public bool IsDarkTheme => Settings.Theme == ThemeMode.Dark || (Settings.Theme != ThemeMode.Light && XkxkUi.Current.Themes.Requested.Base == ThemeBase.Dark);
 
     private void OnLanguageChanged() => LanguageChanged?.Invoke();
 }

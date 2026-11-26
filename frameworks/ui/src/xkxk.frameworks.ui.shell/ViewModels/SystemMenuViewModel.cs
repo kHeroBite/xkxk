@@ -77,7 +77,7 @@ public static class SystemHost
             return;
         }
 
-        await UiSettings.Current.FlushAsync(TimeSpan.FromSeconds(1.5));
+        await XkxkUi.Current.Settings.FlushAsync(TimeSpan.FromSeconds(1.5));
         restart();
     }
 }

@@ -7,6 +7,7 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -156,7 +157,7 @@ internal static class RemoteWindowMenuCommands
         r.Register("snap.get", "③ 자석: on·range(px, 0~48·2단위)·effective", _ => SnapJson());
         r.Register("snap.set", "③ 자석 설정 [on=true|false] [range=px(셸이 0~48·2단위로 맞춤)] [reset=true(기본 24)] → 실제 적용값", a =>
         {
-            var s = Theming.UiSettings.Current;
+            var s = XkxkUi.Current.Settings;
             if (a.Bool("reset")) { s.MagnetRange = Theming.UiSettings.DefaultMagnetRange; }
             if (a.ContainsKey("on")) { s.MagnetEnabled = a.Bool("on"); }
             if (a.Num("range") is { } range) { s.MagnetRange = Theming.UiSettings.NormalizeMagnetRange(range); }
@@ -166,7 +167,7 @@ internal static class RemoteWindowMenuCommands
 
     private static JsonObject SnapJson()
     {
-        var s = Theming.UiSettings.Current;
+        var s = XkxkUi.Current.Settings;
         return new JsonObject { ["on"] = s.MagnetEnabled, ["range"] = s.MagnetRange, ["effective"] = s.EffectiveMagnetRange };
     }
 

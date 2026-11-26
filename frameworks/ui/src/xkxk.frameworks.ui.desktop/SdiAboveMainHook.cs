@@ -4,6 +4,7 @@ using System.Text;
 using Avalonia;
 using Avalonia.Controls;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.desktop;
 
@@ -39,7 +40,7 @@ internal static class SdiAboveMainHook
 
         Win32Properties.AddWndProcHookCallback(main, Hook);
         main.Opened += (_, _) => s_main = main.TryGetPlatformHandle()?.Handle ?? IntPtr.Zero;
-        UiSettings.Current.PropertyChanged += (_, e) =>
+        XkxkUi.Current.Settings.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(UiSettings.SdiAboveMain) && s_main != IntPtr.Zero && !IsIconic(s_main))
             {
@@ -59,7 +60,7 @@ internal static class SdiAboveMainHook
             }
         };
 #endif
-        Program.Log($"sdi-above-main hook installed setting={UiSettings.Current.SdiAboveMain}");
+        Program.Log($"sdi-above-main hook installed setting={XkxkUi.Current.Settings.SdiAboveMain}");
     }
 
     /// <summary>SdiWindowHost.OnOpened 에서 — 대상 SDI 목록 등록(닫히면 제거).</summary>
@@ -75,7 +76,7 @@ internal static class SdiAboveMainHook
 
     private static IntPtr Hook(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
-        if (msg != SdiBgPinHook.WmWindowPosChanging || lParam == IntPtr.Zero || s_busy || s_sdi.Count == 0 || !UiSettings.Current.SdiAboveMain)
+        if (msg != SdiBgPinHook.WmWindowPosChanging || lParam == IntPtr.Zero || s_busy || s_sdi.Count == 0 || !XkxkUi.Current.Settings.SdiAboveMain)
         {
             return IntPtr.Zero;
         }
