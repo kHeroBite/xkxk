@@ -82,6 +82,11 @@
       "id": "UADR-0009",
       "topic": "공개 API 확장 자리 선개방·기본값 호환 8원칙, 깨짐 검출 B02 시작",
       "status": "채택"
+    },
+    {
+      "id": "UADR-0010",
+      "topic": "호스트 주입 값은 빌더 옵션 Host(UiHostOptions)로 받고 UseXkxkUi 가 App 에 1회 연결",
+      "status": "채택"
     }
   ],
   "documents": {
@@ -130,7 +135,8 @@
       "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a1_방법론_전수조사.md",
       "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a2_현행구조_진단.md",
       "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a3_시험대_검증계획.md",
-      "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a4_단계별_배치계획.md"
+      "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a4_단계별_배치계획.md",
+      "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a5_호스트_기동단계.md"
     ],
     "screens": [
       "09_화면설계/01_화면설계_공통원칙.md",
@@ -193,5 +199,5 @@
     "tools_root": "tools"
   },
   "archived": [],
-  "note": "2026-11-24 Pd 에서 옮긴 UI 문서를 Pd 번호 체계 그대로 등재했다. 추가 키는 analysis·tech_stack·architecture·screens·decisions_appendix·pending_appendix·requirements_raw_appendix·migration_record 다. 결정 기록 정본은 decisions 이고 UADR-0001 이 있다. 2026-11-25 architecture_appendix 키(프레임워크화 계획 부록)를 추가했다. requirements·decisions 배열은 이 날부터 새로 생긴 항목만 짧게 색인한다(그 전 항목은 본문 문서가 정본). 2026-11-26 architecture_appendix 에 a3(시험대 검증계획)·a4(단계별 배치계획)를 더하고 REQ-121·UADR-0007·UADR-0008 을 색인했다. 2026-11-26 REQ-122·UADR-0009(공개 API 호환 8원칙)를 색인했다."
+  "note": "2026-11-24 Pd 에서 옮긴 UI 문서를 Pd 번호 체계 그대로 등재했다. 추가 키는 analysis·tech_stack·architecture·screens·decisions_appendix·pending_appendix·requirements_raw_appendix·migration_record 다. 결정 기록 정본은 decisions 이고 UADR-0001 이 있다. 2026-11-25 architecture_appendix 키(프레임워크화 계획 부록)를 추가했다. requirements·decisions 배열은 이 날부터 새로 생긴 항목만 짧게 색인한다(그 전 항목은 본문 문서가 정본). 2026-11-26 architecture_appendix 에 a3(시험대 검증계획)·a4(단계별 배치계획)를 더하고 REQ-121·UADR-0007·UADR-0008 을 색인했다. 2026-11-26 REQ-122·UADR-0009(공개 API 호환 8원칙)를 색인했다. 2026-11-26 B03 로 architecture_appendix 에 a5(호스트 기동단계)를 더하고 UADR-0010(호스트 값 빌더 옵션 연결)을 색인했다."
 }

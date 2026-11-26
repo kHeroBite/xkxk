@@ -1,4 +1,4 @@
-// 데스크톱 호스트 진입점 — 기동 순서(인자·로그·단일 인스턴스·제품 로그·창 옵션)와 App 주입. 인자 해석은 HostArgs, 로그는 HostLog, 창 옵션은 LaunchOptions
+// 데스크톱 호스트 진입점 — 기동 순서(인자·로그·단일 인스턴스·제품 로그·창 옵션)와 호스트 값(Host 옵션) 구성. 인자 해석은 HostArgs, 로그는 HostLog, 창 옵션은 LaunchOptions
 using xkxk.frameworks.ui.data;
 using xkxk.frameworks.ui.data.Logging;
 using xkxk.frameworks.ui.data.Rendering;
@@ -62,9 +62,7 @@ internal static class Program
             ConfigureFloatingOwner();
             BgWindowPolicy.Apply(placement is not null, overlayPopups: placement is not null, Log); // 비전경 시험: 시스템 창·Dock 오버레이 창·(진단)새 창 감시 — 적용 값을 호스트 로그에 남긴다
             LaunchOptions.Apply(host, background: placement is not null);
-            ConfigureApp(host, store);
-
-            var ui = DesktopUiHost.Build(host.AppArgs, Log); // 별별UI 빌더 경유(모듈 0 = 동작 불변). BuildAvaloniaApp 자체는 디자이너용이라 그대로 둔다
+            var ui = DesktopUiHost.Build(host.AppArgs, h => ConfigureHost(h, host, store), Log); // 별별UI 빌더 경유(모듈 0, 호스트 값은 Host 옵션 → UseXkxkUi 가 App 에 연결). BuildAvaloniaApp 자체는 디자이너용이라 그대로 둔다
             var builder = HostRenderOptions.Apply(BuildAvaloniaApp().UseXkxkUi(ui), host.Get("--render"), host.Get("--composition"), gpu,
                 overlayPopups: placement is not null, settingsJson: settingsJson); // 화면 밖 시험: 팝업을 별도 창으로 띄우지 않는다(사용자 화면 노출 방지). settingsJson = 시작 옵션 RenderDirtyRegions
             PerfProbe.Current.SetMetric("host_lifetime_start_ms", PerfProbe.Current.NowMs);
@@ -177,19 +175,18 @@ internal static class Program
         PdLog.WriteSystem(PdLogLevel.Information, $"host start channel={AppChannel.Current} gpu={gpu} source={GpuSetting.AppliedSource}");
     }
 
-    /// <summary>App 정적 주입점(시작 인자·저장소·주 창 설정·SDI 호스트·윈도우 메뉴 호스트·재시작·원격 판정 훅)을 채운다.</summary>
-    private static void ConfigureApp(HostArgs host, FileLayoutStore store)
+    /// <summary>호스트 값(UiHostOptions — 저장소·주 창 설정·보이는 프레임·SDI 호스트·윈도우 메뉴 호스트)과 App 밖 호스트 훅(재시작·아이콘·모달·원격 판정)을 채운다. 시작 인자는 어댑터가 Args 로 넘긴다(B03).</summary>
+    private static void ConfigureHost(UiHostOptions h, HostArgs host, FileLayoutStore store)
     {
         var folder = Path.GetDirectoryName(store.FilePath) ?? ".";
-        App.StartupArgs = host.AppArgs;
-        App.LayoutStore = store;
-        App.SettingsStore = new FileLayoutStore(Path.Combine(folder, "settings.json")); // UI 설정(테마·글자 크기·폰트)은 레이아웃 파일과 같은 폴더
+        h.LayoutStore = store;
+        h.SettingsStore = new FileLayoutStore(Path.Combine(folder, "settings.json")); // UI 설정(테마·글자 크기·폰트)은 레이아웃 파일과 같은 폴더
         xkxk.frameworks.ui.shell.Theming.DesignEffectsApplier.BlobStore = new xkxk.frameworks.ui.data.Theming.LocalBlobStore(folder); // 배경 이미지 복사본은 같은 앱 로컬 폴더 backgrounds/local/local(21 §6.2)
-        App.VisibleFrameOf = WindowFrameMetrics.VisibleFrame;
+        h.VisibleFrameOf = WindowFrameMetrics.VisibleFrame;
         SdiDocumentIcon.Install(); // B2: SDI OS 창 아이콘 = 활성 문서 메뉴 아이콘(AppWindowIcon 은 SDI 를 건너뛴다)
         AppWindowIcon.Install(); // AC-026: 작업 표시줄에 뜨는 창 전부에 앱 아이콘(창 생성 전 등록)
         Win32ModalBlock.Install(); // B3: 설정 창 앱 모달의 OS 수준 차단(ModalScope.PlatformBlock = EnableWindow, Windows 만)
-        App.ConfigureMainWindow = w =>
+        h.ConfigureMainWindow = w =>
         {
             s_main = BgWindowPolicy.Main = w;
             PerfProbe.Current.SetMetric("host_main_created_ms", PerfProbe.Current.NowMs); // 플랫폼 초기화 끝·주 창 생성 시점
@@ -217,14 +214,14 @@ internal static class Program
                 lt.Shutdown();
             }
         };
-        App.CreateHostWindow = () => new SdiWindowHost();
-        App.WindowHost = DesktopWindowHost.Instance; // 윈도우 메뉴 ④~⑦·⑬ 호스트 계약(IWindowHostCommands)
-        MonitorFitService.Register(); // U20 모니터 목록 제공자(창 ▸ 멀티 모니터) + 최대화 때 선택 모니터로 옮김
+        h.CreateHostWindow = () => new SdiWindowHost();
+        h.WindowHost = DesktopWindowHost.Instance; // 윈도우 메뉴 ④~⑦·⑬ 호스트 계약(IWindowHostCommands)
+        MonitorFitService.Register(h); // U20 모니터 목록 제공자(창 ▸ 멀티 모니터) + 최대화 때 선택 모니터로 옮김
 #if PD_DIAGNOSTICS
         DesktopDiagHooks.Install(); // 원격 판정 훅(캡처 방지·SDI OS Z 순서) — 진단 빌드 전용
 #endif
         // 사용자 레이아웃 라이브러리(이름 저장·불러오기·이름 변경·삭제): layout.json 과 같은 폴더의 layouts
-        App.LayoutLibraryStore = new xkxk.frameworks.ui.data.Layout.FileKeyValueStore(Path.Combine(folder, "layouts"));
+        h.LayoutLibraryStore = new xkxk.frameworks.ui.data.Layout.FileKeyValueStore(Path.Combine(folder, "layouts"));
     }
 
     /// <summary>GPU [지금 다시 시작](UI-17 §3.5) 데스크톱 진입점 — 셸이 설정 저장 뒤 부르고, true 면 평소대로 앱을 종료한다.</summary>

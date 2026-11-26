@@ -1,10 +1,11 @@
 #!/bin/bash
 # 별별UI 프레임워크 검증 일괄 실행기 — contract(계약 시험+카나리아)·layers(레이어 검사)·api(공개 API 표면 검사) 단계를 돌려 요약 JSON 을 남긴다
-# 사용: verify_framework.sh [--stage contract,layers,api] [--ci] [--help]
+# 사용: verify_framework.sh [--stage contract,layers,api,inject] [--ci] [--help]
 #   contract : 빌드 잠금(Release) 안에서 dotnet.exe run 으로 ContractCheck 를 돌린다 → logs/contract_check.json(rc 0 이어야 함)
 #              이어서 --canary 로 한 번 더 돌린다 → logs/contract_check_canary.json(rc 1·failed>=1 이어야 함, 시험 장치 거짓 PASS 방지)
 #   layers   : tools/check_layers.py, 같은 파일 --self-test, tools/classify_layers.py --check
 #   api      : api_surface_check.py --self-test, 이어서 최신 logs/build_desktop_*.log 를 --log 로 넘긴 본 검사(로그가 없으면 rc=2)
+#   inject   : host_injection_check.py --self-test, 이어서 본 검사(호스트 진입부 App 정적 대입 0건이어야 함, 파일 8개 미만이면 FAIL)
 #   --ci     : 예약(지금은 동작 동일)
 # 결과: logs/verify_framework_summary.json {"stages":{"<단계>":{"rc":n},...},"rc":n} (고정 경로 덮어쓰기), 종료코드 0=전부 PASS
 #       contract 단계의 빌드·실행 출력은 logs/verify_framework_contract.log (고정 경로 덮어쓰기)
@@ -15,10 +16,10 @@ ROOT="$(cd "$HERE/../.." && pwd)"
 DOTNET="${DOTNET_EXE:-/mnt/c/Program Files/dotnet/dotnet.exe}"
 LOGS="$ROOT/logs"
 SUMMARY="$LOGS/verify_framework_summary.json"
-STAGES="contract,layers,api"
+STAGES="contract,layers,api,inject"
 
 usage() {
-  sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 while [ $# -gt 0 ]; do
@@ -34,7 +35,7 @@ done
 IFS=',' read -r -a LIST <<<"$STAGES"
 [ "${#LIST[@]}" -gt 0 ] || { echo "단계가 비었습니다" >&2; exit 2; }
 for s in "${LIST[@]}"; do
-  case "$s" in contract|layers|api) ;; *) echo "알 수 없는 단계: $s (contract|layers|api)" >&2; exit 2 ;; esac
+  case "$s" in contract|layers|api|inject) ;; *) echo "알 수 없는 단계: $s (contract|layers|api|inject)" >&2; exit 2 ;; esac
 done
 
 mkdir -p "$LOGS"
@@ -92,6 +93,11 @@ stage_api() {
   fi
   echo "  api: 빌드 로그 $log"
   python3 -B "$tool" --root "$ROOT" --log "$log"
+}
+
+stage_inject() {
+  python3 -B "$ROOT/test/framework/judge/host_injection_check.py" --self-test || return 1
+  python3 -B "$ROOT/test/framework/judge/host_injection_check.py" --root "$ROOT"
 }
 
 TOTAL=0

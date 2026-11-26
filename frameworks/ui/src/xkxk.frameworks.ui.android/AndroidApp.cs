@@ -1,4 +1,4 @@
-// Android 호스트 진입(Application) — 앱 전용 저장소·관리형 창·임베드 한글 폰트를 App 에 주입하고 Debug 빌드에서 원격 제어 서버를 켠다
+// Android 호스트 진입(Application) — 앱 전용 저장소를 빌더 옵션 Host 로 넘기고 관리형 창·임베드 한글 폰트를 설정하며 Debug 빌드에서 원격 제어 서버를 켠다
 using xkxk.frameworks.ui.data;
 using Android.App;
 using Android.Runtime;
@@ -41,18 +41,23 @@ public sealed class AndroidApp : AvaloniaAndroidApplication<xkxk.frameworks.ui.v
         ReadStartupArgsFile();
         DockSettings.UseManagedWindows = true;
         var layoutStore = new AndroidLayoutStore("layout.json");
-        App.LayoutStore = layoutStore;
-        App.SettingsStore = new AndroidLayoutStore("settings.json");
-        // 개인 레이아웃·전체 백업(D-ANDROID-LAYOUTSTORE): layout.json 과 같은 앱 전용 폴더의 layouts — 데스크톱과 같은 FileKeyValueStore.
-        // 이전엔 설정하지 않아 App 이 메모리 저장소로 대신했고, 앱을 다시 켜면 사라졌다.
-        App.LayoutLibraryStore = new xkxk.frameworks.ui.data.Layout.FileKeyValueStore(
-            System.IO.Path.Combine(System.IO.Path.GetDirectoryName(layoutStore.FilePath)!, "layouts"));
         xkxk.frameworks.ui.shell.Theming.DesignEffectsApplier.BlobStore = new xkxk.frameworks.ui.data.Theming.LocalBlobStore(System.IO.Path.GetDirectoryName(layoutStore.FilePath)!); // 배경 이미지 복사본은 앱 전용 폴더 backgrounds/local/local(21 §6.2)
         UiSettings.FontResolver = name =>
             name == UiSettings.DefaultFontName ? new FontFamily(KoreanFont) : new FontFamily(name);
         AttachLogSinks();
+        var gpu = ResolveGpuMode(); // --gpu 를 걷어낸 인자가 s_startupArgs 에 남는다
+        // 호스트 값은 App 에 직접 대입하지 않고 빌더 옵션 Host 로 넘긴다 — UseXkxkUi 가 App 에 1회 연결한다(B03, UADR-0010)
+        var ui = AndroidUiHost.Build(s_startupArgs, h =>
+        {
+            h.LayoutStore = layoutStore;
+            h.SettingsStore = new AndroidLayoutStore("settings.json");
+            // 개인 레이아웃·전체 백업(D-ANDROID-LAYOUTSTORE): layout.json 과 같은 앱 전용 폴더의 layouts — 데스크톱과 같은 FileKeyValueStore.
+            // 이전엔 설정하지 않아 App 이 메모리 저장소로 대신했고, 앱을 다시 켜면 사라졌다.
+            h.LayoutLibraryStore = new xkxk.frameworks.ui.data.Layout.FileKeyValueStore(
+                System.IO.Path.Combine(System.IO.Path.GetDirectoryName(layoutStore.FilePath)!, "layouts"));
+        }, m => Console.WriteLine("[host] " + m));
         var customized = base.CustomizeAppBuilder(builder)
-            .UseXkxkUi(AndroidUiHost.Build(App.StartupArgs, m => Console.WriteLine("[host] " + m))) // 별별UI 빌더 경유(모듈 0 = 동작 불변). Args 는 기동 시점 사본(AndroidUiHost 주석)
+            .UseXkxkUi(ui) // 별별UI 빌더 경유(모듈 0). Args·Host 를 App 에 연결한다
             .With(new FontManagerOptions
         {
             DefaultFamilyName = KoreanFont,
@@ -69,8 +74,11 @@ public sealed class AndroidApp : AvaloniaAndroidApplication<xkxk.frameworks.ui.v
         System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.TextWriterTraceListener(Console.Out)); System.Diagnostics.Trace.AutoFlush = true;
         customized = customized.LogToTrace();
 #endif
-        return ApplyGpuMode(customized);
+        return ApplyGpuMode(customized, gpu);
     }
+
+    // 셸에 넘길 기동 인자(파일 인자 반영·--gpu 제거 뒤). App 에 직접 대입하지 않고 빌더 옵션 Args 로 넘긴다(B03)
+    private static IReadOnlyList<string> s_startupArgs = Array.Empty<string>();
 
     /// <summary>제품 로그 싱크(UI-17): logcat(표준 출력, 항상) + 앱 전용 폴더 xkxk/frameworks/ui/logs/pd-YYYYMMDD.log(14일 보존).</summary>
     private static void AttachLogSinks()
@@ -84,10 +92,10 @@ public sealed class AndroidApp : AvaloniaAndroidApplication<xkxk.frameworks.ui.v
     }
 
     /// <summary>
-    /// GPU 가속모드(settings.json "GpuMode", 인자 --gpu)를 Avalonia 초기화 전에 읽어 렌더링 모드에 반영한다.
-    /// Auto 는 옵션을 주지 않는다(Avalonia 기본 Egl→Software). Off 는 Software 만. 렌더링 모드는 기동 때 한 번만 정해지므로 바꾸면 다시 실행해야 적용된다.
+    /// GPU 가속모드(settings.json "GpuMode", 인자 --gpu)를 Avalonia 초기화 전에 읽어 판정하고, --gpu 를 기동 인자에서 걷어낸다.
+    /// 렌더링 모드는 기동 때 한 번만 정해지므로 바꾸면 다시 실행해야 적용된다.
     /// </summary>
-    private static AppBuilder ApplyGpuMode(AppBuilder builder)
+    private static xkxk.frameworks.ui.data.Rendering.GpuMode ResolveGpuMode()
     {
         string? json = null;
         try
@@ -100,9 +108,15 @@ public sealed class AndroidApp : AvaloniaAndroidApplication<xkxk.frameworks.ui.v
             Console.WriteLine("[render] settings 읽기 실패 — 기본(Auto): " + ex.Message);
         }
 
-        var mode = xkxk.frameworks.ui.data.Rendering.GpuSetting.Resolve(json, App.StartupArgs);
-        App.StartupArgs = xkxk.frameworks.ui.data.Rendering.GpuSetting.StripArg(App.StartupArgs); // --gpu 는 셸에 넘기지 않는다(넘기면 자동 저장·복원이 꺼진다)
+        var mode = xkxk.frameworks.ui.data.Rendering.GpuSetting.Resolve(json, s_startupArgs);
+        s_startupArgs = xkxk.frameworks.ui.data.Rendering.GpuSetting.StripArg(s_startupArgs); // --gpu 는 셸에 넘기지 않는다(넘기면 자동 저장·복원이 꺼진다)
         Console.WriteLine($"[render] gpu_mode={mode} source={xkxk.frameworks.ui.data.Rendering.GpuSetting.AppliedSource}");
+        return mode;
+    }
+
+    /// <summary>판정한 GPU 모드를 렌더링 옵션에 반영한다. Auto 는 옵션을 주지 않는다(Avalonia 기본 Egl→Software). Off 는 Software 만.</summary>
+    private static AppBuilder ApplyGpuMode(AppBuilder builder, xkxk.frameworks.ui.data.Rendering.GpuMode mode)
+    {
         return mode == xkxk.frameworks.ui.data.Rendering.GpuMode.Off
             ? builder.With(new AndroidPlatformOptions { RenderingMode = [AndroidRenderingMode.Software] })
             : builder;
@@ -129,7 +143,7 @@ public sealed class AndroidApp : AvaloniaAndroidApplication<xkxk.frameworks.ui.v
             var text = System.IO.File.ReadAllText(path).Trim();
             System.IO.File.Delete(path); // 1회용
             if (text.Length == 0) { return; }
-            App.StartupArgs = text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+            s_startupArgs = text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
             ArgsFromFile = true;
             Console.WriteLine($"[host] pdargs(file)={text}");
         }

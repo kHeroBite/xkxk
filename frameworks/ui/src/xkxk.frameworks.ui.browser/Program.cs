@@ -1,4 +1,4 @@
-// 브라우저(WASM) 호스트 진입점 — main.js 가 URL 쿼리에서 만든 인자·localStorage 저장소·관리형 창을 App 에 주입
+// 브라우저(WASM) 호스트 진입점 — main.js 가 URL 쿼리에서 만든 인자·localStorage 저장소·관리형 창을 빌더 옵션(Args·Host)으로 넘긴다
 using xkxk.frameworks.ui.data.Rendering;
 using System.Runtime.InteropServices.JavaScript;
 using System.Runtime.Versioning;
@@ -101,15 +101,8 @@ internal sealed partial class Program
         xkxk.frameworks.ui.shell.Docking.ChromePlatform.HostIsApple = BrowserHostOs.IsApple(); // 창 크롬(결정 ②): Apple 브라우저면 macOS 스타일, 판별 실패면 Windows
         // 브라우저에는 OS 창이 없으므로 SDI 는 Dock 관리형 창으로 대체한다(sprint_contract 보강 2).
         DockSettings.UseManagedWindows = true;
-        App.StartupArgs = appArgs;
-        App.LayoutStore = new BrowserLayoutStore(layoutKey);
-        // UI 설정은 별도 localStorage 키. 브라우저엔 시스템 폰트가 없어 "Noto Sans KR" 은 임베드 폰트로 연결
-        App.SettingsStore = settingsStore;
-        // 개인 레이아웃(UI-11): 자동 저장 슬롯 키와 같은 접미사 규칙으로 시험 간 격리
-        App.LayoutLibraryStore = new BrowserKeyValueStore((layoutKey ?? BrowserLayoutStore.DefaultKey) + "-lib");
         await InstallBlobStoreAsync(layoutKey); // 배경 이미지 IndexedDB 저장소(Program.Storage.cs)
-        // 윈도우 메뉴 호스트(관리형 창, odev-7c 구현): ⑦ 독립모드 위치 초기화만 실행, ④⑤⑥·⑬ 은 브라우저에서 불가
-        App.WindowHost = new xkxk.frameworks.ui.shell.Docking.ManagedWindowHostCommands();
+        // 브라우저엔 시스템 폰트가 없어 "Noto Sans KR" 은 임베드 폰트로 연결
         UiSettings.FontResolver = name =>
             name == UiSettings.DefaultFontName ? new FontFamily(KoreanFont) : new FontFamily(name);
 
@@ -126,7 +119,17 @@ internal sealed partial class Program
 
         // Off 면 소프트웨어(Canvas 2D)만. Auto 는 Avalonia 기본(WebGL2 → WebGL1 → Software2D)을 그대로 둔다.
         var options = gpu == GpuMode.Off ? new BrowserPlatformOptions { RenderingMode = [BrowserRenderingMode.Software2D] } : null;
-        var ui = BrowserUiHost.Build(appArgs, m => Console.WriteLine("[host] " + m)); // 별별UI 빌더 경유(모듈 0 = 동작 불변)
+        // 별별UI 빌더 경유(모듈 0). 인자·저장소·윈도우 메뉴 호스트는 App 에 직접 대입하지 않고 Host·Args 로 넘긴다(B03) — UseXkxkUi 가 Setup 전에 App 에 연결한다
+        var ui = BrowserUiHost.Build(appArgs, h =>
+        {
+            h.LayoutStore = new BrowserLayoutStore(layoutKey);
+            // UI 설정은 별도 localStorage 키
+            h.SettingsStore = settingsStore;
+            // 개인 레이아웃(UI-11): 자동 저장 슬롯 키와 같은 접미사 규칙으로 시험 간 격리
+            h.LayoutLibraryStore = new BrowserKeyValueStore((layoutKey ?? BrowserLayoutStore.DefaultKey) + "-lib");
+            // 윈도우 메뉴 호스트(관리형 창, odev-7c 구현): ⑦ 독립모드 위치 초기화만 실행, ④⑤⑥·⑬ 은 브라우저에서 불가
+            h.WindowHost = new xkxk.frameworks.ui.shell.Docking.ManagedWindowHostCommands();
+        }, m => Console.WriteLine("[host] " + m));
         var app = BuildAvaloniaApp().UseXkxkUi(ui).AfterSetup(_ => SingleWindowPlatformFix.Apply()); // 웹에는 Window 가 없어 Dock 도구 크롬·고정 패널의 $parent[Window] 바인딩이 오류 로그를 남긴다
         if (xkxk.frameworks.ui.shell.Docking.MdiMoveLight.RenderDirtyRegions)
         {

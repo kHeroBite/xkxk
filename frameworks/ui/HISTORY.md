@@ -4,6 +4,12 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-26 — 별별UI B03 호스트 주입 계약(UADR-0010)·3호스트 App 정적 대입 제거(O4, B03, conv_179565999934)
+- 결정(UADR-0010). 호스트 값은 빌더 옵션으로 받고 `UseXkxkUi` 가 App 에 1회 연결한다. App 정적 setter 는 B16 에 예고하고 B21 에 제거한다. 호스트가 주입하는 App 정적 값은 8종(StartupArgs, LayoutStore, SettingsStore, LayoutLibraryStore, ConfigureMainWindow, VisibleFrameOf, CreateHostWindow, WindowHost)이다. 계획 부록 a2·a4 의 '13개' 표기를 8종으로 정정했다.
+- 공개 계약. `UiHostOptions`(속성 7개)를 새로 만들고 `XkxkUiBuilderOptions.Host`·`Args` 를 더했다. `UseXkxkUi` 는 Setup 전에 `App.BindHost` 를 부른다(비 null 값만, 옵션 우선, Args 는 1개 이상일 때만). `App.ApplyStartupArgs` 오버로드를 더했다. `PublicAPI.Unshipped.txt` 에 반영했다.
+- 3호스트. Desktop·Browser·Android 의 `Program.cs`·`*UiHost.cs`·`AndroidApp.cs`·`MainActivity.cs`·`MonitorFitService.cs` 에서 App 정적 대입을 0건으로 만들었다. 판정기는 `test/framework/judge/host_injection_check.py` 이고 계약 시험 C19~C23(`HostOptionsChecks.cs`)을 더했다. 기동 단계 문서는 부록 a5_호스트_기동단계.md 이다.
+- 결과. 3축 빌드 rc=0, 계약 시험 23/23 PASS, Fold5 실기 PASS. otest AC-001~019·021 PASS, FAIL·UNDET 0.
+
 ## 2026-11-26 — 별별UI B02 공개 API 호환 원칙(UADR-0009)·공개 계약 골격·3호스트 어댑터(O4, B02, conv_179565227509)
 - 결정(UADR-0009). 공개 API 호환 8원칙을 확정했다. 사용자 원문 요지는 확장점을 먼저 열어 두고, 새 기능은 기본값 옵션으로 넣고, 기본값 파라미터 추가 대신 옵션 객체·오버로드로 바이너리 호환을 지키라는 것이다. 정본은 `/mnt/c/DATA/Project/xkxk/docs/standards/02_공개API_호환원칙.md` 이고 요구사항정의서·원문·ADR·계획서·부록 a3·a4 에 반영했다.
 - 공개 계약 골격. `src/xkxk.frameworks.ui.shell/Framework/` 에 계약 파일 18개를 새로 만들었다. `PublicAPI.Shipped.txt`·`PublicAPI.Unshipped.txt`·`.editorconfig` 와 csproj 로 공개 API 분석기를 B02 부터 켰고, 패키지 baseline(호환 비교 기준 고정)은 B17 에 한다.

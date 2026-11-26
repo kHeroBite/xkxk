@@ -108,3 +108,13 @@
 - 영향: `/mnt/c/DATA/Project/xkxk/docs/standards/02_공개API_호환원칙.md`(신설), `../05_아키텍처/02_별별UI_프레임워크화_계획.md` §4.2·§6, 부록 `a3_시험대_검증계획.md`·`a4_단계별_배치계획.md`, `src/xkxk.frameworks.ui.shell/` 의 `Framework/`·`PublicAPI.*.txt`·`.editorconfig`·csproj(RS0017·RS0037 WarningsAsErrors).
 - 한계: "모든 경우의 수" 는 확장 자리를 미리 만든다는 뜻이며 기능을 미리 다 만드는 것이 아니다. 검출 한계도 있다. B02~B20 은 계약이 모두 Unshipped 라서 삭제·변경은 PublicAPI txt 수정과 명시 허용 플래그로 드러나는 수준이고, base=HEAD 비교는 커밋 전 작업 트리 변경만 잡는다. Shipped baseline 기준 차단은 B21 에서 Shipped 로 확정한 뒤, 패키지 바이너리 비교는 B17 첫 pack 뒤에 성립한다. 분석기 저장소(roslyn-analyzers)가 2026-11-12 보관된 사실이 확인되어 후속 위치는 확인 필요다.
 - 상태: 채택
+
+## UADR-0010 호스트 주입은 빌더 옵션 UiHostOptions 로 바꾸고 App 정적 setter 는 B16 에 예고·B21 에 제거한다 (REQ-122)
+- 일자: 2026-11-26
+- 결정: 호스트(Desktop·Browser·Android)가 넘기는 값은 `XkxkUiBuilderOptions.Host`(`UiHostOptions`)와 `Args` 로 받고, `UseXkxkUi` 가 Setup 전에 `App` 에 1회 연결한다(`BindHost`). 연결은 비 null 값(`Args` 는 1개 이상)만 하고 null 은 기존 정적 값을 유지한다. 정적 값과 옵션이 함께 있으면 옵션이 우선한다(B02 호환, 기존 동작 불변). `App` 정적 setter 는 위임 접근자로 두고 B16 에 `[Obsolete]` 로 예고하며 B21(1.0)에 제거한다. `ApplicationId` 는 `xkxk.frameworks.ui` 로 한다.
+- 근거: a2 G2·a4 B03 의 요구이며, `TrExtension` 이 `App.Initialize` 중에 `StartupArgs` 를 읽는 코드 사실이 있어 Setup 전 연결이 필요하다. 예고 후 제거는 UADR-0009 원칙 8(`[Obsolete]` 로 한 부 버전 이상 예고, 주 버전에서만 제거)을 따른다.
+- 대안: 평면 속성 방식(옵션에 호스트 값을 낱개로 나열)은 B11 hosting 분리 때 이동 비용이 커 기각했다. 서비스 등록부에 호스트 값을 등록하는 방식은 형식 키가 충돌할 수 있어 기각했다.
+- UADR-0009 와의 관계: 원칙 1(옵션 객체)·원칙 2(기본값 선택 파라미터 금지, 새 입력은 옵션 속성으로)·원칙 3(확장점 선개방)·원칙 8(폐기 예고)을 적용한 첫 사례다. 옵션이 비어 있으면 정적 값이 그대로 동작하므로 B02 계약과 호환된다.
+- 영향: `src/xkxk.frameworks.ui.shell/Framework/`(`UiHostOptions`·`XkxkUiBuilderOptions`), `App`, 호스트 3종, 계약 시험 C19~C23, 판정기 `test/framework/judge/host_injection_check.py`, 일괄 실행기 `inject` 단계. B11(hosting 분리)에서 `UiHostOptions` 위치를 재검토하고, B21 에서 정적 setter 를 제거한다.
+- 한계: 호스트의 정적 대입 잔존은 판정기(`host_injection_check.py`)로만 검출하며 컴파일러는 옛 setter 사용을 막지 못한다. Fold5 가 연결되지 않으면 Android 늦은 인자 경로는 실측 없이 대기로 남고 Android 는 검증하지 못한다. Avalonia(`Window`·`PixelRect`)·Dock(`IHostWindow`) 형식과 소비자가 구현하는 인터페이스(`ILayoutStore`·`IKeyValueStore`·`IWindowHostCommands`, 분석기 범위 밖, 원칙 4 대상)가 고정 계약(Framework) 표면에 들어가므로 B16 공개 API 고정 확대 때 동결 또는 추상 기반 전환을 검토한다(Unshipped 라 변경 가능). `App.ApplyStartupArgs(IReadOnlyList<string>)` 는 셸 루트 공개 메서드라 분석기가 서명을 고정하지 않는다(B21 정리).
+- 상태: 채택

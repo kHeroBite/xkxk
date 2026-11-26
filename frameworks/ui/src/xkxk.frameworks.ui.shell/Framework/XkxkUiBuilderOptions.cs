@@ -30,8 +30,11 @@ public sealed class XkxkUiBuilderOptions
         set => _args = value ?? EmptyArgs;
     }
 
-    /// <summary>앱 식별자. 기본값 null(미지정). 값은 B03 에서 정해진다.</summary>
+    /// <summary>앱 식별자. 기본값 null(미지정). 별별UI 호스트는 "xkxk.frameworks.ui" 를 준다.</summary>
     public string? ApplicationId { get; set; }
+
+    /// <summary>호스트 값 묶음. 기본값은 빈 묶음(모두 null)이며 대입할 수 없다.</summary>
+    public UiHostOptions Host { get; } = new();
 
     /// <summary>호스트 종류(<see cref="UiHostKinds"/> 상수). 기본값 unknown 이며 null·공백은 unknown 이 된다.</summary>
     public string HostKind

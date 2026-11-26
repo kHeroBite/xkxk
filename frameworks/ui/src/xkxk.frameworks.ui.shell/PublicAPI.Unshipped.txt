@@ -52,6 +52,22 @@ xkxk.frameworks.ui.shell.Framework.UiErrorPolicy
 xkxk.frameworks.ui.shell.Framework.UiErrorPolicy.Collect = 0 -> xkxk.frameworks.ui.shell.Framework.UiErrorPolicy
 xkxk.frameworks.ui.shell.Framework.UiErrorPolicy.Throw = 1 -> xkxk.frameworks.ui.shell.Framework.UiErrorPolicy
 xkxk.frameworks.ui.shell.Framework.UiHostKinds
+xkxk.frameworks.ui.shell.Framework.UiHostOptions
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.ConfigureMainWindow.get -> System.Action<Avalonia.Controls.Window!>?
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.ConfigureMainWindow.set -> void
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.CreateHostWindow.get -> System.Func<Dock.Model.Core.IHostWindow!>?
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.CreateHostWindow.set -> void
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.LayoutLibraryStore.get -> xkxk.frameworks.ui.data.Layout.IKeyValueStore?
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.LayoutLibraryStore.set -> void
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.LayoutStore.get -> xkxk.frameworks.ui.data.Layout.ILayoutStore?
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.LayoutStore.set -> void
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.SettingsStore.get -> xkxk.frameworks.ui.data.Layout.ILayoutStore?
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.SettingsStore.set -> void
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.UiHostOptions() -> void
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.VisibleFrameOf.get -> System.Func<Avalonia.Controls.Window!, Avalonia.PixelRect?>?
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.VisibleFrameOf.set -> void
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.WindowHost.get -> xkxk.frameworks.ui.shell.Docking.IWindowHostCommands?
+xkxk.frameworks.ui.shell.Framework.UiHostOptions.WindowHost.set -> void
 xkxk.frameworks.ui.shell.Framework.UiModule
 xkxk.frameworks.ui.shell.Framework.UiModule.UiModule() -> void
 xkxk.frameworks.ui.shell.Framework.UiServiceRegistry
@@ -89,6 +105,7 @@ xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.Args.get -> System.Colle
 xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.Args.set -> void
 xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.ErrorPolicy.get -> xkxk.frameworks.ui.shell.Framework.UiErrorPolicy
 xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.ErrorPolicy.set -> void
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.Host.get -> xkxk.frameworks.ui.shell.Framework.UiHostOptions!
 xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.HostKind.get -> string!
 xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.HostKind.set -> void
 xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.Properties.get -> System.Collections.Generic.IDictionary<string!, object?>!

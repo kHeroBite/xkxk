@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using xkxk.frameworks.ui.shell;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.shell.ViewModels;
 
@@ -23,8 +24,8 @@ internal static class MonitorFitService
     private static Window? s_main;
     private static bool s_applying;
 
-    /// <summary>Program.ConfigureApp 등록 1줄: 메뉴 제공자 등록 + 메인 창 생성 때 연결(App.ConfigureMainWindow 뒤에 이어 붙임).</summary>
-    public static void Register()
+    /// <summary>Program.ConfigureHost 등록 1줄: 메뉴 제공자 등록 + 메인 창 생성 때 연결(호스트 값 ConfigureMainWindow 뒤에 이어 붙임, B03).</summary>
+    public static void Register(UiHostOptions host)
     {
 #if PD_DIAGNOSTICS
         // 진단 전용 가상 모니터 수(환경변수 — 호스트 인자는 셸 StartupArgs 로 넘어가 자동 저장을 끄므로 쓰지 않는다). --primary-override 와 함께여야 켜진다.
@@ -35,8 +36,8 @@ internal static class MonitorFitService
         }
 #endif
         MonitorMenuViewModel.Provider = DesktopMonitorProvider.Instance;
-        var previous = App.ConfigureMainWindow;
-        App.ConfigureMainWindow = w =>
+        var previous = host.ConfigureMainWindow;
+        host.ConfigureMainWindow = w =>
         {
             previous?.Invoke(w);
             Attach(w);

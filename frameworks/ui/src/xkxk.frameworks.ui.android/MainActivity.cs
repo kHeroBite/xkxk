@@ -38,7 +38,8 @@ public sealed class MainActivity : AvaloniaMainActivity
         // 자동 저장 억제·--fresh(ApplyStartupArgs 재판정)에만 효과가 있고 --loc static·--notify-panel 에는 늦다.
         if (!AndroidApp.ArgsFromFile && Intent?.GetStringExtra("pdargs") is { Length: > 0 } pdargs)
         {
-            App.StartupArgs = pdargs.Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
+            // 대입 대신 오버로드(B03) — 결과는 MainView 의 재판정과 같다
+            App.ApplyStartupArgs(pdargs.Split(' ', System.StringSplitOptions.RemoveEmptyEntries));
         }
 #endif
         UpdateShortSide(Resources?.Configuration); // D-C3-14: 기기 분류를 첫 레이아웃 크기가 아니라 기기 고정값으로(앱 초기화 전)

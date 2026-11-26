@@ -1,4 +1,4 @@
-// PoC 셸 Application 진입 — 호스트 주입점(시작 인자·레이아웃 저장소·메인 창 설정)과 문서 뷰 생성기
+// PoC 셸 Application 진입 — 호스트 주입점(시작 인자·레이아웃 저장소·메인 창 설정)·호스트 값 연결(BindHost)과 문서 뷰 생성기
 using xkxk.frameworks.ui.data;
 using xkxk.frameworks.ui.data.Layout;
 using xkxk.frameworks.ui.shell.Platform;
@@ -12,6 +12,7 @@ using Avalonia.Controls.Templates;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Diagnostics;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 using xkxk.frameworks.ui.shell.Lifecycle;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.shell.ViewModels;
@@ -20,16 +21,16 @@ namespace xkxk.frameworks.ui.shell;
 
 public class App : Application
 {
-    /// <summary>AutomationBridge 인자. 데스크톱=Main args, 브라우저=URL 쿼리를 호스트가 --인자 배열로 변환.</summary>
+    /// <summary>AutomationBridge 인자. 데스크톱=Main args, 브라우저=URL 쿼리를 호스트가 --인자 배열로 변환. 호스트는 XkxkUiBuilderOptions.Args(1개 이상일 때)로 준다(B03). 옵션 값이 있으면 옵션이 우선한다. setter 는 B16 에 Obsolete 예고, B21 에 제거한다.</summary>
     public static IReadOnlyList<string> StartupArgs { get; set; } = Array.Empty<string>();
 
     /// <summary>--fresh 로 시작했는가(기동 자동 복원 생략·종료 자동 저장 끔). 브라우저는 URL ?fresh 가 같은 인자가 된다.</summary>
     public static bool FreshStart { get; private set; }
 
-    /// <summary>레이아웃 저장소. 호스트가 시작 전에 주입(데스크톱 파일 / 브라우저 localStorage).</summary>
+    /// <summary>레이아웃 저장소. 호스트가 시작 전에 주입(데스크톱 파일 / 브라우저 localStorage). 호스트는 XkxkUiBuilderOptions.Host로 준다(B03). 옵션 값이 있으면 옵션이 우선한다. setter 는 B16 에 Obsolete 예고, B21 에 제거한다.</summary>
     public static ILayoutStore LayoutStore { get; set; } = new MemoryLayoutStore();
 
-    /// <summary>UI 설정(테마·글자 크기·폰트) 저장소. 호스트가 주입(데스크톱 파일 / 브라우저 localStorage). null 이면 저장 안 함.</summary>
+    /// <summary>UI 설정(테마·글자 크기·폰트) 저장소. 호스트가 주입(데스크톱 파일 / 브라우저 localStorage). null 이면 저장 안 함. 호스트는 XkxkUiBuilderOptions.Host로 준다(B03). 옵션 값이 있으면 옵션이 우선한다. setter 는 B16 에 Obsolete 예고, B21 에 제거한다.</summary>
     public static ILayoutStore? SettingsStore { get; set; }
 
     /// <summary>문서 종류 → 뷰 생성기.</summary>
@@ -41,19 +42,19 @@ public class App : Application
 
     private static IDocumentViewFactory? s_documentViews;
 
-    /// <summary>데스크톱 메인 창 생성 직후 호출(화면 밖 배치·위치 정상화 등 호스트 처리).</summary>
+    /// <summary>데스크톱 메인 창 생성 직후 호출(화면 밖 배치·위치 정상화 등 호스트 처리). 호스트는 XkxkUiBuilderOptions.Host로 준다(B03). 옵션 값이 있으면 옵션이 우선한다. setter 는 B16 에 Obsolete 예고, B21 에 제거한다.</summary>
     public static Action<Window>? ConfigureMainWindow { get; set; }
 
-    /// <summary>창의 보이는 프레임(물리 px). 데스크톱 호스트가 준다. 없거나 null 이면 창 틀 크기로 본다(알림 패널 비켜 놓기용).</summary>
+    /// <summary>창의 보이는 프레임(물리 px). 데스크톱 호스트가 준다. 없거나 null 이면 창 틀 크기로 본다(알림 패널 비켜 놓기용). 호스트는 XkxkUiBuilderOptions.Host로 준다(B03). 옵션 값이 있으면 옵션이 우선한다. setter 는 B16 에 Obsolete 예고, B21 에 제거한다.</summary>
     public static Func<Window, PixelRect?>? VisibleFrameOf { get; set; }
 
-    /// <summary>데스크톱 SDI(플로팅) 호스트 창 생성기. null 이면 Dock 기본 HostWindow. 같은 UI 스레드에서 생성된다.</summary>
+    /// <summary>데스크톱 SDI(플로팅) 호스트 창 생성기. null 이면 Dock 기본 HostWindow. 같은 UI 스레드에서 생성된다. 호스트는 XkxkUiBuilderOptions.Host로 준다(B03). 옵션 값이 있으면 옵션이 우선한다. setter 는 B16 에 Obsolete 예고, B21 에 제거한다.</summary>
     public static Func<IHostWindow>? CreateHostWindow { get; set; }
 
-    /// <summary>윈도우 메뉴 ④~⑩·⑬ 실행 호스트(데스크톱 = odev-4b, 브라우저 관리형 창 = odev-7c). null 이면 셸 기본 경로만 쓴다.</summary>
+    /// <summary>윈도우 메뉴 ④~⑩·⑬ 실행 호스트(데스크톱 = odev-4b, 브라우저 관리형 창 = odev-7c). null 이면 셸 기본 경로만 쓴다. 호스트는 XkxkUiBuilderOptions.Host로 준다(B03). 옵션 값이 있으면 옵션이 우선한다. setter 는 B16 에 Obsolete 예고, B21 에 제거한다.</summary>
     public static IWindowHostCommands? WindowHost { get; set; }
 
-    /// <summary>개인 레이아웃 저장소(UI-11). 호스트가 주입(데스크톱·Android 폴더 / 브라우저 localStorage). null 이면 메모리(종료 시 소멸).</summary>
+    /// <summary>개인 레이아웃 저장소(UI-11). 호스트가 주입(데스크톱·Android 폴더 / 브라우저 localStorage). null 이면 메모리(종료 시 소멸). 호스트는 XkxkUiBuilderOptions.Host로 준다(B03). 옵션 값이 있으면 옵션이 우선한다. setter 는 B16 에 Obsolete 예고, B21 에 제거한다.</summary>
     public static IKeyValueStore? LayoutLibraryStore { get; set; }
 
     /// <summary>레이아웃 라이브러리(UI-11) — 메뉴·관리 창·원격 공용 표면.</summary>
@@ -149,6 +150,37 @@ public class App : Application
         {
             vm.WindowMenu.SuppressAutoSave = FreshStart || AutomationBridge.HasScenarioArgs(StartupArgs);
         }
+    }
+
+    /// <summary>
+    /// 늦게 도착한 시작 인자(Android 인텐트 등)로 바꾼 뒤 <see cref="ApplyStartupArgs()"/> 를 다시 한다.
+    /// 셸 루트 공개 메서드(PublicAPI 분석기 범위 밖), B21 정리 대상.
+    /// </summary>
+    public static void ApplyStartupArgs(IReadOnlyList<string> args)
+    {
+        ArgumentNullException.ThrowIfNull(args);
+        StartupArgs = args.ToArray();
+        ApplyStartupArgs();
+    }
+
+    /// <summary>
+    /// 빌더 옵션의 호스트 값을 정적 주입점에 1회 연결한다(UseXkxkUi 가 부른다). 비 null 값(Args 는 1개 이상)만 대입하고
+    /// null 이면 기존 정적 값을 그대로 둔다 — 정적 setter 로 먼저 넣은 값과 옵션이 둘 다 있으면 옵션이 우선한다(UADR-0010).
+    /// 연결 뒤 옵션 변경은 반영하지 않는다.
+    /// </summary>
+    internal static void BindHost(XkxkUiApplication application)
+    {
+        ArgumentNullException.ThrowIfNull(application);
+        var options = application.Options;
+        var host = options.Host;
+        if (options.Args.Count > 0) { StartupArgs = options.Args.ToArray(); }
+        if (host.LayoutStore is { } layout) { LayoutStore = layout; }
+        if (host.SettingsStore is { } settings) { SettingsStore = settings; }
+        if (host.LayoutLibraryStore is { } library) { LayoutLibraryStore = library; }
+        if (host.ConfigureMainWindow is { } configure) { ConfigureMainWindow = configure; }
+        if (host.VisibleFrameOf is { } frame) { VisibleFrameOf = frame; }
+        if (host.CreateHostWindow is { } create) { CreateHostWindow = create; }
+        if (host.WindowHost is { } windowHost) { WindowHost = windowHost; }
     }
 
     /// <summary>--fresh 를 소비(자동화 인자에서 뺌)하고 임시 설정 인자(--theme·--font 등 — settings.json 에 저장하지 않음)를 지정한다.</summary>

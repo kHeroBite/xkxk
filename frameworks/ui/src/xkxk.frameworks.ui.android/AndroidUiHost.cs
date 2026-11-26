@@ -5,22 +5,44 @@ namespace xkxk.frameworks.ui.android;
 
 /// <summary>
 /// Android 진입부(<c>AndroidApp.CustomizeAppBuilder</c>)가 <see cref="XkxkUi.CreateBuilder(XkxkUiBuilderOptions)"/> 를 거치게 하는 내부 어댑터다.
-/// 모듈은 등록하지 않는다(B02 동작 불변). 공개 호스트 확장(UseAndroidHost 등)은 B11 범위다.
+/// 모듈은 등록하지 않는다. 호스트 값(저장소)은 App 에 직접 대입하지 않고
+/// <see cref="XkxkUiBuilderOptions.Host"/> 로 넘기며, UseXkxkUi 가 App 에 1회 연결한다(B03, UADR-0010).
+/// 공개 호스트 확장(UseAndroidHost 등)은 B11 범위다.
 /// </summary>
 internal static class AndroidUiHost
 {
-    /// <summary>호스트 인자로 빌더를 만들고 구성 결과를 로그에 남긴다.</summary>
-    /// <param name="args">기동 시점의 앱 인자(App.StartupArgs).</param>
+    /// <summary>호스트 인자와 호스트 값으로 빌더를 만들고 구성 결과를 로그에 남긴다.</summary>
+    /// <param name="args">셸에 넘기는 앱 인자(파일 인자 반영·--gpu 제거 뒤 값).</param>
+    /// <param name="configureHost">호스트 값 묶음(<see cref="UiHostOptions"/>)을 채우는 대리자.</param>
     /// <param name="log">호스트 로그 출력(logcat).</param>
-    internal static XkxkUiApplication Build(IReadOnlyList<string> args, Action<string> log)
+    internal static XkxkUiApplication Build(IReadOnlyList<string> args, Action<UiHostOptions> configureHost, Action<string> log)
     {
-        // Options.Args 는 기동 시점 사본이다(--gpu 제거 전, 인텐트 인자는 뒤에 MainActivity 가 넣음). B02 에는 소비자가 없고 정확한 값은 B03 에서 맞춘다.
-        var app = XkxkUi.CreateBuilder(new XkxkUiBuilderOptions
+        ArgumentNullException.ThrowIfNull(configureHost);
+        // Args 는 파일 인자 반영·--gpu 제거 뒤 값이다. 인텐트 인자는 MainActivity 가 App.ApplyStartupArgs(args) 로 늦게 넘긴다.
+        var options = new XkxkUiBuilderOptions
         {
             Args = [.. args],
+            ApplicationId = "xkxk.frameworks.ui",
             HostKind = UiHostKinds.Android,
-        }).Build();
-        log($"ui builder host={app.Options.HostKind} modules={app.ModuleIds.Count} diagnostics={app.Diagnostics.Entries.Count}");
+        };
+        configureHost(options.Host);
+        var app = XkxkUi.CreateBuilder(options).Build();
+        log($"ui builder host={app.Options.HostKind} modules={app.ModuleIds.Count} diagnostics={app.Diagnostics.Entries.Count} app={app.Options.ApplicationId} host-options={HostOptionKeys(app.Options.Host)}");
         return app;
+    }
+
+    // 데스크톱·웹 어댑터와 같은 규칙의 사본이다. B11 hosting 분리 때 한 곳으로 합친다.
+    /// <summary>값이 있는 호스트 값의 키를 고정 순서로 쉼표 연결한다(없으면 빈 문자열).</summary>
+    private static string HostOptionKeys(UiHostOptions h)
+    {
+        var keys = new List<string>(7);
+        if (h.LayoutStore is not null) keys.Add("layout");
+        if (h.SettingsStore is not null) keys.Add("settings");
+        if (h.LayoutLibraryStore is not null) keys.Add("library");
+        if (h.ConfigureMainWindow is not null) keys.Add("mainwindow");
+        if (h.VisibleFrameOf is not null) keys.Add("visibleframe");
+        if (h.CreateHostWindow is not null) keys.Add("sdihost");
+        if (h.WindowHost is not null) keys.Add("windowhost");
+        return string.Join(',', keys);
     }
 }
