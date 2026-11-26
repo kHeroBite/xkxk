@@ -4,6 +4,18 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-27 — 별별UI B08 메뉴 열기 측정기·모듈 구성 시간·F2 끝 회귀(O4, B08, conv_179570580620)
+- 목적. F2(레지스트리화)가 메뉴 경로에 더한 비용을 실제 ms 로 남기고 F2 끝 회귀를 확인한다(a4 B08, 목표 후보 50ms 이하). 공개 API 는 바뀌지 않았고 새 ADR 은 없다.
+- 진단 원격 명령. `menu.open`(명령 진입 → 팝업 첫 프레임)과 `perf.modules`(`Build`·모듈별 `Configure` 시간)를 더했다(`RemoteMenuOpenCommands.cs`, 진단 빌드 전용). 셸 내부 `UiModuleTimings.cs` 가 `XkxkUiBuilder.Build` 마지막 1회분을 기록하고, 화면 층 `MenuPerf.cs` 가 `ui.menu.build`·`ui.menu.refresh` 를 잰다.
+- 측정기. `test/framework/measure/perf_menu_open.py`(보조 `perf_menu_open_hosts.py`·`perf_menu_open_selftest.py`)를 만들었다. 자기시험 18/18 PASS 이고 없는 메뉴 ID 카나리아는 기대대로 rc=1 이다.
+- 웹 측정(2026-11-27 01:23, PC 비움, headless, 메뉴당 20회·4메뉴, load1 1.23). 통합 p50 7.4 / p95 14.2 / max 22.1ms 로 목표 후보 안이다. 메뉴별 p50·p95·max(ms)는 `mnuFile` 7.3·9.9·14.2, `mnuWindow` 12.7·16.0·22.1, `mnuView` 6.3·9.6·12.6, `mnuSys` 6.4·11.4·18.8 이다. `ui.menu.build` p50 7.3·max 38.2ms, `ui.menu.refresh` p95 1.6·max 4.4ms, 모듈 `total_configure_ms` 0(모듈 0개)이다.
+- 부하 조건 참고. 1회차(00:43, 역라우팅 수정 전 빌드, load1 9.39)의 통합 p95 는 108.3ms 였다. 차이의 원인은 확인하지 않았다(부하 차이로 추정).
+- Fold5 실기기. 재빌드한 Debug APK 로 접지 않고 펼친 화면·전면 화면 스모크 PASS(태블릿형 `menu.open` 16/16, `nav.menu` 63행, 치명 오류·ANR 0). Debug 참고값 `ui.menu.open.firstframe` p95 80.2ms(n=16)는 성능 판정이 아니다.
+- 회귀(R-F2). 빌드(데스크톱 Debug·Product·Release, 웹, Android) rc=0·오류 0, `verify_framework.sh` 9단계 rc=0(계약 62/62), 새 실패 0(PASS 15·기준선과 같은 FAIL 2·WAIT 11·DEFERRED 1, `logs/b08_regress.json`).
+- 역라우팅 1회. AC-003·AC-017 자동 검사가 문자열을 찾지 못해 FAIL 이라 주석을 더했고(동작 변경 없음), 다른 최상위가 열린 상태의 `menu.open` 은 오류를 내도록 고쳤으며, 새 IL2026 경고 1건을 없앴다.
+- 결과. AC 17건 중 PASS 14, 부분 충족 1(AC-008 모듈 1개 이상 미실증), WAIT 2(AC-012 데스크톱 측정 UTODO-0031, AC-013 F 끝 포그라운드 UTODO-0029). a4 B08 진척은 대기다. 새 과제는 UTODO-0037~0041 이다.
+- 문서. a3 §6·§7(지표 정의·측정값, `FUNCTIONAL_PASS` 조건을 구현에 맞춤)·a9 §13·§14·a4·`test/README.md`·`LAYERS.md`(생성기)를 갱신했다.
+
 ## 2026-11-26 — 별별UI B07b 소비자 문서·공개 API 명세 생성기·불일치 검사기(UADR-0015)·AI 실증(O4, B07b, conv_179568972584)
 - 요청·결정. 다른 프로젝트의 AI 가 문서만으로 별별UI 를 쓰도록 하라는 요청(RAW-005, REQ-123)을 받아, 소비자 문서를 영역 `docs/` 에 두고 API 명세는 PublicAPI 파일과 `///` 주석에서 생성하며 문서 불일치는 `verify_framework.sh` 의 docs 단계로 막기로 했다(UADR-0015). a4 에는 B07b batch 를 B07 과 B08 사이에 넣고 이후 batch 의 문서 의무를 §1 공통 끝 조건에 더했다.
 - 소비자 문서. `docs/README.md`(진입점)·`docs/01_시작하기.md`·`docs/02_확장_메뉴명령아이콘.md`·`docs/03_AI_활용안내.md` 를 새로 쓰고, 영역 `README.md` 와 저장소 루트 `README.md` 에서 링크했다.

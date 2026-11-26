@@ -87,6 +87,7 @@ public sealed class RemoteCommandRouter
         RemoteDockAsDocumentCommands.Register(r); // D-DAD1 판정 dock.asDocument(odev-1s, RemoteDockAsDocumentCommands.cs)
         RemoteTrayCommands.Register(r); // 시스템 트레이 tray.state·tray.invoke·tray.enable(odev-tray, RemoteTrayCommands.cs)
         RemoteMenuIconCommands.Register(r); // B1 상단 메뉴 아이콘 menu.icons·menu.render(RemoteMenuIconCommands.cs)
+        RemoteMenuOpenCommands.Register(r); // B08 메뉴 열기 측정 menu.open·perf.modules(RemoteMenuOpenCommands.cs)
         RemoteRegistryCommands.Register(r); // B06 아이콘·명령 레지스트리 registry.dump·command.run(RemoteRegistryCommands.cs)
         RemoteRegistryMutateCommands.Register(r); // B07 실행 중 메뉴·아이콘 변경 registry.menu.add·remove, registry.icon.add·remove(RemoteRegistryMutateCommands.cs)
         RemoteModalCommands.Register(r); // B3 설정 창 앱 모달 modal.state(RemoteModalCommands.cs)

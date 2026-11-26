@@ -31,7 +31,9 @@ internal sealed class MenuBuilder
     {
         ArgumentNullException.ThrowIfNull(menus);
         _menus = menus;
+        var t0 = MenuPerf.Start();
         Rebuild(null);
+        MenuPerf.Stop(MenuPerf.Build, t0); // 조작 기록 ui.menu.build(첫 구성)
     }
 
     /// <summary>지금 최상위 메뉴(레지스트리 순서). 보이지 않는 최상위도 들어 있다.</summary>
@@ -91,7 +93,9 @@ internal sealed class MenuBuilder
             var dirty = _all ? null : _dirty.ToArray();
             _all = false;
             _dirty.Clear();
+            var t0 = MenuPerf.Start();
             Rebuild(dirty);
+            MenuPerf.Stop(MenuPerf.Build, t0); // 조작 기록 ui.menu.build(변경 재구성)
             TopsChanged?.Invoke();
         });
     }
@@ -219,6 +223,7 @@ internal sealed class MenuBuilder
         }
 
         var isTop = ReferenceEquals(opened, sender);
+        var t0 = isTop ? MenuPerf.Start() : 0; // 최상위 열림 처리 전체(창 목록·정의 상태·섹션)를 ui.menu.refresh 로 잰다.
         if (isTop && XkxkUi.Current.MainViewModel is { } vm)
         {
             vm.WindowMenu.OpenWindows.Refresh();
@@ -229,6 +234,7 @@ internal sealed class MenuBuilder
         if (isTop)
         {
             ShellMenuSections.RefreshOnOpen(opened); // 정의 상태를 맞춘 뒤 섹션이 마지막에 덮는다(스냅 0개면 하위 메뉴 숨김).
+            MenuPerf.Stop(MenuPerf.Refresh, t0); // 조작 기록 ui.menu.refresh
         }
     }
 

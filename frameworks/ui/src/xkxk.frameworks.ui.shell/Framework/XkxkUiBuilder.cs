@@ -1,6 +1,7 @@
 // 별별UI 빌더 — 모듈·서비스를 모아 Build 에서 등록 순서대로 1회 구성한다(생성자 internal)
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace xkxk.frameworks.ui.shell.Framework;
 
@@ -69,6 +70,10 @@ public sealed class XkxkUiBuilder
         ThrowIfBuilt();
         _built = true;
 
+        // 모듈별 구성 시간 기록(D3). 마지막 Build 1회분만 남는다.
+        var buildStart = Stopwatch.GetTimestamp();
+        UiModuleTimings.Begin();
+
         var configured = new List<string>();
         var seen = new HashSet<string>(StringComparer.Ordinal);
         var session = new UiBuildSession();
@@ -84,6 +89,9 @@ public sealed class XkxkUiBuilder
         }
 
         session.Complete(UiAppContext.Instance.IconStore, Diagnostics);
+
+        // return 과 Throw 양쪽 모두 기록이 끝나도록 분기 앞에서 Complete 한다.
+        UiModuleTimings.Complete(Stopwatch.GetElapsedTime(buildStart).TotalMilliseconds);
 
         if (Diagnostics.HasErrors && Options.ErrorPolicy == UiErrorPolicy.Throw)
         {
@@ -115,13 +123,16 @@ public sealed class XkxkUiBuilder
             return;
         }
 
+        var configureStart = Stopwatch.GetTimestamp();
         try
         {
             module.Configure(new UiModuleContext(id, Options, Services, Diagnostics, session));
+            UiModuleTimings.Add(id, Stopwatch.GetElapsedTime(configureStart).TotalMilliseconds, true);
             configured.Add(id);
         }
         catch (Exception ex)
         {
+            UiModuleTimings.Add(id, Stopwatch.GetElapsedTime(configureStart).TotalMilliseconds, false);
             Diagnostics.Report(new UiDiagnostic(
                 UiDiagnosticIds.ModuleConfigureFailed,
                 UiDiagnosticSeverity.Error,

@@ -8,13 +8,13 @@
 | 층 | 파일 수 |
 |---|---:|
 | Control | 310 |
-| Data | 63 |
-| Diag | 92 |
+| Data | 64 |
+| Diag | 93 |
 | Host | 77 |
 | Ui | 26 |
-| Views | 237 |
+| Views | 238 |
 
-합계 805개(.cs·.axaml).
+합계 808개(.cs·.axaml).
 
 ## 끊어야 하는 참조(현재 기준 금지 방향)
 
@@ -201,6 +201,7 @@
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteLayoutsCommands.cs` | Diag |  | 진단 전용 폴더 |  |  | RemoteLayoutsCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteLoadSelfTest.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteLoadSelfTest |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteMenuIconCommands.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteMenuIconCommands |
+| `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteMenuOpenCommands.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteMenuOpenCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteModalCommands.cs` | Diag |  | 진단 전용 폴더 | O |  |  |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteMonitorCommands.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteMonitorCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteNotifyCommands.cs` | Diag |  | 진단 전용 폴더 |  |  | RemoteNotifyCommands |
@@ -427,6 +428,7 @@
 | `xkxk.frameworks.ui.shell/Framework/UiMenuSurface.cs` | Data | xkxk.frameworks.ui.data/Framework/UiMenuSurface.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiModule.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(IUiModuleContext.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiModuleContext.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiAppContext.cs) |  |  | UiModuleContext |
+| `xkxk.frameworks.ui.shell/Framework/UiModuleTimings.cs` | Data | xkxk.frameworks.ui.data/Framework/UiModuleTimings.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  | UiModuleTimings |
 | `xkxk.frameworks.ui.shell/Framework/UiRegistryChangeKind.cs` | Data | xkxk.frameworks.ui.data/Framework/UiRegistryChangeKind.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiRegistryChangedEventArgs.cs` | Data | xkxk.frameworks.ui.data/Framework/UiRegistryChangedEventArgs.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiRegistryOwners.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  |  |
@@ -711,6 +713,7 @@
 | `xkxk.frameworks.ui.views/MdiStaticLight.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O | O | MdiStaticLight |
 | `xkxk.frameworks.ui.views/Menus/MenuBuilder.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | MenuBuilder |
 | `xkxk.frameworks.ui.views/Menus/MenuIcon.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.views/Menus/MenuPerf.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 |  |  | MenuPerf |
 | `xkxk.frameworks.ui.views/Menus/RegistryMenuCommand.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | RegistryMenuCommand |
 | `xkxk.frameworks.ui.views/Menus/ShellMenuSections.Window.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | ShellMenuSections |
 | `xkxk.frameworks.ui.views/Menus/ShellMenuSections.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | ShellMenuSections |
