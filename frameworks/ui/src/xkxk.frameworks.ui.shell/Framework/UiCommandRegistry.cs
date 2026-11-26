@@ -1,4 +1,4 @@
-// 명령 레지스트리 내부 저장소(UiCommandStore)·등록 주체별 보기·빌드 세션(UiBuildSession) — 진단 XKUI0301~0309·정책 P1~P4(UADR-0013)
+// 명령 레지스트리 내부 저장소(UiCommandStore)·등록 주체별 보기·빌드 세션(UiBuildSession) — 진단 XKUI0301~0309(단축키 0305·0310 은 .Gesture.cs)·정책 P1~P4(UADR-0013)
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -13,7 +13,7 @@ namespace xkxk.frameworks.ui.shell.Framework;
 /// <remarks>
 /// 잠금은 1개이며 대리자 호출·Changed 발생·진단 보고는 잠금 밖에서 한다. 실행 진단(XKUI0306·0307)은 늘 앱 Diagnostics 로 간다.
 /// </remarks>
-internal sealed class UiCommandStore
+internal sealed partial class UiCommandStore
 {
     private readonly object _gate = new();
     private readonly IUiAppContext _app;
@@ -57,11 +57,11 @@ internal sealed class UiCommandStore
             return Fail(sink, UiDiagnosticIds.CommandExecuteMissing, $"명령 '{id}' 에 Execute 가 없어 등록하지 않는다.", owner); // i18n-ok 개발자 진단
         }
 
-        var gestureOk = o.Gesture is null || UiGestureText.IsValid(o.Gesture);
-        var def = new UiCommandDefinition(id, o, gestureOk ? o.Gesture : null, owner);
+        var def = new UiCommandDefinition(id, o, UiGestureText.IsValid(o.Gesture) ? o.Gesture : null, owner);
         var entry = new Entry(def, o.Execute, o.CanExecute);
         var reserved = !UiRegistryOwners.IsFramework(owner) && id.StartsWith(UiRegistryOwners.ReservedPrefix, StringComparison.Ordinal);
         int index;
+        UiCommandDefinition? conflict;
         lock (_gate)
         {
             // 중복(Replace 아님)·예약(T-RESERVED ①: 없는 xkxk.* ID 를 새로 만듦, Replace 무관)은 등록하지 않는다.
@@ -74,6 +74,8 @@ internal sealed class UiCommandStore
             {
                 _entries.Add(entry); // P1 Replace 인데 없으면 새로 등록(Added).
             }
+
+            conflict = FindGestureConflict(def); // 등록을 거부하면 아래에서 먼저 돌아가 쓰지 않는다.
         }
 
         if (index >= 0 && !o.Replace)
@@ -86,10 +88,7 @@ internal sealed class UiCommandStore
             return Fail(sink, UiDiagnosticIds.CommandIdReserved, $"명령 ID '{id}' 는 프레임워크 예약 접두어({UiRegistryOwners.ReservedPrefix})를 쓴다.", owner); // i18n-ok 개발자 진단
         }
 
-        if (!gestureOk)
-        {
-            Fail(sink, UiDiagnosticIds.CommandGestureInvalid, $"명령 '{id}' 의 단축키 '{o.Gesture}' 가 문법에 맞지 않아 버린다.", owner); // i18n-ok 개발자 진단
-        }
+        ReportGesture(sink, def, o.Gesture, conflict);
 
         if (o.Icon is not null && (session is null || !session.Defer(id, o.Icon, owner)) && !_icons.CanResolve(o.Icon))
         {

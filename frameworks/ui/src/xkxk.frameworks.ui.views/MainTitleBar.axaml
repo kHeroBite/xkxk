@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:xkxk.frameworks.ui.shell.ViewModels"
              xmlns:views="using:xkxk.frameworks.ui.views"
-             xmlns:menus="using:xkxk.frameworks.ui.views.Menus"
              xmlns:loc="using:xkxk.frameworks.ui.shell.Localization"
              xmlns:chrome="using:Avalonia.Controls.Chrome"
              xmlns:snap="using:xkxk.frameworks.ui.views.Snap"
@@ -83,11 +82,8 @@
 
       <Menu x:Name="MainMenu" Grid.Column="2" VerticalAlignment="Center" Background="Transparent"
             chrome:WindowDecorationProperties.ElementRole="User" AutomationProperties.AutomationId="shell.menu">
-        <!-- 메뉴 AutomationId 규칙: shell.mnu{동작} (UI-08 원격 제어 ui.click 용) -->
-        <menus:FileMenu />
-        <menus:WindowMenu />
-        <menus:ViewMenu />
-        <menus:SystemMenuItem />
+        <!-- 최상위 메뉴(파일·창·보기·시스템과 솔루션 메뉴)는 메뉴 레지스트리에서 코드 비하인드(Menus/MenuBuilder)가 이 더보기 앞에 넣는다(UADR-0014).
+             AutomationId 규칙: 셸 항목은 정의의 shell.mnu{동작} (UI-08 원격 제어 ui.click 용) -->
         <!-- 더보기(D-W2): 웹·Android 의 좁은 폭(접힘 402dp 등)에서 제목줄에 다 들어가지 않는 뒤쪽 메뉴를 이 아래로 옮긴다. 다 들어가면 숨김(코드 비하인드 ReflowMenu) -->
         <MenuItem x:Name="MoreMenu" Header="{loc:Tr menu.more}" IsVisible="False" AutomationProperties.AutomationId="shell.mnuMore" />
       </Menu>

@@ -1,9 +1,8 @@
-// 모바일형 하단 탭·삼선 서랍 컨트롤 레이어 — 카탈로그 항목을 기존 메인 뷰모델 명령에 연결하고 비활성 항목에 사유를 붙인다
+// 모바일형 하단 탭·삼선 서랍 컨트롤 레이어 — 메뉴 레지스트리 투영 항목을 레지스트리 명령에 연결하고 비활성 항목에 사유를 붙인다(투영·실행은 .Menu.cs)
 using xkxk.frameworks.ui.data.Navigation;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Localization;
@@ -99,14 +98,16 @@ public sealed partial class MobileNavViewModel : ObservableObject
     public MobileNavViewModel(MainViewModel main)
     {
         Main = main;
-        MenuItems = new ObservableCollection<MobileNavItem>(NavMenuCatalog.Entries.Select(e => new MobileNavItem(e, Execute)));
-        var tabs = NavMenuCatalog.Tabs.Select(t => new MobileNavTab(t.Id, t.TabKey!, t.Icon!, () => OpenTab(t))).ToList();
-        tabs.Add(new MobileNavTab("more", NavMenuCatalog.MoreTabKey, NavMenuCatalog.MoreIcon, () => TogglePanel(PanelMenu)));
-        Tabs = new ObservableCollection<MobileNavTab>(tabs);
+        MenuItems = new ObservableCollection<MobileNavItem>();
+        Tabs = new ObservableCollection<MobileNavTab>();
+        RebuildMenu(); // 서랍·하단 탭은 메뉴 레지스트리 투영에서 만든다(.Menu.cs)
         ToggleMenuCommand = new RelayCommand(() => TogglePanel(PanelMenu));
         CloseSettingsSheetCommand = new RelayCommand(CloseSettingsSheet);
         SystemHost.OpenSettingsSheet = OpenSettingsSheet;
+        ShellDefaultCommands.NavPanelOpener = OpenPanel; // xkxk.nav.openPanel 명령이 이 화면의 패널을 연다
         XkxkUi.Current.Localization.LanguageChanged += Refresh;
+        XkxkUi.Current.Menus.Changed += OnMenusChanged;
+        XkxkUi.Current.Commands.Changed += OnCommandsChanged;
         main.Compact.PropertyChanged += OnChildChanged;
         main.Compact.Style.PropertyChanged += OnChildChanged;
         main.WindowMenu.PropertyChanged += OnChildChanged;
@@ -165,21 +166,19 @@ public sealed partial class MobileNavViewModel : ObservableObject
 
     public bool IsDocsPanel => _panel == PanelDocs;
 
-    /// <summary>원격 진단 nav.menu 용 — 현재 런타임 상태(활성·사유)를 담은 JSON.</summary>
-    public string ToJson() => NavMenuCatalog.ToJson(e => { var (en, why, _) = Evaluate(e); return (en, why); });
-
-    private void OpenTab(NavEntry t)
+    /// <summary>xkxk.nav.openPanel 명령의 실행 대리자 — explorer·docs·menu 는 서랍 패널, notify 는 알림, settings 는 설정 시트.</summary>
+    private void OpenPanel(string panel)
     {
-        if (t.Param is PanelExplorer or PanelDocs) { TogglePanel(t.Param); return; }
+        if (panel is PanelMenu or PanelExplorer or PanelDocs) { TogglePanel(panel); return; }
         Compact.IsDrawerOpen = false;
-        if (t.Param == "settings")
+        if (panel == "settings")
         {
             if (IsSettingsSheetOpen) { CloseSettingsSheet(); } else { OpenSettingsSheet(); }
         }
         else
         {
             CloseSettingsSheet();
-            if (t.Param == "notify") { Compact.ToggleNotifyCommand.Execute(null); }
+            if (panel == "notify") { Compact.ToggleNotifyCommand.Execute(null); }
         }
 
         Refresh();
@@ -209,48 +208,6 @@ public sealed partial class MobileNavViewModel : ObservableObject
         Panel = panel;
         Refresh();
     }
-
-    private void Execute(NavEntry e)
-    {
-        if (e.IsGroup || !Evaluate(e).Enabled) { return; }
-        var p = e.Param;
-        switch (e.Command)
-        {
-            case "Panel": if (p is PanelExplorer or PanelDocs) { TogglePanel(p); } else { OpenTab(e); } return;
-            case "Open": Main.OpenCommand.Execute(p); break;
-            case "Bench": Main.Extras.OpenBenchCommand.Execute(p); break;
-            case "SaveLayout": Main.SaveLayoutCommand.Execute(null); break;
-            case "LoadLayout": Main.LoadLayoutCommand.Execute(null); break;
-            case "LayoutSave": Main.WindowMenu.SaveCurrentLayoutCommand.Execute(null); break;
-            case "LayoutManage": Main.WindowMenu.ManageLayoutsCommand.Execute(null); break;
-            case "Pin": Main.PinCommand.Execute(null); break;
-            case "CloseDoc": Main.CloseCommand.Execute(null); break;
-            case "CloseOthers": Main.CloseOthersCommand.Execute(null); break;
-            case "CloseAll": Main.CloseAllCommand.Execute(null); break;
-            case "Next": Main.NextCommand.Execute(null); break;
-            case "Prev": Main.PreviousCommand.Execute(null); break;
-            case "ResetLayout": Main.ResetLayoutCommand.Execute(null); break;
-            case "FontReset": Main.SettingsPanel.ResetFontCommand.Execute(null); break;
-            case "ToggleTheme": Main.SettingsPanel.ToggleThemeCommand.Execute(null); break;
-            case "SystemView": Main.SystemMenu.SystemViewCommand.Execute(p); break;
-        }
-
-        Compact.IsDrawerOpen = false; // 실행한 뒤에는 서랍을 닫아 결과 화면을 보인다
-    }
-
-    /// <summary>항목의 (활성, 비활성 사유 키, 켜짐) 판정. 모바일형 비적용 항목은 사유와 함께 비활성.</summary>
-    private (bool Enabled, string? Reason, bool On) Evaluate(NavEntry e)
-    {
-        if (!e.Applicable) { return (false, e.ReasonKey, false); }
-        switch (e.Command)
-        {
-            case "Bench": return Gate(Main.Extras.BenchAvailable);
-            case "SystemView" when e.Param == "RestartRequired": return Gate(Main.SystemMenu.SysGpuRestartPending);
-            default: return (true, null, false);
-        }
-    }
-
-    private static (bool, string?, bool) Gate(bool ok) => (ok, ok ? null : NavMenuCatalog.ReasonUnavailable, false);
 
     private void OnChildChanged(object? sender, PropertyChangedEventArgs e)
     {

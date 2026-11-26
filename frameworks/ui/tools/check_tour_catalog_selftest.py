@@ -1,9 +1,15 @@
 # 도움말 카탈로그 검사기 자체 시험 — 실제 파일 내용에 결함을 넣어 각 규칙이 잡는지 본다. 저장소 파일은 건드리지 않는다
 import json
+import re
 
 from check_tour_catalog_rules import CATALOG, Source, check
 
-MENU = "src/xkxk.frameworks.ui.views/Menus/FileMenu.axaml"
+MENU = "src/xkxk.frameworks.ui.views/Menus/FileMenu.axaml"  # e8950ea 까지의 메뉴 정본(B07 에서 삭제)
+TABLE = "src/xkxk.frameworks.ui.data/Navigation/ShellMenuTable.cs"  # B07 부터의 메뉴 정본 표
+COMMANDS = "src/xkxk.frameworks.ui.shell/Framework/ShellDefaultCommands.cs"
+NEW_ROW = ('    new("xkxk.file.brandNew", "xkxk.file", ShellMenuRowKind.Command, "xkxk.app.exit", null, "menu.file.exit", null,'
+           ' "shell.mnuBrandNew", null, null, null, Hidden),\n')
+FIRST_NO_GESTURE = re.compile(r'(\bAdd\(\s*\w+\s*,\s*ShellCommandIds\.\w+\s*,\s*"[^"]*"\s*,\s*[^,]+?\s*,\s*)null')
 TITLE = "src/xkxk.frameworks.ui.views/MainTitleBar.axaml"
 MAIN = "src/xkxk.frameworks.ui.views/MainView.axaml"
 EN = "src/xkxk.frameworks.ui.shell/Localization/sysview.en.json"
@@ -42,6 +48,21 @@ def set_field(item_of, field, value):
     return catalog_edit(lambda d: item_of(d).__setitem__(field, value))
 
 
+def new_menu_item(src):
+    """메뉴 정본에 새 항목 1개 — 표가 있으면 표 행(B07 이후), 없으면 옛 axaml."""
+    table = src.read(TABLE)
+    if table is not None:  # 마지막 메뉴 행 바로 뒤에 넣는다(배열 끝 표기가 '};'·'});' 어느 쪽이어도 된다)
+        lines = table.split("\n")
+        last = max(i for i, line in enumerate(lines) if '"shell.mnu' in line)
+        return {TABLE: "\n".join(lines[:last + 1] + [NEW_ROW.rstrip("\n")] + lines[last + 1:])}
+    return {MENU: replace_last(src.read(MENU), "</MenuItem>", NEW_ITEM)}
+
+
+def new_command_gesture(src):
+    """단축키가 없는 첫 명령 등록 줄에 카탈로그에 없는 Gesture 를 준다(메뉴 표시 단축키 = 명령 Gesture)."""
+    return {COMMANDS: FIRST_NO_GESTURE.sub(r'\1"Ctrl+Q"', src.read(COMMANDS), count=1)}
+
+
 # (이름, 변형, 문제 목록에 있어야 할 문구)
 CASES = (
     ("없는 대상", set_field(first_step, "target", "shell.gone"), "② 단계 main.menu 의 대상 없음: shell.gone"),
@@ -58,7 +79,8 @@ CASES = (
     ("단계 중복", catalog_edit(lambda d: d["steps"].append(dict(first_step(d)))), "④ 단계 id 중복: main.menu"),
     ("texts 금지", catalog_edit(lambda d: d.__setitem__("texts", {})), "⑤ 저장소 카탈로그에 texts 금지"),
     ("NAV 없음", catalog_edit(lambda d: d.__setitem__("steps", [s for s in d["steps"] if not s["id"].startswith("nav.")])), "④ NAV 단계가 없음"),
-    ("새 메뉴", text_edit(MENU, lambda t: replace_last(t, "</MenuItem>", NEW_ITEM)), "⑥ 카탈로그에 설명이 없는 새 항목: shell.mnuBrandNew"),
+    ("새 메뉴", new_menu_item, "⑥ 카탈로그에 설명이 없는 새 항목: shell.mnuBrandNew"),
+    ("명령 단축키 누락", new_command_gesture, "③ ShellDefaultCommands.cs 의 실제 키가 카탈로그에 없음: Ctrl+Q"),
     ("새 버튼", text_edit(TITLE, lambda t: t.replace("</UserControl>", '<Button AutomationProperties.AutomationId="shell.btnBrandNew" /></UserControl>')),
      "⑥ 카탈로그에 설명이 없는 새 항목: shell.btnBrandNew"),
     ("새 창 메뉴", text_edit(WIN_MENU, lambda t: t.replace('"Restore"),', '"Restore"),\n (WindowMenuAction.Pack, "chrome.winmenu.pack", "Pack"),')),

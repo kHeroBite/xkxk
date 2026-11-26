@@ -7,14 +7,14 @@
 
 | 층 | 파일 수 |
 |---|---:|
-| Control | 297 |
-| Data | 55 |
-| Diag | 91 |
+| Control | 310 |
+| Data | 63 |
+| Diag | 92 |
 | Host | 77 |
 | Ui | 26 |
-| Views | 240 |
+| Views | 237 |
 
-합계 786개(.cs·.axaml).
+합계 805개(.cs·.axaml).
 
 ## 끊어야 하는 참조(현재 기준 금지 방향)
 
@@ -85,6 +85,7 @@
 | `xkxk.frameworks.ui.data/Navigation/MenuIconCatalog.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Navigation/NavMenuCatalog.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Navigation/PersonalFavoriteStore.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  | FavoriteJsonContext |
+| `xkxk.frameworks.ui.data/Navigation/ShellMenuTable.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Rendering/GpuSetting.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Samples/GridSeedLegacy.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Samples/SampleLoadDelay.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
@@ -214,6 +215,7 @@
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteProductStubs.cs` | Diag |  | 진단 전용 폴더 |  |  |  |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteProtocol.cs` | Diag |  | 진단 전용 폴더 |  |  |  |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteRegistryCommands.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteRegistryCommands |
+| `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteRegistryMutateCommands.cs` | Diag |  | 진단 전용 폴더 |  |  | RemoteRegistryMutateCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteRenderOverlayCommands.cs` | Diag |  | 진단 전용 폴더 | O |  | RemoteRenderOverlayCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteRenderProbeCommands.cs` | Diag |  | 진단 전용 폴더 | O | O | RemoteRenderProbeCommands |
 | `xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteScrollCommands.cs` | Diag |  | 진단 전용 폴더 | O | O | RemoteScrollCommands |
@@ -382,15 +384,20 @@
 | `xkxk.frameworks.ui.shell/Framework/IUiCommandRegistry.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiCommandDefinition.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/IUiIconRegistry.cs` | Data | xkxk.frameworks.ui.data/Framework/IUiIconRegistry.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/IUiLocalizer.cs` | Data | xkxk.frameworks.ui.data/Framework/IUiLocalizer.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/IUiMenuRegistry.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiMenuItemDefinition.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/IUiModule.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(IUiModuleContext.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/IUiModuleContext.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(IUiCommandRegistry.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/IUiServiceProvider.cs` | Data | xkxk.frameworks.ui.data/Framework/IUiServiceProvider.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/ShellCommandIds.cs` | Data | xkxk.frameworks.ui.data/Framework/ShellCommandIds.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/ShellDefaultCommands.Menu.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  | ShellDefaultCommands |
 | `xkxk.frameworks.ui.shell/Framework/ShellDefaultCommands.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  | O | ShellDefaultCommands |
+| `xkxk.frameworks.ui.shell/Framework/ShellDefaultMenus.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  | ShellDefaultMenus |
+| `xkxk.frameworks.ui.shell/Framework/ShellMenuIds.cs` | Data | xkxk.frameworks.ui.data/Framework/ShellMenuIds.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiAppContext.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(ILayoutStore.cs) |  |  | UiAppContext |
 | `xkxk.frameworks.ui.shell/Framework/UiCommandContext.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiCommandDefinition.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiCommandContext.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiCommandOptions.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiCommandContext.cs) |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiCommandRegistry.Gesture.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiCommandDefinition.cs) |  |  | UiCommandStore |
 | `xkxk.frameworks.ui.shell/Framework/UiCommandRegistry.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  | UiCommandStore, UiBuildSession |
 | `xkxk.frameworks.ui.shell/Framework/UiConfigurationException.cs` | Data | xkxk.frameworks.ui.data/Framework/UiConfigurationException.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiDiagnostic.cs` | Data | xkxk.frameworks.ui.data/Framework/UiDiagnostic.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
@@ -404,8 +411,20 @@
 | `xkxk.frameworks.ui.shell/Framework/UiIconKind.cs` | Data | xkxk.frameworks.ui.data/Framework/UiIconKind.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiIconOptions.cs` | Data | xkxk.frameworks.ui.data/Framework/UiIconOptions.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiIconProvider.cs` | Data | xkxk.frameworks.ui.data/Framework/UiIconProvider.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiIconRegistry.Explicit.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiIconRegistry.cs) |  |  | UiIconStore |
 | `xkxk.frameworks.ui.shell/Framework/UiIconRegistry.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  | UiIconStore |
 | `xkxk.frameworks.ui.shell/Framework/UiLanguage.cs` | Data | xkxk.frameworks.ui.data/Framework/UiLanguage.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiMenuContext.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiMenuItemDefinition.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiMenuContext.cs) |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiMenuItemKind.cs` | Data | xkxk.frameworks.ui.data/Framework/UiMenuItemKind.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiMenuItemOptions.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiMenuContext.cs) |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiMenuItemState.cs` | Data | xkxk.frameworks.ui.data/Framework/UiMenuItemState.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiMenuMobileDefinition.cs` | Data | xkxk.frameworks.ui.data/Framework/UiMenuMobileDefinition.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiMenuMobileOptions.cs` | Data | xkxk.frameworks.ui.data/Framework/UiMenuMobileOptions.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiMenuPlacementOptions.cs` | Data | xkxk.frameworks.ui.data/Framework/UiMenuPlacementOptions.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiMenuRegistry.Rules.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiCommandDefinition.cs) |  |  | UiMenuStore |
+| `xkxk.frameworks.ui.shell/Framework/UiMenuRegistry.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  | UiMenuStore |
+| `xkxk.frameworks.ui.shell/Framework/UiMenuSurface.cs` | Data | xkxk.frameworks.ui.data/Framework/UiMenuSurface.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiModule.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(IUiModuleContext.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiModuleContext.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiAppContext.cs) |  |  | UiModuleContext |
 | `xkxk.frameworks.ui.shell/Framework/UiRegistryChangeKind.cs` | Data | xkxk.frameworks.ui.data/Framework/UiRegistryChangeKind.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
@@ -438,6 +457,7 @@
 | `xkxk.frameworks.ui.shell/Platform/ModalScope.RawGate.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Platform/ModalScope.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Platform/ShellPlatform.cs` | Control |  | 트레이·플랫폼 서비스. axaml 없음. 호스트 2곳·진단 2곳이 직접 쓴다 | O |  |  |
+| `xkxk.frameworks.ui.shell/Platform/ShellPlatformCommands.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  | ShellPlatformCommands |
 | `xkxk.frameworks.ui.shell/Platform/SystemDialogHost.cs` | Control |  | 창 수명 서비스(내용은 Control 로 받음, 화면 형식 무참조). 도킹·호스트·진단이 BackgroundMode 를 읽는다 | O |  |  |
 | `xkxk.frameworks.ui.shell/Platform/TrayMenuModel.cs` | Control |  | 트레이 메뉴 뷰모델. ShellPlatform 과 한 묶음 | O |  |  |
 | `xkxk.frameworks.ui.shell/Platform/UiDeferred.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
@@ -519,8 +539,10 @@
 | `xkxk.frameworks.ui.shell/ViewModels/LocalizedOption.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/LogTool.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(MainViewModel.cs) |  | O |  |
 | `xkxk.frameworks.ui.shell/ViewModels/MainViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  | O |  |
+| `xkxk.frameworks.ui.shell/ViewModels/MobileMenuProjection.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(UiMenuItemDefinition.cs) |  |  | MobileMenuProjection |
+| `xkxk.frameworks.ui.shell/ViewModels/MobileNavViewModel.Menu.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/MobileNavViewModel.Selection.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(PocDocument.cs) |  |  |  |
-| `xkxk.frameworks.ui.shell/ViewModels/MobileNavViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  |  |  |
+| `xkxk.frameworks.ui.shell/ViewModels/MobileNavViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(ShellDefaultCommands.Menu.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/MonitorMenuViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(IMonitorProvider.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/ViewModels/NotificationPanelViewModel.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUi.cs) |  | O |  |
 | `xkxk.frameworks.ui.shell/ViewModels/NotifyBadgeViewModel.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
@@ -663,6 +685,7 @@
 | `xkxk.frameworks.ui.views/FavoriteListView.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/FavoriteListView.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/GridViewPool.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.views/Input/RegistryGestureInput.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | RegistryGestureInput |
 | `xkxk.frameworks.ui.views/Input/ShortcutBindings.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Input/TabFocusScope.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Input/WindowKeyGestures.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
@@ -686,16 +709,12 @@
 | `xkxk.frameworks.ui.views/MdiStaticCache.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O | O | MdiStaticCache |
 | `xkxk.frameworks.ui.views/MdiStaticLight.Restore.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | MdiStaticLight |
 | `xkxk.frameworks.ui.views/MdiStaticLight.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O | O | MdiStaticLight |
-| `xkxk.frameworks.ui.views/Menus/FileMenu.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Menus/FileMenu.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.views/Menus/MenuBuilder.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | MenuBuilder |
 | `xkxk.frameworks.ui.views/Menus/MenuIcon.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.views/Menus/RegistryMenuCommand.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | RegistryMenuCommand |
+| `xkxk.frameworks.ui.views/Menus/ShellMenuSections.Window.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | ShellMenuSections |
+| `xkxk.frameworks.ui.views/Menus/ShellMenuSections.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | ShellMenuSections |
 | `xkxk.frameworks.ui.views/Menus/SnapCellGlyph.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Menus/SystemMenuItem.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Menus/SystemMenuItem.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Menus/ViewMenu.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Menus/ViewMenu.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Menus/WindowMenu.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Menus/WindowMenu.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/MobileNavView.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/MobileNavView.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/MoreWindowsView.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |

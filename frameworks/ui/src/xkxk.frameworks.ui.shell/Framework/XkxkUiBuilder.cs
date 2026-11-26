@@ -77,7 +77,12 @@ public sealed class XkxkUiBuilder
             ConfigureModule(module, configured, seen, session);
         }
 
-        // 모듈 순서와 무관하게 명령 아이콘을 Build 끝에 검사한다. 이 뒤의 모듈 레지스트리 등록은 실행 중 등록이다(ErrorPolicy 미적용).
+        // 모듈 순서와 무관하게 메뉴의 명령(XKUI0405)과 명령 아이콘을 Build 끝에 검사한다. 이 뒤의 모듈 레지스트리 등록은 실행 중 등록이다(ErrorPolicy 미적용).
+        if (UiAppContext.Instance.MenuStoreCreated)
+        {
+            UiAppContext.Instance.MenuStore.CompleteBuild(session, Diagnostics);
+        }
+
         session.Complete(UiAppContext.Instance.IconStore, Diagnostics);
 
         if (Diagnostics.HasErrors && Options.ErrorPolicy == UiErrorPolicy.Throw)

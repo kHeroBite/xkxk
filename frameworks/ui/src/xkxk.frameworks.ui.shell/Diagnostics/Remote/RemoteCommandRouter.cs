@@ -88,6 +88,7 @@ public sealed class RemoteCommandRouter
         RemoteTrayCommands.Register(r); // 시스템 트레이 tray.state·tray.invoke·tray.enable(odev-tray, RemoteTrayCommands.cs)
         RemoteMenuIconCommands.Register(r); // B1 상단 메뉴 아이콘 menu.icons·menu.render(RemoteMenuIconCommands.cs)
         RemoteRegistryCommands.Register(r); // B06 아이콘·명령 레지스트리 registry.dump·command.run(RemoteRegistryCommands.cs)
+        RemoteRegistryMutateCommands.Register(r); // B07 실행 중 메뉴·아이콘 변경 registry.menu.add·remove, registry.icon.add·remove(RemoteRegistryMutateCommands.cs)
         RemoteModalCommands.Register(r); // B3 설정 창 앱 모달 modal.state(RemoteModalCommands.cs)
         RemoteSimActiveCommands.Register(r); // 창 활성 처리기·탭 클릭 분기 시험 sim.*
         RemoteDockMenuInvokeCommands.Register(r); // Dock 메뉴 항목 실행 dock.menuInvoke(odev-chrome, RemoteDockMenuInvokeCommands.cs — L2 우클릭 대체)

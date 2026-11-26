@@ -4,16 +4,51 @@ abstract xkxk.frameworks.ui.shell.Framework.UiIconProvider.Keys.get -> System.Co
 abstract xkxk.frameworks.ui.shell.Framework.UiIconProvider.TryGetIcon(string! key, out xkxk.frameworks.ui.shell.Framework.UiIconDefinition? icon) -> bool
 abstract xkxk.frameworks.ui.shell.Framework.UiModule.Configure(xkxk.frameworks.ui.shell.Framework.IUiModuleContext! context) -> void
 abstract xkxk.frameworks.ui.shell.Framework.UiModule.Id.get -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.AppExit = "xkxk.app.exit" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.BenchOpen = "xkxk.bench.open" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.DemoOpen = "xkxk.demo.open" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.DemoOpenSdi = "xkxk.demo.openSdi" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.FavoriteToggle = "xkxk.favorite.toggle" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.LayoutLoad = "xkxk.layout.load" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.LayoutManage = "xkxk.layout.manage" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.LayoutPresetMdiCascade = "xkxk.layout.preset.mdiCascade" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.LayoutPresetMdiTileVertical = "xkxk.layout.preset.mdiTileVertical" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.LayoutPresetTabbed = "xkxk.layout.preset.tabbed" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.LayoutSave = "xkxk.layout.save" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.LayoutSaveCurrent = "xkxk.layout.saveCurrent" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.MainWindowReset = "xkxk.mainWindow.reset" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.MonitorMaximizeSelected = "xkxk.monitor.maximizeSelected" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.MonitorSingle = "xkxk.monitor.single" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.NavOpenPanel = "xkxk.nav.openPanel" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SdiCloseAll = "xkxk.sdi.closeAll" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SdiMinimizeAll = "xkxk.sdi.minimizeAll" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SdiResetPositions = "xkxk.sdi.resetPositions" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SdiRestoreAll = "xkxk.sdi.restoreAll" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SystemAbout = "xkxk.system.about" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SystemAppMonitor = "xkxk.system.appMonitor" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SystemChangelog = "xkxk.system.changelog" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SystemHelp = "xkxk.system.help" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SystemInquiry = "xkxk.system.inquiry" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SystemInquiryList = "xkxk.system.inquiryList" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SystemLogExport = "xkxk.system.logExport" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SystemLogFolder = "xkxk.system.logFolder" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SystemLogView = "xkxk.system.logView" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SystemRestartRequired = "xkxk.system.restartRequired" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SystemSettings = "xkxk.system.settings" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.SystemUpdate = "xkxk.system.update" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.ThemeNext = "xkxk.theme.next" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.ThemeToggle = "xkxk.theme.toggle" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.ViewFontReset = "xkxk.view.fontReset" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.ViewShowExplorer = "xkxk.view.showExplorer" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.ViewShowLog = "xkxk.view.showLog" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.ViewShowNotifications = "xkxk.view.showNotifications" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowCascade = "xkxk.window.cascade" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowClose = "xkxk.window.close" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowCloseAll = "xkxk.window.closeAll" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowCloseOthers = "xkxk.window.closeOthers" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowFlash = "xkxk.window.flash" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowFloat = "xkxk.window.float" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowMaximizeToggle = "xkxk.window.maximizeToggle" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowMinimize = "xkxk.window.minimize" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowMinimizeAll = "xkxk.window.minimizeAll" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowNext = "xkxk.window.next" -> string!
@@ -21,15 +56,115 @@ const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowOverview = "xkxk.
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowPin = "xkxk.window.pin" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowPrevious = "xkxk.window.previous" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowRedock = "xkxk.window.redock" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowRename = "xkxk.window.rename" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowResetLayout = "xkxk.window.resetLayout" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowRestore = "xkxk.window.restore" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowRestoreAll = "xkxk.window.restoreAll" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowRestoreLastMinimized = "xkxk.window.restoreLastMinimized" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowTabbed = "xkxk.window.tabbed" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowTileHorizontal = "xkxk.window.tileHorizontal" -> string!
 const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowTileVertical = "xkxk.window.tileVertical" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowToggleSdi = "xkxk.window.toggleSdi" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.File = "xkxk.file" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.FileExit = "xkxk.file.exit" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.FileLayoutManage = "xkxk.file.layoutManage" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.FileLayoutSave = "xkxk.file.layoutSave" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.FileLoadLayout = "xkxk.file.loadLayout" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.FileOpenBench = "xkxk.file.openBench" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.FileOpenForm = "xkxk.file.openForm" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.FileOpenFormSdi = "xkxk.file.openFormSdi" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.FileOpenGantt = "xkxk.file.openGantt" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.FileOpenGanttSdi = "xkxk.file.openGanttSdi" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.FileOpenGrid = "xkxk.file.openGrid" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.FileOpenGridSdi = "xkxk.file.openGridSdi" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.FileOpenSdiGroup = "xkxk.file.openSdiGroup" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.FileSaveLayout = "xkxk.file.saveLayout" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.FileSep1 = "xkxk.file.sep1" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.FileSep2 = "xkxk.file.sep2" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SectionMonitors = "xkxk.window.monitor.list" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SectionOpenWindows = "xkxk.window.openList" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SectionSnap = "xkxk.window.snap" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.System = "xkxk.system" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemAbout = "xkxk.system.about" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemChangelog = "xkxk.system.changelog" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemGpuRestart = "xkxk.system.gpuRestart" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemHelp = "xkxk.system.help" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemInquiry = "xkxk.system.inquiry" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemInquiryList = "xkxk.system.inquiryList" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemLog = "xkxk.system.log" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemLogExport = "xkxk.system.logExport" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemLogFolder = "xkxk.system.logFolder" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemLogView = "xkxk.system.logView" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemMonitor = "xkxk.system.monitor" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemMonitorApp = "xkxk.system.monitorApp" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemSep1 = "xkxk.system.sep1" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemSep2 = "xkxk.system.sep2" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemSep3 = "xkxk.system.sep3" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemSettings = "xkxk.system.settings" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.SystemUpdate = "xkxk.system.update" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.View = "xkxk.view" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.ViewFontReset = "xkxk.view.fontReset" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.ViewNextTheme = "xkxk.view.nextTheme" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.ViewPresetCascade = "xkxk.view.presetCascade" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.ViewPresetTabbed = "xkxk.view.presetTabbed" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.ViewPresetTile = "xkxk.view.presetTile" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.ViewSep1 = "xkxk.view.sep1" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.ViewSep2 = "xkxk.view.sep2" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.ViewSettings = "xkxk.view.settings" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.ViewShowExplorer = "xkxk.view.showExplorer" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.ViewShowLog = "xkxk.view.showLog" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.ViewShowNotifications = "xkxk.view.showNotifications" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.ViewToggleTheme = "xkxk.view.toggleTheme" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.Window = "xkxk.window" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowCascade = "xkxk.window.cascade" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowClose = "xkxk.window.close" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowCloseAll = "xkxk.window.closeAll" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowCloseOthers = "xkxk.window.closeOthers" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowFavoriteToggle = "xkxk.window.favoriteToggle" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowFlash = "xkxk.window.flash" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowFloat = "xkxk.window.float" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowMaximize = "xkxk.window.maximize" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowMinimize = "xkxk.window.minimize" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowMinimizeAll = "xkxk.window.minimizeAll" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowMonitor = "xkxk.window.monitor" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowMonitorList = "xkxk.window.monitor.list" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowMonitorMaximize = "xkxk.window.monitorMaximize" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowNext = "xkxk.window.next" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowOpenList = "xkxk.window.openList" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowOverview = "xkxk.window.overview" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowPin = "xkxk.window.pin" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowPrev = "xkxk.window.prev" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowRedock = "xkxk.window.redock" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowRename = "xkxk.window.rename" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowResetLayout = "xkxk.window.resetLayout" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowResetMain = "xkxk.window.resetMain" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowRestore = "xkxk.window.restore" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowRestoreAll = "xkxk.window.restoreAll" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowRestoreLastMin = "xkxk.window.restoreLastMin" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSdiCloseAll = "xkxk.window.sdiCloseAll" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSdiGroup = "xkxk.window.sdiGroup" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSdiMinimize = "xkxk.window.sdiMinimize" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSdiResetPos = "xkxk.window.sdiResetPos" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSdiRestore = "xkxk.window.sdiRestore" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSep1 = "xkxk.window.sep1" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSep2 = "xkxk.window.sep2" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSep3 = "xkxk.window.sep3" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSep4 = "xkxk.window.sep4" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSep5 = "xkxk.window.sep5" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSep6 = "xkxk.window.sep6" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSep7 = "xkxk.window.sep7" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSep8 = "xkxk.window.sep8" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSingleMonitor = "xkxk.window.singleMonitor" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSnap = "xkxk.window.snap" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowSnapCells = "xkxk.window.snap.cells" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowTabbed = "xkxk.window.tabbed" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowTileHorizontal = "xkxk.window.tileHorizontal" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowTileVertical = "xkxk.window.tileVertical" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellMenuIds.WindowToggleSdi = "xkxk.window.toggleSdi" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandDuplicate = "XKUI0302" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandExecuteMissing = "XKUI0303" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandFailed = "XKUI0306" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandGestureConflict = "XKUI0310" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandGestureInvalid = "XKUI0305" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandIconMissing = "XKUI0304" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandIdEmpty = "XKUI0301" -> string!
@@ -43,6 +178,17 @@ const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.IconProviderRejected = 
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.IconRemoveDenied = "XKUI0207" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.IconRenderFailed = "XKUI0204" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.IconSourceInvalid = "XKUI0203" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.MenuAnchorMissing = "XKUI0404" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.MenuCommandMissing = "XKUI0405" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.MenuConditionFailed = "XKUI0411" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.MenuDuplicate = "XKUI0402" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.MenuIdEmpty = "XKUI0401" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.MenuIdReserved = "XKUI0407" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.MenuKindInvalid = "XKUI0406" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.MenuMoveInvalid = "XKUI0410" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.MenuParentMissing = "XKUI0403" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.MenuRemoveDenied = "XKUI0408" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.MenuSectionUnknown = "XKUI0409" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.ModuleConfigureFailed = "XKUI0003" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.ModuleDuplicate = "XKUI0002" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.ModuleIdEmpty = "XKUI0001" -> string!
@@ -57,6 +203,8 @@ const xkxk.frameworks.ui.shell.Framework.UiRegistryOwners.ReservedPrefix = "xkxk
 const xkxk.frameworks.ui.shell.Framework.UiRegistryOwners.Shell = "xkxk.shell" -> string!
 override xkxk.frameworks.ui.shell.Framework.UiDiagnostic.ToString() -> string!
 static xkxk.frameworks.ui.shell.Framework.ShellCommandIds.All.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static xkxk.frameworks.ui.shell.Framework.ShellMenuIds.All.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static xkxk.frameworks.ui.shell.Framework.ShellMenuIds.Roots.get -> System.Collections.Generic.IReadOnlyList<string!>!
 static xkxk.frameworks.ui.shell.Framework.UiIconDefinition.FromPathData(string! key, string! pathData) -> xkxk.frameworks.ui.shell.Framework.UiIconDefinition!
 static xkxk.frameworks.ui.shell.Framework.UiIconDefinition.FromResource(string! key, string! resourceKey) -> xkxk.frameworks.ui.shell.Framework.UiIconDefinition!
 static xkxk.frameworks.ui.shell.Framework.XkxkUi.CreateBuilder() -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder!
@@ -70,6 +218,7 @@ xkxk.frameworks.ui.shell.Framework.IUiAppContext.Diagnostics.get -> xkxk.framewo
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.Icons.get -> xkxk.frameworks.ui.shell.Framework.IUiIconRegistry!
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.Localization.get -> xkxk.frameworks.ui.shell.Framework.IUiLocalizer!
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.MainViewModel.get -> xkxk.frameworks.ui.shell.ViewModels.MainViewModel?
+xkxk.frameworks.ui.shell.Framework.IUiAppContext.Menus.get -> xkxk.frameworks.ui.shell.Framework.IUiMenuRegistry!
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.Monitors.get -> xkxk.frameworks.ui.shell.ViewModels.MonitorMenuViewModel!
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.RegisterViews(xkxk.frameworks.ui.shell.IViewRegistry! views) -> void
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.Settings.get -> xkxk.frameworks.ui.shell.Theming.UiSettings!
@@ -109,6 +258,17 @@ xkxk.frameworks.ui.shell.Framework.IUiLocalizer.LanguageChanged -> System.Action
 xkxk.frameworks.ui.shell.Framework.IUiLocalizer.Languages.get -> System.Collections.Generic.IReadOnlyList<xkxk.frameworks.ui.shell.Framework.UiLanguage!>!
 xkxk.frameworks.ui.shell.Framework.IUiLocalizer.Observe(string! key) -> System.IObservable<string!>!
 xkxk.frameworks.ui.shell.Framework.IUiLocalizer.this[string! key].get -> string!
+xkxk.frameworks.ui.shell.Framework.IUiMenuRegistry
+xkxk.frameworks.ui.shell.Framework.IUiMenuRegistry.Add(string! id, System.Action<xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions!>! configure) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiMenuRegistry.Changed -> System.EventHandler<xkxk.frameworks.ui.shell.Framework.UiRegistryChangedEventArgs!>?
+xkxk.frameworks.ui.shell.Framework.IUiMenuRegistry.Contains(string! id) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiMenuRegistry.GetChildren(string? parentId) -> System.Collections.Generic.IReadOnlyList<xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition!>!
+xkxk.frameworks.ui.shell.Framework.IUiMenuRegistry.GetState(string! id, xkxk.frameworks.ui.shell.Framework.UiMenuSurface surface) -> xkxk.frameworks.ui.shell.Framework.UiMenuItemState!
+xkxk.frameworks.ui.shell.Framework.IUiMenuRegistry.Items.get -> System.Collections.Generic.IReadOnlyList<xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition!>!
+xkxk.frameworks.ui.shell.Framework.IUiMenuRegistry.Move(string! id, System.Action<xkxk.frameworks.ui.shell.Framework.UiMenuPlacementOptions!>! configure) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiMenuRegistry.Remove(string! id) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiMenuRegistry.SetHidden(string! id, bool hidden) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiMenuRegistry.TryGet(string! id, out xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition? item) -> bool
 xkxk.frameworks.ui.shell.Framework.IUiModule
 xkxk.frameworks.ui.shell.Framework.IUiModule.Configure(xkxk.frameworks.ui.shell.Framework.IUiModuleContext! context) -> void
 xkxk.frameworks.ui.shell.Framework.IUiModule.Id.get -> string!
@@ -116,6 +276,7 @@ xkxk.frameworks.ui.shell.Framework.IUiModuleContext
 xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Commands.get -> xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry!
 xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Diagnostics.get -> xkxk.frameworks.ui.shell.Framework.UiDiagnostics!
 xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Icons.get -> xkxk.frameworks.ui.shell.Framework.IUiIconRegistry!
+xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Menus.get -> xkxk.frameworks.ui.shell.Framework.IUiMenuRegistry!
 xkxk.frameworks.ui.shell.Framework.IUiModuleContext.ModuleId.get -> string!
 xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Options.get -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions!
 xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Services.get -> xkxk.frameworks.ui.shell.Framework.UiServiceRegistry!
@@ -124,6 +285,7 @@ xkxk.frameworks.ui.shell.Framework.IUiServiceProvider.Contains<TService>() -> bo
 xkxk.frameworks.ui.shell.Framework.IUiServiceProvider.Get<TService>() -> TService!
 xkxk.frameworks.ui.shell.Framework.IUiServiceProvider.TryGet<TService>(out TService! service) -> bool
 xkxk.frameworks.ui.shell.Framework.ShellCommandIds
+xkxk.frameworks.ui.shell.Framework.ShellMenuIds
 xkxk.frameworks.ui.shell.Framework.UiCommandContext
 xkxk.frameworks.ui.shell.Framework.UiCommandContext.App.get -> xkxk.frameworks.ui.shell.Framework.IUiAppContext!
 xkxk.frameworks.ui.shell.Framework.UiCommandContext.CommandId.get -> string!
@@ -228,6 +390,117 @@ xkxk.frameworks.ui.shell.Framework.UiLanguage.Code.get -> string!
 xkxk.frameworks.ui.shell.Framework.UiLanguage.Deconstruct(out string! code, out string! name) -> void
 xkxk.frameworks.ui.shell.Framework.UiLanguage.Name.get -> string!
 xkxk.frameworks.ui.shell.Framework.UiLanguage.UiLanguage(string! code, string! name) -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuContext
+xkxk.frameworks.ui.shell.Framework.UiMenuContext.App.get -> xkxk.frameworks.ui.shell.Framework.IUiAppContext!
+xkxk.frameworks.ui.shell.Framework.UiMenuContext.Item.get -> xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition!
+xkxk.frameworks.ui.shell.Framework.UiMenuContext.Surface.get -> xkxk.frameworks.ui.shell.Framework.UiMenuSurface
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition.AutomationId.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition.CommandId.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition.CommandParameter.get -> object?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition.HasToolTip.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition.HasVisibilityCondition.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition.Icon.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition.Id.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition.IsHidden.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition.Kind.get -> xkxk.frameworks.ui.shell.Framework.UiMenuItemKind
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition.Mobile.get -> xkxk.frameworks.ui.shell.Framework.UiMenuMobileDefinition!
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition.Owner.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition.Parent.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition.Section.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition.Title.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemDefinition.TitleKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemKind
+xkxk.frameworks.ui.shell.Framework.UiMenuItemKind.Command = 0 -> xkxk.frameworks.ui.shell.Framework.UiMenuItemKind
+xkxk.frameworks.ui.shell.Framework.UiMenuItemKind.Section = 3 -> xkxk.frameworks.ui.shell.Framework.UiMenuItemKind
+xkxk.frameworks.ui.shell.Framework.UiMenuItemKind.Separator = 2 -> xkxk.frameworks.ui.shell.Framework.UiMenuItemKind
+xkxk.frameworks.ui.shell.Framework.UiMenuItemKind.Submenu = 1 -> xkxk.frameworks.ui.shell.Framework.UiMenuItemKind
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.AutomationId.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.AutomationId.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.CommandId.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.CommandId.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.CommandParameter.get -> object?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.CommandParameter.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.Icon.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.Icon.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.InsertAfter.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.InsertAfter.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.InsertBefore.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.InsertBefore.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.IsVisible.get -> System.Func<xkxk.frameworks.ui.shell.Framework.UiMenuContext!, bool>?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.IsVisible.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.Kind.get -> xkxk.frameworks.ui.shell.Framework.UiMenuItemKind
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.Kind.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.Mobile.get -> xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions!
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.Parent.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.Parent.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.Replace.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.Replace.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.Section.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.Section.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.Title.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.Title.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.TitleKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.TitleKey.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.ToolTip.get -> System.Func<xkxk.frameworks.ui.shell.Framework.UiMenuContext!, string?>?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.ToolTip.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuItemOptions.UiMenuItemOptions() -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuItemState
+xkxk.frameworks.ui.shell.Framework.UiMenuItemState.Gesture.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemState.Icon.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemState.IsEnabled.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiMenuItemState.IsVisible.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiMenuItemState.Title.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuItemState.ToolTip.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileDefinition
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileDefinition.Available.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileDefinition.CommandId.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileDefinition.CommandParameter.get -> object?
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileDefinition.CoveredAutomationIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileDefinition.EntryId.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileDefinition.InDrawer.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileDefinition.TabIcon.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileDefinition.TabOrder.get -> int
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileDefinition.TabTitleKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileDefinition.TitleKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileDefinition.UnavailableReasonKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.Available.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.Available.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.CommandId.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.CommandId.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.CommandParameter.get -> object?
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.CommandParameter.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.CoveredAutomationIds.get -> System.Collections.Generic.IList<string!>!
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.EntryId.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.EntryId.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.InDrawer.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.InDrawer.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.TabIcon.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.TabIcon.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.TabOrder.get -> int
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.TabOrder.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.TabTitleKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.TabTitleKey.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.TitleKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.TitleKey.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.UiMenuMobileOptions() -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.UnavailableReasonKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuMobileOptions.UnavailableReasonKey.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuPlacementOptions
+xkxk.frameworks.ui.shell.Framework.UiMenuPlacementOptions.InsertAfter.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuPlacementOptions.InsertAfter.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuPlacementOptions.InsertBefore.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuPlacementOptions.InsertBefore.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuPlacementOptions.Parent.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiMenuPlacementOptions.Parent.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuPlacementOptions.ToRoot.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiMenuPlacementOptions.ToRoot.set -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuPlacementOptions.UiMenuPlacementOptions() -> void
+xkxk.frameworks.ui.shell.Framework.UiMenuSurface
+xkxk.frameworks.ui.shell.Framework.UiMenuSurface.Desktop = 0 -> xkxk.frameworks.ui.shell.Framework.UiMenuSurface
+xkxk.frameworks.ui.shell.Framework.UiMenuSurface.Mobile = 1 -> xkxk.frameworks.ui.shell.Framework.UiMenuSurface
 xkxk.frameworks.ui.shell.Framework.UiModule
 xkxk.frameworks.ui.shell.Framework.UiModule.UiModule() -> void
 xkxk.frameworks.ui.shell.Framework.UiRegistryChangedEventArgs
@@ -235,10 +508,12 @@ xkxk.frameworks.ui.shell.Framework.UiRegistryChangedEventArgs.Id.get -> string!
 xkxk.frameworks.ui.shell.Framework.UiRegistryChangedEventArgs.Kind.get -> xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
 xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
 xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind.Added = 0 -> xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
+xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind.Moved = 5 -> xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
 xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind.ProviderAdded = 3 -> xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
 xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind.ProviderRemoved = 4 -> xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
 xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind.Removed = 1 -> xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
 xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind.Replaced = 2 -> xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
+xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind.VisibilityChanged = 6 -> xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
 xkxk.frameworks.ui.shell.Framework.UiRegistryOwners
 xkxk.frameworks.ui.shell.Framework.UiServiceRegistry
 xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.Add<TService>(System.Func<xkxk.frameworks.ui.shell.Framework.IUiServiceProvider!, TService!>! factory) -> xkxk.frameworks.ui.shell.Framework.UiServiceRegistry!

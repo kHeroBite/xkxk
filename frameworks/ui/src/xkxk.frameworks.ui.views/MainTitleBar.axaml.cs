@@ -12,6 +12,7 @@ using Avalonia.Threading;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Framework;
+using xkxk.frameworks.ui.views.Menus;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -24,10 +25,14 @@ public partial class MainTitleBar : UserControl
     private readonly List<MenuItem> _menuOrder = new();
     private bool _reflowQueued;
 
+    // 최상위 메뉴는 메뉴 레지스트리에서 만든다(UADR-0014). 자식까지 생성 시점에 모두 만들어 메뉴를 열기 전에도 논리 트리에 있다(D4)
+    private readonly MenuBuilder _menus = new(XkxkUi.Current.Menus);
+
     public MainTitleBar()
     {
         InitializeComponent();
-        _menuOrder.AddRange(MainMenu.Items.OfType<MenuItem>().Where(m => m != MoreMenu));
+        SyncMenus();
+        _menus.TopsChanged += OnMenuTopsChanged;
         Bar.SizeChanged += (_, _) => QueueReflow();
         UiModeSwitch.PropertyChanged += (_, e) =>
         {
@@ -56,11 +61,47 @@ public partial class MainTitleBar : UserControl
         }
 
         XkxkUi.Current.Localization.LanguageChanged += UpdateCaption;
-        XkxkUi.Current.Localization.LanguageChanged += QueueReflow; // 메뉴 문구 길이가 바뀐다
+        XkxkUi.Current.Localization.LanguageChanged += OnLanguageChanged; // 메뉴 문구·길이가 바뀐다
         CaptionLayout.Applied += UpdateCaption; // 크롬 스타일 전환(macOS 네이티브 신호등 사용 여부)
+        _menus.Attach();
         UpdateCaption();
         UpdateActiveState();
         QueueReflow();
+        // 화면에 붙은 뒤(배치 끝, 데스크톱은 메인 창 등록 뒤) 사유 툴팁·종료 항목 등 표시 상태를 다시 계산한다 — 붙기 전 값이 남지 않게(옛 FileMenu·WindowMenu 와 같다)
+        Dispatcher.UIThread.Post(() =>
+        {
+            XkxkUi.Current.MainViewModel?.WindowMenu.RefreshTips();
+            _menus.RefreshAll();
+        }, DispatcherPriority.Background);
+    }
+
+    private void OnLanguageChanged()
+    {
+        _menus.RefreshAll();
+        QueueReflow();
+    }
+
+    private void OnMenuTopsChanged()
+    {
+        SyncMenus();
+        QueueReflow();
+    }
+
+    /// <summary>레지스트리 최상위 메뉴를 더보기(마지막) 앞에 순서대로 둔다. 더보기로 옮겨 둔 메뉴는 먼저 되돌린다.</summary>
+    private void SyncMenus()
+    {
+        RestoreMenu();
+        foreach (var old in _menuOrder)
+        {
+            MainMenu.Items.Remove(old);
+        }
+
+        _menuOrder.Clear();
+        _menuOrder.AddRange(_menus.Tops);
+        foreach (var top in _menuOrder)
+        {
+            MainMenu.Items.Insert(MainMenu.Items.Count - 1, top);
+        }
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -73,8 +114,9 @@ public partial class MainTitleBar : UserControl
         }
 
         XkxkUi.Current.Localization.LanguageChanged -= UpdateCaption;
-        XkxkUi.Current.Localization.LanguageChanged -= QueueReflow;
+        XkxkUi.Current.Localization.LanguageChanged -= OnLanguageChanged;
         CaptionLayout.Applied -= UpdateCaption;
+        _menus.Detach();
         _window = null;
         _top = null;
         base.OnDetachedFromVisualTree(e);

@@ -60,7 +60,7 @@ internal static class RemoteMenuIconCommands
             total++;
             var ok = kind != "none" && present && found != false;
             if (ok) { withIcon++; }
-            if (!ok && mi.IsVisible) { missing.Add(aid.Length > 0 ? aid : MenuHeaderText.Of(mi.Header)); }
+            if (!ok && mi.IsVisible) { missing.Add((JsonNode?)JsonValue.Create(aid.Length > 0 ? aid : MenuHeaderText.Of(mi.Header))); } // 제네릭 Add<string> 은 웹(리플렉션 메타데이터 없음)에서 NotSupportedException
             into.Add(new JsonObject
             {
                 ["id"] = aid,

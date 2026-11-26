@@ -57,7 +57,7 @@
     {"id": "snapRight", "keys": "Ctrl+Alt+Right", "handler": "src/xkxk.frameworks.ui.views/Input/WindowKeyGestures.cs:Key.Right"},
     {"id": "snapMax", "keys": "Ctrl+Alt+Up", "handler": "src/xkxk.frameworks.ui.views/Input/WindowKeyGestures.cs:Key.Up"},
     {"id": "snapRestore", "keys": "Ctrl+Alt+Down", "handler": "src/xkxk.frameworks.ui.views/Input/WindowKeyGestures.cs:Key.Down"},
-    {"id": "exit", "keys": "Alt+F4", "webUnavailable": true, "handler": "src/xkxk.frameworks.ui.views/Menus/FileMenu.axaml:Alt+F4"},
+    {"id": "exit", "keys": "Alt+F4", "webUnavailable": true, "handler": "src/xkxk.frameworks.ui.shell/Framework/ShellDefaultCommands.Menu.cs:Alt+F4"},
     {"id": "macClose", "keys": "Cmd+W", "text": "close", "webUnavailable": true, "macOnly": true, "handler": "src/xkxk.frameworks.ui.views/Input/WindowKeyGestures.cs:Key.W"},
     {"id": "macMinimize", "keys": "Cmd+M", "macOnly": true, "handler": "src/xkxk.frameworks.ui.views/Input/WindowKeyGestures.cs:Key.M"},
     {"id": "macNextWindow", "keys": "Cmd+`", "macOnly": true, "handler": "src/xkxk.frameworks.ui.views/Input/WindowKeyGestures.cs:Key.OemTilde"},

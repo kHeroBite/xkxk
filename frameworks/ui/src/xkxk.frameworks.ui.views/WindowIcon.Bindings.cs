@@ -3,6 +3,7 @@ using System.Linq;
 using Avalonia.Data.Converters;
 using xkxk.frameworks.ui.data.Navigation;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.shell.ViewModels;
 
@@ -46,13 +47,14 @@ public sealed partial class WindowIcon
     /// <summary>탐색기 별 채움(즐겨찾기 영역·항목 수, 인자 = 문서 종류 이름).</summary>
     public static IMultiValueConverter FavoriteStarOpacity { get; } = new FavoriteStarConverter();
 
+    // NavEntry.Command 는 레지스트리 명령 ID(B07, 모바일 명령이 있으면 그것)다. 그 밖의 명령(소비자 명령 포함)은 아이콘 없음(null).
     private static string? NavKey(NavEntry? entry) => entry switch
     {
-        { Command: "Open", Param: { } kind } => MenuIconCatalog.IconKeyFor(null, kind),
-        { Command: "Panel", Param: "settings" } => MenuIconCatalog.ShellIconKey("Settings"),
-        { Command: "Panel", Param: "explorer" } => MenuIconCatalog.ShellIconKey("Explorer"),
-        { Command: "Panel", Param: "notify" } => MenuIconCatalog.ShellIconKey("Notify"),
-        { Command: "SystemView", Param: "LogView" } => MenuIconCatalog.ShellIconKey("Log"),
+        { Command: ShellCommandIds.DemoOpen, Param: { } kind } => MenuIconCatalog.IconKeyFor(null, kind),
+        { Command: ShellCommandIds.NavOpenPanel, Param: "settings" } => MenuIconCatalog.ShellIconKey("Settings"),
+        { Command: ShellCommandIds.NavOpenPanel, Param: "explorer" } => MenuIconCatalog.ShellIconKey("Explorer"),
+        { Command: ShellCommandIds.NavOpenPanel, Param: "notify" } => MenuIconCatalog.ShellIconKey("Notify"),
+        { Command: ShellCommandIds.SystemLogView } => MenuIconCatalog.ShellIconKey("Log"),
         _ => null,
     };
 

@@ -1,4 +1,4 @@
-// 별별UI 단축키 문법(T-GESTURE) 검사 — 자체 문법 문자열 검사 + Avalonia KeyGesture 2단 검사(명령 레지스트리 내부용)
+// 별별UI 단축키 문법(T-GESTURE) 검사·비교용 정규화 — 자체 문법 문자열 검사 + Avalonia KeyGesture 2단 검사(명령 레지스트리 내부용)
 using System;
 using System.Collections.Generic;
 using Avalonia.Input;
@@ -51,6 +51,31 @@ internal static class UiGestureText
             && Enum.IsDefined(typeof(Key), gesture.Key)
             && gesture.Key == expected
             && (gesture.KeyModifiers & ~DefinedModifiers) == 0;
+    }
+
+    /// <summary>
+    /// 비교용 정규형 — 수정자(Ctrl·Shift·Alt·Meta 순)와 키를 '+' 로 잇고 대소문자를 위 목록 표기로 맞춘다. 무효면 null.
+    /// </summary>
+    internal static string? Normalize(string? gesture)
+    {
+        if (!IsValid(gesture) || !TryParseSyntax(gesture, out var trimmed, out var keyName)
+            || !KeyNames.TryGetValue(keyName, out var key))
+        {
+            return null;
+        }
+
+        var parts = trimmed.Split('+');
+        var result = new List<string>(parts.Length);
+        foreach (var m in Modifiers)
+        {
+            if (Array.Exists(parts, p => string.Equals(p, m, StringComparison.OrdinalIgnoreCase)))
+            {
+                result.Add(m);
+            }
+        }
+
+        result.Add(key);
+        return string.Join("+", result);
     }
 
     /// <summary>1단 — 자체 문법 문자열 검사. 통과하면 앞뒤 공백을 뺀 문자열과 키 구간을 돌려준다.</summary>

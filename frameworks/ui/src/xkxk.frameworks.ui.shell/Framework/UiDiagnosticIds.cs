@@ -1,8 +1,8 @@
-// 진단 코드 문자열 상수 — 00xx 모듈·01xx 서비스·02xx 아이콘·03xx 명령, 한 번 쓴 번호는 재사용하지 않는다(UADR-0009 원칙 5)
+// 진단 코드 문자열 상수 — 00xx 모듈·01xx 서비스·02xx 아이콘·03xx 명령·04xx 메뉴, 한 번 쓴 번호는 재사용하지 않는다(UADR-0009 원칙 5)
 namespace xkxk.frameworks.ui.shell.Framework;
 
 /// <summary>프레임워크 진단 코드.</summary>
-/// <remarks>번호 대역: XKUI00xx 모듈, XKUI01xx 서비스, XKUI02xx 아이콘, XKUI03xx 명령. 한 번 쓴 번호는 폐기되어도 재사용하지 않는다.</remarks>
+/// <remarks>번호 대역: XKUI00xx 모듈, XKUI01xx 서비스, XKUI02xx 아이콘, XKUI03xx 명령, XKUI04xx 메뉴. 한 번 쓴 번호는 폐기되어도 재사용하지 않는다.</remarks>
 public static class UiDiagnosticIds
 {
     /// <summary>모듈 ID 가 null·공백(Error, 그 모듈은 건너뜀).</summary>
@@ -64,4 +64,40 @@ public static class UiDiagnosticIds
 
     /// <summary>다른 주체가 등록한 명령을 지우려 함(Error, 지우지 않음).</summary>
     public const string CommandRemoveDenied = "XKUI0309";
+
+    /// <summary>프레임워크가 아닌 주체 명령의 단축키가 이미 있는 명령의 단축키와 같음(Warning, 명령은 등록하고 먼저 등록한 쪽이 키를 받음).</summary>
+    public const string CommandGestureConflict = "XKUI0310";
+
+    /// <summary>메뉴 ID 가 null·빈 값·공백(Error, 그 등록은 건너뜀).</summary>
+    public const string MenuIdEmpty = "XKUI0401";
+
+    /// <summary>같은 ID 의 메뉴 항목을 Replace 없이 다시 등록함(Error, 첫 등록 유지).</summary>
+    public const string MenuDuplicate = "XKUI0402";
+
+    /// <summary>부모 메뉴가 없거나 하위 메뉴 종류가 아님(Error, 등록 안 함).</summary>
+    public const string MenuParentMissing = "XKUI0403";
+
+    /// <summary>앞·뒤 삽입 기준 항목이 같은 부모 아래에 없음(Warning, 맨 뒤에 붙임).</summary>
+    public const string MenuAnchorMissing = "XKUI0404";
+
+    /// <summary>명령 메뉴 항목의 명령 ID 가 명령 레지스트리에 없음(Error, 항목은 유지하고 비활성으로 표시).</summary>
+    public const string MenuCommandMissing = "XKUI0405";
+
+    /// <summary>항목 종류와 옵션이 맞지 않음 — 명령 항목에 명령 ID 없음·섹션에 섹션 키 없음·구분선에 명령 ID 있음 등(Error, 등록 안 함).</summary>
+    public const string MenuKindInvalid = "XKUI0406";
+
+    /// <summary>프레임워크가 아닌 주체가 아직 없는 예약 접두어(xkxk.) 메뉴 ID 를 새로 만들려 함(Error, 등록 안 함).</summary>
+    public const string MenuIdReserved = "XKUI0407";
+
+    /// <summary>다른 주체의 메뉴 항목(또는 다른 주체의 자식이 있는 하위 메뉴)을 지우려 함(Error, 지우지 않음).</summary>
+    public const string MenuRemoveDenied = "XKUI0408";
+
+    /// <summary>화면이 모르는 섹션 키(Warning, 화면당 키별 1회, 그 자리는 비움).</summary>
+    public const string MenuSectionUnknown = "XKUI0409";
+
+    /// <summary>메뉴 이동 대상이 없거나 순환이 생기거나 새 부모가 하위 메뉴가 아님(Error, 옮기지 않음).</summary>
+    public const string MenuMoveInvalid = "XKUI0410";
+
+    /// <summary>메뉴의 표시 조건·툴팁 대리자 예외(Warning, 항목·키당 1회, 조건 예외는 숨김·툴팁 예외는 툴팁 없음).</summary>
+    public const string MenuConditionFailed = "XKUI0411";
 }

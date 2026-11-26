@@ -1,4 +1,4 @@
-// 공개 계약 시험 진입점 — C01~C45 를 돌려 PASS/FAIL 을 찍고 --out JSON 을 쓴다(--canary 는 일부러 실패 1건 추가)
+// 공개 계약 시험 진입점 — C01~C62 를 돌려 PASS/FAIL 을 찍고 --out JSON 을 쓴다(--canary 는 일부러 실패 1건 추가)
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -86,8 +86,10 @@ internal static class Program
         cases.AddRange(ContextServiceChecks.All()); // C28~C32 — 컨텍스트 서비스(B05): 투어 소스·모니터 공급자·App 정적 값을 바꾼 뒤 원복한다
         cases.AddRange(IconRegistryChecks.All());
         cases.AddRange(CommandRegistryChecks.All());
+        cases.AddRange(MenuRegistryChecks.All()); // C46~C53·C60·C61 — 메뉴 레지스트리(B07): 시험마다 고유 ID, C53 은 셸 기본 메뉴를 교체해 상태를 남기므로 맨 뒤
+        cases.AddRange(MenuRuleChecks.All()); // C54~C59·C62 — 메뉴 규칙: 셸 항목을 숨기면 원복하고, 단축키 충돌 시험 명령은 지운다
         cases.AddRange(AppContextChecks.All()); // C24~C27 — XkxkUi.Current 는 프로세스 전역·리셋 없음: C25 는 언어를 원복, C26 은 화면 등록 상태를 남기는 마지막 동작 시험(C27 은 리플렉션 구조 검사만)
-        // 실행 순서: C01~C23 → C28~C32 → C24~C27(C26 이 상태를 남기므로 C24~C27 묶음을 맨 뒤에 둔다)
+        // 실행 순서: C01~C23 → C28~C62(C53 제외) → C24~C27(C26 이 상태를 남긴다) → C53(셸 메뉴 Owner 를 바꾸므로 C47·C60 뒤 맨 끝)
         cases.Sort((a, b) =>
         {
             var rank = RunLast(a.Id).CompareTo(RunLast(b.Id));
@@ -126,8 +128,9 @@ internal static class Program
         return failed == 0 ? 0 : 1;
     }
 
-    /// <summary>맨 뒤로 보낼 앱 컨텍스트 묶음(C24~C27)이면 1, 나머지 0.</summary>
-    private static int RunLast(string id) => string.CompareOrdinal(id, "C24") >= 0 && string.CompareOrdinal(id, "C27") <= 0 ? 1 : 0;
+    /// <summary>실행 순위 — 셸 기본 메뉴를 교체하는 C53 은 2(맨 끝), 앱 컨텍스트 묶음(C24~C27)은 1, 나머지 0.</summary>
+    private static int RunLast(string id) =>
+        id == "C53" ? 2 : string.CompareOrdinal(id, "C24") >= 0 && string.CompareOrdinal(id, "C27") <= 0 ? 1 : 0;
 
     private static void WriteJson(string path, int passed, int failed, List<(ContractCase Case, bool Pass, string Detail)> results)
     {

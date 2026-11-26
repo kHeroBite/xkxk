@@ -35,4 +35,12 @@ public interface IUiModuleContext
     /// 등록 진단은 Build 중이면 빌더 <see cref="Diagnostics"/>, Build 가 끝난 뒤에는 앱 컨텍스트의 Diagnostics 로 간다(B06).
     /// </remarks>
     IUiCommandRegistry Commands { get; }
+
+    /// <summary>메뉴 레지스트리(앱 컨텍스트와 같은 저장소).</summary>
+    /// <remarks>
+    /// 여기서 등록한 항목의 등록 주체는 이 모듈의 ID 다.
+    /// 등록 진단은 Build 중이면 빌더 <see cref="Diagnostics"/>, Build 가 끝난 뒤에는 앱 컨텍스트의 Diagnostics 로 간다.
+    /// 명령 ID 가 없는 메뉴는 모든 모듈 구성이 끝난 Build 끝에 검사한다(B07).
+    /// </remarks>
+    IUiMenuRegistry Menus { get; }
 }

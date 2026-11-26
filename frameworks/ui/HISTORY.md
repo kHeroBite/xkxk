@@ -4,6 +4,17 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-26 — 별별UI B07 메뉴 레지스트리(UADR-0014)·ShellMenuTable 단일 출처·셸 명령 61·메뉴 axaml 제거(O4, B07, conv_179568972584)
+- 결정(UADR-0014). 셸 4메뉴(파일·창·보기·시스템)를 axaml 고정 항목에서 메뉴 레지스트리 `IUiMenuRegistry` 등록으로 옮긴다. 공개 계약은 `IUiMenuRegistry`·`UiMenuItemOptions`·`UiMenuMobileOptions`·`UiMenuPlacementOptions`·`UiMenuItemKind`·`UiMenuItemDefinition`·`UiMenuMobileDefinition`·`UiMenuContext`·`UiMenuItemState`·`UiMenuSurface` 이고, `IUiAppContext.Menus`·`IUiModuleContext.Menus`, 진단 ID 12개, 변경 종류 2값을 더했다(`PublicAPI.Unshipped.txt`, Shipped 무변경). 부록 `a9_메뉴_레지스트리.md` 를 신설했다.
+- 단일 출처. 데이터 층 `ShellMenuTable` 이 메뉴 행의 유일한 정본이다. `ShellDefaultMenus` 가 이 행을 레지스트리에 등록하고, 데스크톱은 `MenuBuilder`·`ShellMenuSections` 가 레지스트리로 MenuItem 을 만들며, 모바일은 `MobileMenuProjection` 이 같은 출처에서 투영한다. `NavMenuCatalog` 는 자체 행 없이 파생한다. AutomationId 는 108개 그대로 보존했다.
+- 명령. 셸 기본 명령을 23개에서 61개로 늘렸다(새 명령 ID 38개)(`ShellDefaultCommands.Menu.cs`·`ShellPlatformCommands.cs`, 메뉴 ID `ShellMenuIds`). 소비자 단축키는 `RegistryGestureInput` 로 연결하고 셸 단축키와 겹치면 XKUI0310 을 낸다.
+- 제거. 옛 메뉴 axaml 8파일(`Menus/FileMenu`·`WindowMenu`·`ViewMenu`·`SystemMenuItem` 의 `.axaml`·`.axaml.cs`)을 지웠다.
+- 원격·판정. 원격 진단에 메뉴 덤프와 변경 명령 4종(`RemoteRegistryMutateCommands`)을 더했다. 계약 시험 C46~C62(`MenuRegistryChecks.cs`·`MenuRuleChecks.cs`), 판정기 `test/framework/judge/menu_registry_check.py`(분할 6파일), 스모크 `test/framework/measure/menu_registry_smoke.py`(분할 3파일), `verify_framework.sh` menus 단계(verify 8단계)를 더했다.
+- 결함 수정 3건. ① `RemoteMenuIconCommands.cs` 의 문자열 `JsonArray.Add<string>` 이 웹 트리밍에서 예외를 내 `JsonNode` 로 바꿨다. ② `ShellMenuSections.cs` 진단문이 i18n 검사에 새로 걸려 i18n-ok 표시를 달았다(27건, 기준선 동일). ③ `NavEntry.Command` 값 의미 변경을 `WindowIcon.Bindings.cs` 의 NavKey 소비처가 따라가지 못해 모바일 서랍 아이콘이 사라진 회귀를 고쳤다(Fold5 재시험 PASS).
+- 결과. 4축 빌드 rc=0(웹·Android·Product·Work), verify 8단계 rc=0, 계약 시험 62/62 PASS, 레이어 위반 0, 웹 스모크 14/14 PASS, Fold5 실기기 PASS, 회귀 새 실패 0. 판정표는 PASS 23·WAIT 2·FAIL 0 이고 otest 는 PARTIAL 이다.
+- 대기 2건. 데스크톱 스모크(AC-018)와 앱이 필요한 판정기 2개(`menu_icons_judge`·`title_tab_icons_judge`, AC-020)는 `run_desktop_bg.sh` 사용자 파일 가드 rc=9(`USER_FILES_CHANGED`, pending `20261125_202235_683`)로 WAIT 이다. 근거 `logs/b07_smoke_desktop.json`·`logs/b07_regress.json`, 이월 UTODO-0031.
+- 한계. a9 §13 (a)~(l). 이 중 (j)(k) 는 UTODO-0032, (l) 하단 탭 활성 표시 기존 결함은 UTODO-0033 으로 등재했다.
+
 ## 2026-11-26 — 별별UI B06 아이콘·명령 레지스트리(UADR-0013)·셸 기본 명령 23개·예약 접두어(O4, B06, conv_179565999934)
 - 결정(UADR-0013). 아이콘과 명령을 같은 키 체계의 레지스트리 2종(`IUiIconRegistry`·`IUiCommandRegistry`)으로 연다. 예약 접두어는 `xkxk.` 이고 등록 정책은 P1~P4 다. 공개 계약은 13형식이며 `PublicAPI.Unshipped.txt` 에 반영했다(Shipped 무변경). 진단 ID 는 16개를 더했다.
 - 구현. 기본 아이콘 공급자(`GeneratedIconProvider`)가 생성 아이콘 169키를 등록하고, 셸 기본 명령 23개(`ShellDefaultCommands`)를 등록한다. 화면 층(`WindowIcon`·`MainView`·`WindowMenu`·`MenuIconBitmap`)은 레지스트리로 아이콘을 해석하고 창 전체 보기를 명령으로 전환했다. 원격 진단에 `registry.dump`·`command.run` 을 더했다. 메뉴 axaml 은 바꾸지 않았다(B07).

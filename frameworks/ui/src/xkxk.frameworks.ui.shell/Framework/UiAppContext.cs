@@ -42,10 +42,14 @@ internal sealed class UiAppContext : IUiAppContext
     private readonly Lazy<UiIconStore> _iconStore;
     private readonly Lazy<UiCommandStore> _commandStore;
 
+    // B07 메뉴 저장소. 생성 연쇄(UiMenuStore → ShellDefaultMenus → Commands)는 MenuStore 를 다시 부르지 않는다.
+    private readonly Lazy<UiMenuStore> _menuStore;
+
     private UiAppContext()
     {
         _iconStore = new(() => new UiIconStore(_diagnostics), LazyThreadSafetyMode.ExecutionAndPublication);
         _commandStore = new(() => new UiCommandStore(this, IconStore, _diagnostics), LazyThreadSafetyMode.ExecutionAndPublication);
+        _menuStore = new(() => new UiMenuStore(this, _diagnostics), LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     /// <summary>프로세스 단일 인스턴스.</summary>
@@ -98,11 +102,20 @@ internal sealed class UiAppContext : IUiAppContext
     /// <inheritdoc/>
     public UiDiagnostics Diagnostics => _diagnostics;
 
+    /// <inheritdoc/>
+    public IUiMenuRegistry Menus => MenuStore.Runtime;
+
     /// <summary>아이콘 저장소(모듈 보기·그리기 실패 보고용 내부 경로).</summary>
     internal UiIconStore IconStore => _iconStore.Value;
 
     /// <summary>명령 저장소(모듈 보기용 내부 경로).</summary>
     internal UiCommandStore CommandStore => _commandStore.Value;
+
+    /// <summary>메뉴 저장소(모듈 보기·Build 끝 검사용 내부 경로).</summary>
+    internal UiMenuStore MenuStore => _menuStore.Value;
+
+    /// <summary>메뉴 저장소가 이미 만들어졌으면 true. Build 끝 검사가 저장소를 새로 만들지 않게 한다.</summary>
+    internal bool MenuStoreCreated => _menuStore.IsValueCreated;
 
     /// <summary>디자인 테마 해석기(DesignThemeResolver)의 가변 상태. 컨텍스트 생성 때 함께 만든다(지연 아님).</summary>
     internal DesignThemeState DesignTheme { get; } = new();

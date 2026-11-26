@@ -1,4 +1,4 @@
-// 셸 기본 명령 23개 등록 — 메뉴 RelayCommand 와 같은 IShellCommands 호출을 명령 ID 로 노출한다(T-CMD, UADR-0013)
+// 셸 기본 명령 61개 등록 중 B06 23개 — 메뉴 RelayCommand 와 같은 IShellCommands 호출을 명령 ID 로 노출한다(T-CMD, UADR-0013). B07 38개는 .Menu.cs
 using System;
 using System.Threading.Tasks;
 using Dock.Model.Core;
@@ -14,18 +14,19 @@ namespace xkxk.frameworks.ui.shell.Framework;
 /// <remarks>
 /// 동작은 MainViewModel 의 같은 메뉴 명령과 같은 <see cref="IShellCommands"/> 호출이다. 대상 문서는
 /// <c>ctx.Parameter is PocDocument d ? d : shell.ActiveDocument</c> 다. 셸이 없으면(앱 없음) 실행할 수 없고
-/// 창 전체 보기만 늘 실행할 수 있다. 최대화 전환·이전 크기·이름 변경·MDI↔SDI 전환·확대 축소·데모 문서 열기·종료는 B07 에서 판단한다.
+/// 창 전체 보기만 늘 실행할 수 있다. 메뉴가 쓰는 나머지 38개(B07)는 <c>ShellDefaultCommands.Menu.cs</c> 가 이어서 등록한다.
+/// 확대·축소 명령은 만들지 않는다(메뉴 항목 없음, Ctrl+휠은 기존 입력 경로).
 /// </remarks>
-internal static class ShellDefaultCommands
+internal static partial class ShellDefaultCommands
 {
     private const string Layout = "layout";
     private const string Window = "window";
 
-    /// <summary>23개를 표 순서로 등록한다.</summary>
+    /// <summary>61개를 표 순서(B06 23개 → B07 38개)로 등록한다.</summary>
     internal static void Register(IUiCommandRegistry r)
     {
         ArgumentNullException.ThrowIfNull(r);
-        Add(r, ShellCommandIds.LayoutSave, "menu.file.saveLayout", CmdIconKeys.SaveLayout, null, Layout,
+        Add(r, ShellCommandIds.LayoutSave, "menu.file.saveLayout", CmdIconKeys.SaveLayout, "Ctrl+S", Layout,
             c => Watch(c, Shell(c)?.SaveLayoutAsync()), HasShell);
         Add(r, ShellCommandIds.LayoutLoad, "menu.file.loadLayout", CmdIconKeys.LoadLayout, null, Layout,
             c => Watch(c, Shell(c)?.LoadLayoutAsync()), HasShell);
@@ -71,6 +72,7 @@ internal static class ShellDefaultCommands
             c => Shell(c)?.ApplyPreset(LayoutPreset.Tabbed), HasShell);
         Add(r, ShellCommandIds.LayoutPresetMdiTileVertical, "menu.view.presetTile", CmdIconKeys.TileV, null, Layout,
             c => Shell(c)?.ApplyPreset(LayoutPreset.MdiTileVertical), HasShell);
+        RegisterMenuCommands(r);
     }
 
     private static void Add(IUiCommandRegistry r, string id, string titleKey, string icon, string? gesture, string category,

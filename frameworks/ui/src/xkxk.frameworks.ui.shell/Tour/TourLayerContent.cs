@@ -1,10 +1,11 @@
-// 투어 마지막 레이어 내용 생성(요건 6) — 단축키·기능은 카탈로그에서, 메뉴 줄은 메뉴 카탈로그에서 만들어 메뉴가 바뀌면 설명도 함께 바뀐다
+// 투어 마지막 레이어 내용 생성(요건 6) — 단축키·기능은 카탈로그에서, 메뉴 줄은 메뉴 레지스트리 투영(모바일 목록)에서 만들어 메뉴가 바뀌면 설명도 함께 바뀐다
 using System.Collections.Generic;
 using System.Linq;
 using xkxk.frameworks.ui.data.Navigation;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.Controls;
 using xkxk.frameworks.ui.shell.Framework;
+using xkxk.frameworks.ui.shell.ViewModels;
 
 namespace xkxk.frameworks.ui.shell.Tour;
 
@@ -28,7 +29,7 @@ internal static class TourLayerContent
     /// <summary>메뉴 카탈로그의 묶음마다 한 줄: 제목은 메뉴 이름, 본문은 그 안의 항목 이름. 하위 메뉴는 "묶음(항목·항목)" 으로 적고, 모바일형은 실행 가능한 항목만 보여 준다.</summary>
     private static IEnumerable<FeatureRowItem> MenuRows(TourModes mode)
     {
-        var entries = NavMenuCatalog.Entries;
+        var entries = MobileMenuProjection.Entries(XkxkUi.Current.Menus); // 셸·소비자 메뉴 레지스트리 투영
         foreach (var group in entries.Where(e => e.Depth == 0))
         {
             var members = entries.Where(e => e.Group == group.Group && e.Depth > 0).ToList();

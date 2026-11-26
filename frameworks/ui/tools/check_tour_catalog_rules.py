@@ -4,8 +4,12 @@ import glob
 import json
 import os
 import re
+import sys
 
 from check_tour_catalog_format import CATALOG, check_format, parse_catalog
+
+# 메뉴 정본 표 판독은 메뉴 레지스트리 판정기(test/framework/judge/menu_registry_check.py) 한 곳의 규칙을 쓴다
+_MENU_JUDGE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "test", "framework", "judge")
 
 BINDINGS = "src/xkxk.frameworks.ui.views/Input/ShortcutBindings.cs"
 NAV_MENU = "src/xkxk.frameworks.ui.data/Navigation/NavMenuCatalog.cs"
@@ -37,11 +41,20 @@ TARGET_FILES = (
     "src/xkxk.frameworks.ui.views/Settings/SettingsView.axaml", "src/xkxk.frameworks.ui/Controls/SettingsShell.axaml",
 )
 TARGET_GLOBS = ("src/xkxk.frameworks.ui.views/*.axaml", "src/xkxk.frameworks.ui.views/*/*.axaml", "src/xkxk.frameworks.ui/Controls/*.axaml")
-GESTURE_AXAMLS = ("src/xkxk.frameworks.ui.views/MainView.axaml", "src/xkxk.frameworks.ui.views/MainTitleBar.axaml", "src/xkxk.frameworks.ui.views/Menus/*.axaml")
+GESTURE_AXAMLS = ("src/xkxk.frameworks.ui.views/MainView.axaml", "src/xkxk.frameworks.ui.views/MainTitleBar.axaml")
+# B07: 셸 메뉴 정본 = ShellMenuTable(데이터 층 표) + 섹션 채우기 코드, 메뉴 단축키 = 명령 레지스트리 등록 줄의 Gesture 인자
+TABLE_GLOB = "src/xkxk.frameworks.ui.data/Navigation/ShellMenuTable*.cs"
+SECTIONS_GLOB = "src/xkxk.frameworks.ui.views/Menus/ShellMenuSections*.cs"
+COMMAND_GLOB = "src/xkxk.frameworks.ui.shell/Framework/ShellDefaultCommands*.cs"
+COMMAND_GESTURE = re.compile(r'\bAdd\(\s*\w+\s*,\s*ShellCommandIds\.\w+\s*,\s*[^,]*?,\s*[^,]*?,\s*"([^"]+)"')
+MENU_LITERAL = re.compile(r'"(shell\.mnu[A-Za-z0-9]*)"')
+CS_COMMENT = re.compile(r"/\*.*?\*/|(?<![:\"])//[^\n]*", re.S)
+# e8950ea 까지의 메뉴 axaml(B07 에서 삭제). 이관 중 결과가 흔들리지 않게 남겨 두며, 지워지면 빈 목록이다
+LEGACY_MENU_GLOB = "src/xkxk.frameworks.ui.views/Menus/*.axaml"
 TOUR_UI_CS = ("src/xkxk.frameworks.ui/Controls/TourCard.axaml.cs", "src/xkxk.frameworks.ui/Controls/ShortcutLayer.axaml.cs", "src/xkxk.frameworks.ui/Controls/TourOverlay.axaml.cs",
               "src/xkxk.frameworks.ui.shell/Tour/TourController.cs", "src/xkxk.frameworks.ui.shell/Tour/TourLayerContent.cs")
-# 커버리지 대상: 메뉴 항목, 그리고 셸 표면의 버튼·선택 칸·상태 표시
-MENU_GLOB = "src/xkxk.frameworks.ui.views/Menus/*.axaml"
+# 커버리지 대상: 메뉴 항목(표·섹션 리터럴, 옛 axaml), 그리고 셸 표면의 버튼·선택 칸·상태 표시
+MENU_GLOB = LEGACY_MENU_GLOB
 SURFACE_FILES = ("src/xkxk.frameworks.ui.views/MainTitleBar.axaml", "src/xkxk.frameworks.ui.views/MainView.axaml", "src/xkxk.frameworks.ui.views/ShellStatusBar.axaml",
                  "src/xkxk.frameworks.ui.views/ChromeButtons.axaml", "src/xkxk.frameworks.ui.views/SdiTitleBar.axaml", "src/xkxk.frameworks.ui.views/MobileNavView.axaml")
 SURFACE_ID = re.compile(r"^(shell\.(btn|sw|cmb|status|ctx|nav|mnuMore)|chrome\.btn)")
@@ -94,10 +107,13 @@ def tuple_gestures(source):
 
 def code_gestures(src, problems):
     found = {}
-    for pattern in GESTURE_AXAMLS:
+    for pattern in GESTURE_AXAMLS + (LEGACY_MENU_GLOB,):
         for rel in src.glob(pattern):
             for gesture in GESTURE_AXAML.findall(XML_COMMENT.sub("", src.read(rel) or "")):
                 found.setdefault(normalize_gesture(gesture), os.path.basename(rel))
+    for rel in src.glob(COMMAND_GLOB):  # 메뉴에 표시되는 단축키 = 명령 등록 줄 Add(r, ShellCommandIds.X, 키, 아이콘, "<Gesture>", …)
+        for gesture in COMMAND_GESTURE.findall(CS_COMMENT.sub("", src.read(rel) or "")):
+            found.setdefault(normalize_gesture(gesture), os.path.basename(rel))
     rel = "src/xkxk.frameworks.ui.views/Input/WindowKeyGestures.cs"
     for gesture in tuple_gestures(src.read(rel) or ""):
         found.setdefault(gesture, os.path.basename(rel))
@@ -167,6 +183,8 @@ def coverable_ids(src):
     ids = set()
     for rel in src.glob(MENU_GLOB):
         ids.update(i for i in AUTOMATION_AXAML.findall(XML_COMMENT.sub("", src.read(rel) or "")) if i.startswith("shell.mnu"))
+    for rel in src.glob(TABLE_GLOB) + src.glob(SECTIONS_GLOB):  # 표 행·섹션 코드의 셸 메뉴 AutomationId 리터럴
+        ids.update(MENU_LITERAL.findall(CS_COMMENT.sub("", src.read(rel) or "")))
     for rel in SURFACE_FILES:
         ids.update(i for i in AUTOMATION_AXAML.findall(XML_COMMENT.sub("", src.read(rel) or "")) if SURFACE_ID.match(i))
     ids.update("winmenu." + m for m in re.findall(r'\(\w+\.\w+, "[\w.]+", "(\w+)"\)', src.read(WINDOW_MENU) or ""))
@@ -174,11 +192,23 @@ def coverable_ids(src):
     return ids
 
 
-def nav_menu_ids(src):
-    """메뉴 카탈로그 항목은 기능 레이어의 메뉴 줄로 자동 설명된다."""
+def nav_menu_ids(src, problems):
+    """메뉴 카탈로그 항목은 기능 레이어의 메뉴 줄로 자동 설명된다 — B07 부터는 ShellMenuTable 에서 파생한 모바일 목록의 desktopIds."""
     ids = set()
-    for args in re.findall(r"\b[GIX]\([FWVS], \d, ([^\n]*?)\)[,)]", src.read(NAV_MENU) or ""):
+    for args in re.findall(r"\b[GIX]\([FWVS], \d, ([^\n]*?)\)[,)]", src.read(NAV_MENU) or ""):  # e8950ea 까지의 자체 행(B07 에서 삭제)
         ids.update("shell.mnu" + name for name in re.findall(r'"(\w+)"', args))
+    tables = src.glob(TABLE_GLOB)
+    if tables:
+        if _MENU_JUDGE not in sys.path:
+            sys.path.insert(0, _MENU_JUDGE)
+        import menu_registry_check as mrc  # noqa: E402
+        errors = []
+        rows = mrc.parse_table_files([os.path.join(src.root, t) for t in tables], errors,
+                                     lambda p: src.read(os.path.relpath(p, src.root).replace(os.sep, "/")))
+        for e in errors[:3]:
+            problems.append("⑥ 메뉴 표 판독 실패: %s" % e)
+        for entry in mrc.derive_nav(rows):
+            ids.update(entry["desktopIds"])
     return ids
 
 
@@ -187,7 +217,7 @@ def check_coverage(data, steps, features, src, problems):
     described = {s["target"] for s in steps}
     for item in steps + features:
         described.update(item.get("covers") or [])
-    menu = nav_menu_ids(src) - {"shell.mnu" + s for s in (data.get("menuRows") or {}).get("skip") or []}
+    menu = nav_menu_ids(src, problems) - {"shell.mnu" + s for s in (data.get("menuRows") or {}).get("skip") or []}
     excludes = [e for e in (data.get("coverage") or {}).get("exclude") or [] if isinstance(e, dict) and e.get("id")]
     for covered in sorted({c for item in steps + features for c in item.get("covers") or []} - coverable):
         problems.append("⑥ covers 가 없는 항목을 가리킴: %s" % covered)

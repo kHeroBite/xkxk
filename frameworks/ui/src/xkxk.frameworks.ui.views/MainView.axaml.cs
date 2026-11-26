@@ -31,6 +31,7 @@ public partial class MainView : UserControl
     private UiStyleTransition? _styleTransition;
     private string? _overviewKeysText;
     private KeyGesture? _overviewKeys;
+    private IDisposable? _registryGestures;
 
     public MainView()
     {
@@ -176,6 +177,9 @@ public partial class MainView : UserControl
         XkxkUi.Current.Settings.PropertyChanged -= OnUiSettingChanged;
         XkxkUi.Current.Settings.PropertyChanged += OnUiSettingChanged;
         ApplyTabCloseMode();
+        // 소비자 명령 단축키(레지스트리 Gesture)를 메인 TopLevel 에 잇는다. 셸 기본 단축키는 ShortcutBindings·WindowKeyGestures 그대로(OnUnloaded 에서 뗀다)
+        _registryGestures?.Dispose();
+        _registryGestures = TopLevel.GetTopLevel(this) is { } gestureTop ? xkxk.frameworks.ui.views.Input.RegistryGestureInput.Attach(gestureTop) : null;
         if (_started)
         {
             return;
@@ -230,6 +234,8 @@ public partial class MainView : UserControl
     protected override void OnUnloaded(RoutedEventArgs e)
     {
         XkxkUi.Current.Settings.PropertyChanged -= OnUiSettingChanged;
+        _registryGestures?.Dispose();
+        _registryGestures = null;
         _perfFps?.Dispose();
         _styleTransition?.Dispose();
         (DataContext as MainViewModel)?.Compact.Style.Cancel();

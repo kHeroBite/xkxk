@@ -77,4 +77,11 @@ public interface IUiAppContext
     /// 다른 출처의 진단이 이후 판에서 합류할 수 있으며 항목이 늘어나는 것은 호환 변경이다.
     /// </remarks>
     UiDiagnostics Diagnostics { get; }
+
+    /// <summary>메뉴 레지스트리. null 이 아니다.</summary>
+    /// <remarks>
+    /// 처음 접근할 때 만들고, 그 뒤에는 항상 같은 인스턴스를 돌려준다. 셸 기본 메뉴(<see cref="ShellMenuIds"/>)가 등록되어 있다.
+    /// 여기서 등록한 항목의 등록 주체는 앱이고, 등록 진단은 <see cref="Diagnostics"/> 에 쌓인다(B07).
+    /// </remarks>
+    IUiMenuRegistry Menus { get; }
 }

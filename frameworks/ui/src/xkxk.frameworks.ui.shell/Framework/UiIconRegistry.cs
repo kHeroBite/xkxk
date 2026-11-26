@@ -10,7 +10,7 @@ namespace xkxk.frameworks.ui.shell.Framework;
 /// 해석 순서 ① 명시 등록 ② 공급자(새 것이 앞, 기본 생성 공급자 맨 끝). 잠금 1개, 공급자 호출·Changed·진단 보고는 잠금 밖.
 /// 프레임워크는 아이콘을 명시 등록하지 않고 공급자로만 더한다(T-RESERVED).
 /// </remarks>
-internal sealed class UiIconStore
+internal sealed partial class UiIconStore
 {
     private readonly object _gate = new();
     private readonly UiDiagnostics _runtime;

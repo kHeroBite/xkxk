@@ -1,6 +1,5 @@
 // 원격 UI 형(PC형·태블릿형·모바일형) 조회·설정·자동 전환 확인과 모바일형 메뉴 도달 진단
 #if PD_DIAGNOSTICS // 진단 빌드 전용(PdDiagnostics=true)
-using xkxk.frameworks.ui.data.Navigation;
 using System;
 using System.Linq;
 using System.Text.Json.Nodes;
@@ -89,7 +88,7 @@ public static class RemoteUiModeCommands
             "모바일형 메뉴 도달 조회(읽기 전용) → {tabs[], drawer[{id, group, enabled, reason, desktopIds[]}]}. 하단 탭=TabOrder>=0 항목, 서랍=전체 항목(비적용은 enabled=false+reason)",
             _ =>
             {
-                var entries = NavMenuCatalog.Entries.ToList();
+                var entries = ViewModels.MobileMenuProjection.Entries(Framework.XkxkUi.Current.Menus); // 셸·소비자 메뉴 레지스트리 투영(기본 상태는 NavMenuCatalog.Entries 와 같다)
                 var tabs = new JsonArray();
                 foreach (var e in entries.Where(x => x.TabOrder >= 0).OrderBy(x => x.TabOrder))
                 {

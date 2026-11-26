@@ -1,4 +1,4 @@
-// 명령 레지스트리 계약 시험 C39~C45 — 기본 셸 명령 23개·앱 없음 동작·실행 문맥·규칙 진단(단축키·예약·소유)·빌더 지연 검사(P4)·변경 알림·제자리 교체를 본다(UADR-0013)
+// 명령 레지스트리 계약 시험 C39~C45 — 기본 셸 명령 61개·앱 없음 동작·실행 문맥·규칙 진단(단축키·예약·소유)·빌더 지연 검사(P4)·변경 알림·제자리 교체를 본다(UADR-0013)
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ internal static class CommandRegistryChecks
 
     public static IEnumerable<ContractCase> All()
     {
-        yield return new ContractCase("C39", "기본 셸 명령: ShellCommandIds.All 23개 등록·Owner xkxk.shell·아이콘 해석·문구 키 존재·Commands 앞 23개 순서 = All", C39);
+        yield return new ContractCase("C39", "기본 셸 명령: ShellCommandIds.All 61개·중복 0·Owner xkxk.shell·아이콘 해석·문구 키 존재·Commands 앞 61개 순서 = All", C39);
         yield return new ContractCase("C40", "앱 없음(Shell null): 기본 명령 CanExecute false(overview 만 true)·Execute(cascade) false·예외·Error 진단 0", C40);
         yield return new ContractCase("C41", "사용자 명령 실행: ctx.CommandId·Parameter(null·42)·App, CanExecute false 면 Execute false·대리자 미호출", C41);
         yield return new ContractCase("C42", "명령 규칙 진단 XKUI0301·0302·0303·0304·0306·0307, 단축키 표(XKUI0305), 예약 ID XKUI0308, 다른 주체 Remove XKUI0309", C42);
@@ -42,7 +42,7 @@ internal static class CommandRegistryChecks
     {
         var ctx = XkxkUi.Current;
         var all = ShellCommandIds.All;
-        Check.True(all.Count == 23 && all.Distinct(StringComparer.Ordinal).Count() == 23, $"ShellCommandIds.All 수 {all.Count}(중복 없는 23 기대)");
+        Check.True(all.Count == 61 && all.Distinct(StringComparer.Ordinal).Count() == 61, $"ShellCommandIds.All 수 {all.Count}(중복 없는 61 기대)");
         Check.True(ShellCommandIds.WindowOverview == "xkxk.window.overview" && all.Contains(ShellCommandIds.WindowCascade), "ShellCommandIds 상수 값 오류");
         foreach (var id in all)
         {
@@ -55,8 +55,8 @@ internal static class CommandRegistryChecks
         }
 
         var list = ctx.Commands.Commands;
-        Check.True(list.Count >= 23, $"Commands 수 {list.Count}");
-        for (var i = 0; i < 23; i++)
+        Check.True(list.Count >= all.Count, $"Commands 수 {list.Count}");
+        for (var i = 0; i < all.Count; i++)
         {
             Check.True(list[i].Id == all[i], $"Commands[{i}]={list[i].Id} ≠ All[{i}]={all[i]}");
         }
