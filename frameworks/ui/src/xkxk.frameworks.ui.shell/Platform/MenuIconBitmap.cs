@@ -2,10 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Platform;
 
@@ -13,14 +15,16 @@ namespace xkxk.frameworks.ui.shell.Platform;
 /// 아이콘 키(예: PdShellIconSettings·PdCmdIconAbout·PdMenuIcon1009)를 32px 투명 바탕 PNG 로 그려 WindowIcon 을 만든다(22 설계 — 메뉴 아이콘과 창 아이콘 일치).
 /// 글리프 색은 테마 강조색(PdBrushAccent, 없으면 #2B6CB0)이다. 작업표시줄 바탕은 앱 테마와 무관하므로 글자색이 아니라 강조색을 쓴다.
 /// 캐시 키에 색을 넣어 테마가 바뀌면 새로 그린다(이미 열린 창의 아이콘은 다시 열 때 바뀐다).
-/// 셸 층이라 views 의 WindowIcon 컨트롤을 참조하지 않고 Geometry 리소스만 읽는다(레이어 규칙).
+/// 셸 층이라 views 의 WindowIcon 컨트롤을 참조하지 않고 아이콘 레지스트리 해석(<see cref="UiIconGeometry"/>, 모르는 키는 리소스 폴백)만 쓴다(레이어 규칙, UADR-0013).
+/// 레지스트리가 바뀌면 캐시를 비운다(이미 열린 창의 아이콘은 다시 달 때 바뀐다).
 /// </summary>
 public static class MenuIconBitmap
 {
     private const int IconPixels = 32;
     private const double GridSize = 24; // 생성기 글리프 격자(menu_icons.py — 두 모서리 점으로 24 격자 고정)
     private static readonly Color FallbackAccent = Color.Parse("#2B6CB0");
-    private static readonly Dictionary<(string Key, uint Color), WindowIcon> Cache = new();
+    private static readonly Dictionary<(string Key, uint Color), WindowIcon> Cache = new(); // 잠금은 Cache 자신(레지스트리 알림이 UI 스레드 밖에서 올 수 있음)
+    private static int _subscribed; // 레지스트리 변경 알림 지연 구독 표식(0 미구독, 1 구독)
 
     /// <summary>창에 단 아이콘 키(진단 window.icon·SDI 활성 문서 키 공용). 키가 없으면 null.</summary>
     public static readonly AttachedProperty<string?> KeyProperty =
@@ -38,7 +42,8 @@ public static class MenuIconBitmap
             return null;
         }
 
-        if (!app.TryFindResource(key, app.ActualThemeVariant, out var value) || value is not Geometry glyph)
+        EnsureSubscribed();
+        if (UiIconGeometry.Find(app, app.ActualThemeVariant, key) is not { } glyph)
         {
             System.Diagnostics.Debug.WriteLine($"[경고][아이콘] 창 아이콘 글리프 없음: {key}");
             return null;
@@ -46,15 +51,22 @@ public static class MenuIconBitmap
 
         var color = AccentColor(app);
         var cacheKey = (key, color.ToUInt32());
-        if (Cache.TryGetValue(cacheKey, out var cached))
+        lock (Cache)
         {
-            return cached;
+            if (Cache.TryGetValue(cacheKey, out var cached))
+            {
+                return cached;
+            }
         }
 
         try
         {
             var icon = Render(glyph, color);
-            Cache[cacheKey] = icon;
+            lock (Cache)
+            {
+                Cache[cacheKey] = icon;
+            }
+
             return icon;
         }
         catch (Exception ex)
@@ -75,6 +87,30 @@ public static class MenuIconBitmap
 
         window.Icon = icon;
         return true;
+    }
+
+    /// <summary>
+    /// 아이콘 레지스트리 변경 알림을 첫 Create 때 1회만 구독한다(정적 생성자에서 앱 컨텍스트를 만들면 TypeInitializationException 위험 — R8).
+    /// 등록·교체·제거가 있으면 캐시를 비워 다음 Create 가 새 정의로 그린다.
+    /// </summary>
+    private static void EnsureSubscribed()
+    {
+        if (Interlocked.Exchange(ref _subscribed, 1) != 0)
+        {
+            return;
+        }
+
+        XkxkUi.Current.Icons.Changed += OnIconsChanged;
+    }
+
+    private static void OnIconsChanged(object? sender, UiRegistryChangedEventArgs e)
+    {
+        lock (Cache)
+        {
+            Cache.Clear();
+        }
+
+        System.Diagnostics.Debug.WriteLine($"[Debug2][아이콘] 레지스트리 변경 {e.Kind} {e.Id} — 창 아이콘 캐시 비움");
     }
 
     private static Color AccentColor(Application app) =>

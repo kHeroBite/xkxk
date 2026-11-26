@@ -7,6 +7,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 using xkxk.frameworks.ui.shell.ViewModels;
 
 namespace xkxk.frameworks.ui.views.Menus;
@@ -88,10 +89,10 @@ public partial class WindowMenu : MenuItem
         : TopLevel.GetTopLevel(this) is Window main ? new WindowMenuTarget(WindowMenuKind.Main, null, main)
         : null;
 
-    // '창 전체 보기'(REQ-104) — 단축키·원격과 같은 요청 경로로 전체 보기 덮개를 켜고 끈다(기준 화면은 MainView 가 등록한 문서 영역). 메뉴가 닫힌 뒤 열리게 Post
+    // '창 전체 보기'(REQ-104) — 단축키와 같은 명령 xkxk.window.overview 로 전체 보기 덮개를 켜고 끈다(기준 화면은 MainView 가 등록한 문서 영역). 메뉴가 닫힌 뒤 열리게 Post
     private void OnOverviewClick(object? sender, RoutedEventArgs e)
     {
-        Dispatcher.UIThread.Post(xkxk.frameworks.ui.shell.Theming.WindowOverviewHost.Request);
+        Dispatcher.UIThread.Post(() => XkxkUi.Current.Commands.Execute(ShellCommandIds.WindowOverview));
     }
 
     private static bool TryParseCell(string tag, out string layoutId, out int index)

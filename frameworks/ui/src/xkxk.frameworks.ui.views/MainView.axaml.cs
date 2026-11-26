@@ -74,7 +74,7 @@ public partial class MainView : UserControl
         TaskbarTabs.AddHandler(GotFocusEvent, OnTabGotFocus, RoutingStrategies.Bubble, handledEventsToo: true);
         TaskbarTabs.AddHandler(LostFocusEvent, OnTabLostFocus, RoutingStrategies.Bubble, handledEventsToo: true);
 
-        // 창 전체 보기 단축키(REQ-104, 설정 shortcut.window.overview). 메뉴·원격과 같은 WindowOverviewHost.Request 로 보낸다
+        // 창 전체 보기 단축키(REQ-104, 설정 shortcut.window.overview). 메뉴와 같은 명령 xkxk.window.overview(ShellCommandIds.WindowOverview)로 보낸다
         AddHandler(KeyDownEvent, OnOverviewKey, RoutingStrategies.Tunnel);
 
         // 활성화 출처 표식(제목 탭·문서 탭·본문 누름 — 전환 효과 판정, MainView.TitleOrigin.cs)
@@ -101,7 +101,7 @@ public partial class MainView : UserControl
         if (_overviewKeys?.Matches(e) == true)
         {
             e.Handled = true;
-            WindowOverviewHost.Request();
+            XkxkUi.Current.Commands.Execute(ShellCommandIds.WindowOverview);
         }
     }
 

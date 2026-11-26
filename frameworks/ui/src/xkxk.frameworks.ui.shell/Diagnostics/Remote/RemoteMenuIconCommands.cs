@@ -118,7 +118,7 @@ internal static class RemoteMenuIconCommands
             return null;
         }
 
-        return app.TryGetResource(key, app.ActualThemeVariant, out var v) && v is Geometry;
+        return xkxk.frameworks.ui.shell.Platform.UiIconGeometry.Find(app, app.ActualThemeVariant, key) is not null; // 화면과 같은 해석(레지스트리 → 리소스 폴백, UADR-0013)
     }
 
     private static MenuItem? FindMenu(string id) =>

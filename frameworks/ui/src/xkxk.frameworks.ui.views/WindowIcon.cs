@@ -5,11 +5,13 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Media;
+using Avalonia.Threading;
 using xkxk.frameworks.ui.data.Navigation;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.Controls;
 using xkxk.frameworks.ui.shell.Framework;
+using xkxk.frameworks.ui.shell.Platform;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -45,6 +47,7 @@ public sealed partial class WindowIcon : Control
     private readonly IconSpinner _spinner = new() { IsVisible = false };
     private readonly BadgeLayer _badge = new();
     private PocDocument? _watched;
+    private IUiIconRegistry? _icons; // 붙어 있는 동안 구독한 아이콘 레지스트리(떨어질 때 같은 인스턴스에서 해제)
     private IDisposable? _showTimer;
     private IDisposable? _hideTimer;
     private IDisposable? _errorTimer;
@@ -106,6 +109,8 @@ public sealed partial class WindowIcon : Control
         _attached = true;
         XkxkUi.Current.Settings.PropertyChanged += OnSettingsChanged;
         DesignThemeResolver.Changed += Apply;
+        _icons = XkxkUi.Current.Icons;
+        _icons.Changed += OnIconsChanged; // 아이콘 등록·교체·제거 시 다시 그린다(UADR-0013)
         Watch(Document);
         RefreshResources();
     }
@@ -116,8 +121,18 @@ public sealed partial class WindowIcon : Control
         _attached = false;
         XkxkUi.Current.Settings.PropertyChanged -= OnSettingsChanged;
         DesignThemeResolver.Changed -= Apply;
+        if (_icons is not null)
+        {
+            _icons.Changed -= OnIconsChanged;
+            _icons = null;
+        }
+
         Watch(null);
     }
+
+    // 레지스트리 알림은 어느 스레드에서든 올 수 있으므로 UI 스레드에서 다시 그린다
+    private void OnIconsChanged(object? sender, UiRegistryChangedEventArgs e) =>
+        Dispatcher.UIThread.Post(InvalidateVisual);
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
@@ -183,8 +198,7 @@ public sealed partial class WindowIcon : Control
         context.DrawText(text, new Point(box.Center.X - text.Width / 2, box.Center.Y - text.Height / 2));
     }
 
-    private Geometry? FindGeometry(string? key) =>
-        key is not null && this.TryFindResource(key, ActualThemeVariant, out var value) ? value as Geometry : null;
+    private Geometry? FindGeometry(string? key) => UiIconGeometry.Find(this, ActualThemeVariant, key);
 
     private IBrush? FindBrush(string key) =>
         this.TryFindResource(key, ActualThemeVariant, out var value) ? value as IBrush : null;

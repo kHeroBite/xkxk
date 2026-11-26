@@ -56,4 +56,25 @@ public interface IUiAppContext
     /// 공급자는 <see cref="UiHostOptions.MonitorProvider"/> 로 받는다. 옛 MonitorMenuViewModel.Instance 는 이 값으로 위임한다(B05).
     /// </remarks>
     MonitorMenuViewModel Monitors { get; }
+
+    /// <summary>아이콘 레지스트리. null 이 아니다.</summary>
+    /// <remarks>
+    /// 처음 접근할 때 만들고, 그 뒤에는 항상 같은 인스턴스를 돌려준다. 기본 생성 공급자(xkxk.generated)가 맨 끝에 들어 있다.
+    /// 여기서 등록한 항목의 등록 주체는 앱이고, 등록 규칙 위반은 <see cref="Diagnostics"/> 에 쌓인다(B06).
+    /// </remarks>
+    IUiIconRegistry Icons { get; }
+
+    /// <summary>명령 레지스트리. null 이 아니다.</summary>
+    /// <remarks>
+    /// 처음 접근할 때 만들고, 그 뒤에는 항상 같은 인스턴스를 돌려준다. 셸 기본 명령(<see cref="ShellCommandIds"/>)이 등록되어 있다.
+    /// 여기서 등록한 항목의 등록 주체는 앱이고, 등록·실행 진단은 <see cref="Diagnostics"/> 에 쌓인다(B06).
+    /// </remarks>
+    IUiCommandRegistry Commands { get; }
+
+    /// <summary>앱 수준 진단 모음(비 null, 프로세스 1개).</summary>
+    /// <remarks>
+    /// B06 에서는 빌더 Build 뒤의 등록·실행 진단이 쌓인다.
+    /// 다른 출처의 진단이 이후 판에서 합류할 수 있으며 항목이 늘어나는 것은 호환 변경이다.
+    /// </remarks>
+    UiDiagnostics Diagnostics { get; }
 }

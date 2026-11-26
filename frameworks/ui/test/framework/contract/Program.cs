@@ -1,4 +1,4 @@
-// 공개 계약 시험 진입점 — C01~C32 를 돌려 PASS/FAIL 을 찍고 --out JSON 을 쓴다(--canary 는 일부러 실패 1건 추가)
+// 공개 계약 시험 진입점 — C01~C45 를 돌려 PASS/FAIL 을 찍고 --out JSON 을 쓴다(--canary 는 일부러 실패 1건 추가)
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -84,6 +84,8 @@ internal static class Program
         cases.AddRange(DiagnosticsChecks.All());
         cases.AddRange(HostOptionsChecks.All()); // C22·C23 은 App 정적 상태를 쓰므로 맨 뒤(각 시험이 원복한다)
         cases.AddRange(ContextServiceChecks.All()); // C28~C32 — 컨텍스트 서비스(B05): 투어 소스·모니터 공급자·App 정적 값을 바꾼 뒤 원복한다
+        cases.AddRange(IconRegistryChecks.All());
+        cases.AddRange(CommandRegistryChecks.All());
         cases.AddRange(AppContextChecks.All()); // C24~C27 — XkxkUi.Current 는 프로세스 전역·리셋 없음: C25 는 언어를 원복, C26 은 화면 등록 상태를 남기는 마지막 동작 시험(C27 은 리플렉션 구조 검사만)
         // 실행 순서: C01~C23 → C28~C32 → C24~C27(C26 이 상태를 남기므로 C24~C27 묶음을 맨 뒤에 둔다)
         cases.Sort((a, b) =>

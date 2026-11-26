@@ -37,6 +37,7 @@
 | UTODO-0028 | 사용자 조치 — 이전 대상 머신(Windows+WSL)의 정보를 INFRA.md 에 적고, CI 와 로컬이 공용으로 쓰는 일괄 실행기 리허설을 한다. 대상 머신은 지금도 있다고 사용자가 알렸다. 정보 항목과 리허설 범위는 a4 에서 정한다. 시점은 B18 전이다 | 2026-11-26 사후 질문 Q2 후속 · a4 | a4 B18 전 | 열림 |
 | UTODO-0029 | 데스크톱 포그라운드 F1·H16 재시험. PC 비움을 확인한 뒤 성능 시험과 겹치지 않게 단독으로 돌리고, 도중 `logs/pcaway/user_returned.flag` 가 생기면 즉시 중단한다. 근거는 `logs/b05_fg.json` 이다 | 2026-11-26 B05 odone · UADR-0012 | B12 전 또는 PC 비움 시 | 열림 |
 | UTODO-0030 | B05 성능 재측정(기준선 25c31b6 대비, 교대 3회 이상)과 `test/framework/measure/perf_baseline.py` 가 `user_returned.flag` 를 비움 판정에 넣도록 수정. 근거는 `logs/b05_perf.json` 이다. 웹·Fold5 기준선은 B12 로 이관(UADR-0012) | 2026-11-26 B05 odone · UADR-0012 | PC 비움 시 | 열림 |
+| UTODO-0031 | B06 데스크톱 스모크와 앱이 필요한 회귀 9개 재시험(메뉴·제목 탭 아이콘 판정기 포함). `run_desktop_bg.sh` 사용자 파일 가드가 rc=9 `USER_FILES_CHANGED`(pending `20261125_202235_683`)로 막았다. 사용자가 백업 `logs/user_files/20261125_202235_683/` 대조와 pending 처리를 확인한 뒤 돌린다(가드를 임의로 풀지 않는다). 근거는 `logs/b06_smoke_desktop.json`·`logs/b06_regress.json` 이다 | 2026-11-26 B06 odone · UADR-0013 | 사용자 확인 후 | 열림 |
 
 상태 값은 `열림`·`진행`·`완료(YYYY-MM-DD)`·`취소(사유)`·`결정됨(YYYY-MM-DD, 사유)` 중 하나다. `결정됨` 은 사용자가 지금은 하지 않기로 정한 항목이며 다시 검토할 조건을 재검토 시점 칸에 남긴다.
 완료·취소 행은 지우지 않고 상태만 바꾼다. 행이 많아지면 `03_향후과제_TODO_부록/` 으로 옮기고 이 표에는 열린 항목만 남긴다.

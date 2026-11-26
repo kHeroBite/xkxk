@@ -1,6 +1,48 @@
 #nullable enable
+abstract xkxk.frameworks.ui.shell.Framework.UiIconProvider.Id.get -> string!
+abstract xkxk.frameworks.ui.shell.Framework.UiIconProvider.Keys.get -> System.Collections.Generic.IReadOnlyCollection<string!>!
+abstract xkxk.frameworks.ui.shell.Framework.UiIconProvider.TryGetIcon(string! key, out xkxk.frameworks.ui.shell.Framework.UiIconDefinition? icon) -> bool
 abstract xkxk.frameworks.ui.shell.Framework.UiModule.Configure(xkxk.frameworks.ui.shell.Framework.IUiModuleContext! context) -> void
 abstract xkxk.frameworks.ui.shell.Framework.UiModule.Id.get -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.LayoutLoad = "xkxk.layout.load" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.LayoutPresetMdiCascade = "xkxk.layout.preset.mdiCascade" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.LayoutPresetMdiTileVertical = "xkxk.layout.preset.mdiTileVertical" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.LayoutPresetTabbed = "xkxk.layout.preset.tabbed" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.LayoutSave = "xkxk.layout.save" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowCascade = "xkxk.window.cascade" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowClose = "xkxk.window.close" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowCloseAll = "xkxk.window.closeAll" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowCloseOthers = "xkxk.window.closeOthers" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowFloat = "xkxk.window.float" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowMinimize = "xkxk.window.minimize" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowMinimizeAll = "xkxk.window.minimizeAll" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowNext = "xkxk.window.next" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowOverview = "xkxk.window.overview" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowPin = "xkxk.window.pin" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowPrevious = "xkxk.window.previous" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowRedock = "xkxk.window.redock" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowResetLayout = "xkxk.window.resetLayout" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowRestoreAll = "xkxk.window.restoreAll" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowRestoreLastMinimized = "xkxk.window.restoreLastMinimized" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowTabbed = "xkxk.window.tabbed" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowTileHorizontal = "xkxk.window.tileHorizontal" -> string!
+const xkxk.frameworks.ui.shell.Framework.ShellCommandIds.WindowTileVertical = "xkxk.window.tileVertical" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandDuplicate = "XKUI0302" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandExecuteMissing = "XKUI0303" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandFailed = "XKUI0306" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandGestureInvalid = "XKUI0305" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandIconMissing = "XKUI0304" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandIdEmpty = "XKUI0301" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandIdReserved = "XKUI0308" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandNotFound = "XKUI0307" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.CommandRemoveDenied = "XKUI0309" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.IconDuplicate = "XKUI0202" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.IconKeyEmpty = "XKUI0201" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.IconProviderIdReserved = "XKUI0206" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.IconProviderRejected = "XKUI0205" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.IconRemoveDenied = "XKUI0207" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.IconRenderFailed = "XKUI0204" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.IconSourceInvalid = "XKUI0203" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.ModuleConfigureFailed = "XKUI0003" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.ModuleDuplicate = "XKUI0002" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.ModuleIdEmpty = "XKUI0001" -> string!
@@ -9,13 +51,23 @@ const xkxk.frameworks.ui.shell.Framework.UiHostKinds.Android = "android" -> stri
 const xkxk.frameworks.ui.shell.Framework.UiHostKinds.Browser = "browser" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiHostKinds.Desktop = "desktop" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiHostKinds.Unknown = "unknown" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiRegistryOwners.App = "app" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiRegistryOwners.Generated = "xkxk.generated" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiRegistryOwners.ReservedPrefix = "xkxk." -> string!
+const xkxk.frameworks.ui.shell.Framework.UiRegistryOwners.Shell = "xkxk.shell" -> string!
 override xkxk.frameworks.ui.shell.Framework.UiDiagnostic.ToString() -> string!
+static xkxk.frameworks.ui.shell.Framework.ShellCommandIds.All.get -> System.Collections.Generic.IReadOnlyList<string!>!
+static xkxk.frameworks.ui.shell.Framework.UiIconDefinition.FromPathData(string! key, string! pathData) -> xkxk.frameworks.ui.shell.Framework.UiIconDefinition!
+static xkxk.frameworks.ui.shell.Framework.UiIconDefinition.FromResource(string! key, string! resourceKey) -> xkxk.frameworks.ui.shell.Framework.UiIconDefinition!
 static xkxk.frameworks.ui.shell.Framework.XkxkUi.CreateBuilder() -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder!
 static xkxk.frameworks.ui.shell.Framework.XkxkUi.CreateBuilder(string![]! args) -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder!
 static xkxk.frameworks.ui.shell.Framework.XkxkUi.CreateBuilder(xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions! options) -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder!
 static xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.get -> xkxk.frameworks.ui.shell.Framework.IUiAppContext!
 static xkxk.frameworks.ui.shell.Framework.XkxkUiAppBuilderExtensions.UseXkxkUi(this Avalonia.AppBuilder! builder, xkxk.frameworks.ui.shell.Framework.XkxkUiApplication! application) -> Avalonia.AppBuilder!
 xkxk.frameworks.ui.shell.Framework.IUiAppContext
+xkxk.frameworks.ui.shell.Framework.IUiAppContext.Commands.get -> xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry!
+xkxk.frameworks.ui.shell.Framework.IUiAppContext.Diagnostics.get -> xkxk.frameworks.ui.shell.Framework.UiDiagnostics!
+xkxk.frameworks.ui.shell.Framework.IUiAppContext.Icons.get -> xkxk.frameworks.ui.shell.Framework.IUiIconRegistry!
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.Localization.get -> xkxk.frameworks.ui.shell.Framework.IUiLocalizer!
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.MainViewModel.get -> xkxk.frameworks.ui.shell.ViewModels.MainViewModel?
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.Monitors.get -> xkxk.frameworks.ui.shell.ViewModels.MonitorMenuViewModel!
@@ -25,6 +77,28 @@ xkxk.frameworks.ui.shell.Framework.IUiAppContext.Shell.get -> xkxk.frameworks.ui
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.Themes.get -> xkxk.frameworks.ui.shell.Theming.ThemeCatalog!
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.Tour.get -> xkxk.frameworks.ui.shell.Tour.TourCatalogData!
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.Views.get -> xkxk.frameworks.ui.shell.IViewRegistry!
+xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry
+xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry.Add(string! id, System.Action<xkxk.frameworks.ui.shell.Framework.UiCommandOptions!>! configure) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry.CanExecute(string! id) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry.CanExecute(string! id, object? parameter) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry.Changed -> System.EventHandler<xkxk.frameworks.ui.shell.Framework.UiRegistryChangedEventArgs!>?
+xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry.Commands.get -> System.Collections.Generic.IReadOnlyList<xkxk.frameworks.ui.shell.Framework.UiCommandDefinition!>!
+xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry.Contains(string! id) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry.Execute(string! id) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry.Execute(string! id, object? parameter) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry.Remove(string! id) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry.TryGet(string! id, out xkxk.frameworks.ui.shell.Framework.UiCommandDefinition? command) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiIconRegistry
+xkxk.frameworks.ui.shell.Framework.IUiIconRegistry.Add(string! key, System.Action<xkxk.frameworks.ui.shell.Framework.UiIconOptions!>! configure) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiIconRegistry.AddGeometry(string! key, string! pathData) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiIconRegistry.AddProvider(xkxk.frameworks.ui.shell.Framework.UiIconProvider! provider) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiIconRegistry.Changed -> System.EventHandler<xkxk.frameworks.ui.shell.Framework.UiRegistryChangedEventArgs!>?
+xkxk.frameworks.ui.shell.Framework.IUiIconRegistry.Contains(string! key) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiIconRegistry.Keys.get -> System.Collections.Generic.IReadOnlyList<string!>!
+xkxk.frameworks.ui.shell.Framework.IUiIconRegistry.Providers.get -> System.Collections.Generic.IReadOnlyList<xkxk.frameworks.ui.shell.Framework.UiIconProvider!>!
+xkxk.frameworks.ui.shell.Framework.IUiIconRegistry.Remove(string! key) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiIconRegistry.RemoveProvider(string! providerId) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiIconRegistry.TryGet(string! key, out xkxk.frameworks.ui.shell.Framework.UiIconDefinition? icon) -> bool
 xkxk.frameworks.ui.shell.Framework.IUiLocalizer
 xkxk.frameworks.ui.shell.Framework.IUiLocalizer.Format(string! key, params object?[]! args) -> string!
 xkxk.frameworks.ui.shell.Framework.IUiLocalizer.Get(string! key) -> string!
@@ -39,7 +113,9 @@ xkxk.frameworks.ui.shell.Framework.IUiModule
 xkxk.frameworks.ui.shell.Framework.IUiModule.Configure(xkxk.frameworks.ui.shell.Framework.IUiModuleContext! context) -> void
 xkxk.frameworks.ui.shell.Framework.IUiModule.Id.get -> string!
 xkxk.frameworks.ui.shell.Framework.IUiModuleContext
+xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Commands.get -> xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry!
 xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Diagnostics.get -> xkxk.frameworks.ui.shell.Framework.UiDiagnostics!
+xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Icons.get -> xkxk.frameworks.ui.shell.Framework.IUiIconRegistry!
 xkxk.frameworks.ui.shell.Framework.IUiModuleContext.ModuleId.get -> string!
 xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Options.get -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions!
 xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Services.get -> xkxk.frameworks.ui.shell.Framework.UiServiceRegistry!
@@ -47,6 +123,40 @@ xkxk.frameworks.ui.shell.Framework.IUiServiceProvider
 xkxk.frameworks.ui.shell.Framework.IUiServiceProvider.Contains<TService>() -> bool
 xkxk.frameworks.ui.shell.Framework.IUiServiceProvider.Get<TService>() -> TService!
 xkxk.frameworks.ui.shell.Framework.IUiServiceProvider.TryGet<TService>(out TService! service) -> bool
+xkxk.frameworks.ui.shell.Framework.ShellCommandIds
+xkxk.frameworks.ui.shell.Framework.UiCommandContext
+xkxk.frameworks.ui.shell.Framework.UiCommandContext.App.get -> xkxk.frameworks.ui.shell.Framework.IUiAppContext!
+xkxk.frameworks.ui.shell.Framework.UiCommandContext.CommandId.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiCommandContext.Parameter.get -> object?
+xkxk.frameworks.ui.shell.Framework.UiCommandDefinition
+xkxk.frameworks.ui.shell.Framework.UiCommandDefinition.Category.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiCommandDefinition.DescriptionKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiCommandDefinition.Gesture.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiCommandDefinition.Icon.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiCommandDefinition.Id.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiCommandDefinition.Owner.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiCommandDefinition.Title.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiCommandDefinition.TitleKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.CanExecute.get -> System.Func<xkxk.frameworks.ui.shell.Framework.UiCommandContext!, bool>?
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.CanExecute.set -> void
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.Category.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.Category.set -> void
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.DescriptionKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.DescriptionKey.set -> void
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.Execute.get -> System.Action<xkxk.frameworks.ui.shell.Framework.UiCommandContext!>?
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.Execute.set -> void
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.Gesture.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.Gesture.set -> void
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.Icon.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.Icon.set -> void
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.Replace.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.Replace.set -> void
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.Title.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.Title.set -> void
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.TitleKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.TitleKey.set -> void
+xkxk.frameworks.ui.shell.Framework.UiCommandOptions.UiCommandOptions() -> void
 xkxk.frameworks.ui.shell.Framework.UiConfigurationException
 xkxk.frameworks.ui.shell.Framework.UiConfigurationException.Diagnostics.get -> System.Collections.Generic.IReadOnlyList<xkxk.frameworks.ui.shell.Framework.UiDiagnostic!>!
 xkxk.frameworks.ui.shell.Framework.UiConfigurationException.UiConfigurationException(string! message, System.Collections.Generic.IReadOnlyList<xkxk.frameworks.ui.shell.Framework.UiDiagnostic!>! diagnostics) -> void
@@ -91,6 +201,28 @@ xkxk.frameworks.ui.shell.Framework.UiHostOptions.VisibleFrameOf.get -> System.Fu
 xkxk.frameworks.ui.shell.Framework.UiHostOptions.VisibleFrameOf.set -> void
 xkxk.frameworks.ui.shell.Framework.UiHostOptions.WindowHost.get -> xkxk.frameworks.ui.shell.Docking.IWindowHostCommands?
 xkxk.frameworks.ui.shell.Framework.UiHostOptions.WindowHost.set -> void
+xkxk.frameworks.ui.shell.Framework.UiIconDefinition
+xkxk.frameworks.ui.shell.Framework.UiIconDefinition.Description.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiIconDefinition.Key.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiIconDefinition.Kind.get -> xkxk.frameworks.ui.shell.Framework.UiIconKind
+xkxk.frameworks.ui.shell.Framework.UiIconDefinition.Owner.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiIconDefinition.PathData.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiIconDefinition.ResourceKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiIconKind
+xkxk.frameworks.ui.shell.Framework.UiIconKind.PathData = 0 -> xkxk.frameworks.ui.shell.Framework.UiIconKind
+xkxk.frameworks.ui.shell.Framework.UiIconKind.Resource = 1 -> xkxk.frameworks.ui.shell.Framework.UiIconKind
+xkxk.frameworks.ui.shell.Framework.UiIconOptions
+xkxk.frameworks.ui.shell.Framework.UiIconOptions.Description.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiIconOptions.Description.set -> void
+xkxk.frameworks.ui.shell.Framework.UiIconOptions.PathData.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiIconOptions.PathData.set -> void
+xkxk.frameworks.ui.shell.Framework.UiIconOptions.Replace.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiIconOptions.Replace.set -> void
+xkxk.frameworks.ui.shell.Framework.UiIconOptions.ResourceKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiIconOptions.ResourceKey.set -> void
+xkxk.frameworks.ui.shell.Framework.UiIconOptions.UiIconOptions() -> void
+xkxk.frameworks.ui.shell.Framework.UiIconProvider
+xkxk.frameworks.ui.shell.Framework.UiIconProvider.UiIconProvider() -> void
 xkxk.frameworks.ui.shell.Framework.UiLanguage
 xkxk.frameworks.ui.shell.Framework.UiLanguage.Code.get -> string!
 xkxk.frameworks.ui.shell.Framework.UiLanguage.Deconstruct(out string! code, out string! name) -> void
@@ -98,6 +230,16 @@ xkxk.frameworks.ui.shell.Framework.UiLanguage.Name.get -> string!
 xkxk.frameworks.ui.shell.Framework.UiLanguage.UiLanguage(string! code, string! name) -> void
 xkxk.frameworks.ui.shell.Framework.UiModule
 xkxk.frameworks.ui.shell.Framework.UiModule.UiModule() -> void
+xkxk.frameworks.ui.shell.Framework.UiRegistryChangedEventArgs
+xkxk.frameworks.ui.shell.Framework.UiRegistryChangedEventArgs.Id.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiRegistryChangedEventArgs.Kind.get -> xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
+xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
+xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind.Added = 0 -> xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
+xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind.ProviderAdded = 3 -> xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
+xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind.ProviderRemoved = 4 -> xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
+xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind.Removed = 1 -> xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
+xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind.Replaced = 2 -> xkxk.frameworks.ui.shell.Framework.UiRegistryChangeKind
+xkxk.frameworks.ui.shell.Framework.UiRegistryOwners
 xkxk.frameworks.ui.shell.Framework.UiServiceRegistry
 xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.Add<TService>(System.Func<xkxk.frameworks.ui.shell.Framework.IUiServiceProvider!, TService!>! factory) -> xkxk.frameworks.ui.shell.Framework.UiServiceRegistry!
 xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.Add<TService>(TService! instance) -> xkxk.frameworks.ui.shell.Framework.UiServiceRegistry!

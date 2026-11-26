@@ -1,6 +1,6 @@
 #!/bin/bash
-# 별별UI 프레임워크 검증 일괄 실행기 — contract(계약 시험+카나리아)·layers(레이어 검사)·api(공개 API 표면 검사)·inject·context·services 단계를 돌려 요약 JSON 을 남긴다
-# 사용: verify_framework.sh [--stage contract,layers,api,inject,context,services] [--ci] [--help]
+# 별별UI 프레임워크 검증 일괄 실행기 — contract(계약 시험+카나리아)·layers(레이어 검사)·api(공개 API 표면 검사)·inject·context·services·registry 단계를 돌려 요약 JSON 을 남긴다
+# 사용: verify_framework.sh [--stage contract,layers,api,inject,context,services,registry] [--ci] [--help]
 #   contract : 빌드 잠금(Release) 안에서 dotnet.exe run 으로 ContractCheck 를 돌린다 → logs/contract_check.json(rc 0 이어야 함)
 #              이어서 --canary 로 한 번 더 돌린다 → logs/contract_check_canary.json(rc 1·failed>=1 이어야 함, 시험 장치 거짓 PASS 방지)
 #   layers   : tools/check_layers.py, 같은 파일 --self-test, tools/classify_layers.py --check
@@ -9,6 +9,7 @@
 #   context  : app_context_check.py --self-test, 이어서 본 검사(옛 정적 접근자 직접 참조 0건·정의 파일 위임 형태, 훑은 파일 100개 미만이면 rc=2)
 #   services : context_services_check.py --self-test, 이어서 본 검사(옛 셸 싱글톤·호스트 Instance 직접 참조 0건·위임 정의, 훑은 파일 100개 미만이면 rc=2)
 #              → 정적 상태 인벤토리 logs/context_services_report.json (고정 경로 덮어쓰기)
+#   registry : icon_command_registry_check.py --self-test, 이어서 본 검사(아이콘 키 집합·리터럴·기본 명령 23개·직접 조회 잔존, 결과 끝 줄 icons=… commands=… result=PASS)
 #   --ci     : 예약(지금은 동작 동일)
 # 결과: logs/verify_framework_summary.json {"stages":{"<단계>":{"rc":n},...},"rc":n} (고정 경로 덮어쓰기), 종료코드 0=전부 PASS
 #       contract 단계의 빌드·실행 출력은 logs/verify_framework_contract.log (고정 경로 덮어쓰기)
@@ -19,10 +20,10 @@ ROOT="$(cd "$HERE/../.." && pwd)"
 DOTNET="${DOTNET_EXE:-/mnt/c/Program Files/dotnet/dotnet.exe}"
 LOGS="$ROOT/logs"
 SUMMARY="$LOGS/verify_framework_summary.json"
-STAGES="contract,layers,api,inject,context,services"
+STAGES="contract,layers,api,inject,context,services,registry"
 
 usage() {
-  sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,16p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 while [ $# -gt 0 ]; do
@@ -38,7 +39,7 @@ done
 IFS=',' read -r -a LIST <<<"$STAGES"
 [ "${#LIST[@]}" -gt 0 ] || { echo "단계가 비었습니다" >&2; exit 2; }
 for s in "${LIST[@]}"; do
-  case "$s" in contract|layers|api|inject|context|services) ;; *) echo "알 수 없는 단계: $s (contract|layers|api|inject|context|services)" >&2; exit 2 ;; esac
+  case "$s" in contract|layers|api|inject|context|services|registry) ;; *) echo "알 수 없는 단계: $s (contract|layers|api|inject|context|services|registry)" >&2; exit 2 ;; esac
 done
 
 mkdir -p "$LOGS"
@@ -111,6 +112,11 @@ stage_context() {
 stage_services() {
   python3 -B "$ROOT/test/framework/judge/context_services_check.py" --self-test || return 1
   python3 -B "$ROOT/test/framework/judge/context_services_check.py" --root "$ROOT" --report "$LOGS/context_services_report.json"
+}
+
+stage_registry() {
+  python3 -B "$ROOT/test/framework/judge/icon_command_registry_check.py" --self-test || return 1
+  python3 -B "$ROOT/test/framework/judge/icon_command_registry_check.py" --root "$ROOT"
 }
 
 TOTAL=0

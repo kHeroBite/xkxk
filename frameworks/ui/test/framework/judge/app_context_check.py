@@ -17,7 +17,7 @@ import tempfile
 SRC = "src"
 SKIP_DIRS = {"bin", "obj"}
 MIN_FILES = 100
-REF = re.compile(r"\bApp\.(?:MainViewModel|Shell)\b|\bViewRegistry\.Current\b|\bLoc\.Instance\b"
+REF = re.compile(r"(?<![\w.])(?:(?:global::)?xkxk\.frameworks\.ui\.shell\.)?App\.(?:MainViewModel|Shell)\b|\bViewRegistry\.Current\b|\bLoc\.Instance\b"
                  r"|\busing\s+static\s+(?:global::)?xkxk\.frameworks\.ui\.shell\.(?:App|ViewRegistry|Localization\.Loc)\s*;")
 DEF_APP = "src/xkxk.frameworks.ui.shell/App.cs"
 DEF_VIEWS = "src/xkxk.frameworks.ui.shell/ViewRegistry.cs"
@@ -172,6 +172,8 @@ def self_test():
         ("ref_using_static_detect", "using static xkxk.frameworks.ui.shell.App;\nusing static global::xkxk.frameworks.ui.shell.Localization.Loc;", False, 2),
         ("ref_lookalike_ignored", "PdApp.MainViewModel; AndroidApp.Shell; UiAppContext.Instance.CoreLoc; XkxkUi.Current.Views;"
                                   " Loc.Tr(\"k\"); App.ShellCommands; CoreLoc.Instance; using static xkxk.frameworks.ui.shell.Theming.X;", False, 0),
+        ("ref_instance_member_app_ignored", "var s = c.App.Shell; ctx.App.MainViewModel; x.y.App.Shell?.Run();", False, 0),
+        ("ref_global_qualified_detect", "global::xkxk.frameworks.ui.shell.App.MainViewModel.X(); if (App.Shell != null) { }", False, 2),
         ("ref_comment_ignored", "// App.Shell\n/* Loc.Instance\n ViewRegistry.Current */ var u = \"http://x\"; // App.MainViewModel", False, 0),
         ("ref_axaml_detect_comment_ignored", "<!-- {x:Static s:App.MainViewModel}\n -->\n<X Source=\"{x:Static s:ViewRegistry.Current}\"/>", True, 1),
     ]

@@ -4,6 +4,14 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-26 — 별별UI B06 아이콘·명령 레지스트리(UADR-0013)·셸 기본 명령 23개·예약 접두어(O4, B06, conv_179565999934)
+- 결정(UADR-0013). 아이콘과 명령을 같은 키 체계의 레지스트리 2종(`IUiIconRegistry`·`IUiCommandRegistry`)으로 연다. 예약 접두어는 `xkxk.` 이고 등록 정책은 P1~P4 다. 공개 계약은 13형식이며 `PublicAPI.Unshipped.txt` 에 반영했다(Shipped 무변경). 진단 ID 는 16개를 더했다.
+- 구현. 기본 아이콘 공급자(`GeneratedIconProvider`)가 생성 아이콘 169키를 등록하고, 셸 기본 명령 23개(`ShellDefaultCommands`)를 등록한다. 화면 층(`WindowIcon`·`MainView`·`WindowMenu`·`MenuIconBitmap`)은 레지스트리로 아이콘을 해석하고 창 전체 보기를 명령으로 전환했다. 원격 진단에 `registry.dump`·`command.run` 을 더했다. 메뉴 axaml 은 바꾸지 않았다(B07).
+- 판정·시험. 계약 시험 C33~C45(`IconRegistryChecks.cs`·`CommandRegistryChecks.cs`), 판정기 `test/framework/judge/icon_command_registry_check.py`, `verify_framework.sh` 의 registry 단계를 더했다(verify 7단계). 부록 `a8_아이콘명령_레지스트리.md` 를 신설했다.
+- 결과. 4축 빌드 rc=0, verify 7단계 rc=0, 계약 시험 45/45 PASS, 회귀 새 실패 0, 웹 headless 스모크 PASS. otest 는 PARTIAL 이다.
+- 대기. 데스크톱 스모크와 앱이 필요한 회귀 9개는 `run_desktop_bg.sh` 사용자 파일 가드가 rc=9(`USER_FILES_CHANGED`, pending `20261125_202235_683`)로 막아 WAIT 이다. 근거는 `logs/b06_smoke_desktop.json`·`logs/b06_regress.json`, 이월 과제는 UTODO-0031 이다.
+- 한계. `registry.dump` explicit 목록은 간접 계산이고, 판정기 AC-007 은 구독 동작을 실행으로 검증하지 않는다(B07 후보). 둘 다 a8 §11 에 적었다.
+
 ## 2026-11-26 — 별별UI B05 컨텍스트 서비스 이전(UADR-0012)·데스크톱 Instance 2종 제거(O4, B05, conv_179565999934)
 - 결정(UADR-0012). 설정·테마·투어·모니터 싱글톤을 앱 컨텍스트 서비스로 옮긴다. `IUiAppContext` 에 `Settings`·`Themes`·`Tour`·`Monitors` 4종을 더했고(멤버 추가만), 구현은 `MonitorProvider`·`DesignThemeState` 를 포함해 internal 이다. `DesignThemeResolver` 는 정적 조회 함수로 유지한다. 옛 정적 접근자는 위임만 하며 B16 에 `[Obsolete]`, B21 에 제거한다.
 - 호스트. 데스크톱 `Instance` 2종(단일 인스턴스 접근자)을 제거하고 합성 지점에서 생성한다. 호출부 87파일을 치환했고 직접 참조는 0건이다.

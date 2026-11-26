@@ -21,4 +21,18 @@ public interface IUiModuleContext
 
     /// <summary>진단 모음(빌더와 같은 인스턴스).</summary>
     UiDiagnostics Diagnostics { get; }
+
+    /// <summary>아이콘 레지스트리(앱 컨텍스트와 같은 저장소).</summary>
+    /// <remarks>
+    /// 여기서 등록한 항목의 등록 주체는 이 모듈의 ID 다.
+    /// 등록 진단은 Build 중이면 빌더 <see cref="Diagnostics"/>, Build 가 끝난 뒤에는 앱 컨텍스트의 Diagnostics 로 간다(B06).
+    /// </remarks>
+    IUiIconRegistry Icons { get; }
+
+    /// <summary>명령 레지스트리(앱 컨텍스트와 같은 저장소).</summary>
+    /// <remarks>
+    /// 여기서 등록한 항목의 등록 주체는 이 모듈의 ID 다.
+    /// 등록 진단은 Build 중이면 빌더 <see cref="Diagnostics"/>, Build 가 끝난 뒤에는 앱 컨텍스트의 Diagnostics 로 간다(B06).
+    /// </remarks>
+    IUiCommandRegistry Commands { get; }
 }

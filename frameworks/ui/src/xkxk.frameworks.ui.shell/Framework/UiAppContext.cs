@@ -36,8 +36,16 @@ internal sealed class UiAppContext : IUiAppContext
     private MainViewModel? _mainViewModel;
     private IShellCommands? _shell;
 
+    // B06 레지스트리. 생성 연쇄(UiCommandStore → ShellDefaultCommands → IconStore)는 CommandStore 를 다시 부르지 않고,
+    // UiIconStore 는 다른 저장소를 부르지 않는다. 같은 스레드 재귀 접근이면 Lazy 가 InvalidOperationException 을 낸다.
+    private readonly UiDiagnostics _diagnostics = new();
+    private readonly Lazy<UiIconStore> _iconStore;
+    private readonly Lazy<UiCommandStore> _commandStore;
+
     private UiAppContext()
     {
+        _iconStore = new(() => new UiIconStore(_diagnostics), LazyThreadSafetyMode.ExecutionAndPublication);
+        _commandStore = new(() => new UiCommandStore(this, IconStore, _diagnostics), LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     /// <summary>프로세스 단일 인스턴스.</summary>
@@ -80,6 +88,21 @@ internal sealed class UiAppContext : IUiAppContext
             }
         }
     }
+
+    /// <inheritdoc/>
+    public IUiIconRegistry Icons => IconStore.Runtime;
+
+    /// <inheritdoc/>
+    public IUiCommandRegistry Commands => CommandStore.Runtime;
+
+    /// <inheritdoc/>
+    public UiDiagnostics Diagnostics => _diagnostics;
+
+    /// <summary>아이콘 저장소(모듈 보기·그리기 실패 보고용 내부 경로).</summary>
+    internal UiIconStore IconStore => _iconStore.Value;
+
+    /// <summary>명령 저장소(모듈 보기용 내부 경로).</summary>
+    internal UiCommandStore CommandStore => _commandStore.Value;
 
     /// <summary>디자인 테마 해석기(DesignThemeResolver)의 가변 상태. 컨텍스트 생성 때 함께 만든다(지연 아님).</summary>
     internal DesignThemeState DesignTheme { get; } = new();
