@@ -12,6 +12,7 @@ using Avalonia.Threading;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -157,7 +158,7 @@ internal static partial class RemoteWindowsCommands
         r.Register("perf.get", "PerfProbe 계측 JSON(fps·단계 ms·지표)", _ => JsonNode.Parse(PerfProbe.Current.ToJson(AutomationBridge.Platform)));
         r.Register("log.tail", "앱 로그 패널 최근 n 줄(오래된 것 → 최신) n|lines=50", a =>
         {
-            var lines = App.MainViewModel?.LogLines.Take(Math.Max(1, a.Int("n") ?? a.Int("lines") ?? 50)).Reverse()
+            var lines = XkxkUi.Current.MainViewModel?.LogLines.Take(Math.Max(1, a.Int("n") ?? a.Int("lines") ?? 50)).Reverse()
                 ?? Enumerable.Empty<string>();
             return new JsonArray(lines.Select(l => (JsonNode?)JsonValue.Create(l)).ToArray());
         });

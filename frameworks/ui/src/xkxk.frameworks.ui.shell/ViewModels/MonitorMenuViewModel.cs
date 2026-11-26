@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -22,7 +23,7 @@ public sealed class MonitorMenuViewModel : ObservableObject
 
     private MonitorMenuViewModel()
     {
-        Loc.Instance.LanguageChanged += Refresh;
+        XkxkUi.Current.Localization.LanguageChanged += Refresh;
         UiSettings.Current.PropertyChanged += OnSettingChanged;
     }
 

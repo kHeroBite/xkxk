@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using Dock.Avalonia.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Theming;
 
@@ -39,7 +40,7 @@ public static class SingleWindowPlatformFix
             }
         }
 
-        app.Resources.MergedDictionaries.Add(ViewRegistry.Current.CreatePinnedDockNoWindowTheme());
+        app.Resources.MergedDictionaries.Add(XkxkUi.Current.Views.CreatePinnedDockNoWindowTheme());
         Console.WriteLine($"[host] 단일 창 아님 보정: ToolChrome IsMaximized setter 제거 {removed}건, PinnedDock 테마 TopLevel 사본 적용");
     }
 }

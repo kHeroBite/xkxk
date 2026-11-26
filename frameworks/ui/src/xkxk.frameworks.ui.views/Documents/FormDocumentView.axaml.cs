@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Avalonia.Controls;
 using xkxk.frameworks.ui.shell.Diagnostics;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Documents;
 
@@ -28,8 +29,8 @@ public partial class FormDocumentView : UserControl
             ShowStatus(() => Loc.Tr("doc.form.cleared.status"));
         };
 
-        AttachedToVisualTree += (_, _) => Loc.Instance.LanguageChanged += RefreshStatus;
-        DetachedFromVisualTree += (_, _) => Loc.Instance.LanguageChanged -= RefreshStatus;
+        AttachedToVisualTree += (_, _) => XkxkUi.Current.Localization.LanguageChanged += RefreshStatus;
+        DetachedFromVisualTree += (_, _) => XkxkUi.Current.Localization.LanguageChanged -= RefreshStatus;
     }
 
     /// <summary>마지막 저장값(메모리만, 자동 시험이 읽을 수 있게 공개).</summary>

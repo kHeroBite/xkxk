@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -36,7 +37,7 @@ public sealed class NotifyBadgeViewModel : ObservableObject
         factory.PanelTabsChanged += _ => Reevaluate();
         factory.SplitChanged += Reevaluate;
         factory.ActiveDockableChanged += (_, _) => Reevaluate();
-        Loc.Instance.LanguageChanged += () => { OnPropertyChanged(nameof(Name)); OnPropertyChanged(nameof(Tip)); };
+        XkxkUi.Current.Localization.LanguageChanged += () => { OnPropertyChanged(nameof(Name)); OnPropertyChanged(nameof(Tip)); };
     }
 
     public IRelayCommand ShowCommand { get; }

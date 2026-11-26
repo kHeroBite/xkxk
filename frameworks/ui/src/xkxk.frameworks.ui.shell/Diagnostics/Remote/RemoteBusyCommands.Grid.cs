@@ -7,6 +7,7 @@ using Avalonia.VisualTree;
 using xkxk.frameworks.ui.data.Samples;
 using xkxk.frameworks.ui.shell.Diagnostics.Remote;
 using xkxk.frameworks.ui.shell.ViewModels;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics
 {
@@ -72,7 +73,7 @@ namespace xkxk.frameworks.ui.shell.Diagnostics.Remote
         }
 
         private static FavoriteBarViewModel Favorites() =>
-            App.MainViewModel?.FavoriteBar ?? throw new RemoteCommandException("셸이 없습니다.");
+            XkxkUi.Current.MainViewModel?.FavoriteBar ?? throw new RemoteCommandException("셸이 없습니다.");
 
         private static JsonObject FavoriteState()
         {

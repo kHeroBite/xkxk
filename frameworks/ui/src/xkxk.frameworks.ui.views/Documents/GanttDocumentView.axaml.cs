@@ -8,6 +8,7 @@ using Avalonia.Controls.Primitives;
 using xkxk.frameworks.ui.shell.Diagnostics;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.Input;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Documents;
 
@@ -38,8 +39,8 @@ public partial class GanttDocumentView : UserControl
         PerfProbe.Current.SetMetricMax("gantt_tasks", tasks);
         _taskCount = tasks;
         // 상태 문구(작업 수·일당 px)는 언어가 바뀌면 다시 만든다
-        AttachedToVisualTree += (_, _) => { Loc.Instance.LanguageChanged += UpdateTexts; UpdateTexts(); };
-        DetachedFromVisualTree += (_, _) => Loc.Instance.LanguageChanged -= UpdateTexts;
+        AttachedToVisualTree += (_, _) => { XkxkUi.Current.Localization.LanguageChanged += UpdateTexts; UpdateTexts(); };
+        DetachedFromVisualTree += (_, _) => XkxkUi.Current.Localization.LanguageChanged -= UpdateTexts;
 
         Canvas.ScrollChanged += SyncBars;
         HBar.Scroll += OnBarScroll;

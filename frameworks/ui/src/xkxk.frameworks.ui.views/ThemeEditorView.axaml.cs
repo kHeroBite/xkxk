@@ -12,6 +12,7 @@ using Avalonia.Platform.Storage;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.shell.ViewModels;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -75,7 +76,7 @@ public partial class ThemeEditorView : UserControl
                 Content = new ThemeEditorView { DataContext = new ThemeEditorViewModel() },
                 ShowActivated = activate,
             };
-            _window.Bind(Window.TitleProperty, Loc.Instance.Observe("theme.ui.windowTitle")); // 언어 전환 시 창 제목도 즉시
+            _window.Bind(Window.TitleProperty, XkxkUi.Current.Localization.Observe("theme.ui.windowTitle")); // 언어 전환 시 창 제목도 즉시
             // 창 아이콘 = 설정 ▸ 테마 편집기 아이콘(22 §2.3 — 시스템 창과 같은 규칙). 그리기 실패면 null → 앱 아이콘 유지
             const string iconKey = "PdShellIconThemeEditor";
             _window.SetValue(xkxk.frameworks.ui.shell.Platform.MenuIconBitmap.KeyProperty, iconKey);

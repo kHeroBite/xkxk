@@ -16,6 +16,7 @@ using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.shell.ViewModels;
 using xkxk.frameworks.ui.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -229,7 +230,7 @@ public sealed class DocumentViewLocator : IDataTemplate
             {
                 // 그 사이 닫힌 문서는 건너뛴다(뷰를 만들면 수거되기 전까지 자원만 쓴다). 스피너는 아래에서 함께 내린다.
                 // 셸이 없는 경로(갤러리·벤치)는 열린 문서 목록이 없으니 그대로 만든다.
-                var closed = App.Shell is { } shell && !System.Linq.Enumerable.Contains(shell.Documents, doc);
+                var closed = XkxkUi.Current.Shell is { } shell && !System.Linq.Enumerable.Contains(shell.Documents, doc);
                 if (!closed && ReferenceEquals(host.Child, blank))
                 {
                     host.Child = App.DocumentViews.Create(doc);

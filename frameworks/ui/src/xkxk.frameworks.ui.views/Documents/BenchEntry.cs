@@ -1,6 +1,7 @@
 // 벤치 문서 진입점 — 메뉴·원격 명령이 부르는 공개 API. 진단+벤치 빌드(PD_DIAGNOSTICS && PD_BENCH)에서만 동작하고 제품판에는 문자열·로직이 남지 않는다
 using xkxk.frameworks.ui.shell;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Documents;
 
@@ -23,7 +24,7 @@ public static class BenchEntry
     /// <summary>벤치 문서를 연다. target=grid|chart(처음 보일 탭)|dashboard(대시보드 벤치 문서). 셸 미준비면 null.</summary>
     public static PocDocument? Open(string? target = null)
     {
-        if (App.Shell is not { } shell) { return null; }
+        if (XkxkUi.Current.Shell is not { } shell) { return null; }
         EnsureFactory();
         return shell.OpenDocument(DocumentKind.Form, TitlePrefix + (target == "chart" ? ChartSuffix : target == "dashboard" ? DashboardSuffix : "Grid"), allowDuplicate: true);
     }

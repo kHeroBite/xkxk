@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.Json;
 using Avalonia.Media;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Theming;
 
@@ -26,7 +27,7 @@ public sealed partial class ThemeCatalog
         }
 
         // 언어 전환(Q17): 목록·콤보에 걸린 테마 표시명(내장 = 번역 이름 + 접미)을 즉시 갱신. 단일 인스턴스라 해제 불필요.
-        Loc.Instance.LanguageChanged += () =>
+        XkxkUi.Current.Localization.LanguageChanged += () =>
         {
             foreach (var t in Themes)
             {

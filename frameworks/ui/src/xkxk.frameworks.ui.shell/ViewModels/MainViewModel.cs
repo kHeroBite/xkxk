@@ -9,6 +9,7 @@ using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -26,7 +27,7 @@ public sealed class MainViewModel : ObservableObject
     {
         var explorer = new ExplorerTool(this) { Id = "Explorer", Title = Loc.Tr("panel.explorer"), CanClose = false };
         var log = new LogTool(this) { Id = "Log", Title = Loc.Tr("panel.log"), CanClose = false };
-        Loc.Instance.LanguageChanged += () =>
+        XkxkUi.Current.Localization.LanguageChanged += () =>
         {
             explorer.Title = Loc.Tr("panel.explorer"); // 도구 탭 제목도 언어를 따라간다(키는 odev-1 panel 영역)
             log.Title = Loc.Tr("panel.log");

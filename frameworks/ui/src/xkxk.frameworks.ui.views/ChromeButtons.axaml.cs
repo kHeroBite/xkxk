@@ -13,6 +13,7 @@ using Dock.Settings;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Tour;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -41,7 +42,7 @@ public partial class ChromeButtons : UserControl
         set => SetValue(IsSdiHostProperty, value);
     }
 
-    private static WindowCommands? Shell => App.Shell as WindowCommands;
+    private static WindowCommands? Shell => XkxkUi.Current.Shell as WindowCommands;
 
     protected override void OnDataContextChanged(EventArgs e)
     {
@@ -54,8 +55,8 @@ public partial class ChromeButtons : UserControl
         base.OnAttachedToVisualTree(e);
         Bind(WindowCommands.FindDocument(DataContext));
         Shell?.EnsureZOrderHook(); // MDI 겹침을 MRU 로 유지(Dock 기본은 열린 순서 + 활성 1개)
-        Loc.Instance.LanguageChanged -= Refresh;
-        Loc.Instance.LanguageChanged += Refresh; // 코드로 만든 상태별 툴팁을 언어 전환 때 다시 만든다(Q17)
+        XkxkUi.Current.Localization.LanguageChanged -= Refresh;
+        XkxkUi.Current.Localization.LanguageChanged += Refresh; // 코드로 만든 상태별 툴팁을 언어 전환 때 다시 만든다(Q17)
         CaptionLayout.Applied -= Refresh;
         CaptionLayout.Applied += Refresh; // 적중률 색은 코드가 넣으므로 창 스타일·테마가 바뀌면 다시 고른다
         Refresh(); // 창(MdiDocumentWindow)에 붙은 뒤라야 적갈색 틀 클래스를 걸 수 있다
@@ -66,7 +67,7 @@ public partial class ChromeButtons : UserControl
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
-        Loc.Instance.LanguageChanged -= Refresh;
+        XkxkUi.Current.Localization.LanguageChanged -= Refresh;
         CaptionLayout.Applied -= Refresh;
         Bind(null);
         _guard.Hook(null);
@@ -202,13 +203,13 @@ public partial class ChromeButtons : UserControl
     private void OnRefresh(object? sender, RoutedEventArgs e)
     {
         RefreshConfirm.IsVisible = !RefreshConfirm.IsVisible;
-        App.MainViewModel?.AddLog(Loc.Tr(RefreshConfirm.IsVisible ? "chrome.log.refreshAskShown" : "chrome.log.refreshAskHidden", _doc?.Title ?? Loc.Tr("chrome.log.noDocument")));
+        XkxkUi.Current.MainViewModel?.AddLog(Loc.Tr(RefreshConfirm.IsVisible ? "chrome.log.refreshAskShown" : "chrome.log.refreshAskHidden", _doc?.Title ?? Loc.Tr("chrome.log.noDocument")));
     }
 
     private void OnRefreshConfirm(object? sender, RoutedEventArgs e)
     {
         RefreshConfirm.IsVisible = false;
-        App.MainViewModel?.AddLog(Loc.Tr("chrome.log.refreshConfirmed", _doc?.Title ?? Loc.Tr("chrome.log.noDocumentBlocked")));
+        XkxkUi.Current.MainViewModel?.AddLog(Loc.Tr("chrome.log.refreshConfirmed", _doc?.Title ?? Loc.Tr("chrome.log.noDocumentBlocked")));
         if (_doc is { } doc && Shell is { } shell)
         {
             shell.ChromeRefresh(doc); // 이 제목줄은 닫히는 창과 함께 떨어진다

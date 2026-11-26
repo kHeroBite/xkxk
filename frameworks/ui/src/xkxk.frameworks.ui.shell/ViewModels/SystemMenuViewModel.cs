@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Rendering;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -52,7 +53,7 @@ public static class SystemHost
         set
         {
             s_views = value;
-            App.MainViewModel?.SystemMenu.RefreshSystemViews();
+            XkxkUi.Current.MainViewModel?.SystemMenu.RefreshSystemViews();
         }
     }
 
@@ -99,7 +100,7 @@ public sealed class SystemMenuViewModel : ObservableObject
         {
             OnPropertyChanged(nameof(SysGpuCurrent));
         }
-        Loc.Instance.LanguageChanged += () =>
+        XkxkUi.Current.Localization.LanguageChanged += () =>
         {
             OnPropertyChanged(nameof(SysGpuCurrent));
             OnPropertyChanged(nameof(SysDuplicateTip));

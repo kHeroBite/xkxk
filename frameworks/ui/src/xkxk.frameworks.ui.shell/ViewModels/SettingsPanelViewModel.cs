@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -47,7 +48,7 @@ public sealed class SettingsPanelViewModel : ObservableObject
     /// <summary>언어 구독 시작. 원래 순서(윈도우 메뉴 초기화 뒤)를 지키려고 MainViewModel 생성자가 따로 부른다.</summary>
     internal void InitLanguage()
     {
-        Loc.Instance.LanguageChanged += OnLanguageChanged;
+        XkxkUi.Current.Localization.LanguageChanged += OnLanguageChanged;
     }
 
     /// <summary>언어가 바뀐 직후 발생 — MainViewModel 이 윈도우 메뉴 라벨(MagnetRangeLabel)을 다시 알리게 한다.</summary>

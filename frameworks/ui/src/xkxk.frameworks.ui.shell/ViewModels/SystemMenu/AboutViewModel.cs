@@ -3,6 +3,7 @@ using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels.SystemMenu;
 
@@ -15,7 +16,7 @@ public sealed partial class AboutViewModel : ObservableObject, IDisposable
     public AboutViewModel()
     {
         CheckUpdateCommand = new RelayCommand(CheckUpdate);
-        Loc.Instance.LanguageChanged += OnLanguageChanged;
+        XkxkUi.Current.Localization.LanguageChanged += OnLanguageChanged;
     }
 
     public string Version => SystemInfo.Version;
@@ -55,7 +56,7 @@ public sealed partial class AboutViewModel : ObservableObject, IDisposable
         if (!_disposed)
         {
             _disposed = true;
-            Loc.Instance.LanguageChanged -= OnLanguageChanged;
+            XkxkUi.Current.Localization.LanguageChanged -= OnLanguageChanged;
         }
     }
 

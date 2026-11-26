@@ -12,6 +12,7 @@ using Avalonia.VisualTree;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -115,8 +116,8 @@ internal static class PanelCornerChrome
             button.Margin = new Thickness(0, 26, 0, 0); // 머리줄 제목·📌·✕ 를 가리지 않게 머리줄 아래에 둔다
         }
 
-        button.AttachedToVisualTree += (_, _) => xkxk.frameworks.ui.shell.Localization.Loc.Instance.LanguageChanged += button.RefreshText; // 언어 전환 즉시 툴팁·자동화 이름 갱신
-        button.DetachedFromVisualTree += (_, _) => xkxk.frameworks.ui.shell.Localization.Loc.Instance.LanguageChanged -= button.RefreshText;
+        button.AttachedToVisualTree += (_, _) => xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Localization.LanguageChanged += button.RefreshText; // 언어 전환 즉시 툴팁·자동화 이름 갱신
+        button.DetachedFromVisualTree += (_, _) => xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Localization.LanguageChanged -= button.RefreshText;
         button.Click += (_, e) =>
         {
             e.Handled = true;

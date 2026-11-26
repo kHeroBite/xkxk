@@ -10,6 +10,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Diagnostics;
+using xkxk.frameworks.ui.shell.Framework;
 #endif
 
 namespace xkxk.frameworks.ui.views;
@@ -28,7 +29,7 @@ internal static class DeferredContentLoader
     internal static void DeferContent(PocDocument doc, ZoomDecorator host, ref bool deferred)
     {
 #if PD_DIAGNOSTICS
-        if (!Enabled || App.Shell is not { } shell || ShouldRealizeNow(doc, shell))
+        if (!Enabled || XkxkUi.Current.Shell is not { } shell || ShouldRealizeNow(doc, shell))
         {
             return;
         }
@@ -107,7 +108,7 @@ internal static class DeferredContentLoader
     /// <summary>미룬 문서를 위쪽 창부터 한 프레임에 하나씩 실제 뷰로 바꾼다. 닫혔거나 재사용된 host 는 건너뛴다.</summary>
     private static void PumpOne()
     {
-        var open = App.Shell?.Documents;
+        var open = XkxkUi.Current.Shell?.Documents;
         s_pending.RemoveAll(p => !ReferenceEquals(p.Host.Tag, p.Doc) || open is null || !open.Contains(p.Doc));
         if (s_pending.Count == 0)
         {

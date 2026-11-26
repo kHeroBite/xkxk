@@ -7,6 +7,7 @@ using Android.Views;
 using Avalonia.Android;
 using xkxk.frameworks.ui.shell;
 using xkxk.frameworks.ui.shell.ViewModels;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.android;
 
@@ -195,7 +196,7 @@ public sealed class MainActivity : AvaloniaMainActivity
     /// </summary>
     private void HookCaptureProtection()
     {
-        if (App.MainViewModel is not { } vm || ReferenceEquals(vm, _hooked))
+        if (XkxkUi.Current.MainViewModel is not { } vm || ReferenceEquals(vm, _hooked))
         {
             return;
         }

@@ -9,6 +9,7 @@ using Avalonia.VisualTree;
 using Dock.Model.Controls;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -68,7 +69,7 @@ internal static class CenterDropTitleAlign
             var text = $"cursor=({cursor.X:0.##},{cursor.Y:0.##}) target=({target.X:0.##},{target.Y:0.##}) titleCenter=({center.X:0.##},{center.Y:0.##}) d=({dx:0.##},{dy:0.##}) scale={scale} left={left} {(ok ? "OK" : "adjust")}";
             PdLog.Info("mdi-drop", text);
 #if PD_DIAGNOSTICS
-            App.MainViewModel?.AddLog("[mdi-drop] " + text); // log.tail(앱 로그 패널)에서도 보이게(진단 빌드 한정)
+            XkxkUi.Current.MainViewModel?.AddLog("[mdi-drop] " + text); // log.tail(앱 로그 패널)에서도 보이게(진단 빌드 한정)
 #endif
             if (ok)
             {

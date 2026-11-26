@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using xkxk.frameworks.ui.data.Logging;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Tour;
 
@@ -90,7 +91,7 @@ public static class TourCatalog
 
     /// <summary>문구: 카탈로그 소스가 가진 문구가 있으면 그것, 없으면 앱 사전. 저장소 카탈로그는 texts 를 갖지 않는다(검사기가 막는다).</summary>
     public static string Tr(string key) =>
-        Current.Texts.TryGetValue(Loc.Instance.Language, out var texts) && texts.TryGetValue(key, out var text) ? text : Loc.Tr(key);
+        Current.Texts.TryGetValue(XkxkUi.Current.Localization.Language, out var texts) && texts.TryGetValue(key, out var text) ? text : Loc.Tr(key);
 
     private static TourCatalogData Load(ITourCatalogSource source)
     {

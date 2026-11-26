@@ -3,6 +3,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Styling;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -64,7 +65,7 @@ internal static class WindowChromeDiag
         // min = 숨김(측정·배치·그리기 모두 제외), transparent = Opacity 0(배치는 남고 그리기만 제외) — 둘의 차이로 배치 몫과 그리기 몫을 가른다(Q5).
         if (m != "full")
         {
-            s_chromeButtonsMinStyle = new Style(x => x.OfType(ViewRegistry.Current.ChromeButtonsType))
+            s_chromeButtonsMinStyle = new Style(x => x.OfType(XkxkUi.Current.Views.ChromeButtonsType))
             {
                 Setters = { m == "min" ? new Setter(Visual.IsVisibleProperty, false) : new Setter(Visual.OpacityProperty, 0.0) },
             };

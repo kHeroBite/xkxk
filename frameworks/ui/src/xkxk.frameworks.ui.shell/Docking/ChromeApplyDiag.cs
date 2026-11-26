@@ -8,6 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using Avalonia.VisualTree;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -34,7 +35,7 @@ internal static class ChromeApplyDiag
             // log.tail(앱 로그 패널)은 PdLog 가 아니라 MainViewModel.LogLines 를 읽는다 — 시험이 같은 줄을 두 곳에서 볼 수 있게 함께 남긴다(진단 빌드 한정)
             var text = $"forced={ChromePlatform.ForcedStyle?.ToString() ?? "-"} effective={WindowChromeStyle.EffectiveStyle} sdi={sdis.Length} {string.Join(' ', parts)} | res thickness={R("PdSdiFrameThickness")} padding={R("PdChromeFramePadding")} contentCorner={R("PdChromeContentCorner")} mdiShadow={shadow}겹";
             PdLog.Info("chrome-apply", text);
-            App.MainViewModel?.AddLog("[chrome-apply] " + text);
+            XkxkUi.Current.MainViewModel?.AddLog("[chrome-apply] " + text);
         }
         catch (Exception ex)
         {

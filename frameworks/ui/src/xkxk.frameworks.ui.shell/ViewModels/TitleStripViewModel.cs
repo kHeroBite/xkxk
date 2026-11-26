@@ -11,6 +11,7 @@ using Dock.Model.Controls;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -37,7 +38,7 @@ public sealed class TitleStripViewModel : ObservableObject
         // 아이콘 활성 표시는 OS 창 활성을 따른다. 활성 문서가 그대로여도 전경이 바뀌므로 받는다(이벤트 뒤에 IsActive 가 바뀌어도 게시 처리라 새 값을 읽는다)
         factory.WindowActivated += (_, _) => RequestRefresh();
         factory.WindowDeactivated += (_, _) => RequestRefresh();
-        Loc.Instance.LanguageChanged += RequestRefresh;
+        XkxkUi.Current.Localization.LanguageChanged += RequestRefresh;
         ctx.Main.Compact.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(CompactModeViewModel.IsWide)) { UpdateVisibility(); } };
         ctx.Main.FavoriteBar.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(FavoriteBarViewModel.IsShown)) { UpdateVisibility(); } }; // 즐겨찾기만 있어도 제목 줄을 보인다
         if (factory.Documents is INotifyPropertyChanged documents)

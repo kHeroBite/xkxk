@@ -8,6 +8,7 @@ using Avalonia;
 using Avalonia.Controls;
 using xkxk.frameworks.ui.data.Logging;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -194,7 +195,7 @@ public static partial class SnapAssistSession
 
     private static void Watch(Run r)
     {
-        if (App.Shell is WindowCommands shell)
+        if (XkxkUi.Current.Shell is WindowCommands shell)
         {
             shell.OpenDocuments.CollectionChanged += OnDocumentsChanged;
         }
@@ -213,7 +214,7 @@ public static partial class SnapAssistSession
 
     private static void Unwatch(Run r)
     {
-        if (App.Shell is WindowCommands shell)
+        if (XkxkUi.Current.Shell is WindowCommands shell)
         {
             shell.OpenDocuments.CollectionChanged -= OnDocumentsChanged;
         }

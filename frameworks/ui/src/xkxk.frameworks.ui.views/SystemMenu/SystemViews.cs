@@ -12,6 +12,7 @@ using Avalonia.Platform.Storage; // LauncherExtensions.LaunchDirectoryInfoAsync(
 using Avalonia.Threading;
 using xkxk.frameworks.ui.shell.Tour;
 using xkxk.frameworks.ui.shell.ViewModels;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.SystemMenu;
 
@@ -67,7 +68,7 @@ public sealed class SystemViews : ISystemViews
     /// <summary>스마트폰 NAV 는 ☰ 설정 시트, 그 밖은 새 창(데스크톱)·플라이아웃(웹·Android)으로 연다.</summary>
     private static void OpenSettings()
     {
-        if (App.MainViewModel?.Compact.IsCompact == true && SystemHost.OpenSettingsSheet is { } openSheet)
+        if (XkxkUi.Current.MainViewModel?.Compact.IsCompact == true && SystemHost.OpenSettingsSheet is { } openSheet)
         {
             openSheet();
             return;

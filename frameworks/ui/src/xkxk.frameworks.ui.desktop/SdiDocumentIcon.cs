@@ -7,6 +7,7 @@ using xkxk.frameworks.ui.data.Navigation;
 using xkxk.frameworks.ui.shell;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Platform;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.desktop;
 
@@ -49,7 +50,7 @@ internal static class SdiDocumentIcon
 
     private static void HookShell()
     {
-        if (s_shellHooked || App.Shell is not WindowCommands commands)
+        if (s_shellHooked || XkxkUi.Current.Shell is not WindowCommands commands)
         {
             return;
         }

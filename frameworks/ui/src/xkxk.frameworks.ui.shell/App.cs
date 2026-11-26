@@ -36,7 +36,7 @@ public class App : Application
     /// <summary>문서 종류 → 뷰 생성기.</summary>
     public static IDocumentViewFactory DocumentViews
     {
-        get => s_documentViews ?? ViewRegistry.Current.DocumentViews;
+        get => s_documentViews ?? XkxkUi.Current.Views.DocumentViews;
         set => s_documentViews = value;
     }
 
@@ -69,10 +69,11 @@ public class App : Application
     /// <summary>셸이 모르는 레이아웃 변경 알림(예: 호스트의 SDI 창 크기 조절 끝) — 디바운스 저장 예약.</summary>
     public static void NotifyLayoutChanged() => AutoSaver?.MarkDirty();
 
-    /// <summary>MainView 생성 후 설정되는 셸 명령 표면.</summary>
-    public static IShellCommands? Shell { get; private set; }
+    /// <summary>MainView 생성 후 설정되는 셸 명령 표면. B04 부터 <see cref="XkxkUi.Current"/> 의 Shell 위임 접근자다. B16 에 Obsolete 예고, B21 에 제거한다.</summary>
+    public static IShellCommands? Shell => XkxkUi.Current.Shell;
 
-    public static MainViewModel? MainViewModel { get; private set; }
+    /// <summary>메인 화면 뷰모델. B04 부터 <see cref="XkxkUi.Current"/> 의 MainViewModel 위임 접근자다. B16 에 Obsolete 예고, B21 에 제거한다.</summary>
+    public static MainViewModel? MainViewModel => XkxkUi.Current.MainViewModel;
 
     public override void OnFrameworkInitializationCompleted()
     {
@@ -104,18 +105,18 @@ public class App : Application
         Input.SettingsInput.Install(UiSettings.Current, this, SettingsStore); // 설정 시작 순서·전역 입력 처리기(컨트롤 계층)
 
         var vm = new MainViewModel(LayoutStore);
-        MainViewModel = vm;
+        UiAppContext.Instance.SetMain(vm);
         ApplyStartupArgs();
-        Shell = vm.Commands;
+        UiAppContext.Instance.SetShell(vm.Commands);
         Layouts = new LayoutLibrary(LayoutLibraryStore ?? new MemoryKeyValueStore(), vm.Commands, LayoutStore, vm.AddLog,
             UiSettings.Current.BackupSource); // ⑫ 전체 백업·복원에 설정 포함(설정 파일 없으면 현재 설정, D-BACKUP-NOSET)
-        ViewRegistry.Current.InstallInput(vm); // ② Esc 창닫기 — 메인·SDI 창 공통
+        XkxkUi.Current.Views.InstallInput(vm); // ② Esc 창닫기 — 메인·SDI 창 공통
         ViewModels.SystemMenu.SystemInfo.ChannelProvider = () => AppChannel.Current; // UI-17 프로그램 정보·업데이트 확인(odev-1r)
         ViewModels.SystemMenu.SystemInfo.RendererProvider = ViewModels.SystemMenuViewModel.RendererText;
-        ViewModels.SystemHost.Views = ViewRegistry.Current.SystemViews; // 시스템 메뉴 창 제공자(odev-1r) — 이전엔 창 항목 비활성
+        ViewModels.SystemHost.Views = XkxkUi.Current.Views.SystemViews; // 시스템 메뉴 창 제공자(odev-1r) — 이전엔 창 항목 비활성
         AutoSaver = new LayoutAutoSaver(vm.Commands, vm.Factory, LayoutStore, () => vm.WindowMenu.ShouldAutoSave, vm.AddLog);
         Input.SettingsInput.WindowZoomHandler = vm.Commands.HandleZoomInput; // Ctrl+휠 창 확대 모드(UI-06)
-        var view = ViewRegistry.Current.CreateMainView(vm);
+        var view = XkxkUi.Current.Views.CreateMainView(vm);
 
         switch (ApplicationLifetime)
         {
@@ -146,7 +147,7 @@ public class App : Application
         // 레이아웃 자동 저장·기동 복원은 --fresh 또는 화면 상태를 만드는 시나리오 인자(--open·--cmd 등)일 때만 이번 실행에서 끈다.
         // 환경·계측 인자(--frame-pump·--perf-out 등)는 끄지 않는다(RETEST 3차 FAIL 원인). 제품 빌드는 HasScenarioArgs 가 항상 false.
         // 저장된 '윈도우 자동저장' 설정값은 바꾸지 않는다.
-        if (MainViewModel is { } vm)
+        if (XkxkUi.Current.MainViewModel is { } vm)
         {
             vm.WindowMenu.SuppressAutoSave = FreshStart || AutomationBridge.HasScenarioArgs(StartupArgs);
         }

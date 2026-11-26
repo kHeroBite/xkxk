@@ -11,6 +11,7 @@ using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Tour;
 
@@ -50,7 +51,7 @@ public sealed class TourController
         Scope = scope;
         _steps = plan.Steps;
         _gate = new TourInputGate(top);
-        _activeBefore = App.MainViewModel?.ActiveDocument;
+        _activeBefore = XkxkUi.Current.MainViewModel?.ActiveDocument;
     }
 
     /// <summary>이 세션에서 건너뛴 단계와 사유(진단용).</summary>
@@ -179,7 +180,7 @@ public sealed class TourController
     private void RestoreState()
     {
         _gate.Release();
-        if (_activeBefore is not null && App.Shell is { } shell && !ReferenceEquals(App.MainViewModel?.ActiveDocument, _activeBefore)
+        if (_activeBefore is not null && XkxkUi.Current.Shell is { } shell && !ReferenceEquals(XkxkUi.Current.MainViewModel?.ActiveDocument, _activeBefore)
             && shell.Documents.Contains(_activeBefore))
         {
             shell.Activate(_activeBefore);
@@ -268,7 +269,7 @@ public sealed class TourController
         var body = TourCatalog.Tr(step.BodyKey);
         return step.TargetId == TourCatalog.ContentAnchor
             && target is { Tag: PocDocument { Kind: DocumentKind.Grid or DocumentKind.Gantt } document }
-            && App.Shell is WindowCommands shell
+            && XkxkUi.Current.Shell is WindowCommands shell
             ? shell.ChromeHelpText(document) + "\n\n" + body
             : body;
     }

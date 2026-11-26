@@ -9,6 +9,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.Input;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Documents;
 
@@ -145,13 +146,13 @@ public sealed partial class GanttCanvas : Control
     {
         base.OnAttachedToVisualTree(e);
         UiSettings.Current.Changed += InvalidateVisual;
-        xkxk.frameworks.ui.shell.Localization.Loc.Instance.LanguageChanged += InvalidateVisual; // 머리글("작업") 언어 전환
+        xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Localization.LanguageChanged += InvalidateVisual; // 머리글("작업") 언어 전환
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         UiSettings.Current.Changed -= InvalidateVisual;
-        xkxk.frameworks.ui.shell.Localization.Loc.Instance.LanguageChanged -= InvalidateVisual;
+        xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Localization.LanguageChanged -= InvalidateVisual;
         base.OnDetachedFromVisualTree(e);
     }
 

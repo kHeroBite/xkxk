@@ -10,6 +10,7 @@ using Dock.Avalonia.Controls;
 using Dock.Avalonia.Mdi;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -131,8 +132,8 @@ public static class TitleDragRestore
             }
 
             var normal = s_doc.MdiBounds; // 최대화 동안에도 보통 상태 경계가 남아 있다
-            App.Shell?.SetState(s_doc, MdiWindowState.Normal);
-            App.Shell?.Activate(s_doc); // 끌어 복원한 창이 맨 위·활성(Windows 끌어 복원과 같음)
+            XkxkUi.Current.Shell?.SetState(s_doc, MdiWindowState.Normal);
+            XkxkUi.Current.Shell?.Activate(s_doc); // 끌어 복원한 창이 맨 위·활성(Windows 끌어 복원과 같음)
             s_grab = new Point(s_ratioX * normal.Width, s_grab.Y);
             s_dragging = true;
             e.Pointer.Capture(window);
@@ -167,7 +168,7 @@ public static class TitleDragRestore
             return false;
         }
 
-        App.Shell?.SetState(doc, doc.MdiState == MdiWindowState.Maximized ? MdiWindowState.Normal : MdiWindowState.Maximized);
+        XkxkUi.Current.Shell?.SetState(doc, doc.MdiState == MdiWindowState.Maximized ? MdiWindowState.Normal : MdiWindowState.Maximized);
         e.Handled = true;
         return true;
     }

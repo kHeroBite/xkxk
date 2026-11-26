@@ -223,7 +223,7 @@ internal static class RemoteUiCommands
     /// </summary>
     private static JsonNode? Invoke(JsonObject a)
     {
-        var vm = App.MainViewModel ?? throw new RemoteNotReadyException("no-viewmodel", "뷰모델이 아직 없습니다.");
+        var vm = xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.MainViewModel ?? throw new RemoteNotReadyException("no-viewmodel", "뷰모델이 아직 없습니다.");
         var owners = new List<object> { vm };
         owners.AddRange(vm.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(p => p.PropertyType.Name.EndsWith("ViewModel", StringComparison.Ordinal) && p.GetIndexParameters().Length == 0)

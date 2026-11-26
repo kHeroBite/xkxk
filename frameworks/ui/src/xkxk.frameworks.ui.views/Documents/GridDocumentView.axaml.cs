@@ -9,6 +9,7 @@ using Avalonia.Controls;
 using xkxk.frameworks.ui.shell.Diagnostics;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Documents;
 
@@ -50,10 +51,10 @@ public partial class GridDocumentView : UserControl, IContentLoadReporter
 #endif
         AttachedToVisualTree += (_, _) =>
         {
-            Loc.Instance.LanguageChanged += OnLanguageChanged;
+            XkxkUi.Current.Localization.LanguageChanged += OnLanguageChanged;
             OnLanguageChanged(); // 떨어져 있던 동안 바뀐 언어 반영
         };
-        DetachedFromVisualTree += (_, _) => Loc.Instance.LanguageChanged -= OnLanguageChanged;
+        DetachedFromVisualTree += (_, _) => XkxkUi.Current.Localization.LanguageChanged -= OnLanguageChanged;
         // 생성 단계별 계측(grid_open_analysis.md): init=XAML·열 생성, seed=시드(캐시 적중이면 거의 0), bind=데이터 연결·열 너비. 첫 렌더까지는 doc.open.grid
         var t3 = perf.NowMs;
         if (!PerfProbe.SuppressOpenTrack) // 예열·준비된 표 뷰(GridViewPool)는 만들 때 열기 계측을 하지 않고, 실제 열기에 넘겨질 때 BeginOpenTracking 으로 시작한다

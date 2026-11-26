@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.ViewModels.Settings;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -105,7 +106,7 @@ public sealed partial class MobileNavViewModel : ObservableObject
         ToggleMenuCommand = new RelayCommand(() => TogglePanel(PanelMenu));
         CloseSettingsSheetCommand = new RelayCommand(CloseSettingsSheet);
         SystemHost.OpenSettingsSheet = OpenSettingsSheet;
-        Loc.Instance.LanguageChanged += Refresh;
+        XkxkUi.Current.Localization.LanguageChanged += Refresh;
         main.Compact.PropertyChanged += OnChildChanged;
         main.Compact.Style.PropertyChanged += OnChildChanged;
         main.WindowMenu.PropertyChanged += OnChildChanged;

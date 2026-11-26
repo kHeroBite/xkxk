@@ -11,6 +11,7 @@ using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.ViewModels;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Input;
 
@@ -62,8 +63,8 @@ public static class WindowKeyGestures
             (Key.Space, KeyModifiers.Alt) => WindowSystemMenu.OpenWindowMenu(top),
             (Key.OemMinus or Key.Subtract, KeyModifiers.Alt) when sdi is null => WindowSystemMenu.OpenDocumentMenu(top, vm.ActiveDocument),
             (Key.F4, KeyModifiers.Control) when sdi is not null => Run(() => Close(SdiDocument(sdi))),
-            (Key.Tab or Key.F6, KeyModifiers.Control) when sdi is not null => Run(() => App.Shell?.ActivateNext()),
-            (Key.Tab or Key.F6, KeyModifiers.Control | KeyModifiers.Shift) when sdi is not null => Run(() => App.Shell?.ActivatePrevious()),
+            (Key.Tab or Key.F6, KeyModifiers.Control) when sdi is not null => Run(() => XkxkUi.Current.Shell?.ActivateNext()),
+            (Key.Tab or Key.F6, KeyModifiers.Control | KeyModifiers.Shift) when sdi is not null => Run(() => XkxkUi.Current.Shell?.ActivatePrevious()),
             (Key.W, KeyModifiers.Meta) when OperatingSystem.IsMacOS() => Run(() => Close(sdi is not null ? SdiDocument(sdi) : vm.ActiveDocument)),
             (Key.M, KeyModifiers.Meta) when OperatingSystem.IsMacOS() && top is Window w => Run(() => w.WindowState = WindowState.Minimized),
             (Key.OemTilde, KeyModifiers.Meta) when OperatingSystem.IsMacOS() => Run(() => CycleWindows(top, 1)),
@@ -104,7 +105,7 @@ public static class WindowKeyGestures
     {
         if (document is not null)
         {
-            App.Shell?.CloseDocument(document);
+            XkxkUi.Current.Shell?.CloseDocument(document);
         }
     }
 

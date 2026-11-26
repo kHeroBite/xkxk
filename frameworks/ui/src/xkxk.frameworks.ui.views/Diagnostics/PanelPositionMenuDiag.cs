@@ -16,6 +16,7 @@ using xkxk.frameworks.ui.shell;
 using xkxk.frameworks.ui.shell.Diagnostics.Remote;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.ViewModels;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Diagnostics;
 
@@ -75,10 +76,10 @@ internal static class PanelPositionMenuDiag
         });
         r.Register("panelmenu.docSplit", "문서 분할을 만들거나 푼다(탭 메뉴 '새 가로 문서 영역'·'분할 해제'와 같은 명령, 탭 메뉴는 열 때 붙어 팝업 없이 못 부른다) doc= on=true|false → {done}", a =>
         {
-            var doc = App.Shell?.Documents.FirstOrDefault(d => d.Id == a.ReqStr("doc")) ?? throw new RemoteCommandException("문서 없음");
+            var doc = XkxkUi.Current.Shell?.Documents.FirstOrDefault(d => d.Id == a.ReqStr("doc")) ?? throw new RemoteCommandException("문서 없음");
             if (a.Bool("on"))
             {
-                App.MainViewModel!.Factory.NewHorizontalDocumentDock(doc);
+                XkxkUi.Current.MainViewModel!.Factory.NewHorizontalDocumentDock(doc);
                 return new JsonObject { ["done"] = true };
             }
 
@@ -88,7 +89,7 @@ internal static class PanelPositionMenuDiag
         });
         r.Register("panelmenu.notifyCount", "알림 건수를 n 건으로 맞춘다(샘플을 빼거나 복제) n= → {count, title}", a =>
         {
-            var vm = App.MainViewModel?.Factory.Notifications ?? throw new RemoteCommandException("셸이 준비되지 않았습니다.");
+            var vm = XkxkUi.Current.MainViewModel?.Factory.Notifications ?? throw new RemoteCommandException("셸이 준비되지 않았습니다.");
             var n = (int)(a.Num("n") ?? throw new RemoteCommandException("n= 이 필요합니다."));
             SetCount(vm.Items, n);
             return new JsonObject { ["count"] = vm.Items.Count, ["title"] = vm.Title };

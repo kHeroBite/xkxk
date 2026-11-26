@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using Dock.Avalonia.Controls;
 using xkxk.frameworks.ui.shell;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -14,7 +15,7 @@ public partial class MainView
     private static bool s_originClassHandlers;
 
     /// <summary>입력 순간 출처 표식. 600ms 안의 다음 활성 변경이 가져간다(판정·소비는 WindowCommands). 화면은 출처만 넘긴다.</summary>
-    internal static void MarkOrigin(ActivationOrigin origin) => (App.Shell as WindowCommands)?.MarkActivationOrigin(origin);
+    internal static void MarkOrigin(ActivationOrigin origin) => (XkxkUi.Current.Shell as WindowCommands)?.MarkActivationOrigin(origin);
 
     /// <summary>생성자에서 1회. 제목 탭 줄 키 처리기는 인스턴스마다, 문서 탭·본문 클래스 처리기는 앱에 1회만 건다.</summary>
     private void InstallOriginMarks()

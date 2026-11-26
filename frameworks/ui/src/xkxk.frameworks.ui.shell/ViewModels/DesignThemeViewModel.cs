@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -39,7 +40,7 @@ public sealed partial class DesignThemeViewModel : ObservableObject, IDisposable
         KeepColorCommand = new RelayCommand(() => { _keptSuggestionFor = DesignThemeResolver.Current; Reload(); });
         DesignThemeResolver.Changed += Reload;
         _catalog.Changed += Reload;
-        Loc.Instance.LanguageChanged += Reload;
+        XkxkUi.Current.Localization.LanguageChanged += Reload;
         InitExtras(); // 효과 단계·배경 행(.Levels·.Motion partial)
         Reload();
     }
@@ -48,7 +49,7 @@ public sealed partial class DesignThemeViewModel : ObservableObject, IDisposable
     {
         DesignThemeResolver.Changed -= Reload;
         _catalog.Changed -= Reload;
-        Loc.Instance.LanguageChanged -= Reload;
+        XkxkUi.Current.Localization.LanguageChanged -= Reload;
         DisposeExtras();
     }
 

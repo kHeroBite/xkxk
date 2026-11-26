@@ -4,6 +4,7 @@ using System;
 using System.Text.Json.Nodes;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -36,7 +37,7 @@ internal static class RemoteEffectPerfCommands
         });
         r.Register("docs.activateFrom", "출처를 붙여 활성화 doc= origin=Keyboard|TitleTab|WindowList|BodyClick(전환 효과 측정용) → {active,origin}", a =>
         {
-            var commands = App.MainViewModel?.Commands ?? throw new RemoteCommandException("셸이 없습니다.");
+            var commands = XkxkUi.Current.MainViewModel?.Commands ?? throw new RemoteCommandException("셸이 없습니다.");
             var doc = RemoteShellAccess.Doc(a, "doc");
             var origin = a.EnumArg<ActivationOrigin>("origin") ?? throw new RemoteCommandException("origin=Keyboard|TitleTab|WindowList|BodyClick 이 필요합니다.");
             commands.Activate(doc, origin);

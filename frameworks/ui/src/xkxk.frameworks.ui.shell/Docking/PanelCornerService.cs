@@ -11,6 +11,7 @@ using Dock.Model.Core;
 using Dock.Model.Mvvm.Controls;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -276,7 +277,7 @@ public sealed class PanelCornerService
         }
 
         var roots = _f.DockControls.OfType<Visual>().ToList();
-        var restoreView = ViewRegistry.Current.CapturePanelViewState(roots);
+        var restoreView = XkxkUi.Current.Views.CapturePanelViewState(roots);
         _build.Apply(levels, slots, keepRaw, MainAreaSize());
         restoreView();
         Ownership = next;

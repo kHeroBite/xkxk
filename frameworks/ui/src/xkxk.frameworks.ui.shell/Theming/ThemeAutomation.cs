@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Theming;
 
@@ -230,7 +231,7 @@ public static class ThemeAutomation
 
     public static (bool, string) OpenEditor()
     {
-        ViewRegistry.Current.OpenThemeEditor();
+        XkxkUi.Current.Views.OpenThemeEditor();
         return (true, "테마 편집기 열림"); // i18n-ok 자동화 응답
     }
 

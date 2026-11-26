@@ -8,6 +8,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using xkxk.frameworks.ui.data.Navigation;
 using xkxk.frameworks.ui.shell.ViewModels.Settings;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Settings;
 
@@ -23,7 +24,7 @@ public partial class SettingsView : UserControl, ISettingsRootView
     /// <summary>설정 창을 연다(이미 열려 있으면 활성화). 호출은 SystemViews 가 시스템 메뉴·톱니·☰ 공통으로 한다.</summary>
     public static void Open(Control? anchor = null)
     {
-        if (App.MainViewModel is not { } main)
+        if (XkxkUi.Current.MainViewModel is not { } main)
         {
             return;
         }

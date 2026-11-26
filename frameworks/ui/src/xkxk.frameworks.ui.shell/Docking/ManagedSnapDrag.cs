@@ -222,7 +222,7 @@ public static class ManagedSnapDrag
 
     private static void Maximize(ManagedDockWindowDocument managed, IDockWindow dockWindow)
     {
-        if (App.Shell is WindowCommands shell && WindowCommands.FindDocument(managed) is { } doc)
+        if (xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Shell is WindowCommands shell && WindowCommands.FindDocument(managed) is { } doc)
         {
             shell.SetState(doc, MdiWindowState.Maximized); // 창 메뉴 최대화와 같은 경로
             return;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -15,7 +16,7 @@ public sealed class LocalizedOption : ObservableObject
     public LocalizedOption(string key)
     {
         Key = key;
-        Loc.Instance.LanguageChanged += () => OnPropertyChanged(nameof(Text));
+        XkxkUi.Current.Localization.LanguageChanged += () => OnPropertyChanged(nameof(Text));
     }
 
     /// <summary>사전 키.</summary>

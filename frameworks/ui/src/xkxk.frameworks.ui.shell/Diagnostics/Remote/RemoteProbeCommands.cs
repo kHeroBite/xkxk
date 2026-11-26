@@ -8,6 +8,7 @@ using Avalonia;
 using Dock.Avalonia.Mdi;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -50,7 +51,7 @@ internal static class RemoteProbeCommands
         {
             // command= 를 기본으로 받는다: 인자 이름 cmd 는 시험 도구 Remote.call(cmd, **args) 의 첫 매개변수와 겹쳐 키워드로 못 넘긴다(otest-m-1·odev-3 02:3x)
             var cmd = a.Str("command") ?? a.Str("cmd") ?? throw new RemoteCommandException("인자 'command'(또는 'cmd')가 필요합니다.");
-            await AutomationBridge.RunCommandAsync(App.Shell ?? throw new RemoteNotReadyException("no-shell", "셸 명령 표면이 아직 없습니다."),
+            await AutomationBridge.RunCommandAsync(XkxkUi.Current.Shell ?? throw new RemoteNotReadyException("no-shell", "셸 명령 표면이 아직 없습니다."),
                 VisualTreeInspector.Main(), cmd);
             return new JsonObject { ["ok"] = true, ["cmd"] = cmd };
         });

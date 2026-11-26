@@ -13,6 +13,7 @@ using Dock.Model.Core;
 using Dock.Model.Core.Events;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Depth;
 
@@ -68,7 +69,7 @@ public static partial class WindowTransitions
 
     private static void HookShell()
     {
-        if (s_shell is not null || xkxk.frameworks.ui.shell.App.Shell is not WindowCommands shell)
+        if (s_shell is not null || xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Shell is not WindowCommands shell)
         {
             return;
         }

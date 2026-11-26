@@ -12,6 +12,7 @@ using Dock.Model.Controls;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -149,8 +150,8 @@ public partial class SdiTitleBar : UserControl
             _window.PropertyChanged += OnWindowProperty;
         }
 
-        Loc.Instance.LanguageChanged -= UpdateMaxIcon;
-        Loc.Instance.LanguageChanged += UpdateMaxIcon; // 코드로 넣은 최대화 툴팁을 언어 전환 때 다시 만든다(Q17)
+        XkxkUi.Current.Localization.LanguageChanged -= UpdateMaxIcon;
+        XkxkUi.Current.Localization.LanguageChanged += UpdateMaxIcon; // 코드로 넣은 최대화 툴팁을 언어 전환 때 다시 만든다(Q17)
         CaptionLayout.Applied -= OnCaptionApplied;
         CaptionLayout.Applied += OnCaptionApplied; // 크롬 스타일(Windows/macOS) 전환 때 기호·네이티브 신호등 사용을 다시 맞춘다
         OnActiveChanged(null, EventArgs.Empty);
@@ -169,7 +170,7 @@ public partial class SdiTitleBar : UserControl
     {
         base.OnDetachedFromVisualTree(e);
         _watch.Watch(null);
-        Loc.Instance.LanguageChanged -= UpdateMaxIcon;
+        XkxkUi.Current.Localization.LanguageChanged -= UpdateMaxIcon;
         CaptionLayout.Applied -= OnCaptionApplied;
         if (_window is not null)
         {
@@ -209,7 +210,7 @@ public partial class SdiTitleBar : UserControl
 
     private void OnRedock(object? sender, RoutedEventArgs e)
     {
-        if (_doc is { } doc && App.Shell is { } shell)
+        if (_doc is { } doc && XkxkUi.Current.Shell is { } shell)
         {
             // 진행 표시(요건 2): 스피너를 먼저 그린 뒤 재결합한다. 그 사이 닫힌 문서는 건너뛴다
             xkxk.frameworks.ui.shell.Busy.BusyHooks.RunAfterFrame(doc.Id, "redock", () =>
@@ -267,7 +268,7 @@ public partial class SdiTitleBar : UserControl
             return; // 옵션: 위치 고정 중 최소·최대 차단(IDE 조사 결론 대기, 기본 허용)
         }
 
-        if (_doc is not null && App.Shell is { } shell)
+        if (_doc is not null && XkxkUi.Current.Shell is { } shell)
         {
             shell.SetState(_doc, state);
         }
@@ -287,7 +288,7 @@ public partial class SdiTitleBar : UserControl
 
     private void OnClose(object? sender, RoutedEventArgs e)
     {
-        if (_doc is not null && App.Shell is { } shell)
+        if (_doc is not null && XkxkUi.Current.Shell is { } shell)
         {
             shell.CloseDocument(_doc);
         }

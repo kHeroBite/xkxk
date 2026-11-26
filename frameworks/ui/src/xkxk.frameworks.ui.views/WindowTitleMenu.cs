@@ -13,6 +13,7 @@ using Dock.Avalonia.Controls;
 using xkxk.frameworks.ui.shell;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -170,7 +171,7 @@ public sealed class WindowTitleMenu : AvaloniaObject
             WindowMenuKind.Sdi => placement?.FindAncestorOfType<SdiTitleBar>(includeSelf: true) is { } bar
                 ? new WindowMenuTarget(kind, bar.Document, null, bar.PanelOnlyWindow)
                 : new WindowMenuTarget(kind, null, null),
-            WindowMenuKind.Tab => new WindowMenuTarget(kind, WindowMenuOps.TabTarget ?? App.Shell?.ActiveDocument, null),
+            WindowMenuKind.Tab => new WindowMenuTarget(kind, WindowMenuOps.TabTarget ?? XkxkUi.Current.Shell?.ActiveDocument, null),
             _ => WindowCommands.FindDocument(menu.DataContext) is { } doc
                 ? new WindowMenuTarget(kind, doc, null)
                 : new WindowMenuTarget(kind, null, null, (menu.DataContext as ManagedDockWindowDocument)?.Window),

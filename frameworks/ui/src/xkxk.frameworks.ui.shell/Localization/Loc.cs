@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Localization;
 
@@ -15,13 +16,13 @@ namespace xkxk.frameworks.ui.shell.Localization;
 /// <list type="bullet">
 /// <item>XAML: <c>xmlns:loc="using:xkxk.frameworks.ui.shell.Localization"</c> 뒤 <c>Text="{loc:Tr menu.window.autosave}"</c> — 언어를 바꾸면 즉시 다시 그린다.</item>
 /// <item>코드: <c>Loc.Tr("menu.window.autosave")</c>, 형식 문자열은 <c>Loc.Tr("status.docCount", n)</c>(사전 값의 {0}).</item>
-/// <item>뷰모델 바인딩: <c>Loc.Instance[key]</c> 인덱서 — 언어가 바뀌면 PropertyChanged("Item[]")·("Item") 통지.</item>
+/// <item>뷰모델 바인딩: <c>XkxkUi.Current.Localization[key]</c> 인덱서 — 언어가 바뀌면 PropertyChanged("Item[]")·("Item") 통지.</item>
 /// </list>
 /// 사전: 셸 어셈블리에 내장된 <c>Localization/&lt;영역&gt;.&lt;언어&gt;.json</c>(평면 {"키":"값"}). 언어 추가 = 영역 파일을 그 언어 코드로 더하는 것뿐이다(zh·ja 등).
 /// 누락: 현재 언어에 없으면 기본 언어(ko) 값을 쓰고 경고를 1회 남긴다. ko 에도 없으면 빈 문자열(키 문자열은 화면에 내보내지 않는다).
 /// 모든 호출은 UI 스레드에서 한다(언어 변경 통지가 UI 바인딩을 갱신한다).
 /// </summary>
-public sealed class Loc : INotifyPropertyChanged
+public sealed class Loc : INotifyPropertyChanged, IUiLocalizer
 {
     /// <summary>기본·대체 언어(사용자 원본 언어).</summary>
     public const string DefaultLanguage = "ko";
@@ -36,7 +37,7 @@ public sealed class Loc : INotifyPropertyChanged
     private string _language = DefaultLanguage;
     private bool _notifying; // Language 변경 통지 중(재진입 쓰기 차단용)
 
-    private Loc()
+    internal Loc()
     {
         LoadEmbedded(typeof(Loc).Assembly);
         // 기동 언어(ko)의 문화권을 처음부터 적용한다(D-CULTURE: 이전엔 Language 를 바꿀 때만 적용해 OS·브라우저 로캘 형식이 남았다).
@@ -50,7 +51,8 @@ public sealed class Loc : INotifyPropertyChanged
     /// <summary>경고 기록(누락 키·중복 키). 기본은 Console(호스트 로그로 들어간다).</summary>
     public static Action<string> Warn { get; set; } = m => Console.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} [loc] {m}");
 
-    public static Loc Instance { get; } = new();
+    /// <summary>앱 컨텍스트의 문구 서비스(<c>XkxkUi.Current.Localization</c>)로의 위임 접근자. B04 위임, B16 Obsolete 예고·B21 제거.</summary>
+    public static Loc Instance => UiAppContext.Instance.CoreLoc;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -61,6 +63,9 @@ public sealed class Loc : INotifyPropertyChanged
     public IReadOnlyList<(string Code, string Name)> Languages =>
         _dict.Keys.OrderBy(k => k == DefaultLanguage ? 0 : 1).ThenBy(k => k, StringComparer.Ordinal)
             .Select(k => (k, _dict[k].GetValueOrDefault("lang.self", k))).ToList();
+
+    /// <summary>공개 계약용 언어 목록(위 튜플 목록과 같은 순서·값).</summary>
+    IReadOnlyList<UiLanguage> IUiLocalizer.Languages => Languages.Select(l => new UiLanguage(l.Code, l.Name)).ToList();
 
     /// <summary>기본 언어 사전의 전체 키(검사·원격 진단용).</summary>
     public IReadOnlyCollection<string> AllKeys => _dict.GetValueOrDefault(DefaultLanguage)?.Keys ?? (IReadOnlyCollection<string>)Array.Empty<string>();
@@ -112,16 +117,19 @@ public sealed class Loc : INotifyPropertyChanged
     public static string Tr(string key) => Instance.Get(key);
 
     /// <summary>현재 언어 형식 문자열(사전 값의 {0}·{1} …를 현재 문화권으로 채운다).</summary>
-    public static string Tr(string key, params object?[] args)
+    public static string Tr(string key, params object?[] args) => Instance.Format(key, args);
+
+    /// <summary>현재 언어 형식 문자열(사전 값의 {0}·{1} …를 현재 문화권으로 채운다). 형식 오류면 경고 1회 뒤 사전 값 그대로.</summary>
+    public string Format(string key, params object?[] args)
     {
-        var format = Instance.Get(key);
+        var format = Get(key);
         try
         {
             return string.Format(CultureInfo.CurrentCulture, format, args);
         }
         catch (FormatException)
         {
-            Instance.WarnOnce("format:" + key, $"형식 오류 키={key} 값={format}");
+            WarnOnce("format:" + key, $"형식 오류 키={key} 값={format}");
             return format;
         }
     }
@@ -139,7 +147,8 @@ public sealed class Loc : INotifyPropertyChanged
     /// <summary>키 1개를 관찰: 구독 즉시 현재 값, 이후 언어가 바뀔 때마다 새 값(TrExtension 이 바인딩으로 쓴다).</summary>
     public IObservable<string> Observe(string key) => new KeyObservable(this, key);
 
-    private string Get(string key)
+    /// <summary>현재 언어 문자열. 현재 언어에 없으면 기본 언어 값, 거기에도 없으면 빈 문자열.</summary>
+    public string Get(string key)
     {
         if (_dict.TryGetValue(_language, out var cur) && cur.TryGetValue(key, out var v))
         {
@@ -268,27 +277,5 @@ public sealed class Loc : INotifyPropertyChanged
     {
         try { Warn?.Invoke(message); }
         catch (Exception) { /* 경고 출력 실패는 무시 */ }
-    }
-
-    private sealed class KeyObservable(Loc owner, string key) : IObservable<string>
-    {
-        public IDisposable Subscribe(IObserver<string> observer)
-        {
-            void OnChanged() => observer.OnNext(owner.Get(key));
-            observer.OnNext(owner.Get(key));
-            owner.LanguageChanged += OnChanged;
-            return new Unsubscriber(() => owner.LanguageChanged -= OnChanged);
-        }
-    }
-
-    private sealed class Unsubscriber(Action dispose) : IDisposable
-    {
-        private Action? _dispose = dispose;
-
-        public void Dispose()
-        {
-            _dispose?.Invoke();
-            _dispose = null;
-        }
     }
 }

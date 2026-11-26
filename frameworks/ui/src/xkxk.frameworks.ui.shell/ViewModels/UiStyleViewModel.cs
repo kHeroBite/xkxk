@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -40,7 +41,7 @@ public sealed partial class UiStyleViewModel : ObservableObject
             if (string.Equals(p, "AutoToggle", StringComparison.OrdinalIgnoreCase)) { ToggleAuto(); }
             else if (Enum.TryParse<UiStyle>(p, true, out var s)) { Select(s); }
         });
-        Localization.Loc.Instance.LanguageChanged += RaiseSelectionProps; // 툴팁 문구 갱신
+        XkxkUi.Current.Localization.LanguageChanged += RaiseSelectionProps; // 툴팁 문구 갱신
         ctx.Settings.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName is nameof(UiSettings.UiStyle) or nameof(UiSettings.UiStyleOverride) or nameof(UiSettings.CompactWindowKeepsTablet))

@@ -8,6 +8,7 @@ using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.shell.ViewModels.Settings;
 using xkxk.frameworks.ui.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -66,9 +67,9 @@ internal static class RemoteSettingsCommands
             new System.Collections.Generic.KeyValuePair<string, JsonNode?>(t.Key, Math.Max(6, Settings.BaseFontSize + t.Offset)))),
         ["fontName"] = Settings.FontName,
         ["wheelMode"] = Settings.WheelMode.ToString(),
-        ["language"] = Localization.Loc.Instance.Language,
+        ["language"] = XkxkUi.Current.Localization.Language,
         ["panelFeature"] = Settings.PanelFeatureMode.ToString(), // 패널 기능 설정값(Auto|On|Off) — 시험이 읽어 원복에 쓴다
-        ["activeDocZoom"] = App.Shell?.ActiveDocument?.Zoom,
+        ["activeDocZoom"] = XkxkUi.Current.Shell?.ActiveDocument?.Zoom,
         ["gridViewPool"] = Settings.GridViewPool, // 준비된 표 뷰(기본 끔, A16)
         ["gridCompactCells"] = Settings.GridCompactCells, // 표 단일 요소 셀(기본 켬, A16)
         ["gridDrawnCellText"] = Settings.GridDrawnCellText, // 그리는 셀 글자(기본 켬, K15)
@@ -144,7 +145,7 @@ internal static class RemoteSettingsCommands
             throw new RemoteCommandException("설정 화면이 열려 있지 않습니다(sys.open view=Settings 먼저).");
         }
 
-        var docsBefore = App.MainViewModel?.OpenDocuments.Count ?? 0;
+        var docsBefore = XkxkUi.Current.MainViewModel?.OpenDocuments.Count ?? 0;
         var args = new Avalonia.Input.KeyEventArgs
         {
             RoutedEvent = Avalonia.Input.InputElement.KeyDownEvent,
@@ -157,7 +158,7 @@ internal static class RemoteSettingsCommands
             ["handled"] = args.Handled,
             ["viewOpen"] = OpenSettingsView() is not null,
             ["docsBefore"] = docsBefore,
-            ["docsAfter"] = App.MainViewModel?.OpenDocuments.Count ?? 0,
+            ["docsAfter"] = XkxkUi.Current.MainViewModel?.OpenDocuments.Count ?? 0,
         };
     }
 
@@ -225,7 +226,7 @@ internal static class RemoteSettingsCommands
                     Settings.PanelFeatureMode = pfm;
                 }
 
-                if (a.Str("language") is { Length: > 0 } lang) { Localization.Loc.Instance.Language = lang; } // lang.set 별칭(UiSettings 가 Loc 변경을 따라가 저장)
+                if (a.Str("language") is { Length: > 0 } lang) { XkxkUi.Current.Localization.Language = lang; } // lang.set 별칭(UiSettings 가 Loc 변경을 따라가 저장)
                 // 표 열기 시험 스위치(A16) — ?fresh(설정 저장소 격리)를 유지한 채 켬·끔을 비교하려고 원격으로 바꾼다. 다음에 여는 표부터 반영, 값은 저장되므로 시험이 원복해야 한다
                 if (StrictBool(a, "gridViewPool") is { } gvp) { Settings.GridViewPool = gvp; }
                 if (StrictBool(a, "gridCompactCells") is { } gcc) { Settings.GridCompactCells = gcc; } // A16 단일 요소 셀(다음에 여는 표부터)

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels.SystemMenu;
 
@@ -37,7 +38,7 @@ public sealed partial class InquiryListViewModel : ObservableObject, System.IDis
         _store = store ?? InquiryStore.Default;
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         DeleteCommand = new AsyncRelayCommand(DeleteAsync, () => _selected is not null);
-        Loc.Instance.LanguageChanged += OnLanguageChanged;
+        XkxkUi.Current.Localization.LanguageChanged += OnLanguageChanged;
         _ = RefreshAsync();
     }
 
@@ -69,7 +70,7 @@ public sealed partial class InquiryListViewModel : ObservableObject, System.IDis
         if (!_disposed)
         {
             _disposed = true;
-            Loc.Instance.LanguageChanged -= OnLanguageChanged;
+            XkxkUi.Current.Localization.LanguageChanged -= OnLanguageChanged;
         }
     }
 

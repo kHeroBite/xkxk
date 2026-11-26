@@ -14,6 +14,7 @@ using Dock.Model.Core;
 using xkxk.frameworks.ui.data.Logging;
 using xkxk.frameworks.ui.shell.Platform;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -34,7 +35,7 @@ public static partial class WindowMenuOps
             return null; // 위치 고정 창은 대상이 아니다(11 문서 §2)
         }
 
-        var window = target.Document is { } d && App.Shell is WindowCommands s ? s.SdiPlacement.WindowOf(d) : target.PanelWindow;
+        var window = target.Document is { } d && XkxkUi.Current.Shell is WindowCommands s ? s.SdiPlacement.WindowOf(d) : target.PanelWindow;
         if (window is not null)
         {
             return window.Host is Window host ? OsPlacement(host, WindowMinSize.Current) : ManagedPlacement(window);

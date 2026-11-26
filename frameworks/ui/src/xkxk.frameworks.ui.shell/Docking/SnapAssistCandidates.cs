@@ -9,6 +9,7 @@ using Avalonia.VisualTree;
 using Dock.Avalonia.Controls;
 using Dock.Model.Controls;
 using Dock.Model.Core;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -90,7 +91,7 @@ internal static class SnapAssistCandidates
     {
         if (target.Document is { } doc)
         {
-            if (App.Shell is WindowCommands shell && shell.SdiPlacement.WindowOf(doc) is { } window)
+            if (XkxkUi.Current.Shell is WindowCommands shell && shell.SdiPlacement.WindowOf(doc) is { } window)
             {
                 return "sdi#" + RuntimeHelpers.GetHashCode(window);
             }
@@ -103,7 +104,7 @@ internal static class SnapAssistCandidates
 
     private static IEnumerable<SnapAssistCandidate> Enumerate(SnapAssistScope scope, object anchor, WindowMenuTarget placed)
     {
-        if (App.Shell is not WindowCommands shell)
+        if (XkxkUi.Current.Shell is not WindowCommands shell)
         {
             return Array.Empty<SnapAssistCandidate>();
         }

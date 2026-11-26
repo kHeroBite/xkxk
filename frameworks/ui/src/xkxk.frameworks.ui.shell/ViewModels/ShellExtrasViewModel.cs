@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -20,7 +21,7 @@ public sealed class ShellExtrasViewModel : ObservableObject
     public ShellExtrasViewModel(ShellContext ctx)
     {
         _ctx = ctx;
-        OpenBenchCommand = new RelayCommand<string>(t => ViewRegistry.Current.OpenBench(t ?? "grid"));
+        OpenBenchCommand = new RelayCommand<string>(t => XkxkUi.Current.Views.OpenBench(t ?? "grid"));
         FlashCommand = new RelayCommand<PocDocument>(d => { if ((d ?? ctx.Main.ActiveDocument) is { } doc) { Flash(doc); } });
         Settings.PropertyChanged += (_, e) =>
         {
@@ -78,7 +79,7 @@ public sealed class ShellExtrasViewModel : ObservableObject
     public RelayCommand<PocDocument> FlashCommand { get; }
 
     /// <summary>벤치 문서(그리드·차트 후보 비교, odev-gc Documents/BenchEntry)가 포함된 빌드인가. 제품 기본 빌드는 false → 메뉴 숨김.</summary>
-    public bool BenchAvailable => ViewRegistry.Current.BenchAvailable;
+    public bool BenchAvailable => XkxkUi.Current.Views.BenchAvailable;
 
     /// <summary>벤치 문서 열기(인자 grid|chart = 처음 보일 탭). 벤치 미포함 빌드에서는 아무것도 하지 않는다.</summary>
     public RelayCommand<string> OpenBenchCommand { get; }

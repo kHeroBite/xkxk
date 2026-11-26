@@ -11,6 +11,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -54,8 +55,8 @@ public partial class MainTitleBar : UserControl
             _window.Opened += OnWindowOpened; // 확장 여부는 플랫폼 창이 만들어진 뒤 확정된다
         }
 
-        Loc.Instance.LanguageChanged += UpdateCaption;
-        Loc.Instance.LanguageChanged += QueueReflow; // 메뉴 문구 길이가 바뀐다
+        XkxkUi.Current.Localization.LanguageChanged += UpdateCaption;
+        XkxkUi.Current.Localization.LanguageChanged += QueueReflow; // 메뉴 문구 길이가 바뀐다
         CaptionLayout.Applied += UpdateCaption; // 크롬 스타일 전환(macOS 네이티브 신호등 사용 여부)
         UpdateCaption();
         UpdateActiveState();
@@ -71,8 +72,8 @@ public partial class MainTitleBar : UserControl
             _window.Opened -= OnWindowOpened;
         }
 
-        Loc.Instance.LanguageChanged -= UpdateCaption;
-        Loc.Instance.LanguageChanged -= QueueReflow;
+        XkxkUi.Current.Localization.LanguageChanged -= UpdateCaption;
+        XkxkUi.Current.Localization.LanguageChanged -= QueueReflow;
         CaptionLayout.Applied -= UpdateCaption;
         _window = null;
         _top = null;

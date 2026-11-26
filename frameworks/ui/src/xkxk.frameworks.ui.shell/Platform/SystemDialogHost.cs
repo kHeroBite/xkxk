@@ -6,6 +6,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Platform;
 
@@ -152,7 +153,7 @@ public static class SystemDialogHost
         }
 
         Avalonia.Automation.AutomationProperties.SetAutomationId(window, "sys.dlg." + name);
-        window.Bind(Window.TitleProperty, Loc.Instance.Observe(titleKey)); // 언어 전환 시 제목도 즉시 바뀐다
+        window.Bind(Window.TitleProperty, XkxkUi.Current.Localization.Observe(titleKey)); // 언어 전환 시 제목도 즉시 바뀐다
         if (iconKey is not null)
         {
             MenuIconBitmap.Apply(window, iconKey); // 메뉴 아이콘과 같은 키 — AppWindowIcon 은 Icon 이 이미 있으면 건드리지 않는다

@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -45,7 +46,7 @@ public sealed partial class LayoutManagerViewModel : ObservableObject
         Backups = new LayoutBackupViewModel(library, m => Message = m);
 
         // 언어가 바뀌면 템플릿 이름·자동 저장 항목 이름을 새 언어로 다시 읽는다(Q17)
-        Loc.Instance.LanguageChanged += () =>
+        XkxkUi.Current.Localization.LanguageChanged += () =>
         {
             TemplatePicker.Refresh();
             if (_isOpen && !_isSaveMode) { _ = RefreshAsync(); }

@@ -1,6 +1,7 @@
 // Dock 테마의 메뉴·표시 문자열 현지화 — Dock ControlStrings 키를 현재 언어 값(dock.*.json)으로 담은 병합 사전 1개를 앱 리소스에 넣어 덮는다. 언어를 바꾸면 사전을 통째로 바꾼다
 using Avalonia;
 using Avalonia.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Localization;
 
@@ -64,7 +65,7 @@ public static class DockStrings
         }
 
         Apply(app);
-        Loc.Instance.LanguageChanged += () => Apply(app);
+        XkxkUi.Current.Localization.LanguageChanged += () => Apply(app);
     }
 
     private static void Apply(Application app)

@@ -13,7 +13,24 @@ override xkxk.frameworks.ui.shell.Framework.UiDiagnostic.ToString() -> string!
 static xkxk.frameworks.ui.shell.Framework.XkxkUi.CreateBuilder() -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder!
 static xkxk.frameworks.ui.shell.Framework.XkxkUi.CreateBuilder(string![]! args) -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder!
 static xkxk.frameworks.ui.shell.Framework.XkxkUi.CreateBuilder(xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions! options) -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder!
+static xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.get -> xkxk.frameworks.ui.shell.Framework.IUiAppContext!
 static xkxk.frameworks.ui.shell.Framework.XkxkUiAppBuilderExtensions.UseXkxkUi(this Avalonia.AppBuilder! builder, xkxk.frameworks.ui.shell.Framework.XkxkUiApplication! application) -> Avalonia.AppBuilder!
+xkxk.frameworks.ui.shell.Framework.IUiAppContext
+xkxk.frameworks.ui.shell.Framework.IUiAppContext.Localization.get -> xkxk.frameworks.ui.shell.Framework.IUiLocalizer!
+xkxk.frameworks.ui.shell.Framework.IUiAppContext.MainViewModel.get -> xkxk.frameworks.ui.shell.ViewModels.MainViewModel?
+xkxk.frameworks.ui.shell.Framework.IUiAppContext.RegisterViews(xkxk.frameworks.ui.shell.IViewRegistry! views) -> void
+xkxk.frameworks.ui.shell.Framework.IUiAppContext.Shell.get -> xkxk.frameworks.ui.shell.Docking.IShellCommands?
+xkxk.frameworks.ui.shell.Framework.IUiAppContext.Views.get -> xkxk.frameworks.ui.shell.IViewRegistry!
+xkxk.frameworks.ui.shell.Framework.IUiLocalizer
+xkxk.frameworks.ui.shell.Framework.IUiLocalizer.Format(string! key, params object?[]! args) -> string!
+xkxk.frameworks.ui.shell.Framework.IUiLocalizer.Get(string! key) -> string!
+xkxk.frameworks.ui.shell.Framework.IUiLocalizer.HasKey(string! key) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiLocalizer.Language.get -> string!
+xkxk.frameworks.ui.shell.Framework.IUiLocalizer.Language.set -> void
+xkxk.frameworks.ui.shell.Framework.IUiLocalizer.LanguageChanged -> System.Action?
+xkxk.frameworks.ui.shell.Framework.IUiLocalizer.Languages.get -> System.Collections.Generic.IReadOnlyList<xkxk.frameworks.ui.shell.Framework.UiLanguage!>!
+xkxk.frameworks.ui.shell.Framework.IUiLocalizer.Observe(string! key) -> System.IObservable<string!>!
+xkxk.frameworks.ui.shell.Framework.IUiLocalizer.this[string! key].get -> string!
 xkxk.frameworks.ui.shell.Framework.IUiModule
 xkxk.frameworks.ui.shell.Framework.IUiModule.Configure(xkxk.frameworks.ui.shell.Framework.IUiModuleContext! context) -> void
 xkxk.frameworks.ui.shell.Framework.IUiModule.Id.get -> string!
@@ -68,6 +85,11 @@ xkxk.frameworks.ui.shell.Framework.UiHostOptions.VisibleFrameOf.get -> System.Fu
 xkxk.frameworks.ui.shell.Framework.UiHostOptions.VisibleFrameOf.set -> void
 xkxk.frameworks.ui.shell.Framework.UiHostOptions.WindowHost.get -> xkxk.frameworks.ui.shell.Docking.IWindowHostCommands?
 xkxk.frameworks.ui.shell.Framework.UiHostOptions.WindowHost.set -> void
+xkxk.frameworks.ui.shell.Framework.UiLanguage
+xkxk.frameworks.ui.shell.Framework.UiLanguage.Code.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiLanguage.Deconstruct(out string! code, out string! name) -> void
+xkxk.frameworks.ui.shell.Framework.UiLanguage.Name.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiLanguage.UiLanguage(string! code, string! name) -> void
 xkxk.frameworks.ui.shell.Framework.UiModule
 xkxk.frameworks.ui.shell.Framework.UiModule.UiModule() -> void
 xkxk.frameworks.ui.shell.Framework.UiServiceRegistry

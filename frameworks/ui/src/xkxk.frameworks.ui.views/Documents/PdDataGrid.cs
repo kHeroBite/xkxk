@@ -10,6 +10,7 @@ using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.Input;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Documents;
 
@@ -66,7 +67,7 @@ public class PdDataGrid : DataGrid
 
         UiSettings.Current.Changed += RefreshStripes;
         UiSettings.Current.Changed += ApplyFontScale; // 폰트 종류가 바뀌면 머리글 폭도 달라진다(캐시 적중이면 측정 없음)
-        Loc.Instance.LanguageChanged += OnLanguageChanged;
+        XkxkUi.Current.Localization.LanguageChanged += OnLanguageChanged;
         RefreshStripes();
         OnLanguageChanged(); // 떨어져 있던 동안 바뀐 언어 반영
     }
@@ -75,7 +76,7 @@ public class PdDataGrid : DataGrid
     {
         UiSettings.Current.Changed -= RefreshStripes;
         UiSettings.Current.Changed -= ApplyFontScale;
-        Loc.Instance.LanguageChanged -= OnLanguageChanged;
+        XkxkUi.Current.Localization.LanguageChanged -= OnLanguageChanged;
         base.OnDetachedFromVisualTree(e);
     }
 

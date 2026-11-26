@@ -11,6 +11,7 @@ using Dock.Model.Mvvm;
 using Dock.Model.Mvvm.Controls;
 using Dock.Settings;
 using xkxk.frameworks.ui.shell.ViewModels;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -90,8 +91,8 @@ public sealed partial class PocDockFactory : Factory, IDockDropPolicy, IDockOper
         Tidy.ResetSplitState(); // 옛 분할 패널·영역 기록도 비운다(UI-20, SplitAreaCleanup)
         Moves.Reset();
         var root = DockLayoutBuilder.Build(this, _state, _explorer, _log, (r, d) => { Root = r; Documents = d; });
-        Localization.Loc.Instance.LanguageChanged -= Tidy.RelocalizePanels;
-        Localization.Loc.Instance.LanguageChanged += Tidy.RelocalizePanels;
+        XkxkUi.Current.Localization.LanguageChanged -= Tidy.RelocalizePanels;
+        XkxkUi.Current.Localization.LanguageChanged += Tidy.RelocalizePanels;
         PanelFeature.Reapply(); // 새 패널 탭 영역에 CanPin 반영
         return root;
     }
@@ -104,7 +105,7 @@ public sealed partial class PocDockFactory : Factory, IDockDropPolicy, IDockOper
             DefaultHostWindowLocator = () => App.CreateHostWindow?.Invoke() ?? new HostWindow();
         }
 
-        ViewRegistry.Current.EnsureNotificationTemplate(); // 알림 패널 DataTemplate(Application 수준, 1회)
+        XkxkUi.Current.Views.EnsureNotificationTemplate(); // 알림 패널 DataTemplate(Application 수준, 1회)
         base.InitLayout(layout);
         Hide.SyncSidePanels(); // 비어 있는 여분 패널을 접는다
         PanelJoinDrag.Install(this); // MDI 제목줄 끌기 → 측면 패널 탭 합류(UI-14)

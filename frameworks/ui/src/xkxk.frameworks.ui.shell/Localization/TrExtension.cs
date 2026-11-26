@@ -2,6 +2,7 @@
 using System;
 using Avalonia;
 using Avalonia.Markup.Xaml;
+using xkxk.frameworks.ui.shell.Framework;
 #if PD_DIAGNOSTICS
 using System.Collections.Generic;
 using System.Threading;
@@ -30,7 +31,7 @@ public sealed class TrExtension : MarkupExtension
     {
         object? value = null;
         StaticOverride(Key, ref value); // 진단 스위치 --loc static(PD_DIAGNOSTICS 전용) — 제품 빌드에서는 호출부까지 지워진다
-        return value ?? Loc.Instance.Observe(Key).ToBinding();
+        return value ?? XkxkUi.Current.Localization.Observe(Key).ToBinding();
     }
 
     /// <summary>

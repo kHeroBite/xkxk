@@ -12,6 +12,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -49,8 +50,8 @@ public static class VisualTreeInspector
     {
         var check = Avalonia.Threading.Dispatcher.UIThread.InvokeAsync<(bool, string?)>(() =>
             TopLevels().Count == 0 ? (false, "no-toplevel")
-            : App.MainViewModel is null ? (false, "no-viewmodel")
-            : App.Shell is null ? (false, "no-shell")
+            : XkxkUi.Current.MainViewModel is null ? (false, "no-viewmodel")
+            : XkxkUi.Current.Shell is null ? (false, "no-shell")
             : RemoteCommands.StartupRestoreDone == false ? (false, "restoring") // 기동 레이아웃 복원 중(셸 훅 — null 이면 판단 안 함)
             : (true, null)).GetTask();
         return await System.Threading.Tasks.Task.WhenAny(check, System.Threading.Tasks.Task.Delay(1000)) == check ? check.Result : (false, "ui-busy");

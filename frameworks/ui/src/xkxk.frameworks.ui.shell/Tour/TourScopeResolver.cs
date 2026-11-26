@@ -7,6 +7,7 @@ using Avalonia.VisualTree;
 using Dock.Avalonia.Controls;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Tour;
 
@@ -35,7 +36,7 @@ internal static class TourScopeResolver
         return (isSettings ? TourScope.Settings : null, top);
     }
 
-    public static TourModes CurrentMode() => App.MainViewModel?.Compact.Style.Current switch
+    public static TourModes CurrentMode() => XkxkUi.Current.MainViewModel?.Compact.Style.Current switch
     {
         UiStyle.Mobile => TourModes.Nav,
         UiStyle.Tablet => TourModes.Dock,

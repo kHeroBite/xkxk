@@ -9,6 +9,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Dock.Avalonia.Controls;
 using Avalonia.Threading;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -148,7 +149,7 @@ internal static class RemoteTrayCommands
             ["implPresent"] = tray is null ? null : TrayImplPresent(tray),
             ["visible"] = tray?.IsVisible,
             ["modelVisible"] = menu?.Visible,
-            ["trayEnabled"] = App.MainViewModel?.Extras.TrayEnabled,
+            ["trayEnabled"] = XkxkUi.Current.MainViewModel?.Extras.TrayEnabled,
             ["suppressSaved"] = ShellPlatform.SuppressSavedTray,
             ["remoteOverride"] = menu?.RemoteOverride,
             ["toolTip"] = tray?.ToolTipText,

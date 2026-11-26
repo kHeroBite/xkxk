@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels.Settings;
 
@@ -18,7 +19,7 @@ public abstract class SettingsPageViewModel : ObservableObject, IDisposable
     {
         Main = main;
         main.Settings.PropertyChanged += OnSettingChanged;
-        Loc.Instance.LanguageChanged += OnLanguageChanged;
+        XkxkUi.Current.Localization.LanguageChanged += OnLanguageChanged;
     }
 
     protected MainViewModel Main { get; }
@@ -31,7 +32,7 @@ public abstract class SettingsPageViewModel : ObservableObject, IDisposable
     public virtual void Dispose()
     {
         Main.Settings.PropertyChanged -= OnSettingChanged;
-        Loc.Instance.LanguageChanged -= OnLanguageChanged;
+        XkxkUi.Current.Localization.LanguageChanged -= OnLanguageChanged;
     }
 
     /// <summary>값이 어디서 바뀌든(메뉴·단축키·원격) 페이지 표시를 전부 다시 읽게 한다. 페이지의 속성 수가 적고 드물게 불린다.</summary>
@@ -102,7 +103,7 @@ public sealed class SettingsWindowViewModel : ObservableObject, IDisposable
         _selected = _all[0];
         ResetSelectedCommand = new RelayCommand(() => { if (_selected is { } c) { ResetCategory(c.Id); } }, () => _selected?.CanReset == true);
         ResetAllCommand = new RelayCommand(ResetAll);
-        Loc.Instance.LanguageChanged += OnLanguageChanged;
+        XkxkUi.Current.Localization.LanguageChanged += OnLanguageChanged;
     }
 
     /// <summary>닫기를 호출자가 맡을 때 넣는다(스마트폰 ☰ 시트). 비어 있으면 SystemDialogHost 창을 닫는다.</summary>
@@ -176,7 +177,7 @@ public sealed class SettingsWindowViewModel : ObservableObject, IDisposable
 
     public void Dispose()
     {
-        Loc.Instance.LanguageChanged -= OnLanguageChanged;
+        XkxkUi.Current.Localization.LanguageChanged -= OnLanguageChanged;
         foreach (var item in _all)
         {
             item.Page.Dispose();

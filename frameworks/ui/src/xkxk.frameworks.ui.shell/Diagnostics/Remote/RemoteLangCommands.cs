@@ -6,6 +6,7 @@ using System.Text.Json.Nodes;
 using Avalonia.Controls;
 using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -17,16 +18,16 @@ internal static class RemoteLangCommands
 
     private static JsonObject LangJson() => new()
     {
-        ["language"] = Loc.Instance.Language,
+        ["language"] = XkxkUi.Current.Localization.Language,
         ["culture"] = CultureInfo.CurrentUICulture.Name,
         // D-CULTURE 판정용: 숫자·날짜 형식 문화권과 실제 형식 표본(ICU 자료가 없으면 이름만 맞고 형식은 기본값이 된다)
         ["numberCulture"] = CultureInfo.CurrentCulture.Name,
         ["sampleN0"] = 10000.ToString("N0", CultureInfo.CurrentCulture),
         ["samplePercent"] = 1.0.ToString("P0", CultureInfo.CurrentCulture),
         ["sampleDate"] = new System.DateTime(2026, 1, 2).ToString("d", CultureInfo.CurrentCulture),
-        ["languages"] = new JsonArray(Loc.Instance.Languages
+        ["languages"] = new JsonArray(XkxkUi.Current.Localization.Languages
             .Select(l => (JsonNode?)new JsonObject { ["code"] = l.Code, ["name"] = l.Name }).ToArray()),
-        ["keys"] = Loc.Instance.AllKeys.Count,
+        ["keys"] = UiAppContext.Instance.CoreLoc.AllKeys.Count,
         // 진단 스위치 --loc static: {loc:Tr} 를 바인딩 대신 고정 문자열로 해석 중인지·몇 개 해석했는지(스위치가 실제로 먹었는지 확인)
         ["staticMode"] = TrExtension.StaticMode,
         ["staticCount"] = TrExtension.StaticCount,
@@ -37,7 +38,7 @@ internal static class RemoteLangCommands
         r.Register("lang.get", "현재 언어·문화권·사전 언어 목록·키 수", _ => LangJson());
         r.Register("lang.set", "언어 실시간 전환 code=ko|en (별칭 lang= — 계획 문서 표기) (사전에 없는 코드는 ko) → 실제 적용값", a =>
         {
-            Loc.Instance.Language = a.Str("code") ?? a.Str("lang") ?? throw new RemoteCommandException("인자 'code'(또는 'lang')가 필요합니다.");
+            XkxkUi.Current.Localization.Language = a.Str("code") ?? a.Str("lang") ?? throw new RemoteCommandException("인자 'code'(또는 'lang')가 필요합니다.");
             return LangJson();
         });
         // i18n.missing·i18n.scan 은 리드 확정 이름(00:1x), lang.missingKeys·lang.scan 은 같은 처리기의 별칭
@@ -45,7 +46,7 @@ internal static class RemoteLangCommands
         {
             r.Register(name, "기본 언어(ko)에는 있는데 lang 에 없는 키 [lang=en(생략 시 현재 언어)]", a =>
             {
-                var keys = Loc.Instance.MissingKeys(a.Str("lang") ?? Loc.Instance.Language);
+                var keys = UiAppContext.Instance.CoreLoc.MissingKeys(a.Str("lang") ?? XkxkUi.Current.Localization.Language);
                 return new JsonObject { ["count"] = keys.Count, ["keys"] = new JsonArray(keys.Select(k => (JsonNode?)JsonValue.Create(k)).ToArray()) };
             });
         }
@@ -70,7 +71,7 @@ internal static class RemoteLangCommands
             }
         }
 
-        return new JsonObject { ["language"] = Loc.Instance.Language, ["count"] = hits.Count, ["hits"] = hits };
+        return new JsonObject { ["language"] = XkxkUi.Current.Localization.Language, ["count"] = hits.Count, ["hits"] = hits };
     }
 
     private static bool IsHangul(char ch) => ch is >= '가' and <= '힣' or >= 'ᄀ' and <= 'ᇿ' or >= '㄰' and <= '㆏';

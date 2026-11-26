@@ -1,6 +1,7 @@
 // 도움말 카탈로그의 requires 조건(요건 6) — 이름 → 지금 참인가. 권한은 확장 지점만 두고 PoC 에는 권한 체계가 없어 기본 허용이다
 using System;
 using System.Collections.Generic;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Tour;
 
@@ -11,9 +12,9 @@ public static class TourConditions
     // 이름을 더하면 카탈로그에서 바로 쓸 수 있다. 검사기가 이 표의 이름과 카탈로그를 대조한다
     private static readonly Dictionary<string, Func<bool>> Named = new(StringComparer.Ordinal)
     {
-        ["bench"] = () => ViewRegistry.Current.BenchAvailable,
-        ["logTool"] = () => App.MainViewModel?.WindowMenu.IsLogToolAvailable == true,
-        ["gpuRestart"] = () => App.MainViewModel?.SystemMenu.SysGpuRestartPending == true,
+        ["bench"] = () => XkxkUi.Current.Views.BenchAvailable,
+        ["logTool"] = () => XkxkUi.Current.MainViewModel?.WindowMenu.IsLogToolAvailable == true,
+        ["gpuRestart"] = () => XkxkUi.Current.MainViewModel?.SystemMenu.SysGpuRestartPending == true,
     };
 
     /// <summary>권한 판정 연결 지점. 권한 체계가 들어오면 여기에 넣는다. 없으면 허용한다.</summary>

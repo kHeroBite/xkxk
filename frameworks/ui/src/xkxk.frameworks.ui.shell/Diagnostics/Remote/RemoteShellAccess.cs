@@ -5,15 +5,16 @@ using System.Linq;
 using System.Text.Json.Nodes;
 using Avalonia.Controls;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
 /// <summary>여러 원격 명령 군이 함께 쓰는 앱 서비스 접근과 문서 조회. 명령 등록은 하지 않는다.</summary>
 internal static class RemoteShellAccess
 {
-    internal static IShellCommands Shell => App.Shell ?? throw new RemoteNotReadyException("no-shell", "셸이 아직 준비되지 않았습니다.");
+    internal static IShellCommands Shell => XkxkUi.Current.Shell ?? throw new RemoteNotReadyException("no-shell", "셸이 아직 준비되지 않았습니다.");
 
-    internal static ViewModels.MainViewModel Vm => App.MainViewModel ?? throw new RemoteNotReadyException("no-viewmodel", "뷰모델이 아직 없습니다.");
+    internal static ViewModels.MainViewModel Vm => XkxkUi.Current.MainViewModel ?? throw new RemoteNotReadyException("no-viewmodel", "뷰모델이 아직 없습니다.");
 
     /// <summary>문서 지정: doc = Id | 제목 | 1부터 순번. 생략하면 활성 문서(없으면 마지막 문서).</summary>
     internal static PocDocument Doc(JsonObject a, string key = "doc")

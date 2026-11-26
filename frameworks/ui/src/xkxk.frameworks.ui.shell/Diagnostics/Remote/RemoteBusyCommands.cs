@@ -13,6 +13,7 @@ using Avalonia.Media;
 using xkxk.frameworks.ui.shell.Busy;
 using xkxk.frameworks.ui.Controls;
 using xkxk.frameworks.ui.Motion;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -62,7 +63,7 @@ internal static partial class RemoteBusyCommands
         });
         r.Register("busy.rapidTest", "한 틱 안에서 테마 전환 2번·SDI 전환 2번을 건다(원격 왕복 지연 없이 연타 재현) doc= → 호출 수", a =>
         {
-            var shell = App.Shell ?? throw new RemoteCommandException("셸이 없습니다.");
+            var shell = XkxkUi.Current.Shell ?? throw new RemoteCommandException("셸이 없습니다.");
             var doc = shell.Documents.FirstOrDefault(d => d.Id == a.ReqStr("doc")) ?? throw new RemoteCommandException("문서가 없습니다.");
             xkxk.frameworks.ui.shell.Theming.UiSettings.Current.ToggleTheme();
             xkxk.frameworks.ui.shell.Theming.UiSettings.Current.ToggleTheme();
@@ -184,7 +185,7 @@ internal static partial class RemoteBusyCommands
     private static JsonObject LoadState()
     {
         var load = xkxk.frameworks.ui.shell.Docking.WindowLoadState.Default;
-        var docs = new JsonArray((App.Shell?.Documents ?? Array.Empty<xkxk.frameworks.ui.shell.Docking.PocDocument>()).Select(d => (JsonNode?)new JsonObject
+        var docs = new JsonArray((XkxkUi.Current.Shell?.Documents ?? Array.Empty<xkxk.frameworks.ui.shell.Docking.PocDocument>()).Select(d => (JsonNode?)new JsonObject
         {
             ["id"] = d.Id,
             ["isLoading"] = d.IsLoading,

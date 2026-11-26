@@ -5,6 +5,7 @@ using System.Globalization;
 using Avalonia;
 using Avalonia.Media;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -61,7 +62,7 @@ public static class WindowMinSize
                 Recompute();
             }
         };
-        if (App.Shell is WindowCommands shell)
+        if (XkxkUi.Current.Shell is WindowCommands shell)
         {
             shell.OpenDocuments.CollectionChanged += OnDocumentsChanged;
         }
@@ -97,7 +98,7 @@ public static class WindowMinSize
             $"min={width}x{height} mdiFixed={mdiFixed} caption=3x({Res(app, "PdCapWidth", 0.0)}+{capMargin.Left + capMargin.Right})+{opsMargin.Left + opsMargin.Right}={caption} logo={logo}(visible={Res(app, "PdLogoVisible", true)}) title={title:0.#}(probe+8) frameLR={frame.Left + frame.Right} titleH={Res(app, "PdMdiTitleHeight", 0.0)} frameTB={frame.Top + frame.Bottom}");
         xkxk.frameworks.ui.data.Logging.PdLog.Info("window", "최소 창 크기 계산 " + terms); // U9 ⑩ 각 항 기록(다음 실측에서 하한 산식 대조)
         Diagnostics.PerfProbe.Current.SetText("window_min_size", terms); // 진단판 원격 perf.get 으로 읽기
-        if (App.Shell is { } shell)
+        if (XkxkUi.Current.Shell is { } shell)
         {
             foreach (var doc in shell.Documents)
             {

@@ -13,6 +13,12 @@ namespace xkxk.frameworks.ui.shell.Framework;
 /// </remarks>
 public static class XkxkUi
 {
+    /// <summary>
+    /// 앱 컨텍스트(문구·화면 등록·메인 뷰모델·셸 명령). 항상 같은 비 null 인스턴스이며 대입할 수 없다(UADR-0011).
+    /// </summary>
+    /// <remarks>프로세스 전역이고 리셋하지 않는다. 구현 형식은 공개하지 않는다.</remarks>
+    public static IUiAppContext Current => UiAppContext.Instance;
+
     /// <summary>기본 옵션(인자 없음·호스트 unknown·오류 정책 Collect)으로 빌더를 만든다.</summary>
     public static XkxkUiBuilder CreateBuilder()
     {

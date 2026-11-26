@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.VisualTree;
 using Dock.Avalonia.Controls;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -20,7 +21,7 @@ public sealed class ChromeLogo : Button
         if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed
             && this.FindAncestorOfType<MdiDocumentWindow>() is { } window
             && WindowCommands.FindDocument(window.DataContext) is { } doc
-            && App.Shell is IShellCommands shell)
+            && XkxkUi.Current.Shell is IShellCommands shell)
         {
             shell.Activate(doc);
         }

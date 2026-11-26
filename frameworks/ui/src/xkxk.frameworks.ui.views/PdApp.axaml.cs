@@ -2,6 +2,7 @@
 using Avalonia.Markup.Xaml;
 using xkxk.frameworks.ui.shell;
 using xkxk.frameworks.ui.shell.Diagnostics.Remote;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -10,8 +11,8 @@ public partial class PdApp : App
 {
     public PdApp()
     {
-        ViewRegistry.Current = new PdViewRegistry();
-        ViewRegistry.Current.RegisterRemote(RemoteCommandRouter.Default); // 라우터는 호스트 Main 이 Application 보다 먼저 만든다. 화면 층 진단 명령은 여기서 더한다
+        XkxkUi.Current.RegisterViews(new PdViewRegistry()); // B04 앱 컨텍스트 등록(옛 ViewRegistry.Current 대입)
+        XkxkUi.Current.Views.RegisterRemote(RemoteCommandRouter.Default); // 라우터는 호스트 Main 이 Application 보다 먼저 만든다. 화면 층 진단 명령은 여기서 더한다
     }
 
     public override void Initialize() => AvaloniaXamlLoader.Load(this);

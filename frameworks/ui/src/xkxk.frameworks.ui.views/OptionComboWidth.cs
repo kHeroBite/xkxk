@@ -12,6 +12,7 @@ using Avalonia.Media.TextFormatting;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -38,7 +39,7 @@ public static class OptionComboWidth
 
         combo.MinWidth = baseWidth;
         combo.AttachedToVisualTree += (_, _) => FitLater();
-        Loc.Instance.LanguageChanged += FitLater;
+        XkxkUi.Current.Localization.LanguageChanged += FitLater;
         combo.PropertyChanged += (_, e) =>
         {
             if (e.Property == TemplatedControl.FontFamilyProperty || e.Property == TemplatedControl.FontSizeProperty)

@@ -6,6 +6,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Tour;
 using xkxk.frameworks.ui.shell.ViewModels.Settings;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Platform;
 
@@ -51,7 +52,7 @@ public static class BackDismissal
             return true;
         }
 
-        if (App.MainViewModel is { Compact.IsNotifyOpen: true } main)
+        if (XkxkUi.Current.MainViewModel is { Compact.IsNotifyOpen: true } main)
         {
             main.Compact.IsNotifyOpen = false;
             return true;

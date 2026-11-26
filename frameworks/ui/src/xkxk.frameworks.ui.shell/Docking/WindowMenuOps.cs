@@ -10,6 +10,7 @@ using Avalonia.VisualTree;
 using Dock.Avalonia.Controls;
 using Dock.Model.Controls;
 using Dock.Model.Core;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -92,7 +93,7 @@ public static partial class WindowMenuOps
             return WindowMenuRules.Compute(StateOfWindow(panelWindow), true, true);
         }
 
-        if (target.Document is not { } doc || App.Shell is not WindowCommands shell)
+        if (target.Document is not { } doc || XkxkUi.Current.Shell is not WindowCommands shell)
         {
             return default;
         }
@@ -114,7 +115,7 @@ public static partial class WindowMenuOps
 
         var done = target.Kind == WindowMenuKind.Main ? RunMain(target.Main!, action)
             : target.Document is null ? RunPanelWindow(target.PanelWindow!, action)
-            : RunDocument((WindowCommands)App.Shell!, target.Document, action);
+            : RunDocument((WindowCommands)XkxkUi.Current.Shell!, target.Document, action);
         PdLog.Info("window-menu", $"{target.Kind} {action} doc={target.Document?.Id} done={done}");
         return done;
     }

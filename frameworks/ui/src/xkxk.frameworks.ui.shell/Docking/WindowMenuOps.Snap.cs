@@ -14,6 +14,7 @@ using Dock.Model.Core;
 using xkxk.frameworks.ui.data.Logging;
 using xkxk.frameworks.ui.shell.Platform;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -86,7 +87,7 @@ public static partial class WindowMenuOps
             return;
         }
 
-        var window = target.Document is { } d && App.Shell is WindowCommands s ? s.SdiPlacement.WindowOf(d) : target.PanelWindow;
+        var window = target.Document is { } d && XkxkUi.Current.Shell is WindowCommands s ? s.SdiPlacement.WindowOf(d) : target.PanelWindow;
         SnapAssistScope scope;
         object? anchor;
         if (window is not null)
@@ -172,7 +173,7 @@ public static partial class WindowMenuOps
     /// <summary>적용 뒤 공통: 문서면 활성화(맨 앞), 끌기 없는 배치 변경이라 자동 저장 dirty.</summary>
     private static void Finish(WindowMenuTarget target)
     {
-        if (target.Document is { } doc && App.Shell is WindowCommands shell)
+        if (target.Document is { } doc && XkxkUi.Current.Shell is WindowCommands shell)
         {
             shell.Activate(doc);
         }

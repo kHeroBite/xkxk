@@ -6,6 +6,7 @@ using Dock.Model.Core;
 using Dock.Model.Mvvm.Controls;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -45,7 +46,7 @@ public sealed class NotificationPanelViewModel : Tool
 
         CanClose = false; // 닫기는 패널 단위다(탐색기·로그와 같다)
         Items.CollectionChanged += (_, _) => UpdateTitle(); // 건수가 바뀌면 제목을 바로 고친다
-        Loc.Instance.LanguageChanged += Relocalize;
+        XkxkUi.Current.Localization.LanguageChanged += Relocalize;
         Relocalize();
     }
 

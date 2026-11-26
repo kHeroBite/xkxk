@@ -3,6 +3,7 @@ using System;
 using Avalonia;
 using Avalonia.Media;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -218,7 +219,7 @@ internal static partial class WindowChromeStyle
             return;
         }
 
-        s_inactiveStyles ??= ViewRegistry.Current.CreateInactiveChromeStyle();
+        s_inactiveStyles ??= XkxkUi.Current.Views.CreateInactiveChromeStyle();
         if (s_inactiveDimBrush)
         {
             app.Styles.Add(s_inactiveStyles);

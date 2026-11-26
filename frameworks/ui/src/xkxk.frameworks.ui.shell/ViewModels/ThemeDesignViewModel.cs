@@ -39,14 +39,14 @@ public sealed class ThemeDesignViewModel : ObservableObject, IDisposable
         CancelResetAllCommand = new RelayCommand(() => IsConfirmingResetAll = false);
         BackCommand = new RelayCommand(() => SelectedElement = null);
         _catalog.Changed += OnCatalogChanged;
-        Loc.Instance.LanguageChanged += OnLanguageChanged;
+        xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Localization.LanguageChanged += OnLanguageChanged;
         SelectedElement = Elements.FirstOrDefault(); // PC형·태블릿형 2열의 첫 화면. 모바일형 1열은 뷰가 BackCommand 로 목록부터 보인다
     }
 
     public void Dispose()
     {
         _catalog.Changed -= OnCatalogChanged;
-        Loc.Instance.LanguageChanged -= OnLanguageChanged;
+        xkxk.frameworks.ui.shell.Framework.XkxkUi.Current.Localization.LanguageChanged -= OnLanguageChanged;
     }
 
     public IReadOnlyList<ThemeDesignElement> Elements { get; }

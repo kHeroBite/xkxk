@@ -1,6 +1,7 @@
 // 자동 문서 제목(Q17, 옛 WindowCommands.Titles) — 종류 이름+번호로 만든 제목은 언어가 바뀌면 다시 계산하고, 사용자가 바꾼 제목은 그대로 둔다
 using System.Runtime.CompilerServices;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -52,7 +53,7 @@ internal sealed class DocumentAutoTitles
     /// <summary>언어가 바뀌면 자동 제목 문서의 제목을 새 언어로 다시 만든다(파사드 생성자에서 1회 구독).</summary>
     internal void InstallAutoTitles()
     {
-        Loc.Instance.LanguageChanged += () =>
+        XkxkUi.Current.Localization.LanguageChanged += () =>
         {
             foreach (var doc in _s.Owner.OpenDocuments)
             {

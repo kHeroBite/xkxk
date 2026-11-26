@@ -11,6 +11,7 @@ using Dock.Avalonia.Controls;
 using Dock.Model.Controls;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Busy;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -110,7 +111,7 @@ public static class MdiVisibilityGuard
     {
         PdLog.Info("mdi-guard", text);
 #if PD_DIAGNOSTICS
-        App.MainViewModel?.AddLog("[mdi-guard] " + text); // log.tail 에서도 보이게(진단 빌드 한정)
+        XkxkUi.Current.MainViewModel?.AddLog("[mdi-guard] " + text); // log.tail 에서도 보이게(진단 빌드 한정)
 #endif
     }
 }

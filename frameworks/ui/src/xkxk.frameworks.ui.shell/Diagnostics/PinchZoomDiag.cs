@@ -7,6 +7,7 @@ using Avalonia;
 using xkxk.frameworks.ui.shell.Diagnostics.Remote;
 using xkxk.frameworks.ui.shell.Input;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics;
 
@@ -48,8 +49,8 @@ public static class PinchZoomDiag
         ["steps"] = PinchZoom.Steps,
         ["rejections"] = PinchZoom.Rejections,   // 문서 밖 등으로 거절된 핀치 수(제스처 도중 끊김 진단)
         ["lastScale"] = PinchZoom.LastScale,
-        ["activeDoc"] = App.Shell?.ActiveDocument?.Title,
-        ["zoom"] = App.Shell?.ActiveDocument?.Zoom,
+        ["activeDoc"] = XkxkUi.Current.Shell?.ActiveDocument?.Title,
+        ["zoom"] = XkxkUi.Current.Shell?.ActiveDocument?.Zoom,
         ["fontSize"] = UiSettings.Current.BaseFontSize,
         ["wheelMode"] = UiSettings.Current.WheelMode.ToString(),
     };

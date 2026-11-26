@@ -6,6 +6,7 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Documents.Bench;
 
@@ -75,7 +76,7 @@ public partial class DashboardBenchView : UserControl
 
     private async Task<JsonObject> DragAsync(int frames, double dx, double dy)
     {
-        if (App.Shell is not { } shell) { return new JsonObject { ["status"] = "NotApplicable", ["reason"] = "셸 없음" }; }
+        if (XkxkUi.Current.Shell is not { } shell) { return new JsonObject { ["status"] = "NotApplicable", ["reason"] = "셸 없음" }; }
         JsonObject r;
 #if PD_CHART_LIVECHARTS
         DashDragGate.SetDragging(true); // L2: Enabled=false 면 무동작

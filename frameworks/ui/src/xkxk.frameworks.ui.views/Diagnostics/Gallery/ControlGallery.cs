@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using xkxk.frameworks.ui.shell.Diagnostics.Remote;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views.Diagnostics.Gallery;
 
@@ -26,7 +27,7 @@ public static class ControlGallery
     /// <summary>갤러리 문서를 연다(이미 열려 있으면 그 문서). 셸 미준비면 null.</summary>
     public static PocDocument? Open()
     {
-        if (App.Shell is not { } shell)
+        if (XkxkUi.Current.Shell is not { } shell)
         {
             return null;
         }

@@ -10,6 +10,7 @@ using Avalonia.VisualTree;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics;
 
@@ -73,10 +74,10 @@ internal static class AutomationCommandRunner
             case "pin" or "unpin": if (Target(shell, true) is { } pd) { SetPin(shell, pd, cmd == "pin"); } break;
             case "tray-on" or "tray-off": if (xkxk.frameworks.ui.shell.Platform.ShellPlatform.Menu is { } tm) { tm.RemoteOverride = cmd == "tray-on"; PerfProbe.Current.SetMetric("tray_after_" + cmd, tm.Visible ? 1 : 0); } break; // 이번 실행 한정(저장 안 함 — 시험 인자가 settings.json 을 바꾸지 않게)
             case "esc-close": // Esc KeyBinding 과 같은 EscCloseCommand 경로. 시험 동안만 옵션을 켠다.
-                if (App.MainViewModel is { } ev) { var prev = ev.WindowMenu.EscCloseEnabled; ev.WindowMenu.EscCloseEnabled = true; ev.EscCloseCommand.Execute(null); ev.WindowMenu.EscCloseEnabled = prev; }
+                if (XkxkUi.Current.MainViewModel is { } ev) { var prev = ev.WindowMenu.EscCloseEnabled; ev.WindowMenu.EscCloseEnabled = true; ev.EscCloseCommand.Execute(null); ev.WindowMenu.EscCloseEnabled = prev; }
                 break;
             case "dblclick-close": // MainView.OnTabDoubleTapped 와 같은 조건·동작(옵션 켜짐 → CloseDocument)
-                if (App.MainViewModel is { DoubleClickCloseEnabled: true } && Target(shell, false) is { } dc) { shell.CloseDocument(dc); }
+                if (XkxkUi.Current.MainViewModel is { DoubleClickCloseEnabled: true } && Target(shell, false) is { } dc) { shell.CloseDocument(dc); }
                 break;
             case "theme-dark": UiSettings.Current.Theme = ThemeMode.Dark; break;
             case "theme-light": UiSettings.Current.Theme = ThemeMode.Light; break;

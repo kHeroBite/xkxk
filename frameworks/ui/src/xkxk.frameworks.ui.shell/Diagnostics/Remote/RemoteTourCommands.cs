@@ -11,6 +11,7 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Tour;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -88,8 +89,8 @@ internal static class RemoteTourCommands
             ["rootEffectivelyEnabled"] = root?.IsEffectivelyEnabled,
             ["focusedType"] = focused?.GetType().Name,
             ["focusedId"] = focused is null ? null : Avalonia.Automation.AutomationProperties.GetAutomationId(focused),
-            ["activeDocument"] = App.MainViewModel?.ActiveDocument?.Id,
-            ["docCount"] = App.MainViewModel?.OpenDocuments.Count ?? 0,
+            ["activeDocument"] = XkxkUi.Current.MainViewModel?.ActiveDocument?.Id,
+            ["docCount"] = XkxkUi.Current.MainViewModel?.OpenDocuments.Count ?? 0,
             ["inSession"] = TourController.SessionOf(top) is not null,
         };
     }
@@ -167,14 +168,14 @@ internal static class RemoteTourCommands
     private static JsonNode? Esc(JsonObject a)
     {
         var (top, _) = Session(a);
-        var docsBefore = App.MainViewModel?.OpenDocuments.Count ?? 0;
+        var docsBefore = XkxkUi.Current.MainViewModel?.OpenDocuments.Count ?? 0;
         var handled = Raise(top, Key.Escape, KeyModifiers.None);
         return new JsonObject
         {
             ["handled"] = handled,
             ["ended"] = TourController.SessionOf(top) is null,
             ["docsBefore"] = docsBefore,
-            ["docsAfter"] = App.MainViewModel?.OpenDocuments.Count ?? 0,
+            ["docsAfter"] = XkxkUi.Current.MainViewModel?.OpenDocuments.Count ?? 0,
         };
     }
 
@@ -187,14 +188,14 @@ internal static class RemoteTourCommands
         if (a.Bool("shift")) { mods |= KeyModifiers.Shift; }
         if (a.Bool("alt")) { mods |= KeyModifiers.Alt; }
 
-        var docsBefore = App.MainViewModel?.OpenDocuments.Count ?? 0;
+        var docsBefore = XkxkUi.Current.MainViewModel?.OpenDocuments.Count ?? 0;
         var handled = Raise(top, key, mods);
         return new JsonObject
         {
             ["handled"] = handled,
             ["sessionAlive"] = TourController.SessionOf(top) is not null,
             ["docsBefore"] = docsBefore,
-            ["docsAfter"] = App.MainViewModel?.OpenDocuments.Count ?? 0,
+            ["docsAfter"] = XkxkUi.Current.MainViewModel?.OpenDocuments.Count ?? 0,
         };
     }
 

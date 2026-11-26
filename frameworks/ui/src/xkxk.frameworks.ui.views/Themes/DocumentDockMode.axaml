@@ -14,6 +14,7 @@
                     xmlns:theming="using:xkxk.frameworks.ui.shell.Theming"
                     xmlns:docking="using:xkxk.frameworks.ui.shell.Docking"
                     xmlns:shell="using:xkxk.frameworks.ui.shell"
+                    xmlns:fw="using:xkxk.frameworks.ui.shell.Framework"
                     xmlns:views="using:xkxk.frameworks.ui.views">
 
   <ControlTheme x:Key="{x:Type controls:DocumentDockControl}" TargetType="controls:DocumentDockControl" x:DataType="dmc:IDocumentDock">
@@ -32,7 +33,7 @@
                 <MultiBinding Converter="{x:Static docking:LayoutModeGate.Instance}" ConverterParameter="Tabbed">
                   <Binding />
                   <Binding Path="LayoutMode" />
-                  <Binding Path="Compact.IsCompact" Source="{x:Static shell:App.MainViewModel}" />
+                  <Binding Path="MainViewModel.Compact.IsCompact" Source="{x:Static fw:XkxkUi.Current}" />
                 </MultiBinding>
               </ContentControl.Content>
               <ContentControl.DataTemplates>
@@ -114,7 +115,7 @@
                 <MultiBinding Converter="{x:Static docking:LayoutModeGate.Instance}" ConverterParameter="Mdi">
                   <Binding />
                   <Binding Path="LayoutMode" />
-                  <Binding Path="Compact.IsCompact" Source="{x:Static shell:App.MainViewModel}" />
+                  <Binding Path="MainViewModel.Compact.IsCompact" Source="{x:Static fw:XkxkUi.Current}" />
                 </MultiBinding>
               </ContentControl.Content>
               <ContentControl.DataTemplates>

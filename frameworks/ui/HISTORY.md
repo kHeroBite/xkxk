@@ -4,6 +4,14 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-26 — 별별UI B04 앱 컨텍스트 공개 계약(UADR-0011)·셸 전역 상태 직접 참조 0건(O4, B04, conv_179565999934)
+- 결정(UADR-0011). 프로세스 전역 상태 4종(`App.MainViewModel`·`App.Shell`·`ViewRegistry.Current`·`Loc.Instance`)을 단일 앱 컨텍스트 `XkxkUi.Current` 가 소유한다. 옛 정적 접근자는 컨텍스트로 위임만 하며 B16 에 `[Obsolete]` 로 예고하고 B21 에 제거한다. `Loc.Tr` 는 상태 없는 편의 함수라 유지한다.
+- 공개 계약. `IUiAppContext`·`IUiLocalizer`(최소 표면)·`UiLanguage`(`Deconstruct` 로 튜플 분해 호환)를 `Framework/` 에 새로 만들고 `XkxkUi.Current` 를 더했다. 구현 `UiAppContext` 는 internal 이다. `PublicAPI.Unshipped.txt` 에 반영했다(Shipped 무변경).
+- 호출부 이전. 4종 직접 참조를 91파일 164줄 일괄 치환(스크립트 1명)했고, 네임스페이스 한정 이름 앞부분 수정 6파일 10곳과 `DocumentDockMode.axaml` 을 더했다. 직접 참조는 0건이다.
+- 판정·시험. 판정기 `test/framework/judge/app_context_check.py`, `verify_framework.sh` 의 `context` 단계, 계약 시험 C24~C27(`AppContextChecks.cs`·`FakeViewRegistry.cs`)을 더했다. 부록 `a6_앱컨텍스트_이전대응.md` 를 신설했다.
+- 구현 보정. `Loc` 생성자는 private 이 아니라 internal 이다. `Loc.Get` 은 public 이고 `Format` 을 더했다. `KeyObservable`·`Unsubscriber` 는 `LocObservable.cs` 로 분할했다. 300줄 상한 3파일은 using 대신 정규화된 이름을 썼다.
+- 결과. 3축 빌드 rc=0, 계약 시험 27/27 PASS, 스모크 데스크톱·웹·Fold5 PASS. otest AC 15개 PASS.
+
 ## 2026-11-26 — 별별UI B03 호스트 주입 계약(UADR-0010)·3호스트 App 정적 대입 제거(O4, B03, conv_179565999934)
 - 결정(UADR-0010). 호스트 값은 빌더 옵션으로 받고 `UseXkxkUi` 가 App 에 1회 연결한다. App 정적 setter 는 B16 에 예고하고 B21 에 제거한다. 호스트가 주입하는 App 정적 값은 8종(StartupArgs, LayoutStore, SettingsStore, LayoutLibraryStore, ConfigureMainWindow, VisibleFrameOf, CreateHostWindow, WindowHost)이다. 계획 부록 a2·a4 의 '13개' 표기를 8종으로 정정했다.
 - 공개 계약. `UiHostOptions`(속성 7개)를 새로 만들고 `XkxkUiBuilderOptions.Host`·`Args` 를 더했다. `UseXkxkUi` 는 Setup 전에 `App.BindHost` 를 부른다(비 null 값만, 옵션 우선, Args 는 1개 이상일 때만). `App.ApplyStartupArgs` 오버로드를 더했다. `PublicAPI.Unshipped.txt` 에 반영했다.

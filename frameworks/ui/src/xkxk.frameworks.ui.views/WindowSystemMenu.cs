@@ -9,6 +9,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using Dock.Avalonia.Controls;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.views;
 
@@ -106,7 +107,7 @@ public static class WindowSystemMenu
 
     private static void Close(PocDocument? document)
     {
-        if (document is not null && App.Shell is { } shell)
+        if (document is not null && XkxkUi.Current.Shell is { } shell)
         {
             shell.CloseDocument(document);
         }

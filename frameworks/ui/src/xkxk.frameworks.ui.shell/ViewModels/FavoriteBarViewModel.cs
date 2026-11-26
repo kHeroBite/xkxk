@@ -11,6 +11,7 @@ using xkxk.frameworks.ui.data.Navigation;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.ViewModels;
 
@@ -33,7 +34,7 @@ public sealed class FavoriteBarViewModel : ObservableObject
         _ctx = ctx;
         _store = store;
         store.Changed += () => Dispatcher.UIThread.Post(Reload); // 저장소는 어느 스레드에서든 알린다
-        Loc.Instance.LanguageChanged += Reload; // 이름(종류 표시명)이 언어를 따른다
+        XkxkUi.Current.Localization.LanguageChanged += Reload; // 이름(종류 표시명)이 언어를 따른다
         UiSettings.Current.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName is nameof(UiSettings.FavoriteBarVisible) or nameof(UiSettings.FavoriteBarPosition))

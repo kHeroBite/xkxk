@@ -11,6 +11,7 @@ using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Theming;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Input;
 
@@ -168,7 +169,7 @@ public static class SettingsInput
             return docs[0];
         }
 
-        var active = App.Shell?.ActiveDocument;
+        var active = XkxkUi.Current.Shell?.ActiveDocument;
         return active is null ? null : TabSlotMarker.Descendants(top).FirstOrDefault(z => z is IDocumentZoomHost h && ReferenceEquals(h.Tag, active));
     }
 

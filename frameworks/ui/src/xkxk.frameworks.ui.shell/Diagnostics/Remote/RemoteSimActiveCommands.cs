@@ -8,6 +8,7 @@ using Avalonia.VisualTree;
 using Dock.Avalonia.Controls;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
@@ -76,7 +77,7 @@ internal static class RemoteSimActiveCommands
         });
     }
 
-    private static WindowCommands Shell() => App.Shell as WindowCommands ?? throw new RemoteCommandException("셸이 없습니다.");
+    private static WindowCommands Shell() => XkxkUi.Current.Shell as WindowCommands ?? throw new RemoteCommandException("셸이 없습니다.");
 
     private static Window FindWindow(string target)
     {

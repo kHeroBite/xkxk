@@ -8,6 +8,7 @@ using Dock.Avalonia.Controls;
 using Dock.Model.Controls;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Localization;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
@@ -32,7 +33,7 @@ public sealed class ManagedWindowHostCommands : IWindowHostCommands
 
     public bool Execute(WindowHostCommand command)
     {
-        if (command == WindowHostCommand.ResetSdiPositions && App.Shell is WindowCommands shell)
+        if (command == WindowHostCommand.ResetSdiPositions && XkxkUi.Current.Shell is WindowCommands shell)
         {
             // 공용 공식(SdiResetLayout): 레이어 (40,40) → 같은 좌상단이면 +30 → 레이어 밖이면 가운데, 크기 불변, 위치 고정 창 제외
             shell.SdiResetPositions(LayerArea);
@@ -83,5 +84,5 @@ public sealed class ManagedWindowHostCommands : IWindowHostCommands
 
     public bool MoveMainToDefault() => false; // 웹 메인 화면은 브라우저 창이다(W-01)
 
-    public bool MoveSdiToDefault(IDockWindow window) => App.Shell is WindowCommands shell && shell.SdiPlacement.MoveOne(LayerArea, window);
+    public bool MoveSdiToDefault(IDockWindow window) => XkxkUi.Current.Shell is WindowCommands shell && shell.SdiPlacement.MoveOne(LayerArea, window);
 }
