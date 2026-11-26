@@ -4,6 +4,16 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-26 — 별별UI B07b 소비자 문서·공개 API 명세 생성기·불일치 검사기(UADR-0015)·AI 실증(O4, B07b, conv_179568972584)
+- 요청·결정. 다른 프로젝트의 AI 가 문서만으로 별별UI 를 쓰도록 하라는 요청(RAW-005, REQ-123)을 받아, 소비자 문서를 영역 `docs/` 에 두고 API 명세는 PublicAPI 파일과 `///` 주석에서 생성하며 문서 불일치는 `verify_framework.sh` 의 docs 단계로 막기로 했다(UADR-0015). a4 에는 B07b batch 를 B07 과 B08 사이에 넣고 이후 batch 의 문서 의무를 §1 공통 끝 조건에 더했다.
+- 소비자 문서. `docs/README.md`(진입점)·`docs/01_시작하기.md`·`docs/02_확장_메뉴명령아이콘.md`·`docs/03_AI_활용안내.md` 를 새로 쓰고, 영역 `README.md` 와 저장소 루트 `README.md` 에서 링크했다.
+- 생성 명세. `docs/api/` 9파일(형식 45·멤버 511·설명 없는 공개 멤버 0, 진단 코드 32개)을 만들었다. 생성물이라 손으로 고치지 않는다.
+- 도구·시험. 생성기 `tools/gen_api_docs.py`·`gen_api_docs_parse.py`·`gen_api_docs_render.py`(`--check`·`--self-test`·`--prune`), 검사기 `test/framework/judge/consumer_docs_check.py`(K1~K10·W1·W2)와 자기시험 `consumer_docs_selftest.py`, `verify_framework.sh` docs 단계를 더했다.
+- AI 실증(AC-017). 문서만 읽은 별도 에이전트의 예제 작성이 1차·2차 모두 PASS 였고, 실증에서 나온 문서 결함은 고쳤다. 한계는 세션 시작 때 지침·git 상태가 자동 주입된 점, 예제를 컴파일하지 않은 점, 공개 계약만으로는 실행 호스트를 만들 수 없는 점(UTODO-0036)이다.
+- 역라우팅 1회. otest 1차에서 AC-013 이 FAIL(UADR-0015 한계 ③ 이 구현과 반대)이어서 ADR·`tools/README.md`·`docs/api/README.md`·UTODO-0034 의 서술을 구현에 맞췄고, 재시험 PASS·회귀 0 이다.
+- 결과. otest 17/17 PASS. 자기시험 18/18, 검사기 FAIL 0(379항목), `verify_framework.sh --stage docs,layers,api,registry,menus` rc=0. `src/` 변경이 없어 빌드·배포·앱 실행은 하지 않았다. 새 과제는 UTODO-0034·0035·0036 이다.
+- 한계. 검사기의 멤버 체인 검사(K6)는 `ui`·`XkxkUi.Current` 만 풀고, `docs/02` §3.1 셸 단축키 표는 수기라 검사 대상이 아니다. `gen_api_docs_parse.py`·`consumer_docs_check.py` 는 300줄 상한에 닿아 다음 변경 때 나눠야 한다.
+
 ## 2026-11-26 — 별별UI B07 메뉴 레지스트리(UADR-0014)·ShellMenuTable 단일 출처·셸 명령 61·메뉴 axaml 제거(O4, B07, conv_179568972584)
 - 결정(UADR-0014). 셸 4메뉴(파일·창·보기·시스템)를 axaml 고정 항목에서 메뉴 레지스트리 `IUiMenuRegistry` 등록으로 옮긴다. 공개 계약은 `IUiMenuRegistry`·`UiMenuItemOptions`·`UiMenuMobileOptions`·`UiMenuPlacementOptions`·`UiMenuItemKind`·`UiMenuItemDefinition`·`UiMenuMobileDefinition`·`UiMenuContext`·`UiMenuItemState`·`UiMenuSurface` 이고, `IUiAppContext.Menus`·`IUiModuleContext.Menus`, 진단 ID 12개, 변경 종류 2값을 더했다(`PublicAPI.Unshipped.txt`, Shipped 무변경). 부록 `a9_메뉴_레지스트리.md` 를 신설했다.
 - 단일 출처. 데이터 층 `ShellMenuTable` 이 메뉴 행의 유일한 정본이다. `ShellDefaultMenus` 가 이 행을 레지스트리에 등록하고, 데스크톱은 `MenuBuilder`·`ShellMenuSections` 가 레지스트리로 MenuItem 을 만들며, 모바일은 `MobileMenuProjection` 이 같은 출처에서 투영한다. `NavMenuCatalog` 는 자체 행 없이 파생한다. AutomationId 는 108개 그대로 보존했다.

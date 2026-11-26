@@ -2,6 +2,8 @@
 
 > 폐기 가능한 실험 코드다. 정식 소스(`src/`)와 분리돼 있다. 실행 환경 정본은 프로젝트 루트 `INFRA.md` 3~6장이다.
 
+> **별별UI 를 쓰는 쪽(다른 프로젝트의 개발자·AI)** 은 소비자 문서 [docs/README.md](docs/README.md) 부터 읽는다. AI 에이전트는 [docs/03_AI_활용안내.md](docs/03_AI_활용안내.md) 의 복사용 블록을 자기 지침에 붙여 넣고, 공개 API 는 [docs/api/README.md](docs/api/README.md) 로 확인한다.
+
 ## 구성
 | 프로젝트 | 대상 | 역할 |
 |---|---|---|

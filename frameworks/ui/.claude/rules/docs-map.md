@@ -8,6 +8,7 @@
 | `INFRA.md` | 실행 환경(커밋 금지) | 빌드·배포·시험·접속 시(목차 Grep→절) |
 | `plan/README.md` | 정본 문서 색인(진입점 `plan/index.json`) — 요구·설계·계획·결정. 하위 `plan/**/*.md`·`plan/index.json` 포함(문서 목록의 정본은 index.json documents) | 계획 수립·작업 착수 전 |
 | `README.md` | UI PoC(별별UI) 빌드·실행·자동화 인자 안내 | 빌드·실측 시 |
+| `docs/README.md` | 별별UI 소비자 문서 진입점(시작하기·확장·AI 안내·공개 API 명세). 하위 `docs/**/*.md` 포함(`docs/api/` 는 생성물, 생성기 `tools/gen_api_docs.py`) | 다른 프로젝트가 별별UI 를 쓸 때·공개 API 를 바꿀 때 |
 | `LAYERS.md` | 소스 계층 분류표(자동 생성물, 생성기 `tools/classify_layers.py`) | 레이어 배치를 확인·변경할 때 |
 | `HISTORY.md` | 작업 이력(최신이 위, 2026-11-24 Pd 에서 UI 항목 이전) | 작업 마무리(DONE) 때 항목 추가, 이전 경과를 찾을 때 |
 | `LESSONS.md` | 교훈 로그(최신이 위, 2026-11-24 Pd 에서 UI 항목 이전) | 작업 마무리(DONE) 때 항목 추가, 같은 실수 재발이 의심될 때 |

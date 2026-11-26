@@ -38,6 +38,12 @@
 | `tools/check_product_web.py`·`tools/q9_product_allowlist.json` | 제품 산출물의 진단 기능 부재(Q9) 판정 | 제품 판정 게이트 | `python3 -B tools/check_product_web.py <wwwroot\|폴더\|apk>` | 경로 문구 없음 |
 | `tools/check_icons.py` | 산출물에 앱 아이콘이 들어갔는지 파일 검사 | 아이콘 회귀 방지 | `python3 -B tools/check_icons.py --exe … --apk … --web …` | 2026-11-24 경로 문구 해소 |
 
+## 문서 생성
+
+| 경로 | 용도 | 재사용 이유 | 실행 명령 | 상태 |
+|---|---|---|---|---|
+| `tools/gen_api_docs.py`(보조 `gen_api_docs_parse.py` PublicAPI·`///` 주석 파서, `gen_api_docs_render.py` Markdown 렌더) | `src/*/PublicAPI.Shipped.txt`·`Unshipped.txt` 와 셸 프로젝트 `*.cs`(`bin`·`obj` 제외)의 `///` 주석, 셸 메뉴 표 `src/xkxk.frameworks.ui.data/Navigation/ShellMenuTable.cs`(08 셸 메뉴 ID 의 부모·종류·순서·명령 ID 열)로 소비자용 공개 API 명세 `docs/api/*.md` 생성 | 공개 API 를 바꿀 때마다 명세를 다시 만들고 낡음을 판정한다(손 편집 금지) | `python3 -B tools/gen_api_docs.py [--root <영역 루트>]`(생성) · `--check`(디스크와 비교, 0=같음·1=불일치·2=입력 오류) · `--prune`(생성 대상이 아닌 `docs/api/*.md` 삭제) · `--self-test` | 2026-11-26 신설(B07b) |
+
 ## 아이콘·그림
 
 | 경로 | 용도 | 재사용 이유 | 실행 명령 | 상태 |

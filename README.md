@@ -18,6 +18,7 @@
 
 ## 정본 위치
 - 별별UI 의 요구·설계·결정 정본은 `frameworks/ui/plan/`(진입점 `frameworks/ui/plan/README.md` → `plan/index.json`)이다.
+- 별별UI 를 쓰는 다른 프로젝트(개발자·AI)용 소비자 문서·공개 API 명세는 `frameworks/ui/docs/`(진입점 [frameworks/ui/docs/README.md](frameworks/ui/docs/README.md), AI 안내 `frameworks/ui/docs/03_AI_활용안내.md`)다.
 - 저장소 구조와 그 근거는 `frameworks/ui/plan/05_아키텍처/01_XKXK_저장소구조.md`, 구조 결정은 `frameworks/ui/plan/90_결정관리/02_결정기록_ADR.md` 의 UADR-0001 이다.
 - 여러 영역에 걸친 결정이 생기면 `docs/decisions/` 에 둔다.
 - 실행 환경은 `INFRA.md`(영역 INFRA 로의 링크, 커밋하지 않음)다.
