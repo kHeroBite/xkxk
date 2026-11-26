@@ -7,6 +7,7 @@ using Avalonia.Browser;
 using Avalonia.Media;
 using Dock.Settings;
 using xkxk.frameworks.ui.shell;
+using xkxk.frameworks.ui.shell.Framework;
 using xkxk.frameworks.ui.shell.Rendering;
 using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.shell.ViewModels;
@@ -125,7 +126,8 @@ internal sealed partial class Program
 
         // Off 면 소프트웨어(Canvas 2D)만. Auto 는 Avalonia 기본(WebGL2 → WebGL1 → Software2D)을 그대로 둔다.
         var options = gpu == GpuMode.Off ? new BrowserPlatformOptions { RenderingMode = [BrowserRenderingMode.Software2D] } : null;
-        var app = BuildAvaloniaApp().AfterSetup(_ => SingleWindowPlatformFix.Apply()); // 웹에는 Window 가 없어 Dock 도구 크롬·고정 패널의 $parent[Window] 바인딩이 오류 로그를 남긴다
+        var ui = BrowserUiHost.Build(appArgs, m => Console.WriteLine("[host] " + m)); // 별별UI 빌더 경유(모듈 0 = 동작 불변)
+        var app = BuildAvaloniaApp().UseXkxkUi(ui).AfterSetup(_ => SingleWindowPlatformFix.Apply()); // 웹에는 Window 가 없어 Dock 도구 크롬·고정 패널의 $parent[Window] 바인딩이 오류 로그를 남긴다
         if (xkxk.frameworks.ui.shell.Docking.MdiMoveLight.RenderDirtyRegions)
         {
             // Compositor 가 AvaloniaLocator 에서 읽는다(12.1.4 확인). Skia 는 영역을 지원해 MultiDirtyRectTracker(최대 8개)가 쓰인다

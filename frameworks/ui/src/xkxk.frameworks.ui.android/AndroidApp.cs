@@ -8,6 +8,7 @@ using Avalonia.Media;
 using Dock.Settings;
 using xkxk.frameworks.ui.shell;
 using xkxk.frameworks.ui.shell.Diagnostics.Remote;
+using xkxk.frameworks.ui.shell.Framework;
 using xkxk.frameworks.ui.shell.Theming;
 
 namespace xkxk.frameworks.ui.android;
@@ -50,7 +51,9 @@ public sealed class AndroidApp : AvaloniaAndroidApplication<xkxk.frameworks.ui.v
         UiSettings.FontResolver = name =>
             name == UiSettings.DefaultFontName ? new FontFamily(KoreanFont) : new FontFamily(name);
         AttachLogSinks();
-        var customized = base.CustomizeAppBuilder(builder).With(new FontManagerOptions
+        var customized = base.CustomizeAppBuilder(builder)
+            .UseXkxkUi(AndroidUiHost.Build(App.StartupArgs, m => Console.WriteLine("[host] " + m))) // 별별UI 빌더 경유(모듈 0 = 동작 불변). Args 는 기동 시점 사본(AndroidUiHost 주석)
+            .With(new FontManagerOptions
         {
             DefaultFamilyName = KoreanFont,
             FontFallbacks = [new FontFallback { FontFamily = new FontFamily(KoreanFont) }],

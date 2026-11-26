@@ -8,7 +8,18 @@
     <LangVersion>latest</LangVersion>
     <RootNamespace>xkxk.frameworks.ui.shell</RootNamespace>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <!-- 공개 API 고정(UADR-0009): RS0017(선언 API 삭제)·RS0037(nullable 추적 미선언)은 PublicAPI txt 위치에 보고되는 규칙이라
+         .editorconfig 경로 한정이 안 먹는다. txt 에는 Framework/ 계약만 있으므로 사실상 Framework 한정이다 -->
+    <WarningsAsErrors>$(WarningsAsErrors);RS0017;RS0037</WarningsAsErrors>
   </PropertyGroup>
+
+  <!-- 공개 API 분석기(UADR-0009). 버전 출처: api.nuget.org v3 실측 2026-11-26 — 최신 안정판 5.6.0(2026-07-02 게시, deprecation 없음).
+       severity 는 같은 폴더 .editorconfig 가 Framework/**.cs 에만 error 로 건다 -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
+  </ItemGroup>
 
   <!-- 버전 출처: api.nuget.org v3-flatcontainer 실측(2026-10-28). Dock 12.1.0.12 nuspec 의 Avalonia 의존 = 12.1.4 -->
   <ItemGroup>

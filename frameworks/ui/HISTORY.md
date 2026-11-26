@@ -4,6 +4,14 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-26 — 별별UI B02 공개 API 호환 원칙(UADR-0009)·공개 계약 골격·3호스트 어댑터(O4, B02, conv_179565227509)
+- 결정(UADR-0009). 공개 API 호환 8원칙을 확정했다. 사용자 원문 요지는 확장점을 먼저 열어 두고, 새 기능은 기본값 옵션으로 넣고, 기본값 파라미터 추가 대신 옵션 객체·오버로드로 바이너리 호환을 지키라는 것이다. 정본은 `/mnt/c/DATA/Project/xkxk/docs/standards/02_공개API_호환원칙.md` 이고 요구사항정의서·원문·ADR·계획서·부록 a3·a4 에 반영했다.
+- 공개 계약 골격. `src/xkxk.frameworks.ui.shell/Framework/` 에 계약 파일 18개를 새로 만들었다. `PublicAPI.Shipped.txt`·`PublicAPI.Unshipped.txt`·`.editorconfig` 와 csproj 로 공개 API 분석기를 B02 부터 켰고, 패키지 baseline(호환 비교 기준 고정)은 B17 에 한다.
+- 3호스트 어댑터. `DesktopUiHost.cs`·`BrowserUiHost.cs`·`AndroidUiHost.cs` 를 새로 만들고 각 호스트 `Program.cs`·`AndroidApp.cs` 가 이를 거치게 했다.
+- 시험. `test/framework/contract/` 계약 시험 18항목과 `test/framework/verify_framework.sh`·`judge/api_surface_check.py` 를 새로 만들었다. 호환 깨짐 실증은 2회 했고 둘 다 검출됐다.
+- 도구. `tools/check_layers_consumer.py`(소비자 레이어 규칙)와 `check_layers_rules.json` 규칙을 더했다. 3축 레이어 검사와 consumer 검사 rc=0 이다.
+- 검증 결과. 3축 빌드 rc=0, `verify_framework.sh` rc=0, 데스크톱 스모크 PASS(host=desktop, 메인 창 표시, 종료 코드 0), 웹 스모크 PASS(headless Chromium, pageerror 0). Android 는 연결 기기가 없어 실기기 대기다(goal 항목 아님). md_audit·plan_audit 는 영역·루트 rc=0 이다.
+
 ## 2026-11-26 — 프레임워크화 F0 결정 문서 반영(O5, B01, conv_179565227509)
 - 결정. 프레임워크화는 전체안으로 확정했다(UADR-0007). F0 확정 13항을 계획서 §11 에 넣었다. Q1 정본 저장소는 서버 GitLab, Q2 CI 는 에이전트 머신의 로컬 Windows 러너, Q3 hosting 은 소스를 분리한다(UADR-0008).
 - 시험대 분리. 시험대는 `testbed/` 와 `test/framework/` 로 나눈다(부록 a3). 단계별 배치는 23 batch 로드맵으로 짰다(부록 a4). 소비 제품 ohoops 알림은 B18 이 끝난 뒤에 한다.

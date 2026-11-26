@@ -1,0 +1,14 @@
+# 셸 공개 API 고정 범위(UADR-0009) — PublicAPI 분석기를 Framework/ 공개 계약에만 error 로 건다. 기존 셸 공개 형식은 B16 에 확대
+# RS0017·RS0037 은 txt 위치 보고 규칙이라 여기 적지 않는다(none 으로 끄면 csproj WarningsAsErrors 가 무력해진다)
+[*.cs]
+dotnet_diagnostic.RS0016.severity = none
+dotnet_diagnostic.RS0026.severity = none
+dotnet_diagnostic.RS0027.severity = none
+dotnet_diagnostic.RS0036.severity = none
+dotnet_diagnostic.RS0041.severity = none
+
+[Framework/**.cs]
+dotnet_diagnostic.RS0016.severity = error
+dotnet_diagnostic.RS0026.severity = error
+dotnet_diagnostic.RS0027.severity = error
+dotnet_diagnostic.RS0036.severity = error

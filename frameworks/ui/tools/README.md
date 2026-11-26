@@ -27,6 +27,7 @@
 |---|---|---|---|---|
 | `tools/check_layers.py` | 클라이언트 계층 정적 검사(참조 방향·줄 수·헤더) | 레이어 분리 원칙 게이트 | `python3 -B tools/check_layers.py [--self-test]` | 2026-11-24 기본 `--root` 를 영역 루트로 고침. 옛 경로 문구 해소 |
 | `tools/check_layers_parts.py` | 템플릿 부품 이름 계약 검사(check_layers.py 가 호출) | 계층 검사 보조 | check_layers.py 가 부름 | 경로 문구 없음 |
+| `tools/check_layers_consumer.py` | 프레임워크 소비 경계 검사(InternalsVisibleTo 금지·test/framework 의 Internal·NonPublic 접근 금지, testbed 는 비활성 골격) | 별별UI 프레임워크화 공개 경계 게이트 | check_layers.py 가 부름. 단독 `python3 -B tools/check_layers_consumer.py [--self-test]` | 2026-11-26 신설(B02). 규칙은 check_layers_rules.json 의 consumer_rules |
 | `tools/check_layers_rules.json` | 계층 규칙(층별 금지 참조·패키지·패턴) | check_layers.py 입력 | — | 2026-11-24 경로 6곳을 영역 상대(`src`·`tools`)로 고침 |
 | `tools/classify_layers.py` | 소스 계층 분류기, `LAYERS.md` 재생성 | 계층 분류표 정본 생성 | `python3 -B tools/classify_layers.py [--check]` | 2026-11-24 `SRC`·기본 `--root`·출력 경로를 영역 기준으로 고침. 생성 문구·사용 주석도 새 홈 기준으로 고쳐 LAYERS.md 를 재생성했다(`--check` rc=0) |
 | `tools/classify_layers_overrides.json` | 분류기 고정 예외(사유 필수) | classify_layers.py 입력 | — | 2026-11-24 경로 설명 해소 |

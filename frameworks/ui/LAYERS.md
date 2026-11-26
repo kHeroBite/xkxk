@@ -7,14 +7,14 @@
 
 | 층 | 파일 수 |
 |---|---:|
-| Control | 273 |
-| Data | 35 |
+| Control | 274 |
+| Data | 52 |
 | Diag | 90 |
-| Host | 74 |
+| Host | 77 |
 | Ui | 26 |
 | Views | 240 |
 
-합계 738개(.cs·.axaml).
+합계 759개(.cs·.axaml).
 
 ## 끊어야 하는 참조(현재 기준 금지 방향)
 
@@ -40,6 +40,7 @@
 | `xkxk.frameworks.ui.android/AndroidDeviceInfo.cs` | Host |  | 호스트 프로젝트 |  |  | AndroidDeviceInfo |
 | `xkxk.frameworks.ui.android/AndroidLayoutStore.cs` | Host |  | 호스트 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.android/AndroidSafeArea.cs` | Host |  | 호스트 프로젝트 | O |  | AndroidSafeArea |
+| `xkxk.frameworks.ui.android/AndroidUiHost.cs` | Host |  | 호스트 프로젝트 |  |  | AndroidUiHost |
 | `xkxk.frameworks.ui.android/MainActivity.cs` | Host |  | 호스트 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.android/StartupGesture.cs` | Host |  | 호스트 프로젝트 |  |  | StartupGesture |
 | `xkxk.frameworks.ui.android/StartupHitTest.cs` | Host |  | 호스트 프로젝트 | O |  | StartupHitTest |
@@ -53,6 +54,7 @@
 | `xkxk.frameworks.ui.browser/BrowserLayoutStore.cs` | Host |  | 호스트 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.browser/BrowserMotionPreference.cs` | Host |  | 호스트 프로젝트 |  |  | BrowserMotionPreference |
 | `xkxk.frameworks.ui.browser/BrowserPressTimeSource.cs` | Host |  | 호스트 프로젝트 |  |  | BrowserPressTimeSource |
+| `xkxk.frameworks.ui.browser/BrowserUiHost.cs` | Host |  | 호스트 프로젝트 |  |  | BrowserUiHost |
 | `xkxk.frameworks.ui.browser/LifecycleExports.cs` | Host |  | 호스트 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.browser/PageKeyFocus.cs` | Host |  | 호스트 프로젝트 |  |  | PageKeyFocus |
 | `xkxk.frameworks.ui.browser/PagePointerLeave.cs` | Host |  | 호스트 프로젝트 |  |  | PagePointerLeave |
@@ -96,6 +98,7 @@
 | `xkxk.frameworks.ui.desktop/CaptureProtection.cs` | Host |  | 호스트 프로젝트 | O |  | CaptureProtection |
 | `xkxk.frameworks.ui.desktop/DesktopDiagHooks.cs` | Host |  | 호스트 프로젝트 |  |  | DesktopDiagHooks |
 | `xkxk.frameworks.ui.desktop/DesktopMonitorProvider.cs` | Host |  | 호스트 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.desktop/DesktopUiHost.cs` | Host |  | 호스트 프로젝트 |  |  | DesktopUiHost |
 | `xkxk.frameworks.ui.desktop/DesktopWindowHost.cs` | Host |  | 호스트 프로젝트 | O | O |  |
 | `xkxk.frameworks.ui.desktop/FileLayoutStore.cs` | Host |  | 호스트 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.desktop/HostArgs.cs` | Host |  | 호스트 프로젝트 |  |  | HostArgs |
@@ -373,6 +376,24 @@
 | `xkxk.frameworks.ui.shell/Docking/WindowStateOps.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O | WindowStateOps |
 | `xkxk.frameworks.ui.shell/Docking/WindowTabJoinService.DockGuard.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
 | `xkxk.frameworks.ui.shell/Docking/WindowTabJoinService.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
+| `xkxk.frameworks.ui.shell/Framework/IUiModule.cs` | Data | xkxk.frameworks.ui.data/Framework/IUiModule.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/IUiModuleContext.cs` | Data | xkxk.frameworks.ui.data/Framework/IUiModuleContext.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/IUiServiceProvider.cs` | Data | xkxk.frameworks.ui.data/Framework/IUiServiceProvider.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiConfigurationException.cs` | Data | xkxk.frameworks.ui.data/Framework/UiConfigurationException.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiDiagnostic.cs` | Data | xkxk.frameworks.ui.data/Framework/UiDiagnostic.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiDiagnosticIds.cs` | Data | xkxk.frameworks.ui.data/Framework/UiDiagnosticIds.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiDiagnosticSeverity.cs` | Data | xkxk.frameworks.ui.data/Framework/UiDiagnosticSeverity.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiDiagnostics.cs` | Data | xkxk.frameworks.ui.data/Framework/UiDiagnostics.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiErrorPolicy.cs` | Data | xkxk.frameworks.ui.data/Framework/UiErrorPolicy.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiHostKinds.cs` | Data | xkxk.frameworks.ui.data/Framework/UiHostKinds.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiModule.cs` | Data | xkxk.frameworks.ui.data/Framework/UiModule.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiModuleContext.cs` | Data | xkxk.frameworks.ui.data/Framework/UiModuleContext.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  | UiModuleContext |
+| `xkxk.frameworks.ui.shell/Framework/UiServiceRegistry.cs` | Data | xkxk.frameworks.ui.data/Framework/UiServiceRegistry.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/XkxkUi.cs` | Data | xkxk.frameworks.ui.data/Framework/XkxkUi.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/XkxkUiAppBuilderExtensions.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
+| `xkxk.frameworks.ui.shell/Framework/XkxkUiApplication.cs` | Data | xkxk.frameworks.ui.data/Framework/XkxkUiApplication.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/XkxkUiBuilder.cs` | Data | xkxk.frameworks.ui.data/Framework/XkxkUiBuilder.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/XkxkUiBuilderOptions.cs` | Data | xkxk.frameworks.ui.data/Framework/XkxkUiBuilderOptions.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/IViewRegistry.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Input/PinchZoom.cs` | Control |  | SettingsInput 이 부르는 입력 처리. 진단이 직접 쓴다 | O |  |  |
 | `xkxk.frameworks.ui.shell/Input/SettingsInput.cs` | Control |  | 전역 입력 처리기(파일 주석상 컨트롤 계층). App·진단이 직접 부른다 | O |  |  |

@@ -38,8 +38,19 @@
     "dock_packages": ["Dock.Avalonia", "Dock.Avalonia.Themes.Fluent"],
     "dock_tfm": "net10.0"
   },
+  "consumer_rules": {
+    "_note": "프레임워크 소비 경계(check_layers_consumer.py). framework_paths 에서 InternalsVisibleTo 를 금지하고, 활성 소비자 경로에서 Internal 네임스페이스·NonPublic 리플렉션을 금지한다. 경로가 없으면 건너뛴다.",
+    "framework_paths": ["src"],
+    "framework_forbid_code": ["\\bInternalsVisibleTo\\b"],
+    "consumers": [
+      { "path": "test/framework", "active": true },
+      { "path": "testbed", "active": false, "_note": "B10 활성" }
+    ],
+    "consumer_forbid_code": ["\\bxkxk\\.frameworks\\.ui(\\.[A-Za-z0-9_]+)*\\.Internal\\b", "\\bBindingFlags\\.NonPublic\\b"],
+    "exts": [".cs", ".csproj"]
+  },
   "new_files": {
-    "prefixes": ["src/xkxk.frameworks.ui/", "src/xkxk.frameworks.ui.views/", "src/xkxk.frameworks.ui.data/", "tools/check_layers.py", "tools/check_layers_parts.py", "tools/classify_layers.py"],
+    "prefixes": ["src/xkxk.frameworks.ui/", "src/xkxk.frameworks.ui.views/", "src/xkxk.frameworks.ui.data/", "tools/check_layers.py", "tools/check_layers_parts.py", "tools/check_layers_consumer.py", "tools/classify_layers.py", "src/xkxk.frameworks.ui.shell/Framework/"],
     "max_lines": 300,
     "exts": [".cs", ".axaml", ".csproj", ".py"],
     "exempt": []

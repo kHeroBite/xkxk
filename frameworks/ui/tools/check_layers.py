@@ -15,6 +15,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # python -I 는 스크립트 폴더를 path 에 넣지 않는다
 from check_layers_parts import check_template_parts, load_dock_blob  # noqa: E402
+from check_layers_consumer import check_consumers, run_self_test as consumer_self_test  # noqa: E402
 
 HANGUL = re.compile(r"[가-힣]")
 XML_COMMENT = re.compile(r"<!--.*?-->", re.S)
@@ -248,6 +249,7 @@ def self_test(rules):
     if len(no_dock) != 1 or "Dock 패키지" not in no_dock[0]:
         failed += 1
         print(f"FAIL Dock 패키지 부재는 위반이어야 한다 위반={len(no_dock)}")
+    failed += consumer_self_test(rules)
     print(f"self_test cases={len(cases) + 2} failed={failed}")
     return 0 if failed == 0 else 1
 
@@ -274,7 +276,7 @@ def main():
                 targets = [rel for rel in list_files(args.root, rules, pool) if wanted(rel, rules)]
                 files = {rel: text for rel, text in pool.map(lambda r: read_text(args.root, r), targets) if text is not None}
             versions = {m.group(1): m.group(2) for m in PACKAGE_REF.finditer(files.get(rules["template_parts"]["version_from"], ""))}
-            violations = check_all(files, rules, load_dock_blob(versions, rules))
+            violations = check_all(files, rules, load_dock_blob(versions, rules)) + check_consumers(args.root, rules)
             for v in violations:
                 print(f"VIOLATION {v}")
             print(f"layers={len(rules['layers'])} files={len(files)} violations={len(violations)}")

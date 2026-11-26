@@ -9,6 +9,7 @@ using Avalonia.Threading;
 using Dock.Settings;
 using xkxk.frameworks.ui.shell;
 using xkxk.frameworks.ui.shell.Diagnostics;
+using xkxk.frameworks.ui.shell.Framework;
 using xkxk.frameworks.ui.shell.Rendering;
 
 namespace xkxk.frameworks.ui.desktop;
@@ -63,7 +64,8 @@ internal static class Program
             LaunchOptions.Apply(host, background: placement is not null);
             ConfigureApp(host, store);
 
-            var builder = HostRenderOptions.Apply(BuildAvaloniaApp(), host.Get("--render"), host.Get("--composition"), gpu,
+            var ui = DesktopUiHost.Build(host.AppArgs, Log); // 별별UI 빌더 경유(모듈 0 = 동작 불변). BuildAvaloniaApp 자체는 디자이너용이라 그대로 둔다
+            var builder = HostRenderOptions.Apply(BuildAvaloniaApp().UseXkxkUi(ui), host.Get("--render"), host.Get("--composition"), gpu,
                 overlayPopups: placement is not null, settingsJson: settingsJson); // 화면 밖 시험: 팝업을 별도 창으로 띄우지 않는다(사용자 화면 노출 방지). settingsJson = 시작 옵션 RenderDirtyRegions
             PerfProbe.Current.SetMetric("host_lifetime_start_ms", PerfProbe.Current.NowMs);
             // UI-08 원격 제어(--remote-control[=port]) — 원본 args 기준, 꺼져 있으면 null. 명령은 UI 스레드로 전달된다.

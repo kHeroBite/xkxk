@@ -1,0 +1,19 @@
+<!-- 별별UI 공개 계약 시험(C01~C18, 앱 없음) — 셸 Framework/ 공개 API 만 쓰고 InternalsVisibleTo·NonPublic 리플렉션은 쓰지 않는다(UADR-0009) -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>xkxk.frameworks.ui.test.framework.contract</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 소비자 관점 시험이라 셸 하나만 참조한다(데이터·순수 UI 층은 셸을 통해 따라온다) -->
+    <ProjectReference Include="../../../src/xkxk.frameworks.ui.shell/xkxk.frameworks.ui.shell.csproj" />
+  </ItemGroup>
+
+</Project>

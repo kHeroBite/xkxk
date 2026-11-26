@@ -45,6 +45,11 @@
       "id": "REQ-121",
       "topic": "프레임워크와 분리된 시험대(testbed)와 검증 스크립트로 프레임워크 자동 검증",
       "status": "확정"
+    },
+    {
+      "id": "REQ-122",
+      "topic": "공개 API 확장 자리 선개방·기본값 호환 100%(8원칙)",
+      "status": "확정·구현중"
     }
   ],
   "decisions": [
@@ -71,6 +76,11 @@
     {
       "id": "UADR-0008",
       "topic": "시험대(testbed) 분리·위치·검증 체계",
+      "status": "채택"
+    },
+    {
+      "id": "UADR-0009",
+      "topic": "공개 API 확장 자리 선개방·기본값 호환 8원칙, 깨짐 검출 B02 시작",
       "status": "채택"
     }
   ],
@@ -183,5 +193,5 @@
     "tools_root": "tools"
   },
   "archived": [],
-  "note": "2026-11-24 Pd 에서 옮긴 UI 문서를 Pd 번호 체계 그대로 등재했다. 추가 키는 analysis·tech_stack·architecture·screens·decisions_appendix·pending_appendix·requirements_raw_appendix·migration_record 다. 결정 기록 정본은 decisions 이고 UADR-0001 이 있다. 2026-11-25 architecture_appendix 키(프레임워크화 계획 부록)를 추가했다. requirements·decisions 배열은 이 날부터 새로 생긴 항목만 짧게 색인한다(그 전 항목은 본문 문서가 정본). 2026-11-26 architecture_appendix 에 a3(시험대 검증계획)·a4(단계별 배치계획)를 더하고 REQ-121·UADR-0007·UADR-0008 을 색인했다."
+  "note": "2026-11-24 Pd 에서 옮긴 UI 문서를 Pd 번호 체계 그대로 등재했다. 추가 키는 analysis·tech_stack·architecture·screens·decisions_appendix·pending_appendix·requirements_raw_appendix·migration_record 다. 결정 기록 정본은 decisions 이고 UADR-0001 이 있다. 2026-11-25 architecture_appendix 키(프레임워크화 계획 부록)를 추가했다. requirements·decisions 배열은 이 날부터 새로 생긴 항목만 짧게 색인한다(그 전 항목은 본문 문서가 정본). 2026-11-26 architecture_appendix 에 a3(시험대 검증계획)·a4(단계별 배치계획)를 더하고 REQ-121·UADR-0007·UADR-0008 을 색인했다. 2026-11-26 REQ-122·UADR-0009(공개 API 호환 8원칙)를 색인했다."
 }

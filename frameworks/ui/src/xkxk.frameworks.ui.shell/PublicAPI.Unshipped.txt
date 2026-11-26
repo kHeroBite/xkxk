@@ -1,0 +1,95 @@
+#nullable enable
+abstract xkxk.frameworks.ui.shell.Framework.UiModule.Configure(xkxk.frameworks.ui.shell.Framework.IUiModuleContext! context) -> void
+abstract xkxk.frameworks.ui.shell.Framework.UiModule.Id.get -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.ModuleConfigureFailed = "XKUI0003" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.ModuleDuplicate = "XKUI0002" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.ModuleIdEmpty = "XKUI0001" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.ServiceDuplicate = "XKUI0101" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiHostKinds.Android = "android" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiHostKinds.Browser = "browser" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiHostKinds.Desktop = "desktop" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiHostKinds.Unknown = "unknown" -> string!
+override xkxk.frameworks.ui.shell.Framework.UiDiagnostic.ToString() -> string!
+static xkxk.frameworks.ui.shell.Framework.XkxkUi.CreateBuilder() -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder!
+static xkxk.frameworks.ui.shell.Framework.XkxkUi.CreateBuilder(string![]! args) -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder!
+static xkxk.frameworks.ui.shell.Framework.XkxkUi.CreateBuilder(xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions! options) -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder!
+static xkxk.frameworks.ui.shell.Framework.XkxkUiAppBuilderExtensions.UseXkxkUi(this Avalonia.AppBuilder! builder, xkxk.frameworks.ui.shell.Framework.XkxkUiApplication! application) -> Avalonia.AppBuilder!
+xkxk.frameworks.ui.shell.Framework.IUiModule
+xkxk.frameworks.ui.shell.Framework.IUiModule.Configure(xkxk.frameworks.ui.shell.Framework.IUiModuleContext! context) -> void
+xkxk.frameworks.ui.shell.Framework.IUiModule.Id.get -> string!
+xkxk.frameworks.ui.shell.Framework.IUiModuleContext
+xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Diagnostics.get -> xkxk.frameworks.ui.shell.Framework.UiDiagnostics!
+xkxk.frameworks.ui.shell.Framework.IUiModuleContext.ModuleId.get -> string!
+xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Options.get -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions!
+xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Services.get -> xkxk.frameworks.ui.shell.Framework.UiServiceRegistry!
+xkxk.frameworks.ui.shell.Framework.IUiServiceProvider
+xkxk.frameworks.ui.shell.Framework.IUiServiceProvider.Contains<TService>() -> bool
+xkxk.frameworks.ui.shell.Framework.IUiServiceProvider.Get<TService>() -> TService!
+xkxk.frameworks.ui.shell.Framework.IUiServiceProvider.TryGet<TService>(out TService! service) -> bool
+xkxk.frameworks.ui.shell.Framework.UiConfigurationException
+xkxk.frameworks.ui.shell.Framework.UiConfigurationException.Diagnostics.get -> System.Collections.Generic.IReadOnlyList<xkxk.frameworks.ui.shell.Framework.UiDiagnostic!>!
+xkxk.frameworks.ui.shell.Framework.UiConfigurationException.UiConfigurationException(string! message, System.Collections.Generic.IReadOnlyList<xkxk.frameworks.ui.shell.Framework.UiDiagnostic!>! diagnostics) -> void
+xkxk.frameworks.ui.shell.Framework.UiDiagnostic
+xkxk.frameworks.ui.shell.Framework.UiDiagnostic.Id.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiDiagnostic.Message.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiDiagnostic.Severity.get -> xkxk.frameworks.ui.shell.Framework.UiDiagnosticSeverity
+xkxk.frameworks.ui.shell.Framework.UiDiagnostic.Source.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiDiagnostic.UiDiagnostic(string! id, xkxk.frameworks.ui.shell.Framework.UiDiagnosticSeverity severity, string! message) -> void
+xkxk.frameworks.ui.shell.Framework.UiDiagnostic.UiDiagnostic(string! id, xkxk.frameworks.ui.shell.Framework.UiDiagnosticSeverity severity, string! message, string? source) -> void
+xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds
+xkxk.frameworks.ui.shell.Framework.UiDiagnostics
+xkxk.frameworks.ui.shell.Framework.UiDiagnostics.Entries.get -> System.Collections.Generic.IReadOnlyList<xkxk.frameworks.ui.shell.Framework.UiDiagnostic!>!
+xkxk.frameworks.ui.shell.Framework.UiDiagnostics.HasErrors.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiDiagnostics.Report(string! id, xkxk.frameworks.ui.shell.Framework.UiDiagnosticSeverity severity, string! message) -> void
+xkxk.frameworks.ui.shell.Framework.UiDiagnostics.Report(xkxk.frameworks.ui.shell.Framework.UiDiagnostic! diagnostic) -> void
+xkxk.frameworks.ui.shell.Framework.UiDiagnostics.Reported -> System.EventHandler<xkxk.frameworks.ui.shell.Framework.UiDiagnostic!>?
+xkxk.frameworks.ui.shell.Framework.UiDiagnostics.UiDiagnostics() -> void
+xkxk.frameworks.ui.shell.Framework.UiDiagnosticSeverity
+xkxk.frameworks.ui.shell.Framework.UiDiagnosticSeverity.Error = 2 -> xkxk.frameworks.ui.shell.Framework.UiDiagnosticSeverity
+xkxk.frameworks.ui.shell.Framework.UiDiagnosticSeverity.Info = 0 -> xkxk.frameworks.ui.shell.Framework.UiDiagnosticSeverity
+xkxk.frameworks.ui.shell.Framework.UiDiagnosticSeverity.Warning = 1 -> xkxk.frameworks.ui.shell.Framework.UiDiagnosticSeverity
+xkxk.frameworks.ui.shell.Framework.UiErrorPolicy
+xkxk.frameworks.ui.shell.Framework.UiErrorPolicy.Collect = 0 -> xkxk.frameworks.ui.shell.Framework.UiErrorPolicy
+xkxk.frameworks.ui.shell.Framework.UiErrorPolicy.Throw = 1 -> xkxk.frameworks.ui.shell.Framework.UiErrorPolicy
+xkxk.frameworks.ui.shell.Framework.UiHostKinds
+xkxk.frameworks.ui.shell.Framework.UiModule
+xkxk.frameworks.ui.shell.Framework.UiModule.UiModule() -> void
+xkxk.frameworks.ui.shell.Framework.UiServiceRegistry
+xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.Add<TService>(System.Func<xkxk.frameworks.ui.shell.Framework.IUiServiceProvider!, TService!>! factory) -> xkxk.frameworks.ui.shell.Framework.UiServiceRegistry!
+xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.Add<TService>(TService! instance) -> xkxk.frameworks.ui.shell.Framework.UiServiceRegistry!
+xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.Contains<TService>() -> bool
+xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.Count.get -> int
+xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.Get<TService>() -> TService!
+xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.Remove<TService>() -> bool
+xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.Replace<TService>(System.Func<xkxk.frameworks.ui.shell.Framework.IUiServiceProvider!, TService!>! factory) -> xkxk.frameworks.ui.shell.Framework.UiServiceRegistry!
+xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.Replace<TService>(TService! instance) -> xkxk.frameworks.ui.shell.Framework.UiServiceRegistry!
+xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.TryGet<TService>(out TService! service) -> bool
+xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.UiServiceRegistry() -> void
+xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.UiServiceRegistry(xkxk.frameworks.ui.shell.Framework.UiDiagnostics! diagnostics) -> void
+xkxk.frameworks.ui.shell.Framework.XkxkUi
+xkxk.frameworks.ui.shell.Framework.XkxkUiAppBuilderExtensions
+xkxk.frameworks.ui.shell.Framework.XkxkUiApplication
+xkxk.frameworks.ui.shell.Framework.XkxkUiApplication.Diagnostics.get -> xkxk.frameworks.ui.shell.Framework.UiDiagnostics!
+xkxk.frameworks.ui.shell.Framework.XkxkUiApplication.IsAttached.get -> bool
+xkxk.frameworks.ui.shell.Framework.XkxkUiApplication.ModuleIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+xkxk.frameworks.ui.shell.Framework.XkxkUiApplication.Options.get -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions!
+xkxk.frameworks.ui.shell.Framework.XkxkUiApplication.Services.get -> xkxk.frameworks.ui.shell.Framework.IUiServiceProvider!
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder.AddModule(xkxk.frameworks.ui.shell.Framework.UiModule! module) -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder!
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder.AddModule<TModule>() -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder!
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder.Build() -> xkxk.frameworks.ui.shell.Framework.XkxkUiApplication!
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder.ConfigureServices(System.Action<xkxk.frameworks.ui.shell.Framework.UiServiceRegistry!>! configure) -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder!
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder.Diagnostics.get -> xkxk.frameworks.ui.shell.Framework.UiDiagnostics!
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder.Options.get -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions!
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilder.Services.get -> xkxk.frameworks.ui.shell.Framework.UiServiceRegistry!
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.ApplicationId.get -> string?
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.ApplicationId.set -> void
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.Args.get -> System.Collections.Generic.IReadOnlyList<string!>!
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.Args.set -> void
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.ErrorPolicy.get -> xkxk.frameworks.ui.shell.Framework.UiErrorPolicy
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.ErrorPolicy.set -> void
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.HostKind.get -> string!
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.HostKind.set -> void
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.Properties.get -> System.Collections.Generic.IDictionary<string!, object?>!
+xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.XkxkUiBuilderOptions() -> void
