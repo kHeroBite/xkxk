@@ -53,13 +53,20 @@ internal static partial class RemoteWindowsCommands
         r.Register("ping", "생존 확인", _ => JsonValue.Create("pong"));
         r.Register("windows.list", "최상위 창 목록(0=메인, 1~=SDI 실 창) + 관리형 SDI 창(managed=true, index=null — 브라우저·Android): 제목·활성·위치·크기·상태·포함 문서", _ => WindowsJson());
         r.Register("docs.list", "열린 문서 목록(열린 순서): id·title·kind·active·state·window·floating·zoom·zIndex·zScale·zSource — zIndex 는 zScale=mdi 면 MDI 레이어 화면 쌓임, zScale=sdi 면 SDI 창끼리 순위(0=맨 아래, zSource=os|visual|model). 두 척도는 서로 비교하지 않는다", _ => DocsJson());
-        r.Register("docs.open", "문서 열기 kind=grid|gantt|form [title] [sdi] [allowDuplicate] [count]", a =>
+        r.Register("docs.open", "문서 열기 kind=grid|gantt|form|<창 ID> | window=<창 ID|별칭>(우선) [param=<문자열>] [title] [sdi] [allowDuplicate] [count]", a =>
         {
-            var kind = a.EnumArg<DocumentKind>("kind") ?? throw new RemoteCommandException("kind=grid|gantt|form 이 필요합니다.");
+            var windowId = OpenTarget(a);
+            var options = new UiWindowOpenOptions
+            {
+                Title = a.Str("title"),
+                Placement = a.Bool("sdi") ? UiWindowPlacement.Sdi : UiWindowPlacement.Default,
+                AllowDuplicate = a.Bool("allowDuplicate") ? true : null,
+                Parameter = a.Str("param"),
+            };
             var opened = new List<PocDocument>();
             for (var i = 0; i < Math.Max(1, a.Int("count") ?? 1); i++)
             {
-                opened.Add(Shell.OpenDocument(kind, a.Str("title"), a.Bool("sdi"), a.Bool("allowDuplicate")));
+                opened.Add(Shell.OpenDocument(windowId, options));
             }
 
             using (PerfProbe.Current.TimeOperation("docs.open.json")) { return DocsJsonZ(opened); } // SDI 순위까지(한 번의 목록 계산), 응답 비용 계측(K15)
@@ -175,6 +182,23 @@ internal static partial class RemoteWindowsCommands
         });
     }
 
+    /// <summary>
+    /// docs.open 대상 창. window= 는 받은 값 그대로 넘긴다(모르는 ID 는 셸이 자리표시 문서 + XKUI0505).
+    /// kind= 는 등록된 ID·별칭 또는 옛 이름·숫자만 받고, 그 밖은 예전처럼 명령 오류다(오타가 자리표시 문서가 되지 않게).
+    /// </summary>
+    private static string OpenTarget(JsonObject a)
+    {
+        if (a.Str("window") is { Length: > 0 } window) { return window; }
+        if (a.Str("kind") is { Length: > 0 } kind)
+        {
+            var legacy = LegacyWindowKinds.ToId(kind); // 옛 이름·숫자 0~2 를 먼저 바꾼다(숫자는 창 별칭에 없다)
+            if (legacy is not null) { return legacy; }
+            if (XkxkUi.Current.Windows.TryResolve(kind, out var def)) { return def.Id; }
+        }
+
+        throw new RemoteCommandException("kind=grid|gantt|form 이 필요합니다(또는 window=<창 ID|별칭>).");
+    }
+
     private static ShellArrange ToArrange(string mode) => mode.ToLowerInvariant() switch
     {
         "cascade" => ShellArrange.Cascade,
@@ -236,7 +260,7 @@ internal static partial class RemoteWindowsCommands
             var d = Doc(a);
             part = VisualTreeInspector.DocumentHost(d) ?? throw new RemoteCommandException("문서가 화면에 표시돼 있지 않습니다(최소화·비활성 탭).");
             top = TopLevel.GetTopLevel(part)!;
-            label = "doc" + d.Seq + d.Kind;
+            label = "doc" + d.Seq + string.Concat(WindowDisplay.LegacyOrId(d.WindowId).Split(Path.GetInvalidFileNameChars())); // 파일 이름에 못 쓰는 글자는 뺀다
         }
         else
         {

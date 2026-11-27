@@ -153,10 +153,10 @@ public sealed class TitleStripViewModel : ObservableObject
     // 창 아이콘 식별(22 §2): 화면 ID·메뉴 ID·아이콘 키가 빈 문서(새 열기·레이아웃 복원 모두)는 PoC 종류의 대표 화면으로 채운다. 이미 값이 있으면 그대로 둔다
     private static void EnsureIdentity(PocDocument doc)
     {
-        var kind = doc.Kind.ToString();
+        var kind = WindowDisplay.LegacyOrId(doc.WindowId);
         doc.ScreenId ??= xkxk.frameworks.ui.data.Navigation.MenuIconCatalog.ScreenIdOfPocKind(kind);
         doc.MenuId ??= xkxk.frameworks.ui.data.Navigation.MenuIconCatalog.MenuIdFor(doc.ScreenId, kind);
-        doc.IconKey ??= xkxk.frameworks.ui.data.Navigation.MenuIconCatalog.IconKeyFor(doc.ScreenId, kind);
+        doc.IconKey ??= WindowDisplay.IconKeyOf(doc); // 창 정의 아이콘, 없으면 화면 ID·옛 종류 이름의 메뉴 아이콘
     }
 
     private void OnWatchedChanged(object? sender, PropertyChangedEventArgs e)

@@ -1,28 +1,84 @@
-// Shell 공유 계약(레이아웃 저장소·문서 종류·셸 명령 표면) — Wave1 선공유 계약. 문서 뷰 생성 계약(UI)은 IDocumentViewFactory.cs
+// Shell 공유 계약(레이아웃 저장소·창 표시 도우미·셸 명령 표면) — Wave1 선공유 계약. 문서 뷰 생성 계약(UI)은 IDocumentViewFactory.cs
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dock.Model.Core;
+using xkxk.frameworks.ui.data.Navigation;
+using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
-/// <summary>PoC 샘플 문서 종류.</summary>
-public enum DocumentKind
+/// <summary>
+/// 창 ID(<see cref="IUiWindowRegistry"/>)로 문서의 표시 이름·아이콘·옛 이름·내용을 얻는 도우미(a10 §7).
+/// 등록된 창 정의는 부를 때마다 <see cref="XkxkUi.Current"/> 의 창 레지스트리에서 ID → 별칭 순으로 찾는다.
+/// </summary>
+public static class WindowDisplay
 {
-    Grid,
-    Gantt,
-    Form,
-}
-
-/// <summary>문서 종류 표시명.</summary>
-public static class DocumentKindNames
-{
-    /// <summary>현재 언어의 종류 이름(새 문서 제목 "그리드 3" 등에 쓰인다 — 만든 뒤에는 제목이 고정된다).</summary>
-    public static string DisplayName(this DocumentKind kind) => Localization.Loc.Tr(kind switch
+    /// <summary>
+    /// 현재 언어의 창 이름: 정의의 TitleKey 문구 → Title → ID. 등록 안 된 창은 받은 값 그대로다.
+    /// 새 문서의 자동 제목("그리드 3" 등)에 쓰인다.
+    /// </summary>
+    public static string DisplayName(string windowId)
     {
-        DocumentKind.Grid => "shell.kind.grid",
-        DocumentKind.Gantt => "shell.kind.gantt",
-        _ => "shell.kind.form",
-    });
+        ArgumentNullException.ThrowIfNull(windowId);
+        if (!XkxkUi.Current.Windows.TryResolve(windowId, out var window))
+        {
+            return windowId;
+        }
+
+        return window.TitleKey is { } key ? Localization.Loc.Tr(key) : window.Title ?? windowId;
+    }
+
+    /// <summary>문서 아이콘 키: 문서의 IconKey → 창 정의의 Icon → 화면 ID·옛 이름으로 찾은 메뉴 아이콘(없으면 기본 문서 아이콘).</summary>
+    public static string? IconKeyOf(PocDocument doc)
+    {
+        ArgumentNullException.ThrowIfNull(doc);
+        return doc.IconKey
+            ?? (XkxkUi.Current.Windows.TryResolve(doc.WindowId, out var window) ? window.Icon : null)
+            ?? MenuIconCatalog.IconKeyFor(doc.ScreenId, LegacyWindowKinds.NameOf(doc.WindowId));
+    }
+
+    /// <summary>
+    /// 데모 3종은 옛 이름(Grid·Gantt·Form), 그 밖은 ID 그대로. 문서 Id 앞부분·계측 키·원격 출력의 옛 값 호환에 쓴다.
+    /// </summary>
+    public static string LegacyOrId(string windowId)
+    {
+        ArgumentNullException.ThrowIfNull(windowId);
+        return LegacyWindowKinds.NameOf(windowId) ?? windowId;
+    }
+
+    /// <summary>
+    /// 창 정의의 내용 생성 함수를 부른다. 반환값이 Control 인지는 화면 층이 검사한다.
+    /// </summary>
+    /// <param name="doc">내용을 담을 문서. null 이면 <see cref="ArgumentNullException"/>.</param>
+    /// <param name="failed">내용 생성 함수가 예외를 던졌으면 true. 이때 XKUI0507 은 여기서 이미 보고했다.</param>
+    /// <returns>
+    /// 함수가 돌려준 값. 정의가 없거나 정의에 내용 함수가 없으면 null(<paramref name="failed"/> false, 진단 없음),
+    /// 예외면 null(<paramref name="failed"/> true). 함수가 돌려준 null·Control 아닌 값의 진단(XKUI0507)과
+    /// 정의 없음의 진단(XKUI0505)·자리표시는 화면 층 몫이다.
+    /// </returns>
+    public static object? InvokeContent(PocDocument doc, out bool failed)
+    {
+        ArgumentNullException.ThrowIfNull(doc);
+        failed = false;
+        var app = XkxkUi.Current;
+        if (!app.Windows.TryResolve(doc.WindowId, out var window) || window.CreateContent is not { } create)
+        {
+            return null;
+        }
+
+        try
+        {
+            return create(new UiWindowContentContext(window.Id, doc.Id ?? "", doc.Title ?? "", doc.Parameter));
+        }
+        catch (Exception ex)
+        {
+            failed = true;
+            app.Diagnostics.Report(new UiDiagnostic(UiDiagnosticIds.WindowContentFailed, UiDiagnosticSeverity.Error,
+                $"창 '{window.Id}' 의 내용 생성이 예외로 실패했다: {ex.GetType().Name}: {ex.Message}", window.Owner)); // i18n-ok 개발자 진단
+            return null;
+        }
+    }
 }
 
 /// <summary>MDI 문서 배치 방식.</summary>
@@ -59,11 +115,19 @@ public interface IShellCommands
     PocDocument? ActiveDocument { get; }
 
     /// <summary>
-    /// 문서 열기(MDI-01/02/20). sdi=true 면 열자마자 플로팅(OS 창 / 브라우저 관리형 창)으로 분리.
-    /// title 은 문서 키 역할: title 이 있고 allowDuplicate=false(기본)이면 같은 종류·제목 문서를 새로 만들지 않고 활성화해 반환(Mars Fn중복창확인).
-    /// title=null 이면 항상 새 문서(종류별 일련번호 제목). 새 MDI 창은 기존 창과 겹치지 않게 30px 계단으로 놓는다.
+    /// 문서 열기(MDI-01/02/20). windowId 는 창 ID·별칭이며 모르는 값이면 자리표시 문서를 열고 XKUI0505 를 남긴다.
+    /// sdi=true 면 열자마자 플로팅(OS 창 / 브라우저 관리형 창)으로 분리(창 정의의 Placement 가 Sdi 여도 분리).
+    /// title 은 문서 키 역할: title 이 있고 중복을 허용하지 않으면 같은 창·제목 문서를 새로 만들지 않고 활성화해 반환(Mars Fn중복창확인).
+    /// title=null 이면 항상 새 문서(창별 일련번호 제목). 새 MDI 창은 기존 창과 겹치지 않게 30px 계단으로 놓는다.
+    /// allowDuplicate=false(기본)는 현재 설정을 따른다. 옵션 판에 위임한다.
     /// </summary>
-    PocDocument OpenDocument(DocumentKind kind, string? title = null, bool sdi = false, bool allowDuplicate = false);
+    PocDocument OpenDocument(string windowId, string? title = null, bool sdi = false, bool allowDuplicate = false);
+
+    /// <summary>
+    /// 옵션 객체로 문서 열기(a10 §7). 분리창 = Placement==Sdi 또는 (Default 이고 창 정의가 Sdi).
+    /// 중복 허용 = AllowDuplicate ?? 현재 설정. Parameter 는 문서에 싣는다(저장본에는 남지 않는다).
+    /// </summary>
+    PocDocument OpenDocument(string windowId, UiWindowOpenOptions options);
 
     void Arrange(ShellArrange arrange);
 

@@ -140,7 +140,6 @@ public sealed partial class WindowCommands : IShellCommands
 
     /// <summary>활성 문서 변경 알림(탭 스트립 하이라이트용).</summary>
     public event Action<PocDocument?>? ActiveChanged;
-
     // ── 서비스(배정표 w3_assignment.md 2절 — 이름 고정) ──
     internal DocumentLifecycle Lifecycle { get; }
     internal WindowActivation Activation { get; }
@@ -199,7 +198,8 @@ public sealed partial class WindowCommands : IShellCommands
 #endif
 
     // ── 문서 생명주기(DocumentLifecycle) ──
-    public PocDocument OpenDocument(DocumentKind kind, string? title = null, bool sdi = false, bool allowDuplicate = false) => Lifecycle.OpenDocument(kind, title, sdi, allowDuplicate);
+    public PocDocument OpenDocument(string windowId, string? title = null, bool sdi = false, bool allowDuplicate = false) => Lifecycle.OpenDocument(windowId, title, sdi, allowDuplicate);
+    public PocDocument OpenDocument(string windowId, Framework.UiWindowOpenOptions options) => Lifecycle.OpenDocument(windowId, options);
     public void Arrange(ShellArrange arrange) => Lifecycle.Arrange(arrange);
     public void ApplyPreset(LayoutPreset preset) => Lifecycle.ApplyPreset(preset);
     public void CloseDocument(PocDocument document) => Lifecycle.CloseDocument(document);
@@ -236,15 +236,15 @@ public sealed partial class WindowCommands : IShellCommands
 
     // ── 문서 크롬(DocumentChromeService) ──
     public static DocumentChromeState ChromeOf(PocDocument document) => DocumentChromeService.ChromeOf(document);
-    public IReadOnlyCollection<DocumentKind> DuplicateKinds => ChromeService.DuplicateKinds;
-    public bool IsDuplicateAllowed(DocumentKind kind) => ChromeService.IsDuplicateAllowed(kind);
+    public IReadOnlyCollection<string> DuplicateWindowIds => ChromeService.DuplicateWindowIds;
+    public bool IsDuplicateAllowed(string windowId) => ChromeService.IsDuplicateAllowed(windowId);
     public bool IsFloating(PocDocument document) => ChromeService.IsFloating(document);
     public void ChromeToggleSdi(PocDocument document) => ChromeService.ChromeToggleSdi(document);
     public bool ChromeTogglePin(PocDocument document) => ChromeService.ChromeTogglePin(document);
     public bool ChromeToggleLock(PocDocument document) => ChromeService.ChromeToggleLock(document);
     public bool ChromeToggleSync(PocDocument document) => ChromeService.ChromeToggleSync(document);
     public bool ChromeToggleDuplicate(PocDocument document) => ChromeService.ChromeToggleDuplicate(document);
-    public void SetDuplicateAllowed(DocumentKind kind, bool allowed) => ChromeService.SetDuplicateAllowed(kind, allowed);
+    public void SetDuplicateAllowed(string windowId, bool allowed) => ChromeService.SetDuplicateAllowed(windowId, allowed);
     public PocDocument ChromeRefresh(PocDocument document) => ChromeService.ChromeRefresh(document);
     public bool ChromeToggleCache(PocDocument document) => ChromeService.ChromeToggleCache(document);
     public string ChromeHelpText(PocDocument document) => ChromeService.ChromeHelpText(document);
@@ -273,7 +273,7 @@ public sealed partial class WindowCommands : IShellCommands
     public const double SdiCascadeOrigin = SdiPlacement.SdiCascadeOrigin;
     public static Point SdiDefaultPosition(Rect workArea) => SdiPlacement.SdiDefaultPosition(workArea);
     public int SdiResetPositions(Func<Rect> layerArea) => SdiPlacement.SdiResetPositions(layerArea);
-    public static string AutoTitle(DocumentKind kind, int seq) => DocumentAutoTitles.AutoTitle(kind, seq);
+    public static string AutoTitle(string windowId, int seq) => DocumentAutoTitles.AutoTitle(windowId, seq);
     public static bool IsAutoTitle(PocDocument document) => DocumentAutoTitles.IsAutoTitle(document);
 
     // ── 크롬 스타일·진단(static — 외부 호출부 13파일 호환, W5 정리 대상) ──

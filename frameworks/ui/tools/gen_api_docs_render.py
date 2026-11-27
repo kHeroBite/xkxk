@@ -1,4 +1,4 @@
-# load_surface 결과를 docs/api/ 의 Markdown 명세 파일들(README + 그룹 8개, 300줄 분할)로 그리는 렌더러
+# load_surface 결과를 docs/api/ 의 Markdown 명세 파일들(README + 그룹 9개, 300줄 분할)로 그리는 렌더러
 """render(surface) -> {'docs/api/<파일>.md': 텍스트}. 날짜·커밋 같은 비결정 값은 넣지 않는다(같은 입력 → 같은 바이트)."""
 
 HEADER = "<!-- 생성물 — tools/gen_api_docs.py 가 만든다. 손으로 고치지 않는다 -->"
@@ -23,6 +23,8 @@ GROUPS = [
                   "UiRegistryChangedEventArgs"]),
     ("07_셸명령ID", ["ShellCommandIds"]),
     ("08_셸메뉴ID", ["ShellMenuIds"]),
+    ("09_창", ["IUiWindowRegistry", "UiWindowOptions", "UiWindowDefinition", "UiWindowPlacement", "UiWindowOpenOptions",
+             "UiWindowContentContext"]),
 ]
 
 # UADR-0009 8원칙 제목 — 출처 /docs/standards/02_공개API_호환원칙.md §3(저장소 루트 기준). 원칙이 바뀌면 함께 고친다.

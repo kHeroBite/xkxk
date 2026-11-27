@@ -1,14 +1,13 @@
 // 실행 인자 자동화(AutomationBridge)가 해석한 결과를 담는 옵션 객체 — 플랫폼 중립
 #if PD_DIAGNOSTICS // 진단 빌드 전용. 제품 빌드에는 자동화 인자 해석이 없다(AutomationBridge.Product.cs)
 using System.Collections.Generic;
-using xkxk.frameworks.ui.shell.Docking;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics;
 
 /// <summary>자동화 인자. 플랫폼 중립(호스트가 문자열 배열로 넘긴다 — 브라우저는 URL 쿼리를 --인자 배열로 변환).</summary>
 public sealed class AutomationOptions
 {
-    public List<(DocumentKind Kind, int Count)> Open { get; } = new();
+    public List<(string WindowId, int Count)> Open { get; } = new(); // --open: 창 ID 또는 별칭(옛 이름 Grid·Gantt·Form 포함) 원문과 개수
     public string? Layout { get; set; }
     public int Sdi { get; set; }
     public (double Dx, double Dy)? MoveAll { get; set; }

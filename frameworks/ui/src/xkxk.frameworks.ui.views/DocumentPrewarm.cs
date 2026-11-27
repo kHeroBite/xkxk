@@ -56,7 +56,7 @@ public static class DocumentPrewarm
                 return;
             }
 
-            Poll(new Queue<(DocumentKind Kind, Func<Control> Make)>(Factories()), 0);
+            Poll(new Queue<(string WindowId, Func<Control> Make)>(Factories()), 0);
         }
         catch (Exception ex)
         {
@@ -65,17 +65,17 @@ public static class DocumentPrewarm
         }
     }
 
-    /// <summary>예열 대상. 예열이 꺼지고 준비된 표 뷰만 켜져 있으면 표 1개만 만든다.</summary>
-    private static IEnumerable<(DocumentKind Kind, Func<Control> Make)> Factories()
+    /// <summary>예열 대상(셸 기본 데모 창 ID). 예열이 꺼지고 준비된 표 뷰만 켜져 있으면 표 1개만 만든다.</summary>
+    private static IEnumerable<(string WindowId, Func<Control> Make)> Factories()
     {
-        yield return (DocumentKind.Grid, () => new GridDocumentView());
+        yield return (LegacyWindowKinds.Grid, () => new GridDocumentView());
         if (!XkxkUi.Current.Settings.PrewarmViews)
         {
             yield break;
         }
 
-        yield return (DocumentKind.Form, () => new FormDocumentView());
-        yield return (DocumentKind.Gantt, () => new GanttDocumentView());
+        yield return (LegacyWindowKinds.Form, () => new FormDocumentView());
+        yield return (LegacyWindowKinds.Gantt, () => new GanttDocumentView());
     }
 
     private static bool Enabled => XkxkUi.Current.Settings.PrewarmViews || XkxkUi.Current.Settings.GridViewPool;
@@ -85,7 +85,7 @@ public static class DocumentPrewarm
         RemoteCommands.StartupRestoreDone != false && BusyHooks.Service.Snapshot().Count == 0;
 
     /// <summary>PollMs 마다 idle 을 확인해 IdleHoldMs 지속되면 한 단계를 만든다. Background 우선순위라 입력·렌더를 앞지르지 않는다.</summary>
-    private static void Poll(Queue<(DocumentKind Kind, Func<Control> Make)> pending, long quietSinceMs)
+    private static void Poll(Queue<(string WindowId, Func<Control> Make)> pending, long quietSinceMs)
     {
         DispatcherTimer.RunOnce(() =>
         {
@@ -121,11 +121,11 @@ public static class DocumentPrewarm
     }
 
     /// <summary>한 뷰를 만들어 Measure 한다(미룬 복원 문서가 있는 종류는 건너뜀). 남은 단계가 있으면 true, 끝났거나 실패하면 false(예열 중단).</summary>
-    private static bool RunStep(Queue<(DocumentKind Kind, Func<Control> Make)> pending)
+    private static bool RunStep(Queue<(string WindowId, Func<Control> Make)> pending)
     {
         try
         {
-            while (pending.Count > 0 && RestoreViewDeferral.HasDeferred(pending.Peek().Kind))
+            while (pending.Count > 0 && RestoreViewDeferral.HasDeferred(pending.Peek().WindowId))
             {
                 pending.Dequeue(); // 그 종류는 선생성이 데운다
             }
@@ -137,10 +137,10 @@ public static class DocumentPrewarm
 
             var step = pending.Dequeue();
             var t0 = Environment.TickCount64;
-            if (step.Kind == DocumentKind.Grid && GridViewPool.HasHost)
+            if (step.WindowId == LegacyWindowKinds.Grid && GridViewPool.HasHost)
             {
                 GridViewPool.BuildGrid(); // 실제 크기로 화면 밖에 붙여 데우고, 옵션 GridViewPool 이 켜져 있으면 준비된 표 뷰로 보관한다
-                NoteStep(step.Kind, Environment.TickCount64 - t0, attached: true);
+                NoteStep(step.WindowId, Environment.TickCount64 - t0, attached: true);
                 return pending.Count > 0;
             }
 
@@ -161,7 +161,7 @@ public static class DocumentPrewarm
                 view.Measure(new Size(640, 480)); // 호스트가 없으면 예전처럼 붙이지 않고 측정만(테마가 적용되지 않아 효과는 작다)
             }
 
-            NoteStep(step.Kind, Environment.TickCount64 - t0, attached);
+            NoteStep(step.WindowId, Environment.TickCount64 - t0, attached);
             return pending.Count > 0;
         }
         catch (Exception ex)
@@ -175,10 +175,10 @@ public static class DocumentPrewarm
     /// 예열 단계 성공 기록(진단 빌드만): 로그 한 줄 '뷰 예열 성공 kind ms 붙임' 과 지표 prewarm_{kind}_ms·prewarm_{kind}_attached(perf.get 의 metrics).
     /// a16diag 가 예열이 실제로 돌았는지·실제 크기로 붙었는지를 확인하는 근거다(열기 계측은 SuppressOpenTrack 으로 빠지므로 따로 남긴다).
     /// </summary>
-    private static void NoteStep(DocumentKind kind, long ms, bool attached)
+    private static void NoteStep(string windowId, long ms, bool attached)
     {
 #if PD_DIAGNOSTICS
-        var name = kind.ToString().ToLowerInvariant();
+        var name = WindowDisplay.LegacyOrId(windowId).ToLowerInvariant(); // 데모 3종은 옛 이름 소문자(grid·form·gantt) — 지표 키 유지
         PdLog.Info(xkxk.frameworks.ui.data.Logging.PdLogCategory.System, $"뷰 예열 성공 {name} {ms}ms 붙임={(attached ? 1 : 0)}"); // i18n-ok 진단 로그
         PerfProbe.Current.SetMetric("prewarm_" + name + "_ms", ms);
         PerfProbe.Current.SetMetric("prewarm_" + name + "_attached", attached ? 1 : 0);

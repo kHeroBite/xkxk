@@ -88,7 +88,7 @@ public sealed partial class WindowIcon : Control
 
     /// <summary>실제로 그리는 아이콘 키(진단·판정).</summary>
     public string? EffectiveIconKey => Document is { } doc
-        ? doc.IconKey ?? MenuIconCatalog.IconKeyFor(doc.ScreenId, doc.Kind.ToString())
+        ? WindowDisplay.IconKeyOf(doc)
         : IconKey;
 
     /// <summary>지금 보이는 상태 icon·spinner·static(진단·판정).</summary>

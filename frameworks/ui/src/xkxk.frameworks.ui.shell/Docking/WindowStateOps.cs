@@ -30,7 +30,8 @@ internal sealed partial class WindowStateOps
     private IRootDock Root => _s.Root;
     private ObservableCollection<PocDocument> OpenDocuments => _s.Owner.OpenDocuments;
     private PocDocument? ActiveDocument => _s.Owner.ActiveDocument;
-    private IReadOnlyCollection<DocumentKind> DuplicateKinds => _s.Owner.DuplicateKinds;
+    private IReadOnlyCollection<string> DuplicateWindowIds => _s.Owner.DuplicateWindowIds;
+    private IReadOnlyCollection<string> DuplicateOffWindowIds => _s.Owner.ChromeService.DuplicateOffWindowIds;
     private IDockWindow? FindWindow(PocDocument doc) => _s.FindWindow(doc);
     private IEnumerable<PocDocument> MdiDocs() => _s.MdiDocs();
     private void Activate(PocDocument document) => _s.Owner.Activation.Activate(document);
@@ -180,7 +181,9 @@ internal sealed partial class WindowStateOps
         }
 
         var snapshot = LayoutSerializer.Capture(Docs, Root, OpenDocuments, ActiveDocument);
-        snapshot.DuplicateKinds = DuplicateKinds.ToList(); // 제목줄 '중복 허용'(종류 단위, UI-09)
+        // 제목줄 '중복 허용'(창 단위, UI-09). v6 는 켬·끔 두 목록(a10 §5.3). 옛 판 호환 값(DuplicateKinds)은 Serialize 가 만든다(I9)
+        snapshot.DuplicateWindowIds = DuplicateWindowIds.ToList();
+        snapshot.DuplicateOffWindowIds = DuplicateOffWindowIds.ToList();
         snapshot.Panels = _factory.CapturePanels(); // 도구 패널 비율(Version 2, UI-11)
         snapshot.SidePanelsHidden = _factory.SidePanelsHidden; // '집중' 템플릿 측면 패널 숨김
 

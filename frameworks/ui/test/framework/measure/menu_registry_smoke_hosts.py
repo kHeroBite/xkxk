@@ -6,6 +6,7 @@ import subprocess
 import time
 
 from menu_registry_smoke import UI, scenario  # 본 모듈의 시나리오·경로 재사용
+from perf_menu_open_hosts import decode_console  # tasklist.exe 한글(cp949) 출력 디코딩
 
 
 def run_web(a, log):
@@ -70,7 +71,7 @@ def run_desktop(a, log):
         call("app.shutdown")
     finally:
         time.sleep(3)
-        alive = subprocess.run(["tasklist.exe", "/FI", "PID eq %s" % pid, "/NH"], capture_output=True, text=True).stdout
+        alive = decode_console(subprocess.run(["tasklist.exe", "/FI", "PID eq %s" % pid, "/NH"], capture_output=True).stdout)
         if pid in alive:
             subprocess.run(["taskkill.exe", "/PID", pid, "/F"], capture_output=True)  # 자기 PID 만
             log("자기 PID %s 강제 종료" % pid)

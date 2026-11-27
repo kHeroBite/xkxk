@@ -58,7 +58,7 @@ poc/ui/tools/run_desktop_bg.sh -- --open grid:5,gantt:5,form:10 --layout tile \
 ## 자동화 인자 (AutomationBridge L0)
 | 인자 | 뜻 |
 |---|---|
-| `--open grid:5,gantt:5,form:10` | 종류별 문서 개수만큼 열기 |
+| `--open grid:5,gantt:5,form:10` | 종류별 문서 개수만큼 열기. 옛 이름(Grid·Gantt·Form, 대소문자 무시)·옛 숫자 0~2 와 함께 창 ID(예 `xkxk.demo.grid`)·별칭도 받고, 모르는 이름이면 자리표시 문서를 열고 진단 `XKUI0505` 를 낸다 |
 | `--layout cascade\|tile\|tile-h\|tile-v\|tabbed` | MDI 배치 / 탭 모드 |
 | `--move-all <dx,dy>` | MDI 문서 전체를 60프레임에 나눠 이동(드래그 근사, phase `move-all`) |
 | `--sdi <n>` | 문서 n개를 SDI(플로팅)로 분리 |

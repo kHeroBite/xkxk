@@ -33,7 +33,8 @@ internal sealed class WindowSession
 
     internal Action<string> Log { get; }
 
-    internal Dictionary<DocumentKind, int> Seq { get; } = new();
+    /// <summary>창 ID(정규 ID, 모르는 창은 받은 값)별 마지막 일련번호. ID 비교는 Ordinal.</summary>
+    internal Dictionary<string, int> Seq { get; } = new(StringComparer.Ordinal);
 
     /// <summary>최근 활성 순서(앞=가장 최근).</summary>
     internal List<PocDocument> Mru { get; } = new();

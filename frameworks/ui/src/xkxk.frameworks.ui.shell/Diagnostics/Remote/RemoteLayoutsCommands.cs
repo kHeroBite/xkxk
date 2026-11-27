@@ -1,7 +1,9 @@
-// 원격 명령(UI-11 레이아웃 라이브러리 — 자동 저장 슬롯·개인 레이아웃 저장/불러오기/이름 변경/삭제·템플릿, 윈도우 메뉴 ⑪⑫) — App.Layouts(ILayoutLibrary, odev-2) 를 그대로 호출
+// 원격 명령(UI-11 레이아웃 라이브러리 — 자동 저장 슬롯·개인 레이아웃 저장/불러오기/이름 변경/삭제·템플릿, 윈도우 메뉴 ⑪⑫) — App.Layouts(ILayoutLibrary, odev-2) 를 그대로 호출. layout.apply(B09)는 셸에 JSON 을 바로 적용
 #if PD_DIAGNOSTICS // 진단 빌드 전용(PdDiagnostics=true)
 using xkxk.frameworks.ui.data.Layout;
+using System;
 using System.Linq;
+using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using xkxk.frameworks.ui.shell.Docking;
@@ -54,6 +56,9 @@ internal static class RemoteLayoutsCommands
             if (!a.Bool("confirm")) { throw new RemoteCommandException("삭제는 confirm=true 가 필요합니다."); }
             return ResultJson(await Layouts.DeleteAsync(a.ReqStr("id")));
         });
+        r.Register("layout.apply",
+            "레이아웃 JSON 을 바로 적용(B09 진단) json=<base64 UTF-8 레이아웃 JSON> → {applied,version_read(해석 실패 0),docs(적용 뒤 열린 문서 수)}. 이 명령은 저장하지 않는다. 비었거나 손상된 JSON 이면 applied=false(화면 불변)",
+            Apply);
         r.Register("layout.template.list", "레이아웃 템플릿(읽기 전용): id·name·description", _ =>
             new JsonArray(Layouts.Templates.Select(t => (JsonNode?)new JsonObject
             {
@@ -84,6 +89,30 @@ internal static class RemoteLayoutsCommands
             if (!a.Bool("confirm")) { throw new RemoteCommandException("삭제는 confirm=true 가 필요합니다."); }
             return ResultJson(await Layouts.DeleteBackupAsync(a.ReqStr("id")));
         });
+    }
+
+    /// <summary>layout.apply — 사용자 저장본 파일 없이 레이아웃 JSON 을 화면에 적용한다(저장 호출 없음).</summary>
+    private static JsonNode? Apply(JsonObject a)
+    {
+        RemoteShellAccess.EnsureRestored(); // 기동 복원 중에 적용하면 복원이 덮어쓴다
+        var json = DecodeBase64Utf8(a.ReqStr("json"));
+        var versionRead = LayoutSerializer.Deserialize(json)?.Version ?? 0;
+        var applied = Shell.ApplyLayout(json);
+        return new JsonObject { ["applied"] = applied, ["version_read"] = versionRead, ["docs"] = Shell.Documents.Count };
+    }
+
+    private static string DecodeBase64Utf8(string encoded)
+    {
+        try
+        {
+            // 쿼리 인자로 인코딩 없이 보내면 '+' 가 공백이 된다(RemoteHttp.Decode) — 되돌린다
+            var bytes = Convert.FromBase64String(encoded.Replace(' ', '+'));
+            return new UTF8Encoding(false, true).GetString(bytes);
+        }
+        catch (Exception ex) when (ex is FormatException or DecoderFallbackException)
+        {
+            throw new RemoteCommandException($"인자 'json' 은 base64 로 인코딩한 UTF-8 이어야 합니다({ex.GetType().Name}).");
+        }
     }
 }
 #endif

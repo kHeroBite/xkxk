@@ -1,6 +1,6 @@
 #!/bin/bash
-# 별별UI 프레임워크 검증 일괄 실행기 — contract(계약 시험+카나리아)·layers(레이어 검사)·api(공개 API 표면 검사)·inject·context·services·registry·menus·docs(소비자 문서·API 명세 불일치) 단계를 돌려 요약 JSON 을 남긴다
-# 사용: verify_framework.sh [--stage contract,layers,api,inject,context,services,registry,menus,docs] [--ci] [--help]
+# 별별UI 프레임워크 검증 일괄 실행기 — contract(계약 시험+카나리아)·layers(레이어 검사)·api(공개 API 표면 검사)·inject·context·services·registry·menus·docs(소비자 문서·API 명세 불일치)·windows(창 레지스트리) 단계를 돌려 요약 JSON 을 남긴다
+# 사용: verify_framework.sh [--stage contract,layers,api,inject,context,services,registry,menus,docs,windows] [--ci] [--help]
 #   contract : 빌드 잠금(Release) 안에서 dotnet.exe run 으로 ContractCheck 를 돌린다 → logs/contract_check.json(rc 0 이어야 함)
 #              이어서 --canary 로 한 번 더 돌린다 → logs/contract_check_canary.json(rc 1·failed>=1 이어야 함, 시험 장치 거짓 PASS 방지)
 #   layers   : tools/check_layers.py, 같은 파일 --self-test, tools/classify_layers.py --check
@@ -12,6 +12,7 @@
 #   registry : icon_command_registry_check.py --self-test, 이어서 본 검사(아이콘 키 집합·리터럴·기본 명령(ShellCommandIds 상수 수, B07 61개)·직접 조회 잔존, 끝 줄 icons=… commands=61 result=PASS)
 #   menus    : menu_registry_check.py --self-test, 이어서 본 검사 --base $MENU_BASE(기본 e8950ea — 셸 4메뉴 이관·AutomationId 108개 보존·명령·아이콘·문구 키·모바일 목록 63행 대조, 끝 줄 menus=… result=PASS)
 #   docs     : consumer_docs_check.py --self-test, 이어서 본 검사(docs/api 생성물 최신·수기 문서 식별자·진단 코드·링크·AI 블록, 끝 줄 consumer_docs … result=PASS) → logs/consumer_docs_check.json
+#   windows  : window_registry_selftest.py, 이어서 window_registry_check.py --root(B09 — src 의 DocumentKind 식별자·enum 선언 0, 창 공개 형식 파일의 Avalonia 토큰 0, 검사한 .cs 0개면 rc=2)
 #   --ci     : 예약(지금은 동작 동일)
 # 결과: logs/verify_framework_summary.json {"stages":{"<단계>":{"rc":n},...},"rc":n} (고정 경로 덮어쓰기), 종료코드 0=전부 PASS
 #       contract 단계의 빌드·실행 출력은 logs/verify_framework_contract.log (고정 경로 덮어쓰기)
@@ -22,11 +23,11 @@ ROOT="$(cd "$HERE/../.." && pwd)"
 DOTNET="${DOTNET_EXE:-/mnt/c/Program Files/dotnet/dotnet.exe}"
 LOGS="$ROOT/logs"
 SUMMARY="$LOGS/verify_framework_summary.json"
-STAGES="contract,layers,api,inject,context,services,registry,menus,docs"
+STAGES="contract,layers,api,inject,context,services,registry,menus,docs,windows"
 MENU_BASE="${MENU_BASE:-e8950ea}"  # B07 메뉴 이관 기준 커밋(옛 4메뉴 axaml·NavMenuCatalog 자체 행이 있는 마지막 커밋)
 
 usage() {
-  sed -n '2,18p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 while [ $# -gt 0 ]; do
@@ -42,7 +43,7 @@ done
 IFS=',' read -r -a LIST <<<"$STAGES"
 [ "${#LIST[@]}" -gt 0 ] || { echo "단계가 비었습니다" >&2; exit 2; }
 for s in "${LIST[@]}"; do
-  case "$s" in contract|layers|api|inject|context|services|registry|menus|docs) ;; *) echo "알 수 없는 단계: $s (contract|layers|api|inject|context|services|registry|menus|docs)" >&2; exit 2 ;; esac
+  case "$s" in contract|layers|api|inject|context|services|registry|menus|docs|windows) ;; *) echo "알 수 없는 단계: $s (contract|layers|api|inject|context|services|registry|menus|docs|windows)" >&2; exit 2 ;; esac
 done
 
 mkdir -p "$LOGS"
@@ -130,6 +131,11 @@ stage_menus() {
 stage_docs() {
   python3 -B "$ROOT/test/framework/judge/consumer_docs_check.py" --self-test || return 1
   python3 -B "$ROOT/test/framework/judge/consumer_docs_check.py" --root "$ROOT" --report "$LOGS/consumer_docs_check.json"
+}
+
+stage_windows() {
+  python3 -B "$ROOT/test/framework/judge/window_registry_selftest.py" || return 1
+  python3 -B "$ROOT/test/framework/judge/window_registry_check.py" --root "$ROOT"
 }
 
 TOTAL=0

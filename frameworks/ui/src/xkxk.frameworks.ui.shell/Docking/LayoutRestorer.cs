@@ -8,6 +8,7 @@ using Avalonia.Threading;
 using Dock.Model.Controls;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Diagnostics;
+using xkxk.frameworks.ui.shell.Framework;
 using xkxk.frameworks.ui.shell.Localization;
 
 namespace xkxk.frameworks.ui.shell.Docking;
@@ -23,7 +24,7 @@ internal sealed class LayoutRestorer
     // 옛 WindowCommands 필드·도우미 이름 — 아래 본문을 옮기기만 하려고 같은 이름으로 잇는다.
     private PocDockFactory _factory => _s.Factory;
     private Action<string> _log => _s.Log;
-    private Dictionary<DocumentKind, int> _seq => _s.Seq;
+    private Dictionary<string, int> _seq => _s.Seq;
     private List<PocDocument> _mru => _s.Mru;
     private List<PocDocument> _minimized => _s.Minimized;
     private PocDocument? _restoreTarget { get => _s.RestoreTarget; set => _s.RestoreTarget = value; }
@@ -33,8 +34,8 @@ internal sealed class LayoutRestorer
     private IDockWindow? FindWindow(PocDocument doc) => _s.FindWindow(doc);
     private void CloseAll() => _s.Owner.CloseAll();
     private void AddDocument(PocDocument doc, bool activate = true) => _s.Owner.AddDocument(doc, activate);
-    private bool IsDuplicateAllowed(DocumentKind kind) => _s.Owner.IsDuplicateAllowed(kind);
-    private void SetDuplicateAllowed(DocumentKind kind, bool allowed) => _s.Owner.SetDuplicateAllowed(kind, allowed);
+    private bool IsDuplicateAllowed(string windowId) => _s.Owner.IsDuplicateAllowed(windowId);
+    private void SetDuplicateAllowed(string windowId, bool allowed) => _s.Owner.SetDuplicateAllowed(windowId, allowed);
     private static void RestoreAutoTitle(PocDocument doc, DocumentSnapshot item) => DocumentAutoTitles.RestoreAutoTitle(doc, item);
     private void ApplySidePanels(bool? hidden) => _s.Owner.SidePanels.ApplySidePanels(hidden);
     private void SetMdiZOrder(IReadOnlyList<PocDocument> bottomToTop) => _s.Owner.SetMdiZOrder(bottomToTop);
@@ -84,15 +85,7 @@ internal sealed class LayoutRestorer
         MdiTabGroup.Tidy(_factory, Docs); // 닫기로 비거나 1개 남은 탭 묶음 정리(묶음은 아래에서 스냅샷대로 다시 만든다)
         Step("close", ref t);
         _factory.SetDocumentDockLayoutMode(Docs, snapshot.Mode);
-        foreach (var kind in Enum.GetValues<DocumentKind>())
-        {
-            var want = snapshot.DuplicateKinds.Contains(kind); // 옛 저장본(빈 목록)은 모두 끔
-            if (IsDuplicateAllowed(kind) != want)
-            {
-                SetDuplicateAllowed(kind, want);
-            }
-        }
-
+        RestoreDuplicates(snapshot);
         Step("mode", ref t);
 
         // PERF-UI 복원 개선(team-lead 승인 ①~③). 문서마다 활성화하던 것(Dock 재배치 ×N)과 탭 재정렬(MoveDockable ×N)을 없앴다.
@@ -100,7 +93,8 @@ internal sealed class LayoutRestorer
         var docs = new List<(PocDocument Doc, DocumentSnapshot Item)>();
         foreach (var item in snapshot.Documents)
         {
-            _seq[item.Kind] = Math.Max(_seq.GetValueOrDefault(item.Kind), item.Seq);
+            var windowId = ResolveWindowId(item.WindowId);
+            _seq[windowId] = Math.Max(_seq.GetValueOrDefault(windowId), item.Seq);
             PocDocument doc;
             if (keep is not null && keep.TryGetValue(item.Id, out var kept))
             {
@@ -109,7 +103,7 @@ internal sealed class LayoutRestorer
             }
             else
             {
-                doc = new PocDocument { Id = item.Id, Kind = item.Kind, Seq = item.Seq, Title = item.Title };
+                doc = new PocDocument { Id = item.Id, WindowId = windowId, Seq = item.Seq, Title = item.Title }; // Parameter 는 저장하지 않으므로 null
                 AddDocument(doc, activate: false);
             }
 
@@ -123,6 +117,7 @@ internal sealed class LayoutRestorer
             docs.Add((doc, item));
         }
 
+        ReportMissingWindows(docs.Select(d => d.Doc.WindowId));
         Step("add", ref t); // 문서 모델 생성·Dock 추가(뷰 생성은 첫 렌더 때 — frame 쪽에 잡힌다)
 
         // 측면 패널 탭 안에 있던 문서는 그 패널로 보낸 뒤(odev-1 계약), 패널 비율·탭 순서·알림 위치를 적용한다(Version 1·2 는 null → 현재 유지).
@@ -182,9 +177,60 @@ internal sealed class LayoutRestorer
         Step("activate", ref t);
     }
 
+    /// <summary>저장된 창 ID 를 지금 등록된 ID 로 바꾼다(별칭 → ID). 모르는 ID 는 그대로 두어 자리표시 문서로 보존한다.</summary>
+    private static string ResolveWindowId(string? saved)
+    {
+        var id = saved ?? LegacyWindowKinds.Grid; // 읽기 정규화(LayoutMigration)가 채우므로 보통 null 이 아니다
+        return XkxkUi.Current.Windows.TryResolve(id, out var window) ? window.Id : id;
+    }
+
+    /// <summary>
+    /// '중복 허용'을 저장본의 켬·끔 목록에 맞춘다(a10 §5.3, 두 목록에 모두 있으면 켬). 목록의 창은 값이 같거나 미등록이어도 정한 값으로 기억시킨다.
+    /// 둘 다 없는 창은 바꾸지 않는다. 다만 Version 5 이하 저장본은 켬 목록에 없는 옛 3종을 끈다.
+    /// </summary>
+    private void RestoreDuplicates(LayoutSnapshot snapshot)
+    {
+        var on = ResolveWindowIds(snapshot.DuplicateWindowIds);
+        var off = ResolveWindowIds(snapshot.DuplicateOffWindowIds);
+        if (snapshot.Version < 6)
+        {
+            off.UnionWith(_s.Owner.DuplicateWindowIds.Where(id => LegacyWindowKinds.NameOf(id) is not null));
+        }
+
+        off.ExceptWith(on);
+        foreach (var id in on)
+        {
+            SetDuplicateAllowed(id, true);
+        }
+
+        foreach (var id in off)
+        {
+            SetDuplicateAllowed(id, false);
+        }
+    }
+
+    /// <summary>저장된 창 ID 목록의 별칭을 정규 ID 로 바꾼 집합(null·빈 항목 제외).</summary>
+    private static HashSet<string> ResolveWindowIds(IEnumerable<string>? saved) =>
+        (saved ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrEmpty(id)).Select(ResolveWindowId).ToHashSet(StringComparer.Ordinal);
+
+    /// <summary>등록 안 된 창의 복원을 창 ID 마다 한 번 알린다(XKUI0505). 문서는 ID·제목·위치를 지킨 채 남는다.</summary>
+    private static void ReportMissingWindows(IEnumerable<string> windowIds)
+    {
+        var app = XkxkUi.Current;
+        foreach (var id in windowIds.Distinct(StringComparer.Ordinal).Where(id => !app.Windows.Contains(id)))
+        {
+            app.Diagnostics.Report(UiDiagnosticIds.WindowNotRegistered, UiDiagnosticSeverity.Warning,
+                $"등록되지 않은 창 '{id}' 의 문서를 자리표시로 복원했다."); // i18n-ok 개발자 진단
+        }
+    }
+
+    /// <summary>내용 생성 함수가 있는 창과 등록이 없는 창은 다시 만든다 — 복원은 지금 정의와 Parameter=null 로 열어야 한다.</summary>
+    private static bool CanReuse(string windowId) =>
+        XkxkUi.Current.Windows.TryGet(windowId, out var window) && window.CreateContent is null;
+
     /// <summary>
     /// 재사용할 열린 문서(odev-perf2 A, team-lead 승인). 지금 주 문서 영역 MDI 에 있는 문서(분리 창·측면 패널 아님)가
-    /// 스냅샷의 MDI 항목과 Id·종류가 모두 같을 때만 재사용한다(Id 가 같아도 종류가 다르면 새로 만든다).
+    /// 스냅샷의 MDI 항목과 Id·창 ID 가 모두 같고 열 때 넘긴 값(Parameter)이 없을 때만 재사용한다(Id 가 같아도 창이 다르면 새로 만든다).
     /// 탭 순서(MDI-10)를 그대로 지키려고, 재사용 문서가 스냅샷 앞쪽에 모여 있고 열린 목록·Dock 목록에서도 스냅샷과 같은 순서일 때만 쓴다.
     /// 하나라도 어긋나면 null(예전 경로 — 전부 닫고 다시 연다).
     /// </summary>
@@ -196,8 +242,9 @@ internal sealed class LayoutRestorer
         var (lastOpen, lastDock, newSeen) = (-1, -1, false);
         foreach (var item in snapshot.Documents)
         {
-            var doc = item.Window is null && item.PanelId is null
-                ? open.FirstOrDefault(d => d.Id == item.Id && d.Kind == item.Kind && ReferenceEquals(d.Owner, Docs) && FindWindow(d) is null)
+            var windowId = ResolveWindowId(item.WindowId);
+            var doc = item.Window is null && item.PanelId is null && CanReuse(windowId)
+                ? open.FirstOrDefault(d => d.Id == item.Id && d.WindowId == windowId && d.Parameter is null && ReferenceEquals(d.Owner, Docs) && FindWindow(d) is null)
                 : null;
             if (doc is null || keep.ContainsKey(item.Id))
             {

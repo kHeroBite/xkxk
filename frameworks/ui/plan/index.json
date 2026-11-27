@@ -117,6 +117,11 @@
       "id": "UADR-0015",
       "topic": "소비자 문서는 영역 docs/(plan 밖), API 명세는 PublicAPI 파일·/// 주석에서 생성, 불일치 검사기를 verify docs 단계로, 공개 API 를 바꾸는 batch 의 문서 끝 조건",
       "status": "채택"
+    },
+    {
+      "id": "UADR-0016",
+      "topic": "창 레지스트리(IUiWindowRegistry) 공개, 문서 종류 열거형을 문자열 ID 로(옛 이름·숫자 영구 별칭, 진단 XKUI05xx), 레이아웃 저장 형식 6(v1~v5 읽기 변환), 등록 안 된 창 자리표시, 강타입 등록은 예약 확장",
+      "status": "채택"
     }
   ],
   "documents": {
@@ -170,7 +175,8 @@
       "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a6_앱컨텍스트_이전대응.md",
       "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a7_컨텍스트서비스_이전대응.md",
       "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a8_아이콘명령_레지스트리.md",
-      "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a9_메뉴_레지스트리.md"
+      "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a9_메뉴_레지스트리.md",
+      "05_아키텍처/02_별별UI_프레임워크화_계획_부록/a10_창_레지스트리.md"
     ],
     "screens": [
       "09_화면설계/01_화면설계_공통원칙.md",
@@ -235,5 +241,5 @@
     "tools_root": "tools"
   },
   "archived": [],
-  "note": "2026-11-24 Pd 에서 옮긴 UI 문서를 Pd 번호 체계 그대로 등재했다. 추가 키는 analysis·tech_stack·architecture·screens·decisions_appendix·pending_appendix·requirements_raw_appendix·migration_record 다. 결정 기록 정본은 decisions 이고 UADR-0001 이 있다. 2026-11-25 architecture_appendix 키(프레임워크화 계획 부록)를 추가했다. requirements·decisions 배열은 이 날부터 새로 생긴 항목만 짧게 색인한다(그 전 항목은 본문 문서가 정본). 2026-11-26 architecture_appendix 에 a3(시험대 검증계획)·a4(단계별 배치계획)를 더하고 REQ-121·UADR-0007·UADR-0008 을 색인했다. 2026-11-26 REQ-122·UADR-0009(공개 API 호환 8원칙)를 색인했다. 2026-11-26 B03 로 architecture_appendix 에 a5(호스트 기동단계)를 더하고 UADR-0010(호스트 값 빌더 옵션 연결)을 색인했다. 2026-11-26 B04 로 architecture_appendix 에 a6(앱 컨텍스트 이전 대응)을 더하고 UADR-0011(앱 컨텍스트 이전·IUiLocalizer 최소 표면)을 색인했다. 2026-11-26 B05 로 architecture_appendix 에 a7(컨텍스트 서비스 이전 대응)을 더하고 UADR-0012(설정·테마·투어·모니터 컨텍스트 이전·정적 조회 함수 예외·성능 기준선 B12 이관)를 색인했다. 2026-11-26 B06 으로 architecture_appendix 에 a8(아이콘·명령 레지스트리)을 더하고 UADR-0013(아이콘·명령 레지스트리 공개·예약 접두어 xkxk.·등록 정책 P1~P4)을 색인했다. 2026-11-26 B07 로 architecture_appendix 에 a9(메뉴 레지스트리)를 더하고 UADR-0014(메뉴 레지스트리 공개·셸 4메뉴 이관·모바일 메뉴 단일 출처)를 색인했다. 2026-11-26 B07b 로 consumer_docs·api_reference 키(plan 밖 영역 docs/, 경로는 plan 기준 ../)를 더하고 REQ-123·UADR-0015(소비자 문서·API 명세 생성·불일치 검사)를 색인했다."
+  "note": "2026-11-24 Pd 에서 옮긴 UI 문서를 Pd 번호 체계 그대로 등재했다. 추가 키는 analysis·tech_stack·architecture·screens·decisions_appendix·pending_appendix·requirements_raw_appendix·migration_record 다. 결정 기록 정본은 decisions 이고 UADR-0001 이 있다. 2026-11-25 architecture_appendix 키(프레임워크화 계획 부록)를 추가했다. requirements·decisions 배열은 이 날부터 새로 생긴 항목만 짧게 색인한다(그 전 항목은 본문 문서가 정본). 2026-11-26 architecture_appendix 에 a3(시험대 검증계획)·a4(단계별 배치계획)를 더하고 REQ-121·UADR-0007·UADR-0008 을 색인했다. 2026-11-26 REQ-122·UADR-0009(공개 API 호환 8원칙)를 색인했다. 2026-11-26 B03 로 architecture_appendix 에 a5(호스트 기동단계)를 더하고 UADR-0010(호스트 값 빌더 옵션 연결)을 색인했다. 2026-11-26 B04 로 architecture_appendix 에 a6(앱 컨텍스트 이전 대응)을 더하고 UADR-0011(앱 컨텍스트 이전·IUiLocalizer 최소 표면)을 색인했다. 2026-11-26 B05 로 architecture_appendix 에 a7(컨텍스트 서비스 이전 대응)을 더하고 UADR-0012(설정·테마·투어·모니터 컨텍스트 이전·정적 조회 함수 예외·성능 기준선 B12 이관)를 색인했다. 2026-11-26 B06 으로 architecture_appendix 에 a8(아이콘·명령 레지스트리)을 더하고 UADR-0013(아이콘·명령 레지스트리 공개·예약 접두어 xkxk.·등록 정책 P1~P4)을 색인했다. 2026-11-26 B07 로 architecture_appendix 에 a9(메뉴 레지스트리)를 더하고 UADR-0014(메뉴 레지스트리 공개·셸 4메뉴 이관·모바일 메뉴 단일 출처)를 색인했다. 2026-11-26 B07b 로 consumer_docs·api_reference 키(plan 밖 영역 docs/, 경로는 plan 기준 ../)를 더하고 REQ-123·UADR-0015(소비자 문서·API 명세 생성·불일치 검사)를 색인했다. 2026-11-27 B09 로 architecture_appendix 에 a10(창 레지스트리)을 더하고 UADR-0016(창 레지스트리 공개·문서 종류 문자열 ID·저장 형식 6)을 색인했다."
 }

@@ -1,4 +1,4 @@
-// 원격 명령(아이콘·명령·메뉴 레지스트리 B06·B07) — registry.dump 레지스트리·진단 덤프, command.run 명령 실행(UADR-0013·0014)
+// 원격 명령(아이콘·명령·메뉴·창 레지스트리 B06·B07·B09) — registry.dump 레지스트리·진단 덤프, command.run 명령 실행(UADR-0013·0014·0016)
 #if PD_DIAGNOSTICS // 진단 빌드 전용(PdDiagnostics=true) — 제품판에는 이 명령이 없다
 using System;
 using System.Linq;
@@ -10,7 +10,7 @@ using xkxk.frameworks.ui.shell.Platform;
 namespace xkxk.frameworks.ui.shell.Diagnostics.Remote;
 
 /// <summary>
-/// 공개 레지스트리 표면(<see cref="XkxkUi.Current"/> 의 Icons·Commands·Menus·Diagnostics)을 읽는다.
+/// 공개 레지스트리 표면(<see cref="XkxkUi.Current"/> 의 Icons·Commands·Menus·Windows·Diagnostics)을 읽는다.
 /// 명시 등록 키 목록만 공개 멤버가 없어 내부 저장소 목록(UiIconStore.ExplicitKeys)을 쓴다(B07).
 /// 처리기는 라우터 관례대로 UI 스레드에서 실행된다.
 /// </summary>
@@ -18,18 +18,20 @@ internal static class RemoteRegistryCommands
 {
     internal static void Register(RemoteCommandRouter r)
     {
-        r.Register("registry.dump", "아이콘·명령·메뉴 레지스트리 덤프(B06·B07) [keys=1 이면 아이콘 키 전체 포함] → {icons:{count,explicit:[키],providers:[{id,count}],keys?},commands:[{id,titleKey,title,icon,iconFound,gesture,category,owner,canExecute}],menus:[{id,parent,kind,command,automationId,owner,hidden,visible,enabled,section}],diagnostics:[{id,severity,message,source}],runtime_errors}. 읽기 전용", Dump);
+        r.Register("registry.dump", "아이콘·명령·메뉴 레지스트리 덤프(B06·B07) [keys=1 이면 아이콘 키 전체 포함] → {icons:{count,explicit:[키],providers:[{id,count}],keys?},commands:[{id,titleKey,title,icon,iconFound,gesture,category,owner,canExecute}],menus:[{id,parent,kind,command,automationId,owner,hidden,visible,enabled,section}],diagnostics:[{id,severity,message,source}],runtime_errors,windows(B09):[{id,owner,aliases,placement,allowDuplicate(등록 값),hasContent}]}. 읽기 전용", Dump);
         r.Register("command.run", "레지스트리 명령 실행(B06) id=<명령 ID, 예 xkxk.window.cascade> → {id,canExecute,executed}. 실행 못 하면 executed=false", Run);
     }
 
     private static JsonNode? Dump(JsonObject a)
     {
         var app = XkxkUi.Current;
+        var windows = DumpWindows(app.Windows); // 처음 접근이면 기본 창 등록 진단이 남으므로 diagnostics 를 읽기 전에
         return new JsonObject
         {
             ["icons"] = DumpIcons(app.Icons, a.Bool("keys")),
             ["commands"] = DumpCommands(app.Commands),
             ["menus"] = DumpMenus(app.Menus),
+            ["windows"] = windows,
             ["diagnostics"] = new JsonArray(app.Diagnostics.Entries.Select(d => (JsonNode)new JsonObject
             {
                 ["id"] = d.Id,
@@ -129,6 +131,27 @@ internal static class RemoteRegistryCommands
                 ["visible"] = visible,
                 ["enabled"] = enabled,
                 ["section"] = m.Section,
+            });
+        }
+
+        return arr;
+    }
+
+    private static JsonArray DumpWindows(IUiWindowRegistry windows)
+    {
+        var arr = new JsonArray();
+        foreach (var w in windows.Items)
+        {
+            // 제네릭 Add<T>·JsonArray 원소 자동 변환은 웹 트리밍에서 깨진다(B07) — JsonValue.Create + 비제네릭 Add(JsonNode)
+            var aliases = new JsonArray(w.Aliases.Select(x => (JsonNode?)JsonValue.Create(x)).ToArray());
+            arr.Add((JsonNode)new JsonObject
+            {
+                ["id"] = JsonValue.Create(w.Id),
+                ["owner"] = JsonValue.Create(w.Owner),
+                ["aliases"] = aliases,
+                ["placement"] = JsonValue.Create(w.Placement.ToString()),
+                ["allowDuplicate"] = JsonValue.Create(w.AllowDuplicate),
+                ["hasContent"] = JsonValue.Create(w.CreateContent is not null),
             });
         }
 

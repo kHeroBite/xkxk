@@ -2,7 +2,7 @@
 # 결정기록 (ADR) — ui
 
 - 상태: 작성 중
-- 최종 갱신일: 2026-11-26
+- 최종 갱신일: 2026-11-27
 - 카탈로그 키: `decisions`
 
 ## 작성 규칙
@@ -175,4 +175,14 @@
 - 결과: 소비자는 `docs/README.md` 에서 시작해 매뉴얼·AI 안내·생성 명세를 읽고, 공개 API 가 바뀐 뒤 문서를 갱신하지 않으면 `docs` 단계가 실패한다.
 - 영향: `docs/`(수기 4개와 `docs/api/`, 신설), `tools/gen_api_docs.py`·`gen_api_docs_parse.py`·`gen_api_docs_render.py`(신설), `test/framework/judge/consumer_docs_check.py`·`consumer_docs_selftest.py`(신설)·`test/framework/verify_framework.sh`, 영역·루트 `README.md`, `a4_단계별_배치계획.md`(§1·B07b·B17·B18·B21·§5), `03_향후과제_TODO.md`(UTODO-0024·0034·0035), 요구사항 원문·정의서·`plan/index.json`, `.claude/rules/docs-map.md`·`tools/README.md`·`test/README.md`.
 - 한계: ① `ui.*`·`XkxkUi.Current.*` 체인 검사는 이 두 시작점만 푼다. 다른 변수 이름으로 시작하는 접근은 대조하지 않고, 반환 형식이 공개 형식이 아니면 첫 멤버만 확인한다. ② 검사는 식별자의 실재만 보며 예제 코드를 컴파일하지 않는다. 인자 수·형식·호출 순서가 틀려도 통과한다. ③ 같은 이름의 오버로드는 명세에 줄마다 1행이고 매개변수 형식 목록이 맞는 선언의 `///` summary 를 각자 싣는다. 맞는 선언을 찾지 못하거나 그 선언에 summary 가 없으면 같은 이름의 첫 설명을 대신 싣는데, 명세에는 대체 표시가 없다. 이름과 매개변수 형식 목록이 같게 정리되는 선언(제네릭 인자만 다른 경우 등)은 먼저 읽은 설명을 함께 쓴다. ④ 설명 없는 공개 멤버는 경고일 뿐 기본 실행에서 막지 않는다. 2026-11-26 생성 기준은 0이고 이후 새 멤버는 UTODO-0034 로 추적한다. ⑤ 패키지 게시 전까지 저장소 밖 소비자는 저장소 열람으로만 문서를 읽는다(UTODO-0035). ⑥ 수기 문서 본문 설명의 뜻이 맞는지는 기계로 판정하지 못한다.
+- 상태: 채택
+
+## UADR-0016 창 레지스트리를 공개하고 문서 종류를 문자열 ID 로 열며 레이아웃 저장 형식을 6 으로 올린다 (REQ-122)
+- 일자: 2026-11-27
+- 결정: ① 창 레지스트리 — `IUiWindowRegistry`(`Add`·`Remove`·`Contains`·`TryGet`·`TryResolve`·`Items`·`Open`·`Changed`)를 Avalonia 를 참조하지 않는 `Framework/` 에 공개하고 `IUiAppContext.Windows`·`IUiModuleContext.Windows` 로 연다. 프레임워크만 구현하고 멤버 추가를 허용한다. 새 입력은 옵션 객체(`UiWindowOptions`·`UiWindowOpenOptions`)의 속성으로만 더하며 선택 파라미터는 0건이다. 창 내용은 `CreateContent`(반환 `object?`, 화면 층이 `Control` 인지 검사)로 받는다. ② 문자열 ID — 열거형 `DocumentKind` 를 없애고 창 ID 문자열을 쓴다. 데모 3종은 `xkxk.demo.grid`·`xkxk.demo.gantt`·`xkxk.demo.form` 이고, 옛 이름 `Grid`·`Gantt`·`Form`(대소문자 무시)과 옛 숫자 0·1·2 는 영구 별칭이며, 해석의 마지막 단계에서 셸 기본 ID 로 풀어 정의의 별칭에 기대지 않는다. ID 와 별칭은 한 이름공간이라 새 ID 가 다른 창의 ID·별칭과 대소문자 무시로 겹치면 XKUI0502 로 거부한다. 옛 이름·숫자는 영구 예약어라 셸 주체(`xkxk.shell`) 밖의 등록은 창 ID(XKUI0502, 거부)·별칭(XKUI0503, 그 별칭만 버림)으로 쓸 수 없다(대소문자 무시). 예약 접두어와 P1~P4 는 UADR-0013 을 그대로 적용하며 진단은 XKUI0501~0508 이다. ③ 저장 형식 6 — 문서마다 `WindowId` 를 쓰고, 옛 이름으로 표현되는 창만 `Kind` 를 함께 쓴다. 중복 허용은 `DuplicateKinds`(옛 이름만)와 `DuplicateWindowIds`(켠 창 전부)·`DuplicateOffWindowIds`(끈 창)로 써서, 저장 뒤에 추가된 창의 설정을 복원이 덮지 않게 한다(형식 6 이 출시 전이라 지금 넣는다). v1~v5 는 읽을 때 6 의 뜻으로 변환한다. ④ 등록 안 된 창은 자리표시 문서로 열어 ID·제목·위치를 보존한다. 열린 문서가 있는 창을 `Remove`·`Replace` 해도 열린 문서는 그대로다. ⑤ 강타입 `Register<TViewModel, TView, TArgs>`·`WindowViewModel<TArgs>`·`IWindowContext` 는 이번에 만들지 않고 예약 확장(부록 a10)으로 둔다.
+- 근거: a4 B09 끝 조건(열거형 0, Version 5→6 읽기 변환 고정 시험 PASS)과 본문 §4·§5 `ui.Windows` 확장점, §9 위험 표 "저장 형식 버전 올림 + 옛 값 읽기 변환"이다. 열거형은 솔루션이 값을 더할 수 없어 창 종류 확장점이 성립하지 않는다. 문자열 ID 는 명령·메뉴·아이콘 레지스트리와 같은 키 체계다. 옛 이름 필드를 남기는 이유는 옛 판 앱이 새 저장본을 읽어도 레이아웃 전체를 잃지 않게 하기 위해서이며, 저장 형식 데이터 무결성은 본문 §5 의 고정 예외라 변환표는 B10 뒤에도 셸이 가진다. 강타입 등록은 Avalonia 형식 제약이 필요해 `Framework/` 에 둘 수 없다.
+- 대안: ① `Kind` 를 문자열 ID 로 바로 바꾸는 안은 옛 판 앱이 열거형 해석에 실패해 레이아웃 전체를 잃으므로 기각했다. ② 열거형을 두고 문자열 ID 를 병행하는 안은 B09 끝 조건(열거형 0)에 어긋나 기각했다. ③ 등록 안 된 창을 복원에서 건너뛰는 안은 다시 저장할 때 사용자 문서가 사라지므로 기각했다. ④ 강타입 등록을 `Framework/` 에 지금 넣는 안은 Avalonia 의존이 공개 계약에 들어와 기각했다.
+- UADR-0009 와의 관계: 원칙 1(옵션 객체)·원칙 2(선택 파라미터 0건)·원칙 3(확장점 선개방 — 예약 확장은 a10 표로 추가만으로 연다)·원칙 4(프레임워크만 구현하는 인터페이스는 멤버 추가 허용, 열거형 `UiWindowPlacement` 는 "값이 추가될 수 있다")·원칙 5(문자열 ID, 진단 번호 비재사용)·원칙 6(저장 형식 버전 5→6, 옛 버전 읽기 유지)을 적용한다. `PublicAPI.Unshipped.txt` 추가만 있고 Shipped 는 바꾸지 않는다. 사용자 원문 "확장하더라도 신규기능이나 파라미터는 기본값을 지정해서 이전 api와의 호환성도 100%확보하는 방향"(RAW-004)은 고정 대상 공개 계약에서는 기존 줄 변경 0 으로 지킨다. 다만 공개 계약 밖인 `IShellCommands.OpenDocument` 의 첫 인자 변경(`DocumentKind`→`string`)과 `PocDocument.Kind` 삭제는 이전 판과 바이너리 비호환이라 이 원문의 "100%" 가 공개 계약 밖까지는 미치지 않는다. 열거형 0 이 이 batch 의 끝 조건이라 택했고 한계로 남긴다.
+- 영향: `src/xkxk.frameworks.ui.shell/`(`Framework/` 창 계약·저장소·셸 기본 창·컨텍스트·진단·`PublicAPI.Unshipped.txt`, `Docking/` 문서 모델·저장 형식·변환, 뷰모델·진단 원격·자동화), `src/xkxk.frameworks.ui.views/` 내용 생성·아이콘, 데스크톱 호스트, 계약 시험·판정기·스모크, `docs/`, 부록 `a10_창_레지스트리.md`(신설), 본문 §4.2 표와 §4 예시 주석.
+- 한계: ① `UiWindowOpenOptions.Parameter` 는 저장본에 남지 않아 복원 뒤 null 이다. ② 옛 판 앱이 v6 를 읽고 다시 저장하면 `WindowId` 가 사라져 옛 이름 없는 창은 Grid 로 굳는다. ③ 창 `Remove`·`Replace` 는 열린 문서에 미치지 않는다. ④ `IShellCommands.OpenDocument` 서명 변경은 B09 이전 판과 바이너리 비호환이다. ⑤ 레지스트리는 프로세스 전역이고 리셋이 없으며 P2 는 보안 경계가 아니다(UADR-0013 한계 ②). ⑥ 강타입 등록 등 예약 확장은 B10 이후다.
 - 상태: 채택

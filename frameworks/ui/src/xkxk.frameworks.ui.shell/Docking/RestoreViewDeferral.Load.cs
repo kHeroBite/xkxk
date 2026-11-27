@@ -12,7 +12,7 @@ public static partial class RestoreViewDeferral
     /// </summary>
     private static void BeginOpen(PocDocument doc, bool busy)
     {
-        PerfProbe.Current.BeginOpen(doc.Kind.ToString().ToLowerInvariant());
+        PerfProbe.Current.BeginOpen(WindowDisplay.LegacyOrId(doc.WindowId).ToLowerInvariant()); // 데모 3종은 grid·gantt·form 그대로
         if (busy)
         {
             WindowLoadState.Default.BeginOpen(doc);

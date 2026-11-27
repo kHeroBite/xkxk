@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Avalonia.Controls;
 using Dock.Model.Core;
-using xkxk.frameworks.ui.data.Navigation;
 using xkxk.frameworks.ui.shell;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Platform;
@@ -13,7 +12,7 @@ namespace xkxk.frameworks.ui.desktop;
 
 /// <summary>
 /// SDI 호스트 창(IHostWindow)이 열리거나 활성화되거나 셸 활성 문서가 바뀌면, 그 창의 활성 문서(없으면 첫 문서) IconKey 로 Window.Icon 을 바꾼다.
-/// 키는 제목줄·탭이 쓰는 값(PocDocument.IconKey, 없으면 MenuIconCatalog.IconKeyFor)과 같다. 문서가 없거나 비트맵을 못 만들면 앱 아이콘.
+/// 키는 제목줄·탭이 쓰는 값(WindowDisplay.IconKeyOf)과 같다. 문서가 없거나 비트맵을 못 만들면 앱 아이콘.
 /// 창에 MenuIconBitmap.KeyProperty 로 적용 키를 남겨 진단 window.icon 이 읽는다. 메인 창은 건드리지 않는다(앱 아이콘 유지 — AC-026).
 /// </summary>
 internal static class SdiDocumentIcon
@@ -75,7 +74,7 @@ internal static class SdiDocumentIcon
             HookShell();
             var doc = window is IHostWindow { Window.Layout: { } root } ? WindowCommands.FindDocument(root) : null;
             Track(window, doc);
-            var key = doc is null ? null : doc.IconKey ?? MenuIconCatalog.IconKeyFor(doc.ScreenId, doc.Kind.ToString());
+            var key = doc is null ? null : WindowDisplay.IconKeyOf(doc);
             if (window.Icon is not null && string.Equals(window.GetValue(MenuIconBitmap.KeyProperty), key, StringComparison.Ordinal))
             {
                 return; // 같은 키 — 다시 만들지 않는다

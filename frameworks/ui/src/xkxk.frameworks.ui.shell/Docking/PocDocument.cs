@@ -1,4 +1,4 @@
-// PoC 문서 모델 — 종류·일련번호·분리 전 위치·배율·주의 환기·프로젝트(옛 PocDockFactory.cs 안의 공개 클래스를 그대로 옮김)
+// PoC 문서 모델 — 창 ID·열기 값·일련번호·분리 전 위치·배율·주의 환기·프로젝트(옛 PocDockFactory.cs 안의 공개 클래스를 그대로 옮김)
 using System;
 using Dock.Model.Core;
 using Dock.Model.Mvvm.Controls;
@@ -6,7 +6,7 @@ using xkxk.frameworks.ui.shell.Framework;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
-/// <summary>PoC 문서. 화면 내용은 IDocumentViewFactory 가 Kind 로 만든다.</summary>
+/// <summary>PoC 문서. 화면 내용은 IDocumentViewFactory 가 WindowId 로 만든다.</summary>
 public sealed class PocDocument : Document, Dock.Controls.DeferredContentControl.IDeferredContentPresentation
 {
     /// <summary>
@@ -17,9 +17,15 @@ public sealed class PocDocument : Document, Dock.Controls.DeferredContentControl
     bool Dock.Controls.DeferredContentControl.IDeferredContentPresentation.DeferContentPresentation =>
         !XkxkUi.Current.Settings.FastDocumentSwitch;
 
-    public DocumentKind Kind { get; init; }
+    /// <summary>
+    /// 창 ID(IUiWindowRegistry 에 등록한 ID). 등록 안 된 창(자리표시 문서)은 열거나 저장본에서 읽은 값 그대로라 다시 저장해도 남는다.
+    /// </summary>
+    public string WindowId { get; init; } = "";
 
-    /// <summary>종류별 일련번호(1부터).</summary>
+    /// <summary>열 때 넘긴 값(UiWindowOpenOptions.Parameter). 레이아웃 저장본에는 남지 않아 복원한 문서에서는 null 이다.</summary>
+    public object? Parameter { get; init; }
+
+    /// <summary>창별 일련번호(1부터).</summary>
     public int Seq { get; init; }
 
     /// <summary>SDI 분리 직전 MDI 위치(재결합 시 원위치 복귀용). 분리한 적 없으면 null.</summary>
@@ -64,7 +70,7 @@ public sealed class PocDocument : Document, Dock.Controls.DeferredContentControl
     /// <summary>불변 4자리 메뉴 ID(09/09). 메뉴로 연 창만 값이 있다.</summary>
     public string? MenuId { get; set; }
 
-    /// <summary>창 아이콘 키(메뉴 아이콘 카탈로그 키, 22 §2). null 이면 종류 기본 아이콘.</summary>
+    /// <summary>창 아이콘 키(메뉴 아이콘 카탈로그 키, 22 §2). null 이면 창 기본 아이콘(WindowDisplay.IconKeyOf).</summary>
     public string? IconKey
     {
         get => _iconKey;

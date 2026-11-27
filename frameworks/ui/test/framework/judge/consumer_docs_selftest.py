@@ -51,7 +51,8 @@ CS = {
 HEAD = "상태: 사전판 · 최종 갱신일: 2026-11-26\n"
 DOCS = {
     "README.md": "<!-- 별별UI 소비자 문서 진입점(시험용) -->\n# 문서\n" + HEAD +
-                 "\n- [시작](01_시작하기.md)\n- [확장](02_확장_메뉴명령아이콘.md)\n- [AI](03_AI_활용안내.md)\n- [API](api/README.md)\n",
+                 "\n- [시작](01_시작하기.md)\n- [확장](02_확장_메뉴명령아이콘.md)\n- [AI](03_AI_활용안내.md)\n- [API](api/README.md)\n"
+                 "- [창](04_확장_창.md)\n",
     "01_시작하기.md": "<!-- 시작하기(시험용) -->\n# 시작하기\n" + HEAD +
         "\n`XkxkUi.Current.Menus.SetHidden` 로 숨긴다. 진단 `XKUI0401`, ID `xkxk.file.exit`, 접두 `xkxk.*`·`xkxk.file.…`·`xkxk.`.\n"
         "프로젝트 `xkxk.frameworks.ui.shell.csproj`, 파일 `UiModule.cs`, 형식 `xkxk.frameworks.ui.shell.Framework.UiModule`,"
@@ -61,6 +62,7 @@ DOCS = {
         "        ui.Menus.SetHidden(ShellMenuIds.FileExit, true);\n    }\n}\n```\n",
     "02_확장_메뉴명령아이콘.md": "<!-- 확장(시험용) -->\n# 확장\n" + HEAD + "\n[명세](api/README.md), [시작](01_시작하기.md#시작하기)\n",
     "03_AI_활용안내.md": "<!-- AI 안내(시험용) -->\n# AI\n" + HEAD + "\n" + cdc.MARK_B + "\n- 공개 API 만 쓴다\n" + cdc.MARK_E + "\n",
+    "04_확장_창.md": "<!-- 창 확장(시험용) -->\n# 창 확장\n" + HEAD,
 }
 
 

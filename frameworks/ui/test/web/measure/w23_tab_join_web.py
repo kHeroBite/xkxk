@@ -189,7 +189,7 @@ def save_restore(w):
     lay = w.res("layout.get") or {}
     ver = next((v for k, v in lay.items() if k.lower() == "version"), None)
     gs = next((v for k, v in lay.items() if k.lower() == "groups"), None)
-    check("⑦ 저장본 Version 5·Groups 1건", ver == 5 and isinstance(gs, list) and len(gs) == 1, {"version": ver, "groups": gs})
+    check("⑦ 저장본 Version 6 이상·Groups 1건", isinstance(ver, int) and ver >= 6 and isinstance(gs, list) and len(gs) == 1, {"version": ver, "groups": gs})
     reload(w)
     after = groups(w)
     check("⑦ 복원 왕복 → 묶음·탭 순서·활성 같음", len(after) == 1 and before and after[0]["docs"] == before[0]["docs"] and after[0]["active"] == before[0]["active"],
@@ -271,6 +271,18 @@ def same_x(a, b, tol=0.5):
     return a is not None and b is not None and abs(a - b) <= tol
 
 
+def close_at_right(tab, close, tol=1):
+    """× 가 탭 오른쪽 끝 35% 안에 있는가 — 탭 항목(shell.tabItem.*)과 ×(shell.tabClose.*)의 실제 ui.find 사각형(같은 좌표계)으로 잰다.
+    탭 왼쪽 끝을 제목 글자 x 로 추정하지 않는다(제목 칸 앞에 아이콘 칸이 생기면 추정이 틀어진다)."""
+    if not tab or not close:
+        return False
+    return (close["x"] - tab["x"] >= tab["w"] * 0.65 - tol
+            and close["x"] + close["w"] <= tab["x"] + tab["w"] + tol)
+
+
+CLOSE_MODE_CLASSES = ("closeHover", "closeActive")  # ×표시 방식 클래스(MainView.TabClose.cs) — 없음=항상. tabsTitle·busyInline 등 다른 목록 클래스는 무관
+
+
 def tab_close_cases(w):
     """제목 탭 닫기(×) 표시(TitleTabCloseMode). hover 는 headless Chrome 실마우스(page.mouse.move = page.hover 와 같은 포인터 이벤트),
     키보드는 실키(Tab·방향키), 닫기는 실마우스 클릭·가운데 클릭. 판정 값은 원격 ui.tabClose(Opacity·OpacityMask·제목 글자 x)."""
@@ -309,10 +321,12 @@ def tab_close_cases(w):
     check("C × 표시 전후 제목 글자 x·폭 같음(밀림 없음, 숨김 때 × 자리까지 제목 칸)",
           th and ts and same_x(th.get("titleX"), ts.get("titleX")) and same_x(th.get("titleWidth"), ts.get("titleWidth")),
           {"before": th and [th.get("titleX"), th.get("titleWidth")], "after": ts and [ts.get("titleX"), ts.get("titleWidth")]})
+    tab_b = (w.res("ui.find", id="shell.tabItem." + tgt) or {}).get("bounds")
+    close_b = (w.res("ui.find", id="shell.tabClose." + tgt) or {}).get("bounds")
     check("C × 는 탭 오른쪽 끝(탭 폭 35% 이내)에 겹침",
           ts and ts.get("closeX") is not None and ts.get("titleX") is not None
-          and ts["closeX"] >= ts["titleX"] and ts["closeX"] - (ts["titleX"] - 6) >= ts["tabWidth"] * 0.65 - 1,
-          ts and {k: ts.get(k) for k in ("titleX", "titleWidth", "closeX", "tabWidth")})
+          and ts["closeX"] >= ts["titleX"] and close_at_right(tab_b, close_b),
+          ts and {k: ts.get(k) for k in ("titleX", "titleWidth", "closeX", "tabWidth")} | {"tabRect": tab_b, "closeRect": close_b})
     w.shot("tabclose_hover")
     # 실마우스로 × 클릭 → 그 탭만 닫힘
     cc = w.center("shell.tabClose." + tgt)
@@ -388,8 +402,9 @@ def tab_close_cases(w):
           [(t["id"], t.get("selected"), t.get("closeOpacity")) for t in st["tabs"]])
     tab_state(w, mode="Always")
     st = tab_state(w)
-    check("C Always: 모든 탭 × 보임(실행 중 변경 즉시 반영)", all(t.get("closeOpacity") == 1 and t.get("fade") for t in st["tabs"]) and not (st.get("stripClasses") or []),
-          [(t["id"], t.get("closeOpacity")) for t in st["tabs"]])
+    check("C Always: 모든 탭 × 보임(실행 중 변경 즉시 반영)", all(t.get("closeOpacity") == 1 and t.get("fade") for t in st["tabs"])
+          and not any(c in CLOSE_MODE_CLASSES for c in (st.get("stripClasses") or [])),
+          {"tabs": [(t["id"], t.get("closeOpacity")) for t in st["tabs"]], "stripClasses": st.get("stripClasses")})
     tab_state(w, mode="Auto")
 
 
@@ -450,7 +465,15 @@ def self_test():
     cases = [("legacy_v4 대문자", json.loads(legacy_v4('{"Version":5,"Groups":[{"Id":"g"}],"Documents":[1]}')) == {"Version": 4, "Documents": [1]}),
              ("legacy_v4 소문자", json.loads(legacy_v4('{"version":5,"groups":null,"documents":[]}')) == {"version": 4, "documents": []}),
              ("inside 경계 허용 1", inside({"x": 9, "y": 10, "w": 10, "h": 10}, box)), ("inside 밖", not inside({"x": 0, "y": 0, "w": 50, "h": 5}, box)),
-             ("shift·center", center(shift({"x": 0, "y": 0, "w": 20, "h": 20}, 5, 7)) == (15, 17))]
+             ("shift·center", center(shift({"x": 0, "y": 0, "w": 20, "h": 20}, 5, 7)) == (15, 17)),
+             # B09 실측값(탭 폭 81, × x 63·폭 16, 탭 왼쪽 0) — 제목 앞 아이콘 칸으로 titleX=25 여도 통과
+             ("close_at_right 오른쪽 끝", close_at_right({"x": 0, "y": 0, "w": 81, "h": 24}, {"x": 63, "y": 4, "w": 16, "h": 16})),
+             ("close_at_right 탭 원점 이동", close_at_right({"x": 100, "y": 0, "w": 81, "h": 24}, {"x": 163, "y": 4, "w": 16, "h": 16})),
+             ("close_at_right 가운데면 실패", not close_at_right({"x": 0, "y": 0, "w": 81, "h": 24}, {"x": 30, "y": 4, "w": 16, "h": 16})),
+             ("close_at_right 탭 밖이면 실패", not close_at_right({"x": 0, "y": 0, "w": 81, "h": 24}, {"x": 80, "y": 4, "w": 16, "h": 16})),
+             ("close_at_right 사각형 없음 실패", not close_at_right(None, {"x": 63, "y": 4, "w": 16, "h": 16})),
+             ("Always 클래스 busyInline 허용", not any(c in CLOSE_MODE_CLASSES for c in ["tabsTitle", "busyInline"])),
+             ("Always 클래스 closeHover 남으면 실패", any(c in CLOSE_MODE_CLASSES for c in ["closeHover", "busyInline"]))]
     for n, ok in cases:
         print(("PASS " if ok else "FAIL ") + n)
     return 0 if all(ok for _, ok in cases) else 1

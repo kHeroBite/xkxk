@@ -14,7 +14,7 @@ using xkxk.frameworks.ui.shell.Docking;
 namespace xkxk.frameworks.ui.shell.Diagnostics;
 
 /// <summary>
-/// 인자: --open grid:N,gantt:N,form:N  --layout cascade|tile|tile-h|tile-v|tabbed  --sdi N  --move-all dx,dy
+/// 인자: --open 이름:N(옛 이름 grid·gantt·form 또는 창 ID, 쉼표로 여러 개)  --layout cascade|tile|tile-h|tile-v|tabbed  --sdi N  --move-all dx,dy
 /// --save-layout  --load-layout  --screenshot path  --perf-out path  --exit-after 초  --bg-pos x,y  --dedupe
 /// --cmd close-others|close-all|minimize-all|restore-all|next|prev|redock-all|grid-exercise|gantt-exercise
 ///       |maximize|restore-max|pin|unpin|tray-on|tray-off|esc-close|dblclick-close
@@ -120,12 +120,13 @@ public static class AutomationBridge
 
     private static Task Sync(Action action) { action(); return Task.CompletedTask; }
 
-    /// <summary>--open 실행. --dedupe 면 종류명을 고정 제목으로 쓰고 중복 열기를 막는다.</summary>
+    /// <summary>--open 실행. --dedupe 면 종류명(옛 이름, 없으면 창 ID)을 고정 제목으로 쓰고 중복 열기를 막는다.</summary>
     private static void OpenAll(IShellCommands shell, AutomationOptions o)
     {
-        foreach (var (kind, count) in o.Open)
+        foreach (var (name, count) in o.Open)
         {
-            for (var i = 0; i < count; i++) { _ = o.Dedupe ? shell.OpenDocument(kind, kind.ToString(), allowDuplicate: false) : shell.OpenDocument(kind); }
+            var id = LegacyWindowKinds.ToId(name) ?? name; // 옛 이름·옛 숫자(0~2)는 창 ID 로, 그 밖(창 ID·별칭)은 그대로 셸에 넘긴다
+            for (var i = 0; i < count; i++) { _ = o.Dedupe ? shell.OpenDocument(id, WindowDisplay.LegacyOrId(id), allowDuplicate: false) : shell.OpenDocument(id); }
         }
     }
 
@@ -136,7 +137,7 @@ public static class AutomationBridge
         for (var i = 0; i < n; i++)
         {
             if (i < docs.Count) { shell.Float(docs[i]); AutomationCommandRunner.LastFloated = docs[i]; }
-            else { AutomationCommandRunner.LastFloated = shell.OpenDocument(DocumentKind.Grid, sdi: true); }
+            else { AutomationCommandRunner.LastFloated = shell.OpenDocument(LegacyWindowKinds.Grid, sdi: true); }
         }
     }
 

@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using xkxk.frameworks.ui.shell.Docking;
 
 namespace xkxk.frameworks.ui.shell.Diagnostics;
 
@@ -98,7 +97,8 @@ internal static class AutomationArgs
         foreach (var item in (value ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
         {
             var parts = item.Split(':');
-            if (Enum.TryParse<DocumentKind>(parts[0], true, out var kind)) { o.Open.Add((kind, parts.Length > 1 ? Math.Max(0, (int)Num(parts[1], 1)) : 1)); }
+            var name = parts[0].Trim(); // 창 ID·별칭(옛 이름 Grid 등) 원문. 등록 여부는 판정하지 않고 열 때 셸이 해석한다(모듈 창은 해석 시점에 없을 수 있다)
+            if (name.Length > 0) { o.Open.Add((name, parts.Length > 1 ? Math.Max(0, (int)Num(parts[1], 1)) : 1)); }
             else { o.Unknown.Add("open:" + item); }
         }
     }

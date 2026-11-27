@@ -7,6 +7,7 @@ using Avalonia.Threading;
 using Dock.Model.Controls;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Diagnostics;
+using xkxk.frameworks.ui.shell.Framework;
 using xkxk.frameworks.ui.shell.Localization;
 
 namespace xkxk.frameworks.ui.shell.Docking;
@@ -22,7 +23,7 @@ internal sealed class DocumentLifecycle
     // 옛 WindowCommands 필드·도우미 이름 — 아래 본문을 옮기기만 하려고 같은 이름으로 잇는다.
     private PocDockFactory _factory => _s.Factory;
     private Action<string> _log => _s.Log;
-    private Dictionary<DocumentKind, int> _seq => _s.Seq;
+    private Dictionary<string, int> _seq => _s.Seq;
     private List<PocDocument> _mru => _s.Mru;
     private List<PocDocument> _minimized => _s.Minimized;
     private IDocumentDock Docs => _s.Docs;
@@ -30,31 +31,65 @@ internal sealed class DocumentLifecycle
     private IDockWindow? FindWindow(PocDocument doc) => _s.FindWindow(doc);
     private IEnumerable<PocDocument> MdiDocs() => _s.MdiDocs();
     private void SetActive(PocDocument? doc) => _s.Owner.SetActive(doc);
-    private bool IsDuplicateAllowed(DocumentKind kind) => _s.Owner.IsDuplicateAllowed(kind);
+    private bool IsDuplicateAllowed(string windowId) => _s.Owner.IsDuplicateAllowed(windowId);
     private void Activate(PocDocument document) => _s.Owner.Activation.Activate(document);
     private void Float(PocDocument document) => _s.Owner.Activation.Float(document);
     private void PreserveLocked(Action arrange) => _s.Owner.StateOps.PreserveLocked(arrange);
-    private static string AutoTitle(DocumentKind kind, int seq) => DocumentAutoTitles.AutoTitle(kind, seq);
+    private static string AutoTitle(string windowId, int seq) => DocumentAutoTitles.AutoTitle(windowId, seq);
     private static void SetAutoTitle(PocDocument document, bool auto) => DocumentAutoTitles.SetAutoTitle(document, auto);
 
-    public PocDocument OpenDocument(DocumentKind kind, string? title = null, bool sdi = false, bool allowDuplicate = false)
+    /// <summary>
+    /// 기존 4인자 모양(B09 이전 호출부 호환). Title=title, Placement=sdi ? Sdi : Default, AllowDuplicate=allowDuplicate ? true : null 로
+    /// 새 오버로드에 위임한다 — 데모 3종은 정의 Placement 가 Default 라 기존 동작과 같다(a10 §7).
+    /// </summary>
+    public PocDocument OpenDocument(string windowId, string? title = null, bool sdi = false, bool allowDuplicate = false) =>
+        OpenDocument(windowId, new UiWindowOpenOptions
+        {
+            Title = title,
+            Placement = sdi ? UiWindowPlacement.Sdi : UiWindowPlacement.Default,
+            AllowDuplicate = allowDuplicate ? true : null,
+        });
+
+    /// <summary>
+    /// 창을 문서로 연다(I8). windowId 는 ID·별칭이며 TryResolve 로 정규 ID 를 얻는다. 모르면 받은 값 그대로 자리표시 문서를 열고 XKUI0505(Warning).
+    /// 분리창 = Placement==Sdi 또는 (Default 이고 정의가 Sdi). 중복 허용 = AllowDuplicate ?? IsDuplicateAllowed(id). Parameter 는 문서에 싣는다(저장본에는 남지 않음).
+    /// </summary>
+    public PocDocument OpenDocument(string windowId, UiWindowOpenOptions options)
     {
-        allowDuplicate |= IsDuplicateAllowed(kind); // 제목줄 '중복 허용' 버튼(종류 단위, UI-09 — DocumentChromeService)
-        if (!allowDuplicate && title is not null && OpenDocuments.FirstOrDefault(d => d.Kind == kind && d.Title == title) is { } existing)
+        ArgumentNullException.ThrowIfNull(windowId);
+        ArgumentNullException.ThrowIfNull(options);
+        var app = XkxkUi.Current;
+        UiWindowDefinition? def = null;
+        if (app.Windows.TryResolve(windowId, out var found))
+        {
+            def = found;
+        }
+        else
+        {
+            app.Diagnostics.Report(UiDiagnosticIds.WindowNotRegistered, UiDiagnosticSeverity.Warning,
+                $"등록되지 않은 창 '{windowId}' 을 자리표시 문서로 열었다."); // i18n-ok 개발자 진단
+        }
+
+        var id = def?.Id ?? windowId;
+        var sdi = options.Placement == UiWindowPlacement.Sdi
+            || (options.Placement == UiWindowPlacement.Default && def?.Placement == UiWindowPlacement.Sdi);
+        var allowDuplicate = options.AllowDuplicate ?? IsDuplicateAllowed(id); // 제목줄 '중복 허용' 버튼(창 단위, UI-09 — DocumentChromeService)
+        var title = options.Title;
+        if (!allowDuplicate && title is not null && OpenDocuments.FirstOrDefault(d => d.WindowId == id && d.Title == title) is { } existing)
         {
             Activate(existing);
             _log(Loc.Tr("log.window.duplicateActivated", title));
             return existing;
         }
 
-        var seq = _seq.GetValueOrDefault(kind) + 1;
-        _seq[kind] = seq;
-        var requestKey = $"{kind}-{seq}";
+        var seq = _seq.GetValueOrDefault(id) + 1;
+        _seq[id] = seq;
+        var requestKey = $"{WindowDisplay.LegacyOrId(id)}-{seq}"; // 데모 3종은 옛 형식(Grid-1) 유지 — 저장본·판정기 호환
         var openToken = WindowLoadState.Default.BeginRequest(requestKey, "open"); // 1단계: 열기 요청 순간(문서 생성 전, 23 §2.2)
         PocDocument doc;
         try
         {
-            doc = new PocDocument { Id = requestKey, Kind = kind, Seq = seq, Title = title ?? AutoTitle(kind, seq) };
+            doc = new PocDocument { Id = requestKey, WindowId = id, Parameter = options.Parameter, Seq = seq, Title = title ?? AutoTitle(id, seq) };
             SetAutoTitle(doc, title is null); // 자동 제목은 언어를 따라 바뀐다(DocumentAutoTitles)
             doc.MdiBounds = PocDockFactory.NextMdiBounds(MdiDocs().Select(d => MdiTabGroup.WindowOf(d)!).Distinct().Select(w => w.MdiBounds)); // 30px 계단(MDI-20) — 창 단위(묶음 안 문서는 묶음 자리)
             using (PerfProbe.Current.TimeOperation("docs.open.add")) { AddDocument(doc, requestKey: requestKey); } // K15 열기 동기 구간 분해(제품판 빈 범위)
@@ -192,7 +227,7 @@ internal sealed class DocumentLifecycle
         if (!RestoreViewDeferral.MarkIfRestoring(doc))
         {
             // 열기 시간 시작점(셸). 종료점은 뷰 첫 렌더(PerfProbe.TrackOpen — 대기열이 있으면 시작점을 다시 찍지 않음)
-            PerfProbe.Current.BeginOpen(doc.Kind.ToString().ToLowerInvariant());
+            PerfProbe.Current.BeginOpen(WindowDisplay.LegacyOrId(doc.WindowId).ToLowerInvariant()); // 데모 3종은 grid·gantt·form 그대로
             if (requestKey is not null)
             {
                 WindowLoadState.Default.Bind(requestKey, doc); // 2단계: 요청 토큰을 문서에 묶는다(오버레이·커서 포함)

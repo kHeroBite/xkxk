@@ -7,14 +7,14 @@
 
 | 층 | 파일 수 |
 |---|---:|
-| Control | 310 |
-| Data | 64 |
+| Control | 314 |
+| Data | 70 |
 | Diag | 93 |
 | Host | 77 |
 | Ui | 26 |
 | Views | 238 |
 
-합계 808개(.cs·.axaml).
+합계 818개(.cs·.axaml).
 
 ## 끊어야 하는 참조(현재 기준 금지 방향)
 
@@ -274,6 +274,7 @@
 | `xkxk.frameworks.ui.shell/Docking/LayoutBackupService.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(BusyHooks.Release.cs) |  |  | LayoutBackupService |
 | `xkxk.frameworks.ui.shell/Docking/LayoutGroupCodec.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(LayoutSnapshot.cs) |  | O |  |
 | `xkxk.frameworks.ui.shell/Docking/LayoutLibrary.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(BusyHooks.Release.cs) |  |  | LayoutIndexJsonContext |
+| `xkxk.frameworks.ui.shell/Docking/LayoutMigration.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(LayoutSnapshot.cs) |  |  | LayoutMigration |
 | `xkxk.frameworks.ui.shell/Docking/LayoutModeGate.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
 | `xkxk.frameworks.ui.shell/Docking/LayoutRestorer.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O | LayoutRestorer |
 | `xkxk.frameworks.ui.shell/Docking/LayoutSerializer.cs` | Control |  | 직렬화지만 Data 로 내리지 않았다: Avalonia·Dock.Avalonia·PocDockFactory 를 참조한다. 옮기려면 별도 리팩터링이 필요하다 | O | O |  |
@@ -333,7 +334,7 @@
 | `xkxk.frameworks.ui.shell/Docking/PlacementRecovery.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
 | `xkxk.frameworks.ui.shell/Docking/PocDockFactory.TabGroups.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
 | `xkxk.frameworks.ui.shell/Docking/PocDockFactory.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
-| `xkxk.frameworks.ui.shell/Docking/PocDocument.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(ILayoutStore.cs) |  | O |  |
+| `xkxk.frameworks.ui.shell/Docking/PocDocument.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(Loc.cs) |  | O |  |
 | `xkxk.frameworks.ui.shell/Docking/RestoreViewDeferral.Idle.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Docking/RestoreViewDeferral.Load.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(PerfProbe.Counters.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Docking/RestoreViewDeferral.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
@@ -375,7 +376,7 @@
 | `xkxk.frameworks.ui.shell/Docking/WindowMenuOps.Snap.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O | SnapRestoreMemory, ManagedWindowRect |
 | `xkxk.frameworks.ui.shell/Docking/WindowMenuOps.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
 | `xkxk.frameworks.ui.shell/Docking/WindowMinSize.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
-| `xkxk.frameworks.ui.shell/Docking/WindowSession.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(ILayoutStore.cs) |  | O | WindowSession |
+| `xkxk.frameworks.ui.shell/Docking/WindowSession.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(LayoutSerializer.cs) |  | O | WindowSession |
 | `xkxk.frameworks.ui.shell/Docking/WindowStateOps.Windows.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(MdiDragProbe.cs) |  | O | WindowStateOps |
 | `xkxk.frameworks.ui.shell/Docking/WindowStateOps.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O | WindowStateOps |
 | `xkxk.frameworks.ui.shell/Docking/WindowTabJoinService.DockGuard.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O |  |
@@ -389,10 +390,12 @@
 | `xkxk.frameworks.ui.shell/Framework/IUiModule.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(IUiModuleContext.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/IUiModuleContext.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(IUiCommandRegistry.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/IUiServiceProvider.cs` | Data | xkxk.frameworks.ui.data/Framework/IUiServiceProvider.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/IUiWindowRegistry.cs` | Data | xkxk.frameworks.ui.data/Framework/IUiWindowRegistry.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/ShellCommandIds.cs` | Data | xkxk.frameworks.ui.data/Framework/ShellCommandIds.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/ShellDefaultCommands.Menu.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  | ShellDefaultCommands |
 | `xkxk.frameworks.ui.shell/Framework/ShellDefaultCommands.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  | O | ShellDefaultCommands |
 | `xkxk.frameworks.ui.shell/Framework/ShellDefaultMenus.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  | ShellDefaultMenus |
+| `xkxk.frameworks.ui.shell/Framework/ShellDefaultWindows.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(LayoutMigration.cs) |  |  | ShellDefaultWindows |
 | `xkxk.frameworks.ui.shell/Framework/ShellMenuIds.cs` | Data | xkxk.frameworks.ui.data/Framework/ShellMenuIds.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiAppContext.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(ILayoutStore.cs) |  |  | UiAppContext |
 | `xkxk.frameworks.ui.shell/Framework/UiCommandContext.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  |  |
@@ -433,6 +436,13 @@
 | `xkxk.frameworks.ui.shell/Framework/UiRegistryChangedEventArgs.cs` | Data | xkxk.frameworks.ui.data/Framework/UiRegistryChangedEventArgs.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiRegistryOwners.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiServiceRegistry.cs` | Data | xkxk.frameworks.ui.data/Framework/UiServiceRegistry.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiWindowContentContext.cs` | Data | xkxk.frameworks.ui.data/Framework/UiWindowContentContext.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiWindowDefinition.cs` | Data | xkxk.frameworks.ui.data/Framework/UiWindowDefinition.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiWindowOpenOptions.cs` | Data | xkxk.frameworks.ui.data/Framework/UiWindowOpenOptions.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiWindowOptions.cs` | Data | xkxk.frameworks.ui.data/Framework/UiWindowOptions.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiWindowPlacement.cs` | Data | xkxk.frameworks.ui.data/Framework/UiWindowPlacement.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiWindowRegistry.Rules.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(LayoutMigration.cs) |  |  | UiWindowStore |
+| `xkxk.frameworks.ui.shell/Framework/UiWindowRegistry.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  | UiWindowStore |
 | `xkxk.frameworks.ui.shell/Framework/XkxkUi.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(IUiAppContext.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/XkxkUiAppBuilderExtensions.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Framework/XkxkUiApplication.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUiBuilderOptions.cs) |  |  |  |

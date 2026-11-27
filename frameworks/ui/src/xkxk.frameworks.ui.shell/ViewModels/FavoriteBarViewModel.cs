@@ -93,13 +93,13 @@ public sealed class FavoriteBarViewModel : ObservableObject
     /// <summary>끌어서 순서 바꾸기(저장소 순서 기준 새 자리).</summary>
     public Task MoveAsync(FavoriteItem item, int newIndex) => _store.MoveAsync(TargetType, item.ScreenId, newIndex);
 
-    /// <summary>화면 ID → 문서 종류(PoC 대표 화면 표의 역방향). 모르면 null.</summary>
-    internal static DocumentKind? KindOf(string screenId) =>
-        Enum.GetValues<DocumentKind>().Cast<DocumentKind?>().FirstOrDefault(k => MenuIconCatalog.ScreenIdOfPocKind(k.ToString()) == screenId);
+    /// <summary>화면 ID → 창 ID(PoC 대표 화면 표의 역방향). 모르면 null.</summary>
+    internal static string? KindOf(string screenId) =>
+        MenuIconCatalog.ScreenIdByPocKind.Where(p => p.Value == screenId).Select(p => LegacyWindowKinds.ToId(p.Key)).FirstOrDefault();
 
     /// <summary>문서의 화면 ID(문서에 없으면 PoC 종류의 대표 화면).</summary>
     internal static string? ScreenIdOf(PocDocument? doc) =>
-        doc is null ? null : doc.ScreenId ?? MenuIconCatalog.ScreenIdOfPocKind(doc.Kind.ToString());
+        doc is null ? null : doc.ScreenId ?? MenuIconCatalog.ScreenIdOfPocKind(LegacyWindowKinds.NameOf(doc.WindowId));
 
     private Task ToggleAsync(PocDocument? doc) => ToggleScreenAsync(ScreenIdOf(doc));
 
@@ -140,13 +140,13 @@ public sealed class FavoriteBarViewModel : ObservableObject
             return;
         }
 
-        if (KindOf(item.ScreenId) is not { } kind)
+        if (KindOf(item.ScreenId) is not { } windowId)
         {
             _ctx.AddLog(Loc.Tr("favorite.unknownScreen", item.ScreenId)); // 이 PoC 에 아직 화면이 없는 즐겨찾기(서버 동기화로 온 항목 등)
             return;
         }
 
-        var doc = commands.OpenDocument(kind, allowDuplicate: XkxkUi.Current.Settings.FavoriteBarClick == FavoriteBarClick.AlwaysNew);
+        var doc = commands.OpenDocument(windowId, allowDuplicate: XkxkUi.Current.Settings.FavoriteBarClick == FavoriteBarClick.AlwaysNew);
         doc.ScreenId ??= item.ScreenId;
     }
 
@@ -192,7 +192,7 @@ public sealed class FavoriteBarViewModel : ObservableObject
         OnPropertyChanged(nameof(HasOverflow));
     }
 
-    private static string TitleOf(string screenId) => KindOf(screenId) is { } kind ? kind.DisplayName() : screenId;
+    private static string TitleOf(string screenId) => KindOf(screenId) is { } windowId ? WindowDisplay.DisplayName(windowId) : screenId;
 }
 
 /// <summary>즐겨찾기 아이콘 하나. 목록 항목 전용이라 소유 뷰모델 파일에 함께 둔다(SdiItem 과 같은 방식).</summary>

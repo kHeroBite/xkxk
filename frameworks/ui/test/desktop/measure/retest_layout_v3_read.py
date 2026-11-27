@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # 옛 레이아웃 Version 3 읽기 고정 시험 — 고정 표본(testdata/layout_v3_right.json)의 알림 위치 네 곳·분할·모서리 소유를 임시 프로필에 넣어 띄우고 복원 값과 저장 Version 을 잰다
 """
-사용: python3 -B retest_layout_v3_read.py --run-dir <bin/run/<복사본>/net10.0> --work logs/<이름>/<회차>
+사용: python3 -B retest_layout_v3_read.py --run-dir <bin/run/<복사본>[/net*.0]> --work logs/<이름>/<회차>
 앱을 경우마다 새로 띄운다(화면 밖·임시 폴더·자기 PID 종료). 탐색기·로그 가장자리 값이 없는 파일은 왼쪽·아래로 읽어야 한다.
 결과는 layout_v3.json. 종료 코드 0=전부 통과, 1=실패 있음, 4=가드 중단.
 """
@@ -48,11 +48,35 @@ def cases(base):
     yield "corner.owner", d, {"owners": {"BottomLeft": "BottomPane"}}
 
 
+EXE_NAME = "xkxk.frameworks.ui.desktop.exe"
+
+
+def resolve_run_dir(run_dir):
+    """실행 파일이 있는 net*.0 폴더를 찾는다. run_dir 자체·그 아래·같은 부모의 형제 net*.0 중 exe 가 있는 가장 높은 버전을 고른다. 없으면 입력 그대로."""
+    import glob
+    import re
+
+    def ver(p):
+        m = re.fullmatch(r"net(\d+)\.(\d+)", os.path.basename(p))
+        return (int(m.group(1)), int(m.group(2))) if m else None
+    if os.path.exists(os.path.join(run_dir, EXE_NAME)):
+        return run_dir
+    found = []
+    for base in (run_dir, os.path.dirname(os.path.abspath(run_dir))):
+        for d in glob.glob(os.path.join(base, "net*.0")):
+            if ver(d) and os.path.exists(os.path.join(d, EXE_NAME)):
+                found.append((ver(d), d))
+        if found:
+            break
+    return max(found)[1] if found else run_dir
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run-dir", required=True)
     ap.add_argument("--work", required=True)
     args = ap.parse_args()
+    args.run_dir = resolve_run_dir(args.run_dir)
     os.makedirs(args.work, exist_ok=True)
     from retest_remote import Remote
     from offscreen_guard import OffscreenGuard, GuardBreach

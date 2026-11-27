@@ -1,8 +1,8 @@
-// 진단 코드 문자열 상수 — 00xx 모듈·01xx 서비스·02xx 아이콘·03xx 명령·04xx 메뉴, 한 번 쓴 번호는 재사용하지 않는다(UADR-0009 원칙 5)
+// 진단 코드 문자열 상수 — 00xx 모듈·01xx 서비스·02xx 아이콘·03xx 명령·04xx 메뉴·05xx 창, 한 번 쓴 번호는 재사용하지 않는다(UADR-0009 원칙 5)
 namespace xkxk.frameworks.ui.shell.Framework;
 
 /// <summary>프레임워크 진단 코드.</summary>
-/// <remarks>번호 대역: XKUI00xx 모듈, XKUI01xx 서비스, XKUI02xx 아이콘, XKUI03xx 명령, XKUI04xx 메뉴. 한 번 쓴 번호는 폐기되어도 재사용하지 않는다.</remarks>
+/// <remarks>번호 대역: XKUI00xx 모듈, XKUI01xx 서비스, XKUI02xx 아이콘, XKUI03xx 명령, XKUI04xx 메뉴, XKUI05xx 창. 한 번 쓴 번호는 폐기되어도 재사용하지 않는다.</remarks>
 public static class UiDiagnosticIds
 {
     /// <summary>모듈 ID 가 null·공백(Error, 그 모듈은 건너뜀).</summary>
@@ -100,4 +100,28 @@ public static class UiDiagnosticIds
 
     /// <summary>메뉴의 표시 조건·툴팁 대리자 예외(Warning, 항목·키당 1회, 조건 예외는 숨김·툴팁 예외는 툴팁 없음).</summary>
     public const string MenuConditionFailed = "XKUI0411";
+
+    /// <summary>창 ID 가 null·빈 값·공백이거나 명령 ID 와 같은 형식 규칙에 맞지 않음(Error, 등록 안 함).</summary>
+    public const string WindowIdInvalid = "XKUI0501";
+
+    /// <summary>같은 ID 의 창을 Replace 없이 다시 등록함(첫 등록 유지), 새 창 ID 가 다른 창의 ID·별칭과 대소문자 무시로 겹침, 또는 셸 밖의 등록이 예약어 Grid·Gantt·Form·0·1·2(대소문자 무시)를 창 ID 로 씀(Error, 등록 안 함).</summary>
+    public const string WindowDuplicate = "XKUI0502";
+
+    /// <summary>프레임워크가 아닌 주체가 아직 없는 예약 접두어(xkxk.) 창 ID 를 새로 만들려 함(Error, 등록 안 함). 또는 프레임워크가 아닌 주체의 xkxk. 별칭이나 셸 밖 등록의 옛 이름·숫자(Grid·Gantt·Form·0·1·2) 별칭(Error, 그 별칭만 버리고 창은 등록).</summary>
+    public const string WindowReservedId = "XKUI0503";
+
+    /// <summary>창 별칭이 다른 창의 ID·별칭과 겹침(Warning, 그 별칭만 버리고 창은 등록).</summary>
+    public const string WindowAliasConflict = "XKUI0504";
+
+    /// <summary>등록되지 않은 창을 열거나 복원하려 함(Warning, 자리표시 창으로 대신 표시하고 Open 은 false). 셸의 열기·복원 입구만 보고하며(열기마다 1건, 복원·적용마다 창 ID 당 1건) 화면 층은 보고하지 않음.</summary>
+    public const string WindowNotRegistered = "XKUI0505";
+
+    /// <summary>창을 열 셸(앱 화면)이 아직 없음(Warning, 열지 않고 false).</summary>
+    public const string WindowShellUnavailable = "XKUI0506";
+
+    /// <summary>창 CreateContent 가 예외를 던지거나 null·Control 이 아닌 값을 돌려줌, 또는 셸 기본 창 3종이 아닌 창에 CreateContent 가 없음(Error, 자리표시 내용으로 대신 표시).</summary>
+    public const string WindowContentFailed = "XKUI0507";
+
+    /// <summary>다른 주체가 등록한 창을 지우려 함(Error, 지우지 않음).</summary>
+    public const string WindowRemoveDenied = "XKUI0508";
 }

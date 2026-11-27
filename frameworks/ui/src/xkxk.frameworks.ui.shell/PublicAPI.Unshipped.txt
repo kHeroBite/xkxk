@@ -193,6 +193,14 @@ const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.ModuleConfigureFailed =
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.ModuleDuplicate = "XKUI0002" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.ModuleIdEmpty = "XKUI0001" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.ServiceDuplicate = "XKUI0101" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.WindowAliasConflict = "XKUI0504" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.WindowContentFailed = "XKUI0507" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.WindowDuplicate = "XKUI0502" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.WindowIdInvalid = "XKUI0501" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.WindowNotRegistered = "XKUI0505" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.WindowRemoveDenied = "XKUI0508" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.WindowReservedId = "XKUI0503" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.WindowShellUnavailable = "XKUI0506" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiHostKinds.Android = "android" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiHostKinds.Browser = "browser" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiHostKinds.Desktop = "desktop" -> string!
@@ -226,6 +234,7 @@ xkxk.frameworks.ui.shell.Framework.IUiAppContext.Shell.get -> xkxk.frameworks.ui
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.Themes.get -> xkxk.frameworks.ui.shell.Theming.ThemeCatalog!
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.Tour.get -> xkxk.frameworks.ui.shell.Tour.TourCatalogData!
 xkxk.frameworks.ui.shell.Framework.IUiAppContext.Views.get -> xkxk.frameworks.ui.shell.IViewRegistry!
+xkxk.frameworks.ui.shell.Framework.IUiAppContext.Windows.get -> xkxk.frameworks.ui.shell.Framework.IUiWindowRegistry!
 xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry
 xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry.Add(string! id, System.Action<xkxk.frameworks.ui.shell.Framework.UiCommandOptions!>! configure) -> bool
 xkxk.frameworks.ui.shell.Framework.IUiCommandRegistry.CanExecute(string! id) -> bool
@@ -280,10 +289,21 @@ xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Menus.get -> xkxk.frameworks
 xkxk.frameworks.ui.shell.Framework.IUiModuleContext.ModuleId.get -> string!
 xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Options.get -> xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions!
 xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Services.get -> xkxk.frameworks.ui.shell.Framework.UiServiceRegistry!
+xkxk.frameworks.ui.shell.Framework.IUiModuleContext.Windows.get -> xkxk.frameworks.ui.shell.Framework.IUiWindowRegistry!
 xkxk.frameworks.ui.shell.Framework.IUiServiceProvider
 xkxk.frameworks.ui.shell.Framework.IUiServiceProvider.Contains<TService>() -> bool
 xkxk.frameworks.ui.shell.Framework.IUiServiceProvider.Get<TService>() -> TService!
 xkxk.frameworks.ui.shell.Framework.IUiServiceProvider.TryGet<TService>(out TService! service) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiWindowRegistry
+xkxk.frameworks.ui.shell.Framework.IUiWindowRegistry.Add(string! id, System.Action<xkxk.frameworks.ui.shell.Framework.UiWindowOptions!>! configure) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiWindowRegistry.Changed -> System.EventHandler<xkxk.frameworks.ui.shell.Framework.UiRegistryChangedEventArgs!>?
+xkxk.frameworks.ui.shell.Framework.IUiWindowRegistry.Contains(string! id) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiWindowRegistry.Items.get -> System.Collections.Generic.IReadOnlyList<xkxk.frameworks.ui.shell.Framework.UiWindowDefinition!>!
+xkxk.frameworks.ui.shell.Framework.IUiWindowRegistry.Open(string! id) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiWindowRegistry.Open(string! id, System.Action<xkxk.frameworks.ui.shell.Framework.UiWindowOpenOptions!>! configure) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiWindowRegistry.Remove(string! id) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiWindowRegistry.TryGet(string! id, out xkxk.frameworks.ui.shell.Framework.UiWindowDefinition? window) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiWindowRegistry.TryResolve(string! idOrAlias, out xkxk.frameworks.ui.shell.Framework.UiWindowDefinition? window) -> bool
 xkxk.frameworks.ui.shell.Framework.ShellCommandIds
 xkxk.frameworks.ui.shell.Framework.ShellMenuIds
 xkxk.frameworks.ui.shell.Framework.UiCommandContext
@@ -527,6 +547,57 @@ xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.Replace<TService>(TService!
 xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.TryGet<TService>(out TService! service) -> bool
 xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.UiServiceRegistry() -> void
 xkxk.frameworks.ui.shell.Framework.UiServiceRegistry.UiServiceRegistry(xkxk.frameworks.ui.shell.Framework.UiDiagnostics! diagnostics) -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowContentContext
+xkxk.frameworks.ui.shell.Framework.UiWindowContentContext.DocumentId.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiWindowContentContext.Parameter.get -> object?
+xkxk.frameworks.ui.shell.Framework.UiWindowContentContext.Title.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiWindowContentContext.WindowId.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiWindowDefinition
+xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.Aliases.get -> System.Collections.Generic.IReadOnlyList<string!>!
+xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.AllowDuplicate.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.Category.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.CreateContent.get -> System.Func<xkxk.frameworks.ui.shell.Framework.UiWindowContentContext!, object?>?
+xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.DescriptionKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.Icon.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.Id.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.Owner.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.Placement.get -> xkxk.frameworks.ui.shell.Framework.UiWindowPlacement
+xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.Title.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.TitleKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiWindowOpenOptions
+xkxk.frameworks.ui.shell.Framework.UiWindowOpenOptions.AllowDuplicate.get -> bool?
+xkxk.frameworks.ui.shell.Framework.UiWindowOpenOptions.AllowDuplicate.set -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowOpenOptions.Parameter.get -> object?
+xkxk.frameworks.ui.shell.Framework.UiWindowOpenOptions.Parameter.set -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowOpenOptions.Placement.get -> xkxk.frameworks.ui.shell.Framework.UiWindowPlacement
+xkxk.frameworks.ui.shell.Framework.UiWindowOpenOptions.Placement.set -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowOpenOptions.Title.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiWindowOpenOptions.Title.set -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowOpenOptions.UiWindowOpenOptions() -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Aliases.get -> System.Collections.Generic.IList<string!>!
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.AllowDuplicate.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.AllowDuplicate.set -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Category.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Category.set -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.CreateContent.get -> System.Func<xkxk.frameworks.ui.shell.Framework.UiWindowContentContext!, object?>?
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.CreateContent.set -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.DescriptionKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.DescriptionKey.set -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Icon.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Icon.set -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Placement.get -> xkxk.frameworks.ui.shell.Framework.UiWindowPlacement
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Placement.set -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Replace.get -> bool
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Replace.set -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Title.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Title.set -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.TitleKey.get -> string?
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.TitleKey.set -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.UiWindowOptions() -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowPlacement
+xkxk.frameworks.ui.shell.Framework.UiWindowPlacement.Default = 0 -> xkxk.frameworks.ui.shell.Framework.UiWindowPlacement
+xkxk.frameworks.ui.shell.Framework.UiWindowPlacement.Sdi = 1 -> xkxk.frameworks.ui.shell.Framework.UiWindowPlacement
 xkxk.frameworks.ui.shell.Framework.XkxkUi
 xkxk.frameworks.ui.shell.Framework.XkxkUiAppBuilderExtensions
 xkxk.frameworks.ui.shell.Framework.XkxkUiApplication

@@ -1,8 +1,8 @@
 # 소비자 문서·공개 API 명세 불일치 검사기 — K1~K10·W1·W2(B07b, UADR-0015). 한계: K6 체인은 변수 ui·XkxkUi.Current 만 푼다
-"""docs/ 수기 문서 4개와 docs/api 생성물을 PublicAPI txt(표면 정본)와 대조한다.
+"""docs/ 수기 문서 5개와 docs/api 생성물을 PublicAPI txt(표면 정본)와 대조한다.
 
 사용: python3 -B test/framework/judge/consumer_docs_check.py [--root R] [--strict] [--report J] | --self-test
-  K1 생성물 최신(render_all == 디스크, 남는 .md 없음)   K2 수기 문서 4개·한국어 헤더·'상태'·'최종 갱신일'·300줄
+  K1 생성물 최신(render_all == 디스크, 남는 .md 없음)   K2 수기 문서 5개·한국어 헤더·'상태'·'최종 갱신일'·300줄
   K3 XKUI 코드 실재   K4 'xkxk.' ID 실재(상수 값·네임스페이스·프로젝트, 끝 '*'·'…' 는 접두 표기)
   K5 '<공개형식>.<멤버>' 실재   K6 체인 'ui.A.B'(IUiModuleContext)·'XkxkUi.Current.A.B'(IUiAppContext) 반환 형식 따라 확인
   K7 상대 링크 실재   K8 docs/README.md 가 docs 의 모든 .md(api 는 api/README.md) 링크   K9 AI 블록 마커·80줄
@@ -20,7 +20,8 @@ import urllib.parse
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 TOOLS = os.path.join(REPO, "tools")
-HAND_DOCS = ("docs/README.md", "docs/01_시작하기.md", "docs/02_확장_메뉴명령아이콘.md", "docs/03_AI_활용안내.md")
+HAND_DOCS = ("docs/README.md", "docs/01_시작하기.md", "docs/02_확장_메뉴명령아이콘.md", "docs/03_AI_활용안내.md",
+             "docs/04_확장_창.md")
 AI_DOC = "docs/03_AI_활용안내.md"
 MARK_B, MARK_E = "<!-- xkxk-ui-ai-guide:begin -->", "<!-- xkxk-ui-ai-guide:end -->"
 AI_MAX, DOC_MAX = 80, 300

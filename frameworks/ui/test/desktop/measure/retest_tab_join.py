@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # MDI·SDI 탭 합류 회귀(계획 §7 항목 3 ①~⑧) — 진단판을 화면 밖·임시 폴더로 띄워 L0 진단 명령으로만 판정하고 L0 로 못 하는 항목은 '포그라운드 필요' 목록으로 남긴다
 """
-사용: python3 -B retest_tab_join.py --run-dir <bin/run/<이름>/net10.0> --label <회차> [--work <폴더>] [--keep] [--skip-v4]
+사용: python3 -B retest_tab_join.py --run-dir <bin/run/<이름>[/net*.0]> --label <회차> [--work <폴더>] [--keep] [--skip-v4]
       python3 -B retest_tab_join.py --self-test
 기동·종료는 mdi_drag_app.launch/stop(--multi-instance on, 임시 data·profile, 화면 밖, 자기 PID 만 종료)을 그대로 쓴다. 실입력(커서·전경·SendInput)은 쓰지 않는다.
 L0 명령: tabjoin.drag(앱 안 포인터 끌기 — MdiTabJoinDrag 처리기를 그대로 탄다), window.tabJoin(합류 경로만), window.tabJoinTargets,
@@ -24,6 +24,27 @@ FOREGROUND_NEEDED = [
     {"item": "끄는 동안 표적 강조 캡처(pdTabJoinArmed·pdTabJoinTarget)", "why": "tabjoin.drag 는 한 요청 안에서 끝나 중간 상태를 캡처할 틈이 없다"},
     {"item": "L2 창 메시지 끌기로 250ms 머무름", "why": "post_mouse.ps1 은 끌기 도중 멈춤을 만들지 못한다 — 머무름 판정은 L0 tabjoin.drag 로 대신 본다"},
 ]
+
+
+EXE_NAME = "xkxk.frameworks.ui.desktop.exe"
+
+
+def resolve_run_dir(run_dir):
+    """실행 파일이 있는 net*.0 폴더를 찾는다. run_dir 자체·그 아래·같은 부모의 형제 net*.0 중 exe 가 있는 가장 높은 버전을 고른다. 없으면 입력 그대로."""
+    import re
+    def ver(p):
+        m = re.fullmatch(r"net(\d+)\.(\d+)", os.path.basename(p))
+        return (int(m.group(1)), int(m.group(2))) if m else None
+    if os.path.exists(os.path.join(run_dir, EXE_NAME)):
+        return run_dir
+    found = []
+    for base in (run_dir, os.path.dirname(os.path.abspath(run_dir))):
+        for d in glob.glob(os.path.join(base, "net*.0")):
+            if ver(d) and os.path.exists(os.path.join(d, EXE_NAME)):
+                found.append((ver(d), d))
+        if found:
+            break
+    return max(found)[1] if found else run_dir
 
 
 # 순수 판정(자가시험 대상) -----------------------------------------------------
@@ -168,7 +189,7 @@ def save_restore(run, profile, raw):
     doc = json.loads(text) if text else {}
     saved = field(doc, "groups") or []
     ids = [field(x, "docIds") for x in saved]
-    run.check("c8_saved_version5", field(doc, "version") == 5 and any(sorted(i or []) == sorted((g0 or {}).get("docs") or []) for i in ids),
+    run.check("c8_saved_version5", (field(doc, "version") or 0) >= 6 and any(sorted(i or []) == sorted((g0 or {}).get("docs") or []) for i in ids),
               {"file": path, "version": field(doc, "version"), "groups": saved})
     run.call("docs.close", all=True)
     time.sleep(0.5)
@@ -222,6 +243,7 @@ def main():
     if not args.run_dir:
         print("거부: --run-dir 가 필요하다")
         return 3
+    args.run_dir = resolve_run_dir(args.run_dir)
     work = os.path.abspath(os.path.join(args.work, args.label))
     if "logs/ui28" in work.replace("\\", "/"):
         print("logs/ui28/ 는 otest 결과 전용이다")
@@ -290,6 +312,15 @@ def self_test():
         fails.append("필드 대소문자")
     if HOLD_OK < 250 or any(h >= 250 for h in HOLD_SHORT):
         fails.append("머무름 기준이 250ms 경계를 나누지 않음")
+    import tempfile
+    with tempfile.TemporaryDirectory() as t:
+        for n in ("net10.0", "net11.0"):
+            os.makedirs(os.path.join(t, n))
+        open(os.path.join(t, "net11.0", EXE_NAME), "w").close()
+        if resolve_run_dir(os.path.join(t, "net10.0")) != os.path.join(t, "net11.0") or resolve_run_dir(t) != os.path.join(t, "net11.0"):
+            fails.append("run-dir net11.0 탐색")
+        if resolve_run_dir(os.path.join(t, "net11.0")) != os.path.join(t, "net11.0"):
+            fails.append("run-dir 직접 지정")
     for f in fails:
         print("FAIL", f)
     print("self-test %s, 실패 %d건" % ("PASS" if not fails else "FAIL", len(fails)))

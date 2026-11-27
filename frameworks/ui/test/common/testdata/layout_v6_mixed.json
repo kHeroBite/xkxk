@@ -1,0 +1,115 @@
+{
+  "Version": 6,
+  "Mode": "Mdi",
+  "Panels": {
+    "ExplorerProportion": 0.18,
+    "LogProportion": 0.2,
+    "NotificationEdge": "Right",
+    "NotificationProportion": 0.2,
+    "ExplorerEdge": "Left",
+    "LogEdge": "Bottom",
+    "ExtraEdge": null,
+    "ExtraProportion": null,
+    "Tabs": [
+      {
+        "PanelId": "LeftPane.Tabs",
+        "ToolIds": [
+          "Explorer"
+        ],
+        "ActiveToolId": "Explorer",
+        "Area": null,
+        "Index": null,
+        "Proportion": null
+      },
+      {
+        "PanelId": "BottomPane.Tabs",
+        "ToolIds": [
+          "Log"
+        ],
+        "ActiveToolId": "Log",
+        "Area": null,
+        "Index": null,
+        "Proportion": null
+      }
+    ],
+    "cornerOwners": null
+  },
+  "SidePanelsHidden": false,
+  "ActiveId": "acme.project.editor-1",
+  "Documents": [
+    {
+      "Id": "Grid-1",
+      "Kind": "Grid",
+      "WindowId": "xkxk.demo.grid",
+      "Seq": 1,
+      "Title": "그리드 1",
+      "X": 0,
+      "Y": 0,
+      "Width": 640,
+      "Height": 420,
+      "MdiState": "Normal",
+      "ZIndex": 0,
+      "ZOrder": 0,
+      "Zoom": 1,
+      "IsPinned": false,
+      "SyncEnabled": true,
+      "IsLocked": false,
+      "Window": null,
+      "AutoTitle": true,
+      "PanelId": null
+    },
+    {
+      "Id": "acme.project.editor-1",
+      "WindowId": "acme.project.editor",
+      "Seq": 1,
+      "Title": "프로젝트 편집기",
+      "X": 60,
+      "Y": 60,
+      "Width": 720,
+      "Height": 480,
+      "MdiState": "Normal",
+      "ZIndex": 2,
+      "ZOrder": 2,
+      "Zoom": 1,
+      "IsPinned": false,
+      "SyncEnabled": true,
+      "IsLocked": false,
+      "Window": null,
+      "AutoTitle": false,
+      "PanelId": null
+    },
+    {
+      "Id": "Form-1",
+      "Kind": "Form",
+      "WindowId": "xkxk.demo.form",
+      "Seq": 1,
+      "Title": "입력폼 1",
+      "X": 30,
+      "Y": 30,
+      "Width": 640,
+      "Height": 420,
+      "MdiState": "Normal",
+      "ZIndex": 1,
+      "ZOrder": 1,
+      "Zoom": 1,
+      "IsPinned": false,
+      "SyncEnabled": true,
+      "IsLocked": false,
+      "Window": null,
+      "AutoTitle": true,
+      "PanelId": null
+    }
+  ],
+  "DuplicateKinds": [
+    "Form"
+  ],
+  "DuplicateWindowIds": [
+    "xkxk.demo.form",
+    "acme.project.editor"
+  ],
+  "DuplicateOffWindowIds": [
+    "xkxk.demo.grid",
+    "xkxk.demo.gantt"
+  ],
+  "Groups": null
+}

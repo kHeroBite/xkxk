@@ -6,8 +6,8 @@ using xkxk.frameworks.ui.shell.Framework;
 namespace xkxk.frameworks.ui.views.Documents;
 
 /// <summary>
-/// 벤치 문서는 새 DocumentKind 를 만들지 않고 Form 종류 + 고정 제목 접두로 연다. 뷰는 App.DocumentViews 를
-/// 감싼 팩토리가 제목 접두를 보고 BenchDocumentView 로 바꿔 만든다(문서 종류 열거·레이아웃 직렬화·다국어 사전을 건드리지 않기 위함).
+/// 벤치 문서는 새 창 종류를 만들지 않고 Form 창 + 고정 제목 접두로 연다. 뷰는 App.DocumentViews 를
+/// 감싼 팩토리가 제목 접두를 보고 BenchDocumentView 로 바꿔 만든다(창 등록·레이아웃 직렬화·다국어 사전을 건드리지 않기 위함).
 /// 한계: 앱 시작 때 레이아웃 복원으로 다시 열린 벤치 문서는 팩토리 설치 전이면 일반 양식 화면으로 보인다 — 닫고 다시 연다.
 /// 제품판(진단 꺼짐)에서는 IsAvailable=false, Open 은 null 만 돌려준다.
 /// </summary>
@@ -26,7 +26,7 @@ public static class BenchEntry
     {
         if (XkxkUi.Current.Shell is not { } shell) { return null; }
         EnsureFactory();
-        return shell.OpenDocument(DocumentKind.Form, TitlePrefix + (target == "chart" ? ChartSuffix : target == "dashboard" ? DashboardSuffix : "Grid"), allowDuplicate: true);
+        return shell.OpenDocument(LegacyWindowKinds.Form, TitlePrefix + (target == "chart" ? ChartSuffix : target == "dashboard" ? DashboardSuffix : "Grid"), allowDuplicate: true);
     }
 
     private static bool s_installed;

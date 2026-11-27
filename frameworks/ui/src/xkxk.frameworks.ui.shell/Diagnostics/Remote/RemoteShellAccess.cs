@@ -49,7 +49,8 @@ internal static class RemoteShellAccess
         {
             ["zIndex"] = stack?.ZIndex ?? tabIndex, ["childIndex"] = stack?.ChildIndex, ["zReason"] = zReason,
             ["modelZIndex"] = d.MdiZIndex, // Dock 모델 값(화면 zIndex·저장 ZOrder 와 3자 대조용)
-            ["id"] = d.Id, ["title"] = d.Title, ["kind"] = d.Kind.ToString().ToLowerInvariant(), ["seq"] = d.Seq,
+            ["id"] = d.Id, ["title"] = d.Title, ["kind"] = WindowDisplay.LegacyOrId(d.WindowId).ToLowerInvariant(), ["seq"] = d.Seq, // kind 값은 데모 3종 grid·gantt·form 그대로(I10)
+            ["windowId"] = d.WindowId, ["parameter"] = d.Parameter as string, // parameter 는 문자열일 때만 값, 아니면 null
             ["active"] = ReferenceEquals(d, Shell.ActiveDocument), ["state"] = d.MdiState.ToString(),
             // floating 은 셸 판정(Dock 플로팅 창 소속)을 쓴다. 브라우저 관리형 창은 메인 TopLevel 안에 그려져 idx 로는 판별 불가(otest-w-2 22:4x 제보)
             ["window"] = idx, ["floating"] = floating, ["managedWindow"] = floating && global::Dock.Settings.DockSettings.UseManagedWindows, // 열린 직후(아직 미배치)에도 맞게 — Android 23:28 실측 보정

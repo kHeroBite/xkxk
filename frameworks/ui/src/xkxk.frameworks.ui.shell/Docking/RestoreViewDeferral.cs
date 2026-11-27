@@ -92,8 +92,8 @@ public static partial class RestoreViewDeferral
         return true;
     }
 
-    /// <summary>이 종류의 미룬 문서가 있는가. 있으면 그 문서 선생성이 템플릿 예열을 겸하므로 DocumentPrewarm 이 같은 종류 예열을 건너뛴다.</summary>
-    public static bool HasDeferred(DocumentKind kind) => s_deferred.Any(d => d.Doc.Kind == kind);
+    /// <summary>이 창 ID 의 미룬 문서가 있는가. 있으면 그 문서 선생성이 템플릿 예열을 겸하므로 DocumentPrewarm 이 같은 창 예열을 건너뛴다.</summary>
+    public static bool HasDeferred(string windowId) => s_deferred.Any(d => d.Doc.WindowId == windowId);
 
     /// <summary>DocumentPrewarm 이 끝났다(꺼짐·실패 포함). 선생성은 예열 뒤에 시작한다(두 작업이 같은 유휴 시간을 다투지 않게).</summary>
     public static void NotifyPrewarmDone()

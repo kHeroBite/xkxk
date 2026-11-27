@@ -153,7 +153,7 @@ internal static class RemoteLoadSelfTest
         return new JsonObject { ["cases"] = cases, ["slowSeconds"] = WindowLoadState.CurrentSlowSeconds };
     }
 
-    private static PocDocument Doc(string id) => new() { Id = id, Kind = DocumentKind.Grid, Seq = 1, Title = id };
+    private static PocDocument Doc(string id) => new() { Id = id, WindowId = LegacyWindowKinds.Grid, Seq = 1, Title = id };
 
     private static string? Check(params (bool Ok, string Message)[] checks) => checks.FirstOrDefault(c => !c.Ok).Message;
 

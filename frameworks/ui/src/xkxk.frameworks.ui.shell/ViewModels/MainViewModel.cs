@@ -224,8 +224,11 @@ public sealed class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(ActiveDocument));
     }
 
-    private static DocumentKind ParseKind(string? kind) =>
-        Enum.TryParse<DocumentKind>(kind, ignoreCase: true, out var k) ? k : DocumentKind.Grid;
+    // 창 ID·별칭 해석은 셸(OpenDocument)이 한다. 빈 값은 기존 기본인 격자 창이고, 별칭이 아닌 옛 숫자(0~2)만 여기서 창 ID 로 바꾼다.
+    private static string ParseKind(string? kind) =>
+        string.IsNullOrWhiteSpace(kind) ? LegacyWindowKinds.Grid
+        : int.TryParse(kind, out var number) ? LegacyWindowKinds.ToId(number) ?? kind
+        : kind;
 
     private static void Run(PocDocument? doc, Action<PocDocument> action)
     {

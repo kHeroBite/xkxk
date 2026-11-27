@@ -4,6 +4,20 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-27 — 별별UI B09 창 레지스트리(UADR-0016)·문서 종류 문자열 ID·저장 형식 6(O4, B09, conv_179570580620)
+- 결정(UADR-0016). 문서 종류 열거형(`DocumentKind`)을 없애고 창을 문자열 ID 로 등록하는 창 레지스트리를 공개한다. 공개 계약은 `IUiWindowRegistry`·`UiWindowDefinition`·`UiWindowOptions`·`UiWindowOpenOptions`·`UiWindowPlacement`·`UiWindowContentContext` 이며 정본은 `a10_창_레지스트리.md` 와 `docs/04_확장_창.md`·`docs/api/09_창.md` 다. 셸 기본 3종(`xkxk.demo.grid`·`gantt`·`form`)은 `ShellDefaultWindows` 가 등록한다.
+- 저장 형식 6. 레이아웃 Version 5→6 읽기 변환(`LayoutMigration`)을 더했고 문서 종류는 문자열 ID 로 저장한다. 끔 목록은 `DuplicateOffWindowIds`(리뷰 R4)를 쓰며 옛 `DuplicateKinds` 는 원소 변환기로 읽는다. 고정 표본은 `test/common/testdata/layout_v5_kinds.json`·`layout_v6_mixed.json` 이다.
+- 예약어(D-V2). 옛 이름 Grid·Gantt·Form 과 숫자 문자열 0·1·2 는 셸 주체가 아니면 창 ID 로 쓸 수 없다(등록 거부 + XKUI0502, 별칭이면 그 별칭만 버리고 XKUI0503). `xkxk.` 접두어도 프레임워크 몫이다.
+- 리뷰 R1~R7(odev-review-1). ID·별칭 충돌 거부(R1), `Resolve` 마지막 단계의 옛 이름 재탐색(R2), XKUI0505 중복 보고 정리(R3), 형식 6 끔 목록(R4), 예약 별칭 문서·코드 일치(R5), `DuplicateKinds` 변환(R6), `CreateContent` 없는 비셸 창 자리표시+XKUI0507(R7). 재확인 PASS·새 회귀 0. O4 외부(codex) 적대적 리뷰는 팀원 하위 Agent 가드(L-299)에 막혀 같은 관점의 직접 점검으로 대체했다.
+- 원격·자동화. 기존 명령에 인자를 더했다(`docs.open window=`·`param=`·`kind=` 옛 이름·숫자 호환, `docs.list` 에 `windowId`·`parameter`, 진단 `layout.apply`·`registry.dump windows`). 모르는 `--open` 이름은 이전의 '무시' 에서 자리표시 문서+XKUI0505 로 바뀐다.
+- 소비자 영향. ① `docs/03_AI_활용안내.md` 의 AI 복사 블록이 바뀌었다 — 별별UI 를 쓰는 제품은 03 블록을 다시 붙여 넣어야 한다(B18 ohoops 통지 때 포함). ② `IShellCommands.OpenDocument` 의 첫 인자가 `string` 으로 바뀌었다(바이너리 비호환, a10 한계 ⑤).
+- 시험. 계약 시험 73/73(C63~C73), 카나리아 기대 FAIL, 웹 스모크 9/9, Fold5 실기기 AC-021 PASS(접지 않음), `verify_framework.sh` 10단계 rc0, 빌드 4종 rc0, `docs/api` 생성기·소비자 문서 검사 477항목 fail 0. 데스크톱은 사용자 결정 D-U2 로 `logs/user_files/pending` 만 지우고 임시 `--data-dir` 로 실행해 AC-013 9/9·AC-024b PASS 다.
+- w23 판정식 노후 정정. 웹 w23 2건(`w23_tab_join_web`)이 실패해 역라우팅했고, 화면 코드(`MainView.FavoriteBar.cs`) 무변경·캡처상 정상이라 회귀가 아니라 판정식이 아이콘 칸 폭을 반영하지 않은 노후로 판단해 판정식만 고쳤다(31/31). 기준선 빌드 대조는 하지 않았으므로 노후는 추정이다.
+- 시험 도구 결함 정정(D-T4). 데스크톱 시험이 종료부에서 `tasklist.exe` 의 cp949 출력을 `text=True` 로 읽다 UnicodeDecodeError 를 냈다. `perf_menu_open_hosts.py`·`menu_registry_smoke_hosts.py` 는 OS 코드 페이지로 정확히 읽게(`errors=replace` 로 숨기지 않음), `retest_tab_join`·`retest_layout_v3_read` 는 `resolve_run_dir` 로 고쳤다. 제품 소스는 무변경이다.
+- 검수 조건 v3 개정(D-U1, 사용자 결정, 내용 그대로). 사유는 판정 스크립트 결함과 기준선 실패가 제품 결함으로 오인돼서다. ① AC-019 는 판정 스크립트의 로캘 collation·저장소 루트 기준 git diff 경로 결함만 고쳐 더 엄격하게 재판정(PASS rc0) ② AC-020 은 '기준 커밋 61ffef5 대비 새 실패 0'(기존 하드코딩 한글 27건·15파일은 UTODO-0043) ③ AC-024 의 데스크톱 3종은 AC-013 처럼 대기 허용(should, WAIT 는 PASS 로 세지 않음)이고 웹 3종은 must 유지. 개정 전 파일은 세션 보관본이다.
+- 사용자 결정. D-U2: 설정 보호 pending 해제 허가("내가 변경한 설정은 유지 안해도 된다. 테스트 단계라서 아무 의미없다"), UTODO-0031 해소. D-U3: CRUD 게이트는 클라이언트 저장소를 DB 판정에서 빼고, frameworks/ui 하위 프로젝트에만 `/ocrudwaiver` 면제를 둔다("xkxk는 추후에 서버db가 생길예정이다. 이 xkxk.frameworks.ui 프로젝트만 서버db가 없을 예정이다."). 하네스 결함(F-UNIT-TEST amendments 미인식, docs_update_gate 오판, CRUD 판정기)은 하네스 쪽에서 처리됐다.
+- 결과. AC 최종 must 전부 PASS, should 2/2 PASS, 카나리아 정상. a4 B09 완료, B10 행에 강타입 `Register<TVm,TView,TArgs>`·`WindowViewModel`·`IWindowContext` 예약 확장과 옛 이름 별칭 금지를 보강했다. 새 과제는 UTODO-0042~0048 이고 UTODO-0031 은 완료(2026-11-27)로 바꿨다.
+
 ## 2026-11-27 — 별별UI B08 메뉴 열기 측정기·모듈 구성 시간·F2 끝 회귀(O4, B08, conv_179570580620)
 - 목적. F2(레지스트리화)가 메뉴 경로에 더한 비용을 실제 ms 로 남기고 F2 끝 회귀를 확인한다(a4 B08, 목표 후보 50ms 이하). 공개 API 는 바뀌지 않았고 새 ADR 은 없다.
 - 진단 원격 명령. `menu.open`(명령 진입 → 팝업 첫 프레임)과 `perf.modules`(`Build`·모듈별 `Configure` 시간)를 더했다(`RemoteMenuOpenCommands.cs`, 진단 빌드 전용). 셸 내부 `UiModuleTimings.cs` 가 `XkxkUiBuilder.Build` 마지막 1회분을 기록하고, 화면 층 `MenuPerf.cs` 가 `ui.menu.build`·`ui.menu.refresh` 를 잰다.

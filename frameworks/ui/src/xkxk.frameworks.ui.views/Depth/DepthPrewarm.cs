@@ -156,7 +156,7 @@ public static class DepthPrewarm
             Child = new StackPanel
             {
                 Orientation = Avalonia.Layout.Orientation.Horizontal,
-                Children = { R(new PathIcon(), PathIcon.DataProperty, "PdIconDocument"), new TextBlock { Text = WindowCommands.AutoTitle(DocumentKind.Grid, 1) }, R(new Avalonia.Controls.Shapes.Path(), Avalonia.Controls.Shapes.Path.DataProperty, "PdCapCloseGeometry") },
+                Children = { R(new PathIcon(), PathIcon.DataProperty, "PdIconDocument"), new TextBlock { Text = WindowCommands.AutoTitle(LegacyWindowKinds.Grid, 1) }, R(new Avalonia.Controls.Shapes.Path(), Avalonia.Controls.Shapes.Path.DataProperty, "PdCapCloseGeometry") },
             },
         };
         R(header, Border.HeightProperty, "PdMdiTitleHeight");
@@ -197,7 +197,7 @@ public static class DepthPrewarm
         var bars = new DockPanel { Children = { new Avalonia.Controls.Primitives.ScrollBar { Orientation = Avalonia.Layout.Orientation.Horizontal, AllowAutoHide = false }, new Avalonia.Controls.Primitives.ScrollBar { Orientation = Avalonia.Layout.Orientation.Vertical, AllowAutoHide = false }, cells } };
         DockPanel.SetDock(bars.Children[0], Avalonia.Controls.Dock.Bottom);
         DockPanel.SetDock(bars.Children[1], Avalonia.Controls.Dock.Right);
-        var button = new Button { Content = WindowCommands.AutoTitle(DocumentKind.Form, 2) };
+        var button = new Button { Content = WindowCommands.AutoTitle(LegacyWindowKinds.Form, 2) };
         DockPanel.SetDock(button, Avalonia.Controls.Dock.Top);
         return new DockPanel { Children = { button, bars } };
     }
@@ -215,7 +215,7 @@ public static class DepthPrewarm
         var c = CultureInfo.CurrentCulture;
         var now = DateTime.Now;
         return string.Join(" ",
-            WindowCommands.AutoTitle(DocumentKind.Grid, 1), WindowCommands.AutoTitle(DocumentKind.Form, 2), WindowCommands.AutoTitle(DocumentKind.Gantt, 3),
+            WindowCommands.AutoTitle(LegacyWindowKinds.Grid, 1), WindowCommands.AutoTitle(LegacyWindowKinds.Form, 2), WindowCommands.AutoTitle(LegacyWindowKinds.Gantt, 3),
             (1234567.89).ToString("N2", c), (-0.5).ToString("P0", c), now.ToString("d", c), now.ToString("t", c), now.ToString("MMMM dddd", c));
     }
 

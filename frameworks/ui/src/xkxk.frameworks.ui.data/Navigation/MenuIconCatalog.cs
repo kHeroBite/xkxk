@@ -14,7 +14,7 @@ public static partial class MenuIconCatalog
     public const string DefaultDocumentIconKey = ShellIconKeyPrefix + "Document";
 
     /// <summary>
-    /// PoC 샘플 문서 종류(Shell DocumentKind 이름) → 대표 화면 ID. 후보 대응이며 이 표 한 곳에만 둔다(22 설계·plan §4.3).
+    /// PoC 샘플 문서 종류(옛 문서 종류 이름(Grid·Gantt·Form, LegacyWindowKinds.NameOf)) → 대표 화면 ID. 후보 대응이며 이 표 한 곳에만 둔다(22 설계·plan §4.3).
     /// 데이터 층은 Shell 의 enum 을 모르므로 이름 문자열로 받는다.
     /// </summary>
     public static IReadOnlyDictionary<string, string> ScreenIdByPocKind { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)

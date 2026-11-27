@@ -65,7 +65,7 @@ internal static class AutomationCommandRunner
             case "grid-reopen": // 그리드 열기 회귀 판별: 모두 닫고 그리드를 다시 연다(두 번째 열기 값 = grid.open.*.next)
                 shell.CloseAll();
                 await AutomationBridge.WaitFramesAsync(top, 2);
-                shell.OpenDocument(DocumentKind.Grid);
+                shell.OpenDocument(LegacyWindowKinds.Grid);
                 await AutomationBridge.WaitFramesAsync(top, 4);
                 break;
             case "chrome-sdi" or "chrome-pin" or "chrome-lock" or "chrome-sync" or "chrome-dup" or "chrome-cache" or "chrome-refresh" or "chrome-help": ChromeCmd(shell, lower); break; // UI-09 제목줄 버튼

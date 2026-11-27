@@ -14,10 +14,32 @@ namespace xkxk.frameworks.ui.shell.Docking;
 /// <summary>스냅샷 ↔ JSON, 그리고 Dock 모델 → 스냅샷 캡처.</summary>
 public static class LayoutSerializer
 {
-    public static string Serialize(LayoutSnapshot snapshot) =>
-        JsonSerializer.Serialize(snapshot, LayoutJsonContext.Default.LayoutSnapshot);
+    /// <summary>
+    /// 저장 형식 6 으로 쓴다 — Version 은 늘 CurrentVersion, 문서마다 WindowId, 옛 이름이 있는 창만 Kind(없으면 키 생략),
+    /// DuplicateWindowIds 는 전부, DuplicateKinds 는 옛 이름으로 바뀌는 것만, DuplicateOffWindowIds 는 늘(비어도) 쓰되 빈 값·중복·켬 목록 항목은 뺀다(a10 §5.3).
+    /// 호출자의 스냅샷은 바꾸지 않는다(얕은 사본에 채운다).
+    /// </summary>
+    public static string Serialize(LayoutSnapshot snapshot)
+    {
+        var output = snapshot.ShallowCopy();
+        output.Version = LayoutSnapshot.CurrentVersion;
+        output.Documents = (snapshot.Documents ?? new List<DocumentSnapshot>()).Where(d => d is not null).Select(d =>
+        {
+            var item = d.ShallowCopy();
+            item.WindowId = string.IsNullOrEmpty(d.WindowId) ? LayoutMigration.ResolveId(d.Kind) : d.WindowId;
+            item.Kind = LegacyWindowKinds.NameOf(item.WindowId);
+            return item;
+        }).ToList();
+        var duplicates = (snapshot.DuplicateWindowIds ?? new List<string>()).Where(id => !string.IsNullOrEmpty(id)).Distinct(System.StringComparer.Ordinal).ToList();
+        output.DuplicateWindowIds = duplicates;
+        output.DuplicateKinds = duplicates.Select(LegacyWindowKinds.NameOf).OfType<string>().ToList();
+        output.DuplicateOffWindowIds = (snapshot.DuplicateOffWindowIds ?? new List<string>())
+            .Where(id => !string.IsNullOrEmpty(id) && !duplicates.Contains(id, System.StringComparer.Ordinal))
+            .Distinct(System.StringComparer.Ordinal).ToList();
+        return JsonSerializer.Serialize(output, LayoutJsonContext.Default.LayoutSnapshot);
+    }
 
-    /// <summary>손상·빈 JSON 이면 null.</summary>
+    /// <summary>손상·빈 JSON 이면 null. 해석 뒤 LayoutMigration.Normalize 로 옛 저장본(v1~v5)의 WindowId·DuplicateWindowIds 를 채운다(Version 은 읽은 값 유지).</summary>
     public static LayoutSnapshot? Deserialize(string? json)
     {
         if (string.IsNullOrWhiteSpace(json))
@@ -27,7 +49,8 @@ public static class LayoutSerializer
 
         try
         {
-            return JsonSerializer.Deserialize(json, LayoutJsonContext.Default.LayoutSnapshot);
+            var snapshot = JsonSerializer.Deserialize(json, LayoutJsonContext.Default.LayoutSnapshot);
+            return snapshot is null ? null : LayoutMigration.Normalize(snapshot);
         }
         catch (JsonException)
         {
@@ -50,7 +73,7 @@ public static class LayoutSerializer
             var item = new DocumentSnapshot
             {
                 Id = doc.Id,
-                Kind = doc.Kind,
+                WindowId = doc.WindowId, // 옛 판 호환 Kind 는 Serialize 가 만든다(S6)
                 Seq = doc.Seq,
                 Title = doc.Title,
                 X = b.X,

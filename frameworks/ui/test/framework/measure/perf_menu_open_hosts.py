@@ -13,6 +13,16 @@ sys.path.insert(0, os.path.join(UI, "test", "common"))
 REJECT_PORTS = (5180, 5220, 5242, 5791)
 
 
+def decode_console(raw):
+    """Windows 콘솔 도구(tasklist.exe 등) 바이트 출력을 정확히 디코딩한다 — UTF-8 우선, 실패 시 cp949(한글 Windows 기본). 글자를 버리지 않는다."""
+    for enc in ("utf-8", "cp949"):
+        try:
+            return raw.decode(enc)
+        except UnicodeDecodeError:
+            continue
+    return raw.decode("cp949", errors="strict")
+
+
 @contextlib.contextmanager
 def launch(a, log):
     """(call, meta) 를 내준다. 기동 실패·가드 대기면 call=None 과 meta{status,reason[,carryover]}."""
@@ -110,7 +120,7 @@ def launch_desktop(a, log):
         call("app.shutdown")
     finally:
         time.sleep(3)
-        alive = subprocess.run(["tasklist.exe", "/FI", "PID eq %s" % pid, "/NH"], capture_output=True, text=True).stdout
+        alive = decode_console(subprocess.run(["tasklist.exe", "/FI", "PID eq %s" % pid, "/NH"], capture_output=True).stdout)
         if pid in alive:
             subprocess.run(["taskkill.exe", "/PID", pid, "/F"], capture_output=True)  # 자기 PID 만
             log("자기 PID %s 강제 종료" % pid)

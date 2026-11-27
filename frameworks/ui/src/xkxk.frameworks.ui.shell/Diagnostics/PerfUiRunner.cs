@@ -14,7 +14,7 @@ namespace xkxk.frameworks.ui.shell.Diagnostics;
 /// <summary>perf-ui 시나리오 실행. AutomationCommandRunner 의 perf-ui·perf-ui:short 명령이 부른다.</summary>
 internal static class PerfUiRunner
 {
-    private static readonly DocumentKind[] PerfUiKinds = { DocumentKind.Grid, DocumentKind.Gantt, DocumentKind.Form };
+    private static readonly string[] PerfUiKinds = { LegacyWindowKinds.Grid, LegacyWindowKinds.Gantt, LegacyWindowKinds.Form };
 
     /// <summary>--profile short(웹·모바일): 문서 1·5개 × 조작별 3회(목표 3분 이내). 기본 full(데스크톱): 1·20개 × 10회.</summary>
     internal static bool Short { get; set; }
@@ -62,7 +62,7 @@ internal static class PerfUiRunner
                 await OpAsync(top, p + "zoom.reset", () => shell.ResetZoom());
                 await OpAsync(top, p + "theme.next", () => ThemeAutomation.Next());
                 await OpAsync(top, p + "font.family", () => ui.FontName = r % 2 == 0 ? altFont : font);
-                await OpAsync(top, p + "doc.open", () => shell.OpenDocument(DocumentKind.Form));
+                await OpAsync(top, p + "doc.open", () => shell.OpenDocument(LegacyWindowKinds.Form));
                 await OpAsync(top, p + "doc.close", () => { if (shell.ActiveDocument is { } d) { shell.CloseDocument(d); } });
                 await OpAsync(top, p + "activate.next", shell.ActivateNext);
                 await OpAsync(top, p + "activate.prev", shell.ActivatePrevious);

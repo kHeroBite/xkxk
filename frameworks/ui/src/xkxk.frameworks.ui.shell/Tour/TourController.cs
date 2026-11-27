@@ -268,7 +268,7 @@ public sealed class TourController
     {
         var body = TourCatalog.Tr(step.BodyKey);
         return step.TargetId == TourCatalog.ContentAnchor
-            && target is { Tag: PocDocument { Kind: DocumentKind.Grid or DocumentKind.Gantt } document }
+            && target is { Tag: PocDocument { WindowId: LegacyWindowKinds.Grid or LegacyWindowKinds.Gantt } document }
             && XkxkUi.Current.Shell is WindowCommands shell
             ? shell.ChromeHelpText(document) + "\n\n" + body
             : body;

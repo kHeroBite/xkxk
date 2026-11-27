@@ -8,6 +8,7 @@ internal sealed class UiModuleContext : IUiModuleContext
     private IUiIconRegistry? _icons;
     private IUiCommandRegistry? _commands;
     private IUiMenuRegistry? _menus;
+    private IUiWindowRegistry? _windows;
 
     internal UiModuleContext(string moduleId, XkxkUiBuilderOptions options, UiServiceRegistry services, UiDiagnostics diagnostics, UiBuildSession session)
     {
@@ -32,4 +33,6 @@ internal sealed class UiModuleContext : IUiModuleContext
     public IUiCommandRegistry Commands => _commands ??= UiAppContext.Instance.CommandStore.ViewFor(ModuleId, Diagnostics, _session);
 
     public IUiMenuRegistry Menus => _menus ??= UiAppContext.Instance.MenuStore.ViewFor(ModuleId, Diagnostics, _session);
+
+    public IUiWindowRegistry Windows => _windows ??= UiAppContext.Instance.WindowStore.ViewFor(ModuleId, Diagnostics, _session);
 }

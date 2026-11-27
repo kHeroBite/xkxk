@@ -13,7 +13,7 @@ using xkxk.frameworks.ui.shell.Framework;
 namespace xkxk.frameworks.ui.views.Diagnostics.Gallery;
 
 /// <summary>
-/// 갤러리 문서는 새 DocumentKind 를 만들지 않고 Form 종류 + 고정 제목 접두로 연다(BenchEntry 와 같은 방식 — 문서 종류 열거·레이아웃 직렬화·다국어 사전 불변).
+/// 갤러리 문서는 새 창 종류를 만들지 않고 Form 창 + 고정 제목 접두로 연다(BenchEntry 와 같은 방식 — 창 등록·레이아웃 직렬화·다국어 사전 불변).
 /// 뷰는 App.DocumentViews 를 감싼 팩토리가 제목 접두를 보고 GalleryView 로 바꿔 만든다.
 /// 한계: 앱 시작 때 레이아웃 복원으로 다시 열린 갤러리 문서는 팩토리 설치 전이면 일반 양식 화면으로 보인다 — 닫고 gallery.open 으로 다시 연다.
 /// </summary>
@@ -33,7 +33,7 @@ public static class ControlGallery
         }
 
         EnsureFactory();
-        return shell.OpenDocument(DocumentKind.Form, TitlePrefix + "Controls", allowDuplicate: false);
+        return shell.OpenDocument(LegacyWindowKinds.Form, TitlePrefix + "Controls", allowDuplicate: false);
     }
 
     private static void EnsureFactory()

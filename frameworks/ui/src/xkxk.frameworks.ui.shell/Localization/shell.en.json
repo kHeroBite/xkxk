@@ -133,6 +133,7 @@
   "shell.explorer.gridSdi": "Grid in separate window",
   "shell.explorer.ganttSdi": "Gantt in separate window",
   "shell.explorer.formSdi": "Form in separate window",
+  "shell.window.missing": "This window is not registered: {0}",
   "shell.explorer.presets": "Layout presets",
 
   "status.docs": "Documents",

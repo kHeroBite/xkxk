@@ -134,6 +134,7 @@
   "shell.explorer.ganttSdi": "간트 독립 창",
   "shell.explorer.formSdi": "입력폼 독립 창",
   "shell.explorer.presets": "레이아웃 프리셋",
+  "shell.window.missing": "등록되지 않은 창입니다: {0}",
 
   "status.docs": "문서",
   "status.noActive": "활성 문서 없음",

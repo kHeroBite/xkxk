@@ -7,12 +7,13 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Dock.Model.Core;
 using xkxk.frameworks.ui.shell.Diagnostics;
+using xkxk.frameworks.ui.shell.Framework;
 using xkxk.frameworks.ui.shell.Localization;
 
 namespace xkxk.frameworks.ui.shell.Docking;
 
 /// <summary>
-/// 문서별 크롬 상태(static 표 s_chrome — 문서 객체가 사라지면 함께 사라짐)와 종류 단위 중복 허용(인스턴스)을 맡는다.
+/// 문서별 크롬 상태(static 표 s_chrome — 문서 객체가 사라지면 함께 사라짐)와 창 ID 단위 중복 허용(인스턴스)을 맡는다.
 /// 창 전환·항상 위(SDI)·떠 있게 하기는 s.Owner.Activation, Z순서 재적용은 s.Owner.MdiZOrder 를 부른다.
 /// </summary>
 [WindowCommandsPart]
@@ -20,8 +21,8 @@ internal sealed class DocumentChromeService
 {
     private const int MockQueriesPerLoad = 8;
     private static readonly ConditionalWeakTable<PocDocument, DocumentChromeState> s_chrome = new();
-    private static readonly Dictionary<DocumentKind, int> s_loads = new();
-    private readonly HashSet<DocumentKind> _duplicateKinds = new();
+    private static readonly Dictionary<string, int> s_loads = new();
+    private readonly Dictionary<string, bool> _duplicates = new(); // 창 ID → 바꾼 설정. 없으면 창 정의의 처음 값(a10 §2)
     private readonly WindowSession _s;
 
     internal DocumentChromeService(WindowSession s)
@@ -133,10 +134,16 @@ internal sealed class DocumentChromeService
 
     public static DocumentChromeState ChromeOf(PocDocument document) => s_chrome.GetValue(document, _ => new DocumentChromeState());
 
-    /// <summary>중복 허용된 문서 종류(레이아웃 저장용).</summary>
-    public IReadOnlyCollection<DocumentKind> DuplicateKinds => _duplicateKinds;
+    /// <summary>중복 허용된 창 ID(레이아웃 저장용). 바꾼 순서 먼저, 이어서 정의가 처음부터 허용한 창.</summary>
+    public IReadOnlyCollection<string> DuplicateWindowIds => DuplicateIds(true);
 
-    public bool IsDuplicateAllowed(DocumentKind kind) => _duplicateKinds.Contains(kind);
+    /// <summary>중복 허용을 끈 창 ID(저장용, a10 §5.3): 꺼진 등록 창 전부 + 등록 안 됐지만 꺼짐으로 정한 창.</summary>
+    public IReadOnlyCollection<string> DuplicateOffWindowIds => DuplicateIds(false);
+
+    private List<string> DuplicateIds(bool allowed) => _duplicates.Keys.Concat(XkxkUi.Current.Windows.Items.Select(w => w.Id)).Distinct().Where(id => IsDuplicateAllowed(id) == allowed).ToList();
+
+    public bool IsDuplicateAllowed(string windowId) =>
+        _duplicates.TryGetValue(windowId, out var allowed) ? allowed : XkxkUi.Current.Windows.TryGet(windowId, out var window) && window.AllowDuplicate;
 
     public bool IsFloating(PocDocument document) => _s.FindWindow(document) is not null;
 
@@ -193,27 +200,27 @@ internal sealed class DocumentChromeService
         return state.SyncEnabled;
     }
 
-    /// <summary>④ 중복 허용 — 종류 단위. 같은 종류 열린 창 전체 표시가 함께 바뀐다(Mars 같은 이름 창 전체 동기화).</summary>
+    /// <summary>④ 중복 허용 — 창 ID 단위. 같은 창 ID 의 열린 문서 전체 표시가 함께 바뀐다(Mars 같은 이름 창 전체 동기화).</summary>
     public bool ChromeToggleDuplicate(PocDocument document)
     {
         using var op = PerfProbe.Current.TimeOperation("chrome.dup");
-        SetDuplicateAllowed(document.Kind, !IsDuplicateAllowed(document.Kind));
-        return IsDuplicateAllowed(document.Kind);
+        SetDuplicateAllowed(document.WindowId, !IsDuplicateAllowed(document.WindowId));
+        return IsDuplicateAllowed(document.WindowId);
     }
 
-    public void SetDuplicateAllowed(DocumentKind kind, bool allowed)
+    public void SetDuplicateAllowed(string windowId, bool allowed)
     {
-        _ = allowed ? _duplicateKinds.Add(kind) : _duplicateKinds.Remove(kind);
-        foreach (var doc in _s.Owner.OpenDocuments.Where(d => d.Kind == kind))
+        var changed = IsDuplicateAllowed(windowId) != allowed; // 복원은 같은 값도 기억시키므로 로그는 바뀔 때만 남긴다
+        _duplicates[windowId] = allowed;
+        foreach (var doc in _s.Owner.OpenDocuments.Where(d => d.WindowId == windowId))
         {
             ChromeOf(doc).AllowDuplicate = allowed;
         }
-
-        _s.Log(Loc.Tr(allowed ? "chrome.log.dupOn" : "chrome.log.dupOff", kind.DisplayName()));
+        if (changed) { _s.Log(Loc.Tr(allowed ? "chrome.log.dupOn" : "chrome.log.dupOff", WindowDisplay.DisplayName(windowId))); }
     }
 
     /// <summary>
-    /// ⑤ 새로고침(=캐시, Mars F5): 창을 닫고 같은 종류·제목·위치·크기·상태·배율·프로젝트·SDI 여부로 다시 연다. 새 문서를 반환.
+    /// ⑤ 새로고침(=캐시, Mars F5): 창을 닫고 같은 창 ID·인자·제목·위치·크기·상태·배율·프로젝트·SDI 여부로 다시 연다. 새 문서를 반환.
     /// 확인창은 제목줄 버튼(사람 조작)만 띄우고, 자동화·원격은 바로 실행한다.
     /// </summary>
     public PocDocument ChromeRefresh(PocDocument document)
@@ -225,7 +232,7 @@ internal sealed class DocumentChromeService
         var b = document.MdiBounds;
         var item = new DocumentSnapshot
         {
-            Kind = document.Kind, Title = document.Title, X = b.X, Y = b.Y, Width = b.Width, Height = b.Height,
+            WindowId = document.WindowId, Title = document.Title, X = b.X, Y = b.Y, Width = b.Width, Height = b.Height,
             MdiState = document.MdiState, ZIndex = document.MdiZIndex, Zoom = document.Zoom, IsPinned = old.IsPinned,
         };
         var host = window is null ? null : new WindowSnapshot
@@ -235,7 +242,8 @@ internal sealed class DocumentChromeService
         var (project, sync, preFloat) = (document.Project, old.SyncEnabled, document.PreFloatBounds);
 
         _s.Owner.CloseDocument(document);
-        var fresh = _s.Owner.OpenDocument(item.Kind, item.Title, sdi: false, allowDuplicate: true);
+        var fresh = _s.Owner.OpenDocument(document.WindowId, new UiWindowOpenOptions { Title = item.Title, AllowDuplicate = true, Parameter = document.Parameter });
+        _s.Owner.Activation.Redock(fresh); // 정의가 분리창인 창은 열면서 분리된다 → 문서 영역으로 되돌린 뒤 원래 상태를 적용(분리돼 있지 않으면 아무 일 없음)
         LayoutSerializer.ApplyDocument(fresh, item);
         fresh.Project = project;
         ChromeOf(fresh).SyncEnabled = sync;
@@ -269,23 +277,19 @@ internal sealed class DocumentChromeService
     {
         using var op = PerfProbe.Current.TimeOperation("chrome.help");
         _s.Log(Loc.Tr("chrome.log.help", document.Title));
-        return document.Kind switch
-        {
-            DocumentKind.Grid => Loc.Tr("chrome.help.grid", document.Title),
-            DocumentKind.Gantt => Loc.Tr("chrome.help.gantt", document.Title),
-            _ => Loc.Tr("chrome.help.none"),
-        };
+        return XkxkUi.Current.Windows.TryGet(document.WindowId, out var window) && window.DescriptionKey is { } key
+            ? Loc.Tr(key, document.Title) : Loc.Tr("chrome.help.none");
     }
 
     /// <summary>제목줄이 문서에 붙을 때(=데이터 로드 시작) 호출: 중복 허용 표시를 맞추고 캐시 적중 모의값을 새로 센다.</summary>
     public void SyncChrome(PocDocument document)
     {
         var state = ChromeOf(document);
-        state.AllowDuplicate = IsDuplicateAllowed(document.Kind);
+        state.AllowDuplicate = IsDuplicateAllowed(document.WindowId);
         if (state.CacheTotal == 0)
         {
-            // 모의: 같은 종류를 이번 세션에 여러 번 읽을수록 서버 캐시가 데워진다 → 0% → 37% → 75% → 100%.
-            var loads = s_loads[document.Kind] = s_loads.GetValueOrDefault(document.Kind) + 1;
+            // 모의: 같은 창 ID 를 이번 세션에 여러 번 읽을수록 서버 캐시가 데워진다 → 0% → 37% → 75% → 100%.
+            var loads = s_loads[document.WindowId] = s_loads.GetValueOrDefault(document.WindowId) + 1;
             state.CacheTotal = MockQueriesPerLoad;
             state.CacheHits = Math.Min(MockQueriesPerLoad, (loads - 1) * 3);
             state.IsCached = state.CacheHits > 0;

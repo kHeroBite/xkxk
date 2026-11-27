@@ -112,7 +112,7 @@ internal static class RemoteTrayCommands
 
     private static string? DocIconKey(Window window) =>
         window is Dock.Model.Core.IHostWindow { Window.Layout: { } root } && xkxk.frameworks.ui.shell.Docking.WindowCommands.FindDocument(root) is { } doc
-            ? doc.IconKey ?? xkxk.frameworks.ui.data.Navigation.MenuIconCatalog.IconKeyFor(doc.ScreenId, doc.Kind.ToString())
+            ? xkxk.frameworks.ui.shell.Docking.WindowDisplay.IconKeyOf(doc)
             : null;
 
     private static NativeMenuItem? TrayItem(string name)
