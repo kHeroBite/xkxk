@@ -7,7 +7,7 @@ using xkxk.frameworks.ui.shell.Diagnostics;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Framework;
 
-namespace xkxk.frameworks.ui.views.Documents;
+namespace xkxk.frameworks.ui.testbed.Documents;
 
 public partial class FormDocumentView : UserControl
 {

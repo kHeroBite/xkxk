@@ -1,46 +1,48 @@
-// 화면 밖 예열 호스트와 준비된 표 뷰 1개 보관 — 뷰를 실제 크기로 붙여 데우고, 표 뷰 1개를 다음 표 열기에 넘긴 뒤 유휴 때 다시 채운다(A16, 옵션 PrewarmViews·GridViewPool(기본 끔))
+// 화면 밖 예열 호스트와 창 ID 별 준비된 뷰 1개 보관 — 뷰를 실제 크기로 붙여 데우고, 준비된 뷰를 다음 열기에 넘긴 뒤 유휴 때 다시 채운다(A16, 옵션 PrewarmViews·GridViewPool(기본 끔))
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
-using Avalonia.Threading;
 using xkxk.frameworks.ui.data.Logging;
-using xkxk.frameworks.ui.shell.Busy;
 using xkxk.frameworks.ui.shell.Diagnostics;
-using xkxk.frameworks.ui.shell.Diagnostics.Remote;
-using xkxk.frameworks.ui.shell.Theming;
-using xkxk.frameworks.ui.views.Documents;
+using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Framework;
+using xkxk.frameworks.ui.views.Windows;
 
 namespace xkxk.frameworks.ui.views;
 
 /// <summary>
-/// 규칙 정본: plan/09_화면설계/01_화면설계_공통원칙.md §5.4(문서 뷰 예열과 준비된 표 뷰).
+/// 규칙 정본: plan/09_화면설계/01_화면설계_공통원칙.md §5.4(문서 뷰 예열과 준비된 뷰). 시험대 지원용, 공개 계약 아님(B16 생성 명세 제외 후보).
 /// 화면 밖 호스트는 메인 화면 DockPanel 맨 앞에 넣는 높이 0·잘라냄·입력 제외 Canvas 다. 그 안에 뷰를 실제 문서 영역 크기의 칸(Border)으로 붙이면
-/// 테마·스타일·템플릿·행/셀 생성·글자 측정이 실제 열기와 같은 경로로 돈다(붙지 않은 뷰는 테마가 적용되지 않는다 — StyledElement 는 논리 트리에 붙을 때 스타일을 적용).
-/// 그림은 화면 밖 비트맵(RenderTargetBitmap)에 한 번 그려 글자 모양·글리프 캐시를 데운다(화면에는 그리지 않는다).
-/// 준비된 표 뷰는 실제 열기 때 칸에서 떼어 문서 칸에 붙인다. 옮겨 붙일 때 Avalonia 는 스타일을 지웠다 다시 매칭하고 측정을 다시 하지만,
-/// 템플릿은 같은 인스턴스라 다시 만들지 않고(TemplatedControl.ApplyTemplate) 행·셀 요소도 재사용한다(12.1.4 디컴파일 확인).
-/// 만들 때는 PerfProbe.SuppressOpenTrack 로 열기 계측을 끄고, 넘길 때 GridDocumentView.BeginOpenTracking 으로 켠다.
+/// 테마·스타일·템플릿·행/셀 생성·글자 측정이 실제 열기와 같은 경로로 돈다(붙지 않은 뷰는 테마가 적용되지 않는다).
+/// 그림은 화면 밖 비트맵에 한 번 그려 글리프 캐시를 데운다. 준비된 뷰는 실제 열기 때 칸에서 떼어 문서 칸에 붙인다.
+/// 만들 때는 PerfProbe.SuppressOpenTrack 로 열기 계측을 끄고, 넘길 때 IWindowOpenTracking.BeginOpenTracking 으로 켠다.
+/// 풀은 창 ID(Prewarm=KeepReady 인 등록 창)마다 뷰 1개를 쥔다. 데모 표 형식 같은 특정 형식은 모른다.
 /// </summary>
-public static class GridViewPool
+[EditorBrowsable(EditorBrowsableState.Never)]
+public static partial class WindowViewPool
 {
     /// <summary>다시 채우기 전 입력이 없어야 하는 시간(ms). 채우기는 UI 스레드를 수백 ms 막으므로 사용자가 조작 중이면 미룬다.</summary>
     private const int InputQuietMs = 2000;
     private const int IdleHoldMs = 1000;
     private const int PollMs = 250;
+    private const string PoolIdPrefix = "pool:";
 
+    private static readonly Dictionary<string, (Control View, Border? Slot)> s_ready = new();
     private static Canvas? s_host;
-    private static Border? s_readySlot;
-    private static GridDocumentView? s_ready;
     private static Size s_lastSize;
     private static long s_lastInputMs;
     private static bool s_refillScheduled;
+    private static bool s_building;
 
-    /// <summary>준비된 표 뷰가 있는가(DocumentViewLocator 가 빈 칸 프레임 없이 바로 붙일지 판단).</summary>
-    public static bool HasReady => s_ready is not null && XkxkUi.Current.Settings.GridViewPool;
+    /// <summary>해당 창의 준비된 뷰가 있는가(DocumentViewLocator 가 빈 칸 프레임 없이 바로 붙일지 판단).</summary>
+    public static bool HasReady(string windowId) => s_ready.ContainsKey(windowId) && XkxkUi.Current.Settings.GridViewPool;
+
+    /// <summary>화면 밖 호스트가 준비됐는가(예열이 붙여서 데울 수 있는가).</summary>
+    internal static bool HasHost => s_host is not null;
 
     /// <summary>화면 밖 호스트를 메인 화면 패널 맨 앞에 넣는다(1회). 패널이 DockPanel 이면 위쪽에 높이 0 으로 붙어 배치에 영향이 없다.</summary>
     public static void AttachHost(Panel parent)
@@ -52,33 +54,43 @@ public static class GridViewPool
 
         var host = new Canvas { Height = 0, ClipToBounds = true, IsHitTestVisible = false, Focusable = false };
         DockPanel.SetDock(host, Avalonia.Controls.Dock.Top);
-        KeyboardNavigation.SetTabNavigation(host, KeyboardNavigationMode.None); // Tab 이 화면 밖 뷰(필터 입력칸)로 들어가지 않게
-        XkxkUi.Current.Settings.ApplyDocumentScope(host); // 문서 범위 글자 토큰을 실제 문서 칸과 같게 — 옮겨 붙일 때 글자 크기가 바뀌어 열 폭을 다시 계산하지 않게
+        KeyboardNavigation.SetTabNavigation(host, KeyboardNavigationMode.None); // Tab 이 화면 밖 뷰로 들어가지 않게
+        XkxkUi.Current.Settings.ApplyDocumentScope(host); // 문서 범위 글자 토큰을 실제 문서 칸과 같게 — 옮겨 붙일 때 열 폭을 다시 계산하지 않게
         XkxkUi.Current.Settings.Changed += () =>
         {
             XkxkUi.Current.Settings.ApplyDocumentScope(host);
-            if (!XkxkUi.Current.Settings.GridViewPool) { Release(); }
+            if (!XkxkUi.Current.Settings.GridViewPool) { ReleaseAll(); }
         };
         parent.Children.Insert(0, host);
         s_host = host;
         HookInput();
     }
 
-    /// <summary>화면 밖 호스트가 준비됐는가(예열이 붙여서 데울 수 있는가).</summary>
-    internal static bool HasHost => s_host is not null;
-
-    /// <summary>실제 화면에 배치된 표 문서 크기를 기억한다(다음 준비 뷰 크기). 화면 밖 칸에 있는 뷰는 건너뛴다.</summary>
-    internal static void NoteSize(GridDocumentView view, Size size)
+    /// <summary>실제 화면에 배치된 문서 크기를 기억한다(다음 준비 뷰 크기). 화면 밖 칸에 있는 뷰는 건너뛴다.</summary>
+    public static void NoteSize(Control view, Size size)
     {
-        if (!ReferenceEquals(view, s_ready) && size.Width >= 100 && size.Height >= 100)
+        if (!IsPooled(view) && size.Width >= 100 && size.Height >= 100)
         {
             s_lastSize = size;
         }
     }
 
+    private static bool IsPooled(Control view)
+    {
+        foreach (var e in s_ready.Values)
+        {
+            if (ReferenceEquals(e.View, view))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /// <summary>
     /// 뷰를 화면 밖 칸에 붙여 측정·배치하고 비트맵에 한 번 그린다. keep=false 면 바로 떼어 버린다. 실패하면 false.
-    /// 크기는 마지막 표 문서 크기, 아직 없으면 메인 화면 크기다(크게 잡으면 넘길 때 줄어드는 쪽이라 다시 측정이 싸다).
+    /// 크기는 마지막 문서 크기, 아직 없으면 메인 화면 크기다(크게 잡으면 넘길 때 줄어드는 쪽이라 다시 측정이 싸다).
     /// </summary>
     internal static bool Warm(Control view, bool keep, out Border? slot)
     {
@@ -113,20 +125,17 @@ public static class GridViewPool
         return true;
     }
 
-    /// <summary>준비된 표 뷰로 보관한다(예열 또는 다시 채우기에서).</summary>
-    internal static void Keep(GridDocumentView view, Border slot)
+    /// <summary>창의 준비된 뷰로 보관한다(예열 또는 다시 채우기에서). 같은 창의 옛 뷰는 버린다.</summary>
+    public static void Keep(string windowId, Control view, Border slot)
     {
-        Release();
+        Release(windowId);
         MaskAutomationIds(view, on: true);
-        s_ready = view;
-        s_readySlot = slot;
+        s_ready[windowId] = (view, slot);
     }
 
-    private const string PoolIdPrefix = "pool:";
-
     /// <summary>
-    /// 보관 중에는 뷰 안 AutomationId 앞에 'pool:' 을 붙인다. 원격 진단·UI 자동화가 범위 없이 id(grid.dgMain 등)로 찾거나 트리 안 개수를 셀 때
-    /// 화면 밖 준비 뷰를 실제 문서로 잡지 않게 한다(VisualTreeInspector.Find 는 트리 순서상 첫 번째를 고른다). 넘길 때 원래 id 로 되돌린다.
+    /// 보관 중에는 뷰 안 AutomationId 앞에 'pool:' 을 붙인다. 원격 진단·UI 자동화가 id 로 찾거나 트리 안 개수를 셀 때
+    /// 화면 밖 준비 뷰를 실제 문서로 잡지 않게 한다. 넘길 때 원래 id 로 되돌린다.
     /// </summary>
     private static void MaskAutomationIds(Control view, bool on)
     {
@@ -149,70 +158,100 @@ public static class GridViewPool
     }
 
     /// <summary>
-    /// 준비된 표 뷰를 꺼낸다(DefaultDocumentViewFactory). 없거나 옵션이 꺼져 있으면 null — 호출 쪽이 일반 경로로 새로 만든다.
+    /// 해당 창의 준비된 뷰를 꺼낸다(창 내용 생성 함수가 부른다). 없거나 옵션이 꺼져 있거나 풀이 뷰를 만드는 중이면 null — 호출 쪽이 새로 만든다.
     /// 꺼낸 뒤 유휴 시간에 다음 1개를 다시 채우도록 예약한다(그 전 연속 열기는 일반 경로).
     /// </summary>
-    public static GridDocumentView? TryTake()
+    public static Control? TryTake(string windowId)
     {
-        if (s_ready is null)
+        if (s_building)
         {
+            return null; // 풀이 만드는 중의 호출은 적중·실패로 세지 않는다
+        }
+
+        if (!s_ready.TryGetValue(windowId, out var entry))
+        {
+            NoteMiss(windowId);
             return null;
         }
 
         if (!XkxkUi.Current.Settings.GridViewPool)
         {
-            Release();
+            ReleaseAll();
+            NoteMiss(windowId);
             return null;
         }
 
-        var view = s_ready;
-        var slot = s_readySlot;
-        s_ready = null;
-        s_readySlot = null;
-        if (slot is not null)
+        s_ready.Remove(windowId);
+        if (entry.Slot is not null)
         {
-            slot.Child = null;
-            s_host?.Children.Remove(slot);
+            entry.Slot.Child = null;
+            s_host?.Children.Remove(entry.Slot);
         }
 
-        MaskAutomationIds(view, on: false);
-        view.BeginOpenTracking();
+        MaskAutomationIds(entry.View, on: false);
+        (entry.View as IWindowOpenTracking)?.BeginOpenTracking();
+        NoteTake(windowId, hit: true);
         ScheduleRefill();
-        return view;
+        return entry.View;
     }
 
-    /// <summary>보관 중인 준비 뷰를 버린다(옵션 끔·다시 채우기 교체).</summary>
-    private static void Release()
+    /// <summary>보관 중인 준비 뷰를 버린다(다시 채우기 교체).</summary>
+    private static void Release(string windowId)
     {
-        if (s_readySlot is { } slot)
+        if (s_ready.Remove(windowId, out var e) && e.Slot is not null)
         {
-            slot.Child = null;
-            s_host?.Children.Remove(slot);
+            e.Slot.Child = null;
+            s_host?.Children.Remove(e.Slot);
         }
-
-        s_ready = null;
-        s_readySlot = null;
     }
 
-    /// <summary>예열 단계(DocumentPrewarm) 또는 다시 채우기에서 표 뷰 1개를 만들어 데우고, 옵션이 켜져 있으면 보관한다.</summary>
-    internal static void BuildGrid()
+    /// <summary>모든 준비 뷰를 버린다(옵션 끔).</summary>
+    private static void ReleaseAll()
     {
-        var pool = XkxkUi.Current.Settings.GridViewPool;
-        GridDocumentView view;
+        foreach (var id in new List<string>(s_ready.Keys))
+        {
+            Release(id);
+        }
+    }
+
+    /// <summary>
+    /// 창 내용 1개를 만들어 데운다(예열 단계 DocumentPrewarm 와 다시 채우기가 부른다). keep 이고 슬롯이 있으면 준비된 뷰로 보관한다.
+    /// 내용은 등록 창의 내용 생성 함수로 만든다(WindowDisplay.InvokeContent). 만드는 동안 TryTake 는 null 이라 풀이 자기 뷰를 다시 꺼내지 않는다.
+    /// 호스트가 없으면 붙이지 않고 측정만 한다(attached=false, 테마가 적용되지 않아 효과는 작다). 만들었으나 Control 이 아니거나 실패하면 false.
+    /// </summary>
+    internal static bool Build(string windowId, bool keep, out bool attached)
+    {
+        attached = false;
+        Control? view;
         PerfProbe.SuppressOpenTrack = true;
+        s_building = true;
         try
         {
-            view = new GridDocumentView();
+            var doc = new PocDocument { WindowId = windowId, Id = PoolIdPrefix + windowId, Title = string.Empty };
+            view = WindowDisplay.InvokeContent(doc, out _) as Control;
         }
         finally
         {
+            s_building = false;
             PerfProbe.SuppressOpenTrack = false;
         }
 
-        if (Warm(view, pool, out var slot) && pool && slot is not null)
+        if (view is null)
         {
-            Keep(view, slot);
+            return false;
         }
+
+        attached = Warm(view, keep, out var slot);
+        if (!attached)
+        {
+            view.Measure(new Size(640, 480));
+        }
+        else if (keep && slot is not null)
+        {
+            Keep(windowId, view, slot);
+        }
+
+        return true;
     }
 
     private static Size TargetSize()
@@ -234,64 +273,27 @@ public static class GridViewPool
         using var bitmap = new RenderTargetBitmap(new PixelSize(w, h));
         bitmap.Render(target);
     }
+}
 
-    private static void HookInput()
-    {
-        const RoutingStrategies routes = RoutingStrategies.Tunnel | RoutingStrategies.Bubble;
-        InputElement.PointerPressedEvent.AddClassHandler<TopLevel>((_, _) => MarkInput(), routes, handledEventsToo: true);
-        InputElement.PointerMovedEvent.AddClassHandler<TopLevel>((_, _) => MarkInput(), routes, handledEventsToo: true);
-        InputElement.PointerWheelChangedEvent.AddClassHandler<TopLevel>((_, _) => MarkInput(), routes, handledEventsToo: true);
-        InputElement.KeyDownEvent.AddClassHandler<TopLevel>((_, _) => MarkInput(), routes, handledEventsToo: true);
-    }
+/// <summary>
+/// 옛 표 뷰 풀 이름. 같은 기능은 <see cref="WindowViewPool"/> 이 창 ID 키로 일반화했고 이 형식은 표 데모 창 ID 로 위임하는 얇은 껍데기다.
+/// 시험대 지원용, 공개 계약 아님(B16 생성 명세 제외 후보).
+/// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public static class GridViewPool
+{
+    /// <summary>표 데모 창의 준비된 뷰가 있는가.</summary>
+    public static bool HasReady => WindowViewPool.HasReady(LegacyWindowKinds.Grid);
 
-    private static void MarkInput() => s_lastInputMs = Environment.TickCount64;
+    /// <summary>화면 밖 호스트를 넣는다. <see cref="WindowViewPool.AttachHost"/> 로 위임한다.</summary>
+    public static void AttachHost(Panel parent) => WindowViewPool.AttachHost(parent);
 
-    /// <summary>바쁨 스코프 없음 + 입력 없음이 이어지면 다음 준비 뷰를 만든다. Background 우선순위라 입력·렌더를 앞지르지 않는다.</summary>
-    private static void ScheduleRefill()
-    {
-        if (s_refillScheduled || !XkxkUi.Current.Settings.GridViewPool)
-        {
-            return;
-        }
+    /// <summary>표 데모 창의 준비된 뷰를 꺼낸다(반환형이 GridDocumentView? 에서 Control? 로 넓어졌다, UADR-0009 계획된 예외).</summary>
+    public static Control? TryTake() => WindowViewPool.TryTake(LegacyWindowKinds.Grid);
 
-        s_refillScheduled = true;
-        Poll(0);
-    }
+    /// <summary>화면에 배치된 문서 크기를 기억한다. <see cref="WindowViewPool.NoteSize"/> 로 위임한다.</summary>
+    public static void NoteSize(Control view, Size size) => WindowViewPool.NoteSize(view, size);
 
-    private static void Poll(long quietSinceMs)
-    {
-        DispatcherTimer.RunOnce(() =>
-        {
-            if (!XkxkUi.Current.Settings.GridViewPool || s_ready is not null || s_host is null)
-            {
-                s_refillScheduled = false;
-                return;
-            }
-
-            var now = Environment.TickCount64;
-            var quiet = RemoteCommands.StartupRestoreDone != false && BusyHooks.Service.Snapshot().Count == 0 && now - s_lastInputMs >= InputQuietMs;
-            if (!quiet)
-            {
-                Poll(0);
-                return;
-            }
-
-            var since = quietSinceMs == 0 ? now : quietSinceMs;
-            if (now - since < IdleHoldMs)
-            {
-                Poll(since);
-                return;
-            }
-
-            s_refillScheduled = false;
-            try
-            {
-                BuildGrid();
-            }
-            catch (Exception ex)
-            {
-                PdLog.Info(PdLogCategory.System, $"준비된 표 뷰 채우기 실패: {ex.GetType().Name}: {ex.Message}"); // i18n-ok 진단 로그
-            }
-        }, TimeSpan.FromMilliseconds(PollMs), DispatcherPriority.Background);
-    }
+    /// <summary>표 데모 창의 준비된 뷰로 보관한다. <see cref="WindowViewPool.Keep"/> 로 위임한다.</summary>
+    public static void Keep(Control view, Border slot) => WindowViewPool.Keep(LegacyWindowKinds.Grid, view, slot);
 }

@@ -45,8 +45,32 @@ CASES = [
 ]
 
 
-def build(root, over):
-    files = dict(GOOD)
+MOVED = ["GridDocumentView.axaml", "GridDocumentView.axaml.cs", "GridScrollProbe.cs", "GridRouteProbe.cs",
+         "GanttDocumentView.axaml", "GanttDocumentView.axaml.cs", "GanttCanvas.cs", "GanttCanvas.Dense.cs",
+         "GanttCanvas.Render.cs", "FormDocumentView.axaml", "FormDocumentView.axaml.cs"]
+TB = "testbed/xkxk.frameworks.ui.testbed/Documents/"
+VW = "src/xkxk.frameworks.ui.views/"
+GOOD2 = {TB + f: "class X { }\n" for f in MOVED}
+GOOD2.update({VW + "V.cs": "// GridDocumentView 설명 주석\nclass V { }\n", VW + "DocumentPrewarm.cs": "class P { }\n",
+              VW + "GridViewPool.cs": "class G { }\n", VW + "WindowViewPool.Refill.cs": "class W { }\n",
+              "src/xkxk.frameworks.ui.shell/S.cs": "class S { }\n"})
+# (이름, 덮어쓸 {경로: 내용 | None=삭제}, 기대 rc, 기대 규칙 집합) — batch 2
+CASES2 = [
+    ("b2_clean", {}, 0, set()),
+    ("b2_r8_cs", {VW + "V.cs": "class V { GanttCanvas c; }\n"}, 1, {"R8"}),
+    ("b2_r8_axaml", {VW + "Documents/A.axaml": "<FormDocumentView />\n"}, 1, {"R8"}),
+    ("b2_r8_axaml_comment_ok", {VW + "Documents/A.axaml": "<!-- FormDocumentView 에서 옮김 -->\n<x />\n"}, 0, set()),
+    ("b2_r8_viewmodel_ok", {VW + "V.cs": "class V { GridDocumentViewModel m; }\n"}, 0, set()),
+    ("b2_r9_prewarm", {VW + "DocumentPrewarm.cs": "class P { void M(){ new GridDocumentView(); } }\n"}, 1, {"R9"}),
+    ("b2_r9_pool_refill", {VW + "WindowViewPool.Refill.cs": "class W { GridScrollProbe p; }\n"}, 1, {"R9"}),
+    ("b2_r9_comment_ok", {VW + "GridViewPool.cs": "// GridDocumentView 설명\nclass G { }\n"}, 0, set()),
+    ("b2_r10_missing", {TB + "GanttCanvas.Dense.cs": None}, 1, {"R10"}),
+    ("b2_r10_leftover", {VW + "Documents/FormDocumentView.axaml": "<x />\n"}, 1, {"R10"}),
+]
+
+
+def build(root, over, base=None):
+    files = dict(GOOD if base is None else base)
     files.update(over)
     for rel, content in files.items():
         if content is None:
@@ -81,13 +105,19 @@ def main():
         ok = rc == 2
         print("%s empty_tree rc=%d" % ("PASS" if ok else "FAIL", rc))
         fail += 0 if ok else 1
-        build(root, {})
-        rc, out = run(["--root", root, "--batch", "2"])
-        ok = rc == 5 and "NOT_IMPLEMENTED" in out
-        print("%s batch2_not_implemented rc=%d" % ("PASS" if ok else "FAIL", rc))
-        fail += 0 if ok else 1
     finally:
         shutil.rmtree(root, ignore_errors=True)
+    for name, over, rc_want, rules_want in CASES2:
+        root = tempfile.mkdtemp(prefix="tbmove_")
+        try:
+            build(root, over, GOOD2)
+            rc, out = run(["--root", root, "--batch", "2"])
+            got = {ln.split()[1] for ln in out.splitlines() if ln.startswith("VIOLATION")}
+            ok = rc == rc_want and got == rules_want
+            print("%s %s rc=%d rules=%s" % ("PASS" if ok else "FAIL", name, rc, ",".join(sorted(got)) or "-"))
+            fail += 0 if ok else 1
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
     print("testbed_move_selftest failed=%d result=%s" % (fail, "PASS" if fail == 0 else "FAIL"))
     return 1 if fail else 0
 

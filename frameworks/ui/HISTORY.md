@@ -4,6 +4,16 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-28 — 별별UI B10 batch 2 예열 일반화·데모 문서 시험대 이동(O4, B10 batch 2/2, conv_179576186006)
+- 예열 일반화. 창 정의·옵션에 `Prewarm`(`UiWindowPrewarm`: None·Warm·KeepReady)을 더했다. views 의 `WindowViewPool` 이 창 ID 별 준비 뷰 풀을 맡고(`WindowViewPool.Refill.cs`), `DocumentPrewarm` 은 그리드 고정이 아니라 등록 옵션을 기준으로 예열한다. `DocumentViewLocator` 는 KeepReady 창이면 풀의 준비 뷰를 먼저 쓴다(`WindowViewPool.TakeFor`, GridViewPool 설정이 켜진 때만). 풀 적중·실패·다시 채우기는 진단 지표로 남는다(`pool_hit`·`pool_miss`, `IWindowOpenTracking` 신설).
+- 데모 문서 11파일 시험대 이동. 그리드·간트·폼 문서 뷰와 부속(`GridRouteProbe`·`GridScrollProbe`·`GanttCanvas*`)을 `src/xkxk.frameworks.ui.views/Documents/` 에서 `testbed/xkxk.frameworks.ui.testbed/Documents/` 로 git mv 했다(R095~R099). 옛 이름 별칭은 두지 않았다.
+- 강타입 창 Prewarm 무시. 강타입 등록 창에 `Prewarm` 이 붙으면 `None` 으로 바꾸고 진단 XKUI0511(Warning)을 보고한다.
+- 소비자 영향. ① `GridViewPool.TryTake` 반환형이 `Control?` 로 바뀌었다(바이너리 비호환 예외, UADR-0009 의 예외로 인지). ② `IWindowOpenTracking` 신설. ③ 데모 문서 형식이 시험대로 이동했다. ④ `docs/03_AI_활용안내.md` 의 AI 복사 블록이 바뀌었으므로 소비 제품은 블록을 다시 붙여넣어야 한다.
+- 리뷰 FAIL→반영→재리뷰 PASS. odev-review-1 이 blocker 1(B2-R1: 시험대 그리드 내용 함수가 `GridViewPool.TryTake` 호출을 지워 준비 뷰가 영원히 소비되지 않음 — 계획 원문대로 구현했더니 기존 동작이 사라졌다)·major 1(B2-R2 강타입 창 Prewarm)을 지적했고, 프레임워크 쪽 `TakeFor` 일반화와 XKUI0511 로 고쳐 재리뷰 PASS(minor 1·nit 4 남김).
+- 시험 결과(최종 검수 otest-2 PARTIAL, FAIL 0). AC-101·102·106 PASS, AC-103 PASS(계약 시험 86건 중 85 PASS + 카나리아 C99 의도 FAIL), AC-104 PASS(웹 진단판·데스크톱 smoke, 벤치 번들 5단계), AC-107 PASS(Fold5 실기기), AC-010 PASS(Fold5, 탭 제목 `hello` 로 확인 — 본문 텍스트는 미확인), AC-105 PARTIAL(새 실패 0, verify_framework 11단계 rc0; DEFERRED 2건 — `main_titlebar_contrast`·`retest_maximize_pick`). batch 1 에서 WAIT 였던 AC-010 이 해소됐다. 증거 `logs/b10_fold5_b2.json`.
+- 이동 뒤 using 누락. 기본 구성에서도 `GridRouteProbe`·`ZoomDecorator` 에서 누락이 나 한 번 고쳤다(batch 1 `PD_BENCH` 구성에 이어 두 번째 — LESSONS 참조).
+- 결과. B10 전체 완료(batch 1·2). UTODO-0056~0060 등록, UTODO-0054 의 Fold5 항목 완료.
+
 ## 2026-11-27 — 별별UI B10 batch 1 강타입 창 등록(UADR-0017)·시험대 모듈 이관(O4, B10 batch 1/2, conv_179576186006)
 - 결정(UADR-0017). 창 확장에 강타입 등록을 더했다. `IUiWindowRegistry.Register` 6 오버로드(`TVm`·`TView`·`TArgs` 조합)와 `UiWindowViewModel`·`UiWindowViewModel<TArgs>`·`IUiWindowContext` 를 공개하고, 연결 실패는 진단 XKUI0509(`AttachWindow` 인자 불일치)·XKUI0510(닫힘 처리기 예외)으로 보고한다(XKUI0507 은 `CreateContent` 없는 등록 창). views 의 바인더(`WindowViewModelBinder`)는 internal 이다. `AcceptParameter` 가 false 면 `AttachWindow` 가 `ArgumentException` 을 던지고 연결하지 않으며, 두 번째 Attach·연결 전 `NotifyOpenedAsync` 는 `InvalidOperationException` 이다.
 - 시험대 모듈 이관. 데모 창·데모 명령을 같은 ID 로 `testbed/xkxk.frameworks.ui.testbed/` 로 옮겼고 옛 이름 별칭은 두지 않았다(Grid·Gantt·Form 은 영구 예약어). 벤치 37파일(`views/Documents/Bench` → `testbed/.../Bench`)과 `BenchEntry` 삭제, views csproj 의 벤치·차트·ClosedXML·Skia·글꼴 그룹 제거, `PdViewRegistry` 는 명령 등록 여부로 벤치 가용을 판단한다. 시험대 표본(`xkxk.testbed.typed`)은 `TestbedModule.Configure` 한 줄로 등록한다.

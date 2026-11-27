@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Avalonia;
 using xkxk.frameworks.ui.Input;
 
-namespace xkxk.frameworks.ui.views.Documents;
+namespace xkxk.frameworks.ui.testbed.Documents;
 
 public sealed partial class GanttCanvas : IDenseViewTarget
 {

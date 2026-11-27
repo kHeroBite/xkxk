@@ -130,4 +130,7 @@ public static class UiDiagnosticIds
 
     /// <summary>강타입 창 뷰모델의 OnOpenedAsync 가 예외를 던짐(Error, 내용은 유지).</summary>
     public const string WindowViewModelFailed = "XKUI0510";
+
+    /// <summary>강타입 창 등록에 예열(Prewarm)을 지정함(Warning, Prewarm 을 None 으로 바꿔 등록).</summary>
+    public const string WindowPrewarmIgnored = "XKUI0511";
 }

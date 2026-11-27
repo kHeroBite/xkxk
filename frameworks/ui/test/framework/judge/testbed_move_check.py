@@ -1,7 +1,7 @@
 # B10 시험대 이동 정적 판정기 — views 의 차트·엑셀·벤치 참조 0, 셸 기본 창·이관 명령 등록 0, 시험대 모듈 연결·별칭 0 을 판정한다
 """
 사용: python3 -B testbed_move_check.py [--root <영역 루트>] [--batch 1|2] [--json <경로>]
-종료코드: 0=전부 통과, 1=위반 있음, 2=인자·트리 오류(검사한 파일이 0개 등), 5=NOT_IMPLEMENTED(--batch 2)
+종료코드: 0=전부 통과, 1=위반 있음, 2=인자·트리 오류(검사한 파일이 0개 등)
 규칙(batch 1)
   R1 views(bin·obj 제외)의 .cs·.axaml·.csproj 에 LiveCharts|ClosedXML|ScottPlot|OxyPlot|ProCharts|TheOne|Documents.Bench 식별자 0
   R2 testbed csproj 에 위 패키지(ClosedXML·ScottPlot·ProCharts·LiveCharts·OxyPlot·TheOne) 참조가 존재
@@ -12,7 +12,10 @@
   R7 testbed 소스의 Aliases 대입에 옛 이름 별칭 Grid·Gantt·Form 0
   R7b src 의 상수 배열·사전·컬렉션 초기화에 옛 창·명령 ID 문자열 별칭(\"xkxk.demo.*\"·\"xkxk.bench.*\"·\"xkxk.grid|gantt|form\") 0
       (주석은 제외한다. 상수·switch 로 정의한 변환표는 배열·사전이 아니라 대상이 아니다)
-batch 2 규칙은 아직 없다 — 채워질 때까지 NOT_IMPLEMENTED(rc 5, PASS 로 가장하지 않는다).
+규칙(batch 2, 데모 문서 3종·간트 캔버스 이동)
+  R8 views(아래 풀·예열 파일 제외)의 .cs·.axaml 에 GridDocumentView|GanttDocumentView|FormDocumentView|GanttCanvas 식별자 0(.cs 는 주석 제외)
+  R9 DocumentPrewarm.cs·GridViewPool.cs·WindowViewPool*.cs 에 위 식별자와 GridScrollProbe|GridRouteProbe 참조 0(주석 제외)
+  R10 이동 11파일이 testbed/xkxk.frameworks.ui.testbed/Documents 에 존재하고 views/Documents 에는 없음
 끝 줄: testbed_move batch=N rules=R result=PASS|FAIL
 """
 import argparse
@@ -35,6 +38,13 @@ INTERNAL_NS = re.compile(r"\bxkxk\.frameworks\.ui(\.[A-Za-z0-9_]+)*\.Internal\b|
 ALIAS_LINE = re.compile(r"Aliases")
 COLLECTION_CTX = re.compile(r"\[\]|Dictionary<|HashSet<|List<|new\s*\[|=\s*\{|\{\s*\"|\[\s*\"")
 OLD_ID_STR = re.compile(r"\"xkxk\.(?:demo|bench)\.[A-Za-z0-9_.]*\"|\"xkxk\.(?:grid|gantt|form)\"")
+_DEMO = ["GridDocumentView", "GanttDocumentView", "FormDocumentView", "GanttCanvas"]
+DEMO_TYPES = re.compile(r"\b(" + "|".join(_DEMO) + r")\b")
+DEMO_REFS = re.compile(r"\b(" + "|".join(_DEMO + ["GridScrollProbe", "GridRouteProbe"]) + r")\b")
+POOL_FILES = re.compile(r"^(DocumentPrewarm|GridViewPool|WindowViewPool(\..+)?)\.cs$")
+MOVED = ["GridDocumentView.axaml", "GridDocumentView.axaml.cs", "GridScrollProbe.cs", "GridRouteProbe.cs",
+         "GanttDocumentView.axaml", "GanttDocumentView.axaml.cs", "GanttCanvas.cs", "GanttCanvas.Dense.cs",
+         "GanttCanvas.Render.cs", "FormDocumentView.axaml", "FormDocumentView.axaml.cs"]
 OLD_ALIAS = re.compile(r"\"(grid|gantt|form)\"", re.IGNORECASE)
 
 
@@ -101,6 +111,26 @@ def check_batch1(root):
     return v, scanned
 
 
+def check_batch2(root):
+    v, scanned = [], 0
+    rel = lambda p: os.path.relpath(p, root).replace(os.sep, "/")
+    for p in walk(root, VIEWS, (".cs", ".axaml")):
+        scanned += 1
+        pool = bool(POOL_FILES.match(os.path.basename(p)))
+        rx, rule = (DEMO_REFS, "R9") if pool else (DEMO_TYPES, "R8")
+        text = read(p)
+        if p.endswith(".axaml"):  # XML 주석은 줄 수를 유지하며 비운다
+            text = re.sub(r"<!--.*?-->", lambda m: "\n" * m.group(0).count("\n"), text, flags=re.S)
+        for n in lines_hit(text, rx, strip=p.endswith(".cs")):
+            v.append({"rule": rule, "file": rel(p), "line": n})
+    for f in MOVED:
+        if not os.path.isfile(os.path.join(root, TESTBED, "Documents", f)):
+            v.append({"rule": "R10", "file": TESTBED + "/Documents/" + f, "line": 0})
+        if os.path.exists(os.path.join(root, VIEWS, "Documents", f)):
+            v.append({"rule": "R10", "file": VIEWS + "/Documents/" + f, "line": 0})
+    return v, scanned
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default=os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
@@ -110,10 +140,7 @@ def main():
     if not os.path.isdir(os.path.join(a.root, "src")):
         print("src 폴더가 없습니다: " + a.root, file=sys.stderr)
         return 2
-    if a.batch == 2:
-        print("testbed_move batch=2 rules=- result=NOT_IMPLEMENTED (batch 2 규칙이 채워질 때까지 PASS 아님)")
-        return 5
-    v, scanned = check_batch1(a.root)
+    v, scanned = (check_batch1 if a.batch == 1 else check_batch2)(a.root)
     if scanned == 0:
         print("검사한 파일이 0개입니다", file=sys.stderr)
         return 2

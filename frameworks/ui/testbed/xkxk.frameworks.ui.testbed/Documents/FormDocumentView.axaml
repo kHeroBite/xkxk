@@ -2,7 +2,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:xkxk.frameworks.ui.shell.Localization"
-             x:Class="xkxk.frameworks.ui.views.Documents.FormDocumentView">
+             x:Class="xkxk.frameworks.ui.testbed.Documents.FormDocumentView">
   <ScrollViewer HorizontalScrollBarVisibility="Disabled">
     <!-- 라벨 열은 Auto: 글자 크기·언어가 바뀌어도 라벨이 잘리지 않는다. Stretch+MaxWidth: 창이 좁으면 창 폭, 넓으면 720 까지(좁은 창에서 입력칸 잘림 방지) -->
     <Grid Margin="12" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" MaxWidth="720" HorizontalAlignment="Stretch">

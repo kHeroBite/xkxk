@@ -8,14 +8,14 @@
 | 층 | 파일 수 |
 |---|---:|
 | Control | 314 |
-| Data | 73 |
+| Data | 74 |
 | Diag | 93 |
 | Host | 77 |
-| Testbed | 42 |
+| Testbed | 53 |
 | Ui | 26 |
-| Views | 204 |
+| Views | 195 |
 
-합계 829개(.cs·.axaml).
+합계 832개(.cs·.axaml).
 
 ## 끊어야 하는 참조(현재 기준 금지 방향)
 
@@ -443,6 +443,7 @@
 | `xkxk.frameworks.ui.shell/Framework/UiWindowOpenOptions.cs` | Data | xkxk.frameworks.ui.data/Framework/UiWindowOpenOptions.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiWindowOptions.cs` | Data | xkxk.frameworks.ui.data/Framework/UiWindowOptions.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiWindowPlacement.cs` | Data | xkxk.frameworks.ui.data/Framework/UiWindowPlacement.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiWindowPrewarm.cs` | Data | xkxk.frameworks.ui.data/Framework/UiWindowPrewarm.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiWindowRegistry.Rules.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(LayoutMigration.cs) |  |  | UiWindowStore |
 | `xkxk.frameworks.ui.shell/Framework/UiWindowRegistry.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  | UiWindowStore |
 | `xkxk.frameworks.ui.shell/Framework/UiWindowViewModel.cs` | Data | xkxk.frameworks.ui.data/Framework/UiWindowViewModel.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
@@ -630,26 +631,15 @@
 | `xkxk.frameworks.ui.views/DocumentTabMenu.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | DocumentTabMenu |
 | `xkxk.frameworks.ui.views/DocumentTabSwitchProbe.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | DocumentTabSwitchProbe |
 | `xkxk.frameworks.ui.views/DocumentViewLocator.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O | O |  |
-| `xkxk.frameworks.ui.views/Documents/FormDocumentView.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/FormDocumentView.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/GanttCanvas.Dense.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/GanttCanvas.Render.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/GanttCanvas.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/GanttDocumentView.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/GanttDocumentView.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/GridCellStrokes.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridCellStrokes |
-| `xkxk.frameworks.ui.views/Documents/GridColumnDrafts.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridColumnDrafts |
+| `xkxk.frameworks.ui.views/Documents/GridCellStrokes.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.views/Documents/GridColumnDrafts.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Documents/GridColumnScaler.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridColumnScaler |
 | `xkxk.frameworks.ui.views/Documents/GridDenseTarget.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/GridDocumentView.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/GridDocumentView.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Documents/GridDocumentViewModel.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/GridLayoutProbe.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridLayoutProbe |
+| `xkxk.frameworks.ui.views/Documents/GridLayoutProbe.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Documents/GridOpenBreakdown.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridOpenBreakdown, CellText |
-| `xkxk.frameworks.ui.views/Documents/GridRouteProbe.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridRouteProbe |
 | `xkxk.frameworks.ui.views/Documents/GridRow.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridSeed |
 | `xkxk.frameworks.ui.views/Documents/GridScrollCoalescer.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridScrollCoalescer |
-| `xkxk.frameworks.ui.views/Documents/GridScrollProbe.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridScrollProbe |
 | `xkxk.frameworks.ui.views/Documents/GridTouchSelection.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridTouchSelection |
 | `xkxk.frameworks.ui.views/Documents/PdCellChrome.Text.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | PdCellChrome, PdCellTextLook |
 | `xkxk.frameworks.ui.views/Documents/PdCellChrome.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | PdCellChrome |
@@ -795,6 +785,8 @@
 | `xkxk.frameworks.ui.views/WindowIcon.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/WindowSystemMenu.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/WindowTitleMenu.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.views/WindowViewPool.Refill.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.views/Windows/IWindowOpenTracking.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.views/Windows/UiWindowViewRegistration.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Windows/WindowViewModelBinder.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | WindowViewModelBinder |
 | `xkxk.frameworks.ui.views/ZoomDecorator.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O | O |  |
@@ -859,6 +851,17 @@
 | `xkxk.frameworks.ui.testbed/Bench/GridBenchView.axaml.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.testbed/Bench/HangulFirstComparer.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.testbed/Bench/IDashboardAdapter.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Documents/FormDocumentView.axaml` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Documents/FormDocumentView.axaml.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Documents/GanttCanvas.Dense.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Documents/GanttCanvas.Render.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Documents/GanttCanvas.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Documents/GanttDocumentView.axaml` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Documents/GanttDocumentView.axaml.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Documents/GridDocumentView.axaml` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Documents/GridDocumentView.axaml.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Documents/GridRouteProbe.cs` | Testbed |  | 시험대 프로젝트 | O |  | GridRouteProbe |
+| `xkxk.frameworks.ui.testbed/Documents/GridScrollProbe.cs` | Testbed |  | 시험대 프로젝트 | O |  | GridScrollProbe |
 | `xkxk.frameworks.ui.testbed/Samples/TypedSampleView.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.testbed/Samples/TypedSampleViewModel.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.testbed/TestbedBench.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |

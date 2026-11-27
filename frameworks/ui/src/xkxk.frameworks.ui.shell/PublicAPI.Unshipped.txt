@@ -562,6 +562,7 @@ xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.Icon.get -> string?
 xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.Id.get -> string!
 xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.Owner.get -> string!
 xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.Placement.get -> xkxk.frameworks.ui.shell.Framework.UiWindowPlacement
+xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.Prewarm.get -> xkxk.frameworks.ui.shell.Framework.UiWindowPrewarm
 xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.Title.get -> string?
 xkxk.frameworks.ui.shell.Framework.UiWindowDefinition.TitleKey.get -> string?
 xkxk.frameworks.ui.shell.Framework.UiWindowOpenOptions
@@ -588,6 +589,8 @@ xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Icon.get -> string?
 xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Icon.set -> void
 xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Placement.get -> xkxk.frameworks.ui.shell.Framework.UiWindowPlacement
 xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Placement.set -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Prewarm.get -> xkxk.frameworks.ui.shell.Framework.UiWindowPrewarm
+xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Prewarm.set -> void
 xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Replace.get -> bool
 xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Replace.set -> void
 xkxk.frameworks.ui.shell.Framework.UiWindowOptions.Title.get -> string?
@@ -598,6 +601,10 @@ xkxk.frameworks.ui.shell.Framework.UiWindowOptions.UiWindowOptions() -> void
 xkxk.frameworks.ui.shell.Framework.UiWindowPlacement
 xkxk.frameworks.ui.shell.Framework.UiWindowPlacement.Default = 0 -> xkxk.frameworks.ui.shell.Framework.UiWindowPlacement
 xkxk.frameworks.ui.shell.Framework.UiWindowPlacement.Sdi = 1 -> xkxk.frameworks.ui.shell.Framework.UiWindowPlacement
+xkxk.frameworks.ui.shell.Framework.UiWindowPrewarm
+xkxk.frameworks.ui.shell.Framework.UiWindowPrewarm.KeepReady = 2 -> xkxk.frameworks.ui.shell.Framework.UiWindowPrewarm
+xkxk.frameworks.ui.shell.Framework.UiWindowPrewarm.None = 0 -> xkxk.frameworks.ui.shell.Framework.UiWindowPrewarm
+xkxk.frameworks.ui.shell.Framework.UiWindowPrewarm.Warm = 1 -> xkxk.frameworks.ui.shell.Framework.UiWindowPrewarm
 xkxk.frameworks.ui.shell.Framework.XkxkUi
 xkxk.frameworks.ui.shell.Framework.XkxkUiAppBuilderExtensions
 xkxk.frameworks.ui.shell.Framework.XkxkUiApplication
@@ -650,6 +657,7 @@ xkxk.frameworks.ui.shell.Framework.UiWindowViewModel<TArgs>.Args.get -> TArgs?
 xkxk.frameworks.ui.shell.Framework.UiWindowViewModel<TArgs>.UiWindowViewModel() -> void
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.WindowArgumentMismatch = "XKUI0509" -> string!
 const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.WindowViewModelFailed = "XKUI0510" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.WindowPrewarmIgnored = "XKUI0511" -> string!
 xkxk.frameworks.ui.shell.Framework.UiCommandContext.Windows.get -> xkxk.frameworks.ui.shell.Framework.IUiWindowRegistry!
 xkxk.frameworks.ui.shell.Framework.UiWindowContentContext.Window.get -> xkxk.frameworks.ui.shell.Framework.IUiWindowContext!
 override xkxk.frameworks.ui.shell.Framework.UiWindowViewModel<TArgs>.AcceptParameter(object? parameter) -> bool

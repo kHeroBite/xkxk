@@ -35,6 +35,7 @@ public sealed class UiWindowDefinition
         AllowDuplicate = options.AllowDuplicate;
         Aliases = new List<string>(aliases).AsReadOnly();
         CreateContent = options.CreateContent;
+        Prewarm = options.Prewarm;
     }
 
     /// <summary>창 ID(대소문자 구분).</summary>
@@ -71,6 +72,9 @@ public sealed class UiWindowDefinition
 
     /// <summary>창 내용 생성 함수(<see cref="UiWindowOptions.CreateContent"/>). 없으면 null.</summary>
     public Func<UiWindowContentContext, object?>? CreateContent { get; }
+
+    /// <summary>등록 때 정한 예열 수준(<see cref="UiWindowOptions.Prewarm"/> 의 사본). 기본값 <see cref="UiWindowPrewarm.None"/>.</summary>
+    public UiWindowPrewarm Prewarm { get; }
 
     /// <summary>등록 주체. 셸 기본 창은 <see cref="UiRegistryOwners.Shell"/>, 모듈이 등록하면 모듈 ID, 실행 중 앱이 등록하면 <see cref="UiRegistryOwners.App"/>.</summary>
     /// <remarks><see cref="UiWindowOptions.Replace"/> 로 교체하면 교체한 주체가 된다. 제거는 이 주체만 할 수 있다(XKUI0508).</remarks>

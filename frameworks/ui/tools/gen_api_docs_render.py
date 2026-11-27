@@ -25,7 +25,7 @@ GROUPS = [
     ("08_셸메뉴ID", ["ShellMenuIds"]),
     ("09_창", ["IUiWindowRegistry", "UiWindowOptions", "UiWindowDefinition", "UiWindowPlacement", "UiWindowOpenOptions",
              "UiWindowContentContext", "IUiWindowContext", "UiWindowViewModel", "UiWindowViewModel<TArgs>",
-             "UiWindowViewRegistration"]),
+             "UiWindowViewRegistration", "UiWindowPrewarm", "IWindowOpenTracking"]),
 ]
 
 # UADR-0009 8원칙 제목 — 출처 /docs/standards/02_공개API_호환원칙.md §3(저장소 루트 기준). 원칙이 바뀌면 함께 고친다.

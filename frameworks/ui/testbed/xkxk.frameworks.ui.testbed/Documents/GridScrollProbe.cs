@@ -8,7 +8,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using xkxk.frameworks.ui.shell.Diagnostics;
 
-namespace xkxk.frameworks.ui.views.Documents;
+namespace xkxk.frameworks.ui.testbed.Documents;
 
 /// <summary>
 /// 확인할 것 두 가지다.

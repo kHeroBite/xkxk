@@ -5,7 +5,7 @@ using System.Globalization;
 using Avalonia;
 using Avalonia.Media;
 
-namespace xkxk.frameworks.ui.views.Documents;
+namespace xkxk.frameworks.ui.testbed.Documents;
 
 public sealed partial class GanttCanvas
 {

@@ -89,4 +89,8 @@ public sealed class UiWindowOptions
     /// </para>
     /// </remarks>
     public bool Replace { get; set; }
+
+    /// <summary>창 내용을 미리 준비해 두는 수준. 기본값 <see cref="UiWindowPrewarm.None"/>.</summary>
+    /// <remarks>등록 시점의 값이 <see cref="UiWindowDefinition.Prewarm"/> 로 복사된다. 등록 뒤에 바꿔도 등록된 창은 바뀌지 않는다.</remarks>
+    public UiWindowPrewarm Prewarm { get; set; }
 }

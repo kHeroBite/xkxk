@@ -8,7 +8,7 @@
 단계: 1) registry.dump windows 의 xkxk.demo.* 3종 owner·강타입 표본 owner  2) docs.open 을 창 ID 경로(window=xkxk.demo.gantt)와 kind 경로(kind=grid)로 따로 호출해 열림·내용이 자리표시 아님
 3) docs.open window=xkxk.testbed.typed param=hello → 트리 testbed.typed.message 텍스트·제목 hello  4) perf.modules count≥1·modules[0].id=시험대(UTODO-0037)
 5) 벤치(폼 문서)를 command.run xkxk.bench.open 으로 열고 문서 목록에서 확인(실행 불가 빌드면 skip 기록 → status=PARTIAL, PASS 아님)  6) pageerror 0(웹).
---batch 2 는 batch 2 단계(예열·GridViewPool)를 위한 자리이며 이 스크립트는 아직 그 단계가 없어 status=NOT_IMPLEMENTED rc 5 로 끝낸다(PASS 로 가장하지 않는다).
+--batch 2(AC-104)는 batch 2 단계만 돈다 — prewarm_ran: perf.get 최상위 prewarm_<kind>_ms·_attached=1(perf.ops 아님, 지표 없으면 skip)  grid_pool_hit: settings.set gridViewPool=true 뒤 그리드 2회 열기 전후 perf.get 의 pool_hit_grid 가 1 이상 증가(키 없으면 skip), perf.ops op=doc.open.grid count≥2 도 확인. 결과는 logs/b10_testbed_smoke_b2_<host>.json.
 결과: {status, host, steps:[{name, ok, skipped, problems, raw}], …} 를 logs/b10_testbed_smoke_<host>.json 에 남긴다.
 rc: 0=PASS 1=FAIL 2=기동 실패·INVALID 3=WAIT(가드 rc9) 4=포트 거부 5=NOT_IMPLEMENTED 6=PARTIAL(건너뛴 단계 있음, PASS 아님)
 """
@@ -135,13 +135,56 @@ def bench_open(s, ctx):
     s.need(any(t.startswith(BENCH_TITLE) for t in titles), "벤치 문서(제목 접두 '%s')가 문서 목록에 없음: %s" % (BENCH_TITLE, titles[:8]))
 
 
+def prewarm_ran(s, ctx):
+    # 예열은 진단판만 지표를 남긴다 — prewarm_* 키가 하나도 없으면 진단판이 아니거나 예열이 꺼진 빌드라 skip(PASS 아님)
+    got = s.remote("perf_get", "perf.get") or {}
+    keys = {k: v for k, v in got.items() if k.startswith("prewarm_")}
+    s.raw["prewarm_metrics"] = keys
+    if not keys:
+        s.skipped = "perf.get 에 prewarm_* 지표 없음(진단판 아님 또는 예열 꺼짐) — SKIP 은 PASS 로 세지 않는다"
+        return
+    ms = [k for k in keys if k.endswith("_ms")]
+    s.need(bool(ms), "prewarm_*_ms 지표 없음: %s" % sorted(keys))
+    s.need(any(keys.get(k[:-3] + "_attached") == 1 for k in ms), "붙임(_attached=1)이 확인된 예열 종류 없음: %s" % keys)
+
+
+def grid_pool_hit(s, ctx):
+    # 임시 프로필(임시 --data-dir)이므로 설정 변경이 사용자 파일에 닿지 않는다. 그래도 끝에 원복한다
+    before = s.remote("settings_before", "settings.get").get("gridViewPool")
+    s.remote("settings_pool_on", "settings.set", gridViewPool=True)
+    try:
+        s.need(s.remote("settings_after", "settings.get").get("gridViewPool") is True, "gridViewPool 켬이 settings.get 에 반영되지 않음")
+        time.sleep(ctx["settle"] * 3)  # 유휴 채우기
+        s.remote("ops_reset", "perf.reset")
+        hit0 = (s.remote("perf_get_before", "perf.get") or {}).get("pool_hit_grid")  # 키 없음 = 진단 지표 없는 빌드
+        for i in (1, 2):
+            opened = s.remote("docs_open_%d" % i, "docs.open", kind="grid")
+            s.need(isinstance(opened, list) and len(opened) == 1, "그리드 열기 %d 응답이 문서 1건이 아님" % i)
+            time.sleep(ctx["settle"] * 3)  # 열린 뒤 다시 채우기
+        ops = s.remote("ops", "perf.ops", op="doc.open.grid")
+        s.raw["grid_ops"] = ops
+        row = next((o for o in ops or [] if o.get("name") == "doc.open.grid"), {})
+        s.need((row.get("count") or 0) >= 2, "doc.open.grid 열기 기록 count=%s(기대 2 이상)" % row.get("count"))
+        after = s.remote("perf_get_after", "perf.get") or {}
+        hit1 = after.get("pool_hit_grid")
+        s.raw["pool_metrics"] = {k: v for k, v in after.items() if k.startswith("pool_")}
+        if hit0 is None and hit1 is None:
+            s.skipped = "perf.get 에 pool_hit_grid 지표 없음(진단판 아님) — SKIP 은 PASS 로 세지 않는다"
+        else:
+            s.need((hit1 or 0) - (hit0 or 0) >= 1, "pool_hit_grid %s → %s(두 번 열기 뒤 1 이상 증가 기대, pool_miss_grid=%s)" % (hit0, hit1, after.get("pool_miss_grid")))
+    finally:
+        if before is not None:
+            s.remote("settings_restore", "settings.set", gridViewPool=bool(before))
+
+
 STEPS = [registry_owners, demo_open, typed_open, perf_modules, bench_open]
+STEPS2 = [prewarm_ran, grid_pool_hit]
 
 
-def run_steps(call, log, settle=1.0):
+def run_steps(call, log, settle=1.0, steps=None):
     """단계를 차례로 실행한다. 한 단계가 실패해도 다음 단계는 실행해 원자료를 남긴다."""
     ctx, out = {"settle": settle}, []
-    for fn in STEPS:
+    for fn in steps or STEPS:
         s = Step(call)
         try:
             fn(s, ctx)
@@ -167,10 +210,11 @@ def main(argv=None):
     if a.host == "web" and a.port in REJECT_PORTS:
         print("포트 %d 거부(사용자 인스턴스 포트)" % a.port)
         return 4
-    if a.batch != 1:
-        print("--batch %d 단계는 이 스크립트에 아직 없음 — NOT_IMPLEMENTED(PASS 아님)" % a.batch)
+    if a.batch not in (1, 2):
+        print("--batch %d 단계는 없음 — NOT_IMPLEMENTED(PASS 아님)" % a.batch)
         return 5
-    out = os.path.abspath(a.out or os.path.join(UI, "logs", "b10_testbed_smoke_%s.json" % a.host))
+    tag = "" if a.batch == 1 else "_b2"
+    out = os.path.abspath(a.out or os.path.join(UI, "logs", "b10_testbed_smoke%s_%s.json" % (tag, a.host)))
     lines = []
 
     def log(msg):
@@ -188,7 +232,7 @@ def main(argv=None):
             if call is not None:
                 ready, last = wait_ready(call, a.ready_timeout)
                 if ready:
-                    result["steps"] = run_steps(call, log)
+                    result["steps"] = run_steps(call, log, steps=STEPS if a.batch == 1 else STEPS2)
                     skipped = [s["name"] for s in result["steps"] if s["skipped"]]
                     result["skipped_steps"] = skipped
                     if not all(s["ok"] for s in result["steps"]):

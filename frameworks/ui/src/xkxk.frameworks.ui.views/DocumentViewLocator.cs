@@ -233,7 +233,7 @@ public sealed class DocumentViewLocator : IDataTemplate
                 var closed = XkxkUi.Current.Shell is { } shell && !System.Linq.Enumerable.Contains(shell.Documents, doc);
                 if (!closed && ReferenceEquals(host.Child, blank))
                 {
-                    host.Child = App.DocumentViews.Create(doc);
+                    host.Child = WindowViewPool.TakeFor(doc.WindowId) ?? App.DocumentViews.Create(doc); // KeepReady 창은 준비된 뷰를 먼저 본다
                     WindowLoadState.Default.AttachContent(doc, host.Child); // 보고 계약이 있으면 뷰 부착을 완료로 보지 않는다(23 §2.2) — DocumentRealized 보다 먼저
                 }
 
@@ -243,9 +243,9 @@ public sealed class DocumentViewLocator : IDataTemplate
 
             // 복원 지연(B5): 안 보이는 복원 문서는 빈 칸으로 두고 만들 때를 컨트롤 층(RestoreViewDeferral)이 정한다.
             // busy=true(보게 된 때)는 기존처럼 스피너를 먼저 그린 뒤, false(유휴 선생성)는 그 자리에서 만든다. 복원이 아니면 기존 경로 그대로다
-            if (doc.WindowId == LegacyWindowKinds.Grid && (GridViewPool.HasReady || DiagDirectGridCreate))
+            if (WindowViewPool.HasReady(doc.WindowId) || (doc.WindowId == LegacyWindowKinds.Grid && DiagDirectGridCreate))
             {
-                Create(); // A16 준비된 표 뷰: 만드는 비용이 없으므로 빈 칸·스피너 프레임을 먼저 그리지 않고 바로 붙인다(한 프레임 절약)
+                Create(); // A16 준비된 뷰: 만드는 비용이 없으므로 빈 칸·스피너 프레임을 먼저 그리지 않고 바로 붙인다(한 프레임 절약)
             }
             else if (!RestoreViewDeferral.TryDefer(doc, busy =>
                 {

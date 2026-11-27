@@ -18,7 +18,7 @@ internal static class RemoteRegistryCommands
 {
     internal static void Register(RemoteCommandRouter r)
     {
-        r.Register("registry.dump", "아이콘·명령·메뉴 레지스트리 덤프(B06·B07) [keys=1 이면 아이콘 키 전체 포함] → {icons:{count,explicit:[키],providers:[{id,count}],keys?},commands:[{id,titleKey,title,icon,iconFound,gesture,category,owner,canExecute}],menus:[{id,parent,kind,command,automationId,owner,hidden,visible,enabled,section}],diagnostics:[{id,severity,message,source}],runtime_errors,windows(B09):[{id,owner,aliases,placement,allowDuplicate(등록 값),hasContent}]}. 읽기 전용", Dump);
+        r.Register("registry.dump", "아이콘·명령·메뉴 레지스트리 덤프(B06·B07) [keys=1 이면 아이콘 키 전체 포함] → {icons:{count,explicit:[키],providers:[{id,count}],keys?},commands:[{id,titleKey,title,icon,iconFound,gesture,category,owner,canExecute}],menus:[{id,parent,kind,command,automationId,owner,hidden,visible,enabled,section}],diagnostics:[{id,severity,message,source}],runtime_errors,windows(B09):[{id,owner,aliases,placement,allowDuplicate(등록 값),hasContent,prewarm(None|Warm|KeepReady)}]}. 읽기 전용", Dump);
         r.Register("command.run", "레지스트리 명령 실행(B06) id=<명령 ID, 예 xkxk.window.cascade> → {id,canExecute,executed}. 실행 못 하면 executed=false", Run);
     }
 
@@ -152,6 +152,7 @@ internal static class RemoteRegistryCommands
                 ["placement"] = JsonValue.Create(w.Placement.ToString()),
                 ["allowDuplicate"] = JsonValue.Create(w.AllowDuplicate),
                 ["hasContent"] = JsonValue.Create(w.CreateContent is not null),
+                ["prewarm"] = JsonValue.Create(w.Prewarm.ToString()), // B10 batch 2 — None/Warm/KeepReady
             });
         }
 

@@ -16,6 +16,7 @@ namespace xkxk.frameworks.ui.views.Diagnostics.Gallery;
 /// 갤러리 문서는 새 창 종류를 만들지 않고 Form 창 + 고정 제목 접두로 연다(BenchEntry 와 같은 방식 — 창 등록·레이아웃 직렬화·다국어 사전 불변).
 /// 뷰는 App.DocumentViews 를 감싼 팩토리가 제목 접두를 보고 GalleryView 로 바꿔 만든다.
 /// 한계: 앱 시작 때 레이아웃 복원으로 다시 열린 갤러리 문서는 팩토리 설치 전이면 일반 양식 화면으로 보인다 — 닫고 gallery.open 으로 다시 연다.
+/// 한계(L4): 시험대 없는 앱에서는 Form 창 정의가 없어 갤러리가 자리표시가 된다.
 /// </summary>
 public static class ControlGallery
 {

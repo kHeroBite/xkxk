@@ -11,7 +11,7 @@ using xkxk.frameworks.ui.shell.Theming;
 using xkxk.frameworks.ui.Input;
 using xkxk.frameworks.ui.shell.Framework;
 
-namespace xkxk.frameworks.ui.views.Documents;
+namespace xkxk.frameworks.ui.testbed.Documents;
 
 /// <summary>간트 작업 1건.</summary>
 public sealed record GanttTask(int No, string Name, DateTime Start, int Days, int Progress, int? DependsOn);

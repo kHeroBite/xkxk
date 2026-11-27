@@ -136,7 +136,9 @@ public sealed class GridDocumentViewModel : IContentLoadReporter
     /// 검색·새로고침 1건. 표시를 먼저 그린 뒤(afterFrame) 일하고, 그사이 새 작업이 오거나 창이 닫히면 버린다.
     /// 셸에 붙지 않은 표(갤러리·예열)는 그 자리에서 돈다.
     /// </summary>
-    internal async Task RunTrackedAsync(string reason, Func<Task> afterFrame, Action work)
+    /// <remarks>시험대 지원용, 공개 계약 아님(B16 생성 명세 제외 후보).</remarks>
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    public async Task RunTrackedAsync(string reason, Func<Task> afterFrame, Action work)
     {
         var version = ++_workVersion;
         var previous = _work;

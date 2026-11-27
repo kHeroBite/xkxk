@@ -8,8 +8,9 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Dock.Avalonia.Controls;
 using xkxk.frameworks.ui.shell.Diagnostics;
+using xkxk.frameworks.ui.views;
 
-namespace xkxk.frameworks.ui.views.Documents;
+namespace xkxk.frameworks.ui.testbed.Documents;
 
 /// <summary>
 /// 포인터 이동(터치) 1건이 TopLevel 에서 그리드까지 내려갔다 올라오는 동안, 아래 지점(형식별 Tunnel·Bubble 클래스 처리기)에서 시각을 찍는다.

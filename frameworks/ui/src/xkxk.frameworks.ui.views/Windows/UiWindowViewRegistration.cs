@@ -116,6 +116,12 @@ public static class UiWindowViewRegistration
         return registry.Add(id, options =>
         {
             configure(options);
+            if (options.Prewarm != UiWindowPrewarm.None) // 예열 Build 는 임시 문서로 내용을 만들어 OnOpenedAsync 가 열리지 않은 창에 실행되고 Closed 가 오지 않는다
+            {
+                options.Prewarm = UiWindowPrewarm.None;
+                XkxkUi.Current.Diagnostics.Report(new UiDiagnostic(UiDiagnosticIds.WindowPrewarmIgnored, UiDiagnosticSeverity.Warning,
+                    $"강타입 창 '{id}' 은 예열하지 않는다(Prewarm 을 None 으로 바꿈).", null)); // i18n-ok 개발자 진단
+            }
             options.CreateContent = context => WindowViewModelBinder.CreateContent<TViewModel, TView>(context, createViewModel); // 구성 대리자가 채운 값을 덮어쓴다
         });
     }

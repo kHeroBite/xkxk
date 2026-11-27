@@ -1,9 +1,9 @@
 <!-- 1만 행 가상화 그리드 문서 화면(필터 입력 + DataGrid). 글자는 셸 토큰(PdFont*), 색은 테마 토큰(PdBrush*), 문구는 다국어 사전(doc.grid.*)을 따른다 -->
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:xkxk.frameworks.ui.views.Documents"
+             xmlns:local="clr-namespace:xkxk.frameworks.ui.views.Documents;assembly=xkxk.frameworks.ui.views"
              xmlns:loc="using:xkxk.frameworks.ui.shell.Localization"
-             x:Class="xkxk.frameworks.ui.views.Documents.GridDocumentView">
+             x:Class="xkxk.frameworks.ui.testbed.Documents.GridDocumentView">
   <DockPanel>
     <Border DockPanel.Dock="Top" Padding="6,4" Background="{DynamicResource PdBrushSurfaceAlt}">
       <WrapPanel Orientation="Horizontal" ItemSpacing="8">

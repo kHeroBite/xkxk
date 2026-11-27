@@ -1,5 +1,6 @@
 // 그리드 문서 열 구성 대조·초안 — 대조 빌드(PD_GRID_TEXTCOLUMNS) 열 교체와 진단 인자 --grid-open 첫 측정 감소 초안(notrim·staticstroke·litecell·noround·fixedname)
 using xkxk.frameworks.ui.shell;
+using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
@@ -13,10 +14,11 @@ using xkxk.frameworks.ui.shell.Localization;
 
 namespace xkxk.frameworks.ui.views.Documents;
 
-/// <summary>GridDocumentView 생성자가 InitializeComponent 직후 1회 부른다. 기본 빌드는 열 방식 문자열 기록만 한다.</summary>
-internal static class GridColumnDrafts
+/// <summary>GridDocumentView 생성자가 InitializeComponent 직후 1회 부른다. 기본 빌드는 열 방식 문자열 기록만 한다. 시험대 지원용, 공개 계약 아님(B16 생성 명세 제외 후보).</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public static class GridColumnDrafts
 {
-    /// <summary>대조 빌드(-p:PdGridTextColumns=true)에서만 열을 이전 방식(DataGridTextColumn + 리플렉션 바인딩)으로 교체한다. 진단 빌드는 --grid-open 초안도 적용한다.</summary>
+    /// <summary>시험대 지원용, 공개 계약 아님(B16 생성 명세 제외 후보). 대조 빌드(-p:PdGridTextColumns=true)에서만 열을 이전 방식(DataGridTextColumn + 리플렉션 바인딩)으로 교체한다. 진단 빌드는 --grid-open 초안도 적용한다.</summary>
     public static void ApplyControlColumns(Control view, DataGrid grid)
     {
 #if PD_GRID_TEXTCOLUMNS

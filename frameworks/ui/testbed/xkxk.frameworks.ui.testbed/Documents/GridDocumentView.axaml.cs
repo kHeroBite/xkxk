@@ -10,11 +10,14 @@ using xkxk.frameworks.ui.shell.Diagnostics;
 using xkxk.frameworks.ui.shell.Docking;
 using xkxk.frameworks.ui.shell.Localization;
 using xkxk.frameworks.ui.shell.Framework;
+using xkxk.frameworks.ui.views;
+using xkxk.frameworks.ui.views.Documents;
+using xkxk.frameworks.ui.views.Windows;
 
-namespace xkxk.frameworks.ui.views.Documents;
+namespace xkxk.frameworks.ui.testbed.Documents;
 
 /// <summary>그리드 문서 화면. XAML 생성 partial 짝은 이 파일 1개뿐이며, 표 공통 동작은 PdDataGrid, 계측·셀 선은 Grid* 클래스에 맡긴다.</summary>
-public partial class GridDocumentView : UserControl, IContentLoadReporter
+public partial class GridDocumentView : UserControl, IContentLoadReporter, IWindowOpenTracking
 #if PD_DIAGNOSTICS
     , IGridDocumentDiagnostics, IGridLoadDiagnostics
 #endif
@@ -139,8 +142,8 @@ public partial class GridDocumentView : UserControl, IContentLoadReporter
         return _layout.Arrange(finalSize, _baseArrange);
     }
 
-    /// <summary>준비된 표 뷰가 실제 열기에 넘겨질 때 열기 계측(doc.open.grid·부착/첫 측정/첫 렌더 분해)을 시작한다(GridViewPool.TryTake).</summary>
-    internal void BeginOpenTracking()
+    /// <summary>준비된 표 뷰가 실제 열기에 넘겨질 때 열기 계측(doc.open.grid·부착/첫 측정/첫 렌더 분해)을 시작한다(IWindowOpenTracking, 예열 경로).</summary>
+    public void BeginOpenTracking()
     {
         PerfProbe.Current.TrackOpen(this, "grid");
         _layout.BeginOpenBreakdown();

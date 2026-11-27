@@ -16,7 +16,7 @@
 
 - Shipped 는 출시된 판에 실린 API 다. 지우거나 서명을 바꾸면 호환이 깨진다.
 - Unshipped 는 다음 판에 실릴 API 다. 사전판(0.x 전) 동안은 전부 Unshipped 이며 바뀔 수 있으니 고정 계약으로 가정하지 않는다.
-- 현재 줄 수: Shipped 0 · Unshipped 659.
+- 현재 줄 수: Shipped 0 · Unshipped 667.
 
 ## 호환 규칙 (UADR-0009 8원칙)
 
@@ -81,6 +81,7 @@
 | `XKUI0508` | `UiDiagnosticIds.WindowRemoveDenied` | 기타 | 다른 주체가 등록한 창을 지우려 함(Error, 지우지 않음). |
 | `XKUI0509` | `UiDiagnosticIds.WindowArgumentMismatch` | 기타 | 강타입 창의 열 때 넘긴 인자가 뷰모델이 기대하는 형식이 아님(Error, 자리표시 내용으로 대신 표시). |
 | `XKUI0510` | `UiDiagnosticIds.WindowViewModelFailed` | 기타 | 강타입 창 뷰모델의 OnOpenedAsync 가 예외를 던짐(Error, 내용은 유지). |
+| `XKUI0511` | `UiDiagnosticIds.WindowPrewarmIgnored` | 기타 | 강타입 창 등록에 예열(Prewarm)을 지정함(Warning, Prewarm 을 None 으로 바꿔 등록). |
 
 ## 그룹 파일
 
@@ -94,8 +95,8 @@
 | [06 진단·공통](06_진단_공통.md) | `UiDiagnostics`·`UiDiagnostic`·`UiDiagnosticSeverity`·`UiDiagnosticIds`·`UiErrorPolicy`·`UiConfigurationException`·`UiRegistryOwners`·`UiRegistryChangeKind`·`UiRegistryChangedEventArgs` |
 | [07 셸명령ID](07_셸명령ID.md) | `ShellCommandIds` |
 | [08 셸메뉴ID](08_셸메뉴ID.md) | `ShellMenuIds` |
-| [09 창](09_창.md) | `IUiWindowRegistry`·`UiWindowOptions`·`UiWindowDefinition`·`UiWindowPlacement`·`UiWindowOpenOptions`·`UiWindowContentContext`·`IUiWindowContext`·`UiWindowViewModel`·`UiWindowViewModel<TArgs>`·`UiWindowViewRegistration` |
+| [09 창](09_창.md) | `IUiWindowRegistry`·`UiWindowOptions`·`UiWindowDefinition`·`UiWindowPlacement`·`UiWindowOpenOptions`·`UiWindowContentContext`·`IUiWindowContext`·`UiWindowViewModel`·`UiWindowViewModel<TArgs>`·`UiWindowViewRegistration`·`UiWindowPrewarm`·`IWindowOpenTracking` |
 
 ## 통계
 
-- PublicAPI 줄(`#` 줄 제외) 659 · 형식 55 · 멤버 611 · 설명 없는 멤버 0.
+- PublicAPI 줄(`#` 줄 제외) 667 · 형식 57 · 멤버 619 · 설명 없는 멤버 0.

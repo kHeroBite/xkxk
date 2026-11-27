@@ -2,8 +2,8 @@
 using System;
 using xkxk.frameworks.ui.data.Navigation;
 using xkxk.frameworks.ui.shell.Framework;
+using xkxk.frameworks.ui.testbed.Documents;
 using xkxk.frameworks.ui.views;
-using xkxk.frameworks.ui.views.Documents;
 
 namespace xkxk.frameworks.ui.testbed;
 
@@ -32,14 +32,14 @@ public static class TestbedWindows
         ArgumentNullException.ThrowIfNull(context);
         var r = context.Windows;
         Add(r, Grid, "shell.kind.grid", MenuIconCatalog.GridIconKey, "chrome.help.grid",
-            _ => GridViewPool.TryTake() ?? new GridDocumentView());
+            _ => new GridDocumentView(), UiWindowPrewarm.KeepReady);
         Add(r, Gantt, "shell.kind.gantt", MenuIconCatalog.GanttIconKey, "chrome.help.gantt",
-            _ => new GanttDocumentView());
-        Add(r, Form, "shell.kind.form", MenuIconCatalog.FormIconKey, null, CreateForm);
+            _ => new GanttDocumentView(), UiWindowPrewarm.Warm);
+        Add(r, Form, "shell.kind.form", MenuIconCatalog.FormIconKey, null, CreateForm, UiWindowPrewarm.Warm);
     }
 
     private static void Add(IUiWindowRegistry r, string id, string titleKey, string icon, string? descriptionKey,
-        Func<UiWindowContentContext, object?> createContent) =>
+        Func<UiWindowContentContext, object?> createContent, UiWindowPrewarm prewarm) =>
         r.Add(id, o =>
         {
             o.TitleKey = titleKey;
@@ -47,6 +47,7 @@ public static class TestbedWindows
             o.DescriptionKey = descriptionKey;
             o.AllowDuplicate = false;
             o.CreateContent = createContent;
+            o.Prewarm = prewarm;
         });
 
     /// <summary>입력폼 창 내용. 벤치 빌드에서 제목이 벤치 접두로 시작하면 벤치 화면을 만든다.</summary>

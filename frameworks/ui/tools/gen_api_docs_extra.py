@@ -13,13 +13,16 @@ from gen_api_docs_parse import xml_to_text
 # (소스 상대 경로, 형식 이름) — 새 형식은 여기 넣어야 명세에 실린다(views 전체를 끌어오지 않는다).
 EXTRA_TYPES = [
     ("src/xkxk.frameworks.ui.views/Windows/UiWindowViewRegistration.cs", "UiWindowViewRegistration"),
+    ("src/xkxk.frameworks.ui.views/Windows/IWindowOpenTracking.cs", "IWindowOpenTracking"),
 ]
 
 _NAMESPACE = re.compile(r"^\s*namespace\s+([\w.]+)\s*;", re.M)
 _METHOD = re.compile(
     r"((?:[ \t]*///[^\n]*\n)+)[ \t]*public\s+static\s+([\w.<>?,\[\] ]+?)\s+(\w+)(<[^()>]*>)?\(([^)]*)\)"
     r"((?:\s*where\s+[^\n]+)*)\s*(?==>|\{)")
-_TYPE = re.compile(r"((?:[ \t]*///[^\n]*\n)+)[ \t]*public\s+((?:static\s+|sealed\s+|abstract\s+)*)class\s+(\w+)")
+_TYPE = re.compile(r"((?:[ \t]*///[^\n]*\n)+)[ \t]*public\s+((?:static\s+|sealed\s+|abstract\s+)*)(class|interface)\s+(\w+)")
+# 인터페이스 멤버(접근 한정자 없는 메서드 선언)
+_IMETHOD = re.compile(r"((?:[ \t]*///[^\n]*\n)+)[ \t]*([\w.<>?,\[\] ]+?)\s+(\w+)\(([^)]*)\)\s*;")
 
 
 def _doc(block):
@@ -44,21 +47,28 @@ def add_extra(root, surface):
                 text = f.read()
         except OSError:
             continue
-        mt = next((m for m in _TYPE.finditer(text) if m.group(3) == name), None)
+        mt = next((m for m in _TYPE.finditer(text) if m.group(4) == name), None)
         mn = _NAMESPACE.search(text)
         if name in types or not mt or not mn:
             continue
         full = mn.group(1) + "." + name
         d = _doc(mt.group(1))
         members = []
-        for m in _METHOD.finditer(text):
+        is_iface = mt.group(3) == "interface"
+        if is_iface:
+            for m in _IMETHOD.finditer(text, mt.end()):
+                doc = _doc(m.group(1))
+                sig = "%s(%s) -> %s" % (m.group(3), _params(m.group(4)), m.group(2).strip())
+                members.append({"name": m.group(3), "raw": full + "." + sig, "member_kind": "method", "returns": m.group(2).strip(),
+                                "const_value": None, "sig": None, "summary": doc["summary"]})
+        for m in ([] if is_iface else _METHOD.finditer(text)):
             doc = _doc(m.group(1))
             where = re.sub(r"\s+", " ", m.group(6)).strip()
             summary = doc["summary"] + (" 제약: %s." % ", ".join("`%s`" % c.strip() for c in re.split(r"\bwhere\s+", where) if c.strip()) if where else "")
             sig = "%s%s(%s) -> %s" % (m.group(3), m.group(4) or "", _params(m.group(5)), m.group(2).strip())
             members.append({"name": m.group(3), "raw": full + "." + sig, "member_kind": "method", "returns": m.group(2).strip(),
                             "const_value": None, "sig": None, "summary": summary})
-        kind = (mt.group(2) + "class").strip().replace("  ", " ")
+        kind = (mt.group(2) + mt.group(3)).strip().replace("  ", " ")
         types[name] = {"full": full, "kind": kind, "members": members, "summary": d["summary"], "remarks": d["remarks"],
                        "member_docs": {}}
     surface["namespaces"] = sorted({t["full"].rsplit(".", 1)[0] for t in types.values()})

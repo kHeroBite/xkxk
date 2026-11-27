@@ -1,6 +1,7 @@
 // 그리드 문서 열기 지연 분해 계측 — 생성자 끝→부착·첫 측정·첫 배치·첫 렌더 시간과 이후 측정·배치 크기 변화(진단 빌드)를 기록
 using xkxk.frameworks.ui.shell;
 using System;
+using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using xkxk.frameworks.ui.shell.Diagnostics;
@@ -12,8 +13,10 @@ namespace xkxk.frameworks.ui.views.Documents;
 /// 기록 이름: grid.open.{attach|measure1|arrange1|render}.{first|next}
 /// attach = 생성자 끝→화면 부착, measure1/arrange1 = 첫 Measure/Arrange 자체 시간, render = 첫 Arrange 끝→두 번째 rAF(첫 프레임 그려짐).
 /// 제품 빌드(PerfProbe.IsEnabled=false)에서는 분해를 시작하지 않는다.
+/// 시험대 지원용, 공개 계약 아님(B16 생성 명세 제외 후보).
 /// </summary>
-internal sealed class GridLayoutProbe
+[EditorBrowsable(EditorBrowsableState.Never)]
+public sealed class GridLayoutProbe
 {
     private static int s_openSeq; // 프로세스 안 그리드 생성 순번(첫 열기 vs 다음 열기 구분)
     private readonly Control _view;
@@ -23,9 +26,10 @@ internal sealed class GridLayoutProbe
     private bool _measured;
     private bool _arranged;
 
+    /// <summary>시험대 지원용, 공개 계약 아님(B16 생성 명세 제외 후보).</summary>
     public GridLayoutProbe(Control view) => _view = view;
 
-    /// <summary>뷰 생성자 끝에서 호출.</summary>
+    /// <summary>뷰 생성자 끝에서 호출. 시험대 지원용, 공개 계약 아님(B16 생성 명세 제외 후보).</summary>
     public void BeginOpenBreakdown()
     {
         if (!PerfProbe.IsEnabled) { return; }
@@ -41,6 +45,7 @@ internal sealed class GridLayoutProbe
         Record("attach", _tAttach - _tCtorEnd);
     }
 
+    /// <summary>시험대 지원용, 공개 계약 아님(B16 생성 명세 제외 후보).</summary>
     public Size Measure(Size availableSize, Func<Size, Size> baseMeasure)
     {
         if (_measured || _tAttach < 0) { return MeasureLater(availableSize, baseMeasure); }
@@ -54,6 +59,7 @@ internal sealed class GridLayoutProbe
         return size;
     }
 
+    /// <summary>시험대 지원용, 공개 계약 아님(B16 생성 명세 제외 후보).</summary>
     public Size Arrange(Size finalSize, Func<Size, Size> baseArrange)
     {
         if (_arranged || !_measured) { return ArrangeLater(finalSize, baseArrange); }
@@ -82,8 +88,8 @@ internal sealed class GridLayoutProbe
     private static int s_gridMeasureSizeChanges;
     private static int s_gridArrangeSizeChanges;
 
-    /// <summary>진단(dock.trace): 첫 열기 뒤 마지막 측정 때 받은 크기(없으면 -1,-1).</summary>
-    internal Size DiagLastMeasureGiven => _lastMeasureGiven;
+    /// <summary>진단(dock.trace): 첫 열기 뒤 마지막 측정 때 받은 크기(없으면 -1,-1). 시험대 지원용, 공개 계약 아님(B16 생성 명세 제외 후보).</summary>
+    public Size DiagLastMeasureGiven => _lastMeasureGiven;
 #endif
 
     private Size MeasureLater(Size availableSize, Func<Size, Size> baseMeasure)
