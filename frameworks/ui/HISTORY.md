@@ -4,6 +4,17 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-27 — 별별UI B10 batch 1 강타입 창 등록(UADR-0017)·시험대 모듈 이관(O4, B10 batch 1/2, conv_179576186006)
+- 결정(UADR-0017). 창 확장에 강타입 등록을 더했다. `IUiWindowRegistry.Register` 6 오버로드(`TVm`·`TView`·`TArgs` 조합)와 `UiWindowViewModel`·`UiWindowViewModel<TArgs>`·`IUiWindowContext` 를 공개하고, 연결 실패는 진단 XKUI0509(`AttachWindow` 인자 불일치)·XKUI0510(닫힘 처리기 예외)으로 보고한다(XKUI0507 은 `CreateContent` 없는 등록 창). views 의 바인더(`WindowViewModelBinder`)는 internal 이다. `AcceptParameter` 가 false 면 `AttachWindow` 가 `ArgumentException` 을 던지고 연결하지 않으며, 두 번째 Attach·연결 전 `NotifyOpenedAsync` 는 `InvalidOperationException` 이다.
+- 시험대 모듈 이관. 데모 창·데모 명령을 같은 ID 로 `testbed/xkxk.frameworks.ui.testbed/` 로 옮겼고 옛 이름 별칭은 두지 않았다(Grid·Gantt·Form 은 영구 예약어). 벤치 37파일(`views/Documents/Bench` → `testbed/.../Bench`)과 `BenchEntry` 삭제, views csproj 의 벤치·차트·ClosedXML·Skia·글꼴 그룹 제거, `PdViewRegistry` 는 명령 등록 여부로 벤치 가용을 판단한다. 시험대 표본(`xkxk.testbed.typed`)은 `TestbedModule.Configure` 한 줄로 등록한다.
+- views 공개 형식 변경(I20). 시험대가 쓰도록 views 일부 형식을 public 으로 바꿨다(목록은 a11, `[EditorBrowsable(Never)]`·'공개 계약 아님' 주석). 결합 해소는 UTODO-0051 이다.
+- 소비자 영향. `docs/03_AI_활용안내.md` 의 AI 복사 블록이 바뀌었으므로 소비 제품은 블록을 다시 붙여넣어야 한다(B18 통지 때 포함). `docs/01`·`02`·`04` 와 `docs/api/`(제네릭 형식 지원 추가, `gen_api_docs_parse.py` 자기시험 14/14)·a10·a11(신설)·a4·a3·분할 규칙(testbed 층)·저장소 구조를 갱신했다.
+- 리뷰 FAIL→반영. odev-review-1 의 FAIL 지적 R1~R4·R7·S1·S6·S9 를 고쳤다. 단순화 S2(탐색 함수 공용화)·S3(공개 오버로드 축소, UADR-0009)는 다음 판 과제로 UTODO-0055·0051 에 올렸다.
+- 역라우팅 1회(#1). `PD_BENCH` 를 켠 구성에서 이관 뒤 CS0103 이 남았다(기본 빌드 4종은 통과해 드러나지 않았다). 고친 뒤 그 구성으로 다시 빌드해 확인했다.
+- 시험 결과. AC 17건 중 PASS 15·WAIT 1(AC-010 Fold5 — adb 에 기기 없음, 진단 APK md5 `f3068b78394d01fd4f5d299c6c5b247d`)·PARTIAL 1(AC-015 `dense_wheel` 21사례는 PC 비움 때 재실행), 카나리아 기대대로 FAIL. 남은 과제 6건은 UTODO-0054, 시험은 "PARTIAL" 이며 이를 PASS 로 적지 않는다.
+- 진행 경과. 리드 세션 재기동과 `/mnt/c` I/O 장애로 사이클이 중단됐다가 이어서 재개했다.
+- 결과. a4 B10 행은 batch 1 완료·batch 2(그리드·간트·폼 데모 이관·예열 일반화) 남음이다. UTODO-0037 해소, UTODO-0049~0055 등록.
+
 ## 2026-11-27 — 별별UI B09 창 레지스트리(UADR-0016)·문서 종류 문자열 ID·저장 형식 6(O4, B09, conv_179570580620)
 - 결정(UADR-0016). 문서 종류 열거형(`DocumentKind`)을 없애고 창을 문자열 ID 로 등록하는 창 레지스트리를 공개한다. 공개 계약은 `IUiWindowRegistry`·`UiWindowDefinition`·`UiWindowOptions`·`UiWindowOpenOptions`·`UiWindowPlacement`·`UiWindowContentContext` 이며 정본은 `a10_창_레지스트리.md` 와 `docs/04_확장_창.md`·`docs/api/09_창.md` 다. 셸 기본 3종(`xkxk.demo.grid`·`gantt`·`form`)은 `ShellDefaultWindows` 가 등록한다.
 - 저장 형식 6. 레이아웃 Version 5→6 읽기 변환(`LayoutMigration`)을 더했고 문서 종류는 문자열 ID 로 저장한다. 끔 목록은 `DuplicateOffWindowIds`(리뷰 R4)를 쓰며 옛 `DuplicateKinds` 는 원소 변환기로 읽는다. 고정 표본은 `test/common/testdata/layout_v5_kinds.json`·`layout_v6_mixed.json` 이다.

@@ -41,7 +41,7 @@ CS_STR = re.compile(r'\$?@?"((?:[^"\\\n]|\\.)*)"')
 
 # 경로 단위 제외(root 기준 상대 경로, '/' 구분). Documents/Bench 는 진단+벤치 빌드(PdBench=true)에서만 컴파일되는 시험 도구이고,
 # 남은 한글은 한글 렌더링·정렬·IME 검증용 시험 데이터다(odev-gc 요청·team-lead 지시, csproj 가 제품판에서 Documents\Bench\** 를 제거).
-SKIP_PATHS = ("xkxk.frameworks.ui.views/Documents/Bench",)
+SKIP_PATHS = ("xkxk.frameworks.ui.testbed/Bench",)
 
 
 def _skip_path(d, name):
@@ -222,11 +222,13 @@ def main(argv):
     check_host_copies(root, dicts, problems)
     if a.remote:
         check_remote(dicts, keys, problems)
-    for f in walk(os.path.join(root, "src"), {".axaml"}):
-        scan_axaml(f, hard, used, tpl_hits)
+    for sub in ("src", "testbed"):
+        for f in walk(os.path.join(root, sub), {".axaml"}):
+            scan_axaml(f, hard, used, tpl_hits)
     judge_item_templates(root, tpl_hits, problems, warns)
-    for f in walk(os.path.join(root, "src"), {".cs"}):
-        scan_cs(f, hard, used)
+    for sub in ("src", "testbed"):
+        for f in walk(os.path.join(root, sub), {".cs"}):
+            scan_cs(f, hard, used)
     scan_hosts(root, hard)
     judge_unknown_keys(root, used, keys, problems)
     by_file = group_by_file(root, hard)

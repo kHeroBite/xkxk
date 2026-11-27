@@ -95,6 +95,8 @@
   <ItemGroup>
     <ProjectReference Include="..\xkxk.frameworks.ui.shell\xkxk.frameworks.ui.shell.csproj" />
     <ProjectReference Include="..\xkxk.frameworks.ui.views\xkxk.frameworks.ui.views.csproj" />
+    <!-- 시험대 모듈(B10): 데모 창·명령·벤치는 셸이 아니라 시험대가 등록한다. 트리밍은 AddModule<TestbedModule> 의 직접 참조로 정적으로 잡힌다. -->
+    <ProjectReference Include="..\..\testbed\xkxk.frameworks.ui.testbed\xkxk.frameworks.ui.testbed.csproj" />
   </ItemGroup>
 
   <!-- 제품 빌드(PdDiagnostics≠true)에서는 웹 자동화 브리지 diag.js 를 산출물에서 뺀다(main.js 동적 import 와 이중 방어) -->

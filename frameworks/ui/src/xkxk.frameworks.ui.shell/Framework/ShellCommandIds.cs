@@ -84,13 +84,13 @@ public static class ShellCommandIds
     /// <summary>배치 프리셋 "MDI 세로 나란히"를 적용한다.</summary>
     public const string LayoutPresetMdiTileVertical = "xkxk.layout.preset.mdiTileVertical";
 
-    /// <summary>데모 문서를 연다. 파라미터는 창 ID 또는 옛 이름(Grid·Gantt·Form)이다. 시험대 모듈로 같은 ID 그대로 옮겨 갈 예정이다.</summary>
+    /// <summary>데모 문서를 연다. 파라미터는 창 ID 또는 옛 이름(Grid·Gantt·Form)이다. 시험대 모듈이 등록한다(B10). 셸은 이 ID 의 명령을 등록하지 않는다.</summary>
     public const string DemoOpen = "xkxk.demo.open";
 
-    /// <summary>데모 문서를 독립 창(SDI)으로 연다. 파라미터는 창 ID 또는 옛 이름(Grid·Gantt·Form)이다.</summary>
+    /// <summary>데모 문서를 독립 창(SDI)으로 연다. 파라미터는 창 ID 또는 옛 이름(Grid·Gantt·Form)이다. 시험대 모듈이 등록한다(B10). 셸은 등록하지 않는다.</summary>
     public const string DemoOpenSdi = "xkxk.demo.openSdi";
 
-    /// <summary>성능 벤치 화면을 연다. 파라미터는 벤치 종류 문자열이다. 벤치를 쓸 수 있을 때만 실행할 수 있다.</summary>
+    /// <summary>성능 벤치 화면을 연다. 파라미터는 벤치 종류 문자열이다. 벤치를 쓸 수 있을 때만 실행할 수 있다. 시험대 모듈이 등록한다(B10). 셸은 등록하지 않는다.</summary>
     public const string BenchOpen = "xkxk.bench.open";
 
     /// <summary>현재 배치를 이름 붙여 저장하는 창을 연다.</summary>

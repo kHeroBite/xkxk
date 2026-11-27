@@ -1,11 +1,12 @@
 // 데스크톱 호스트의 별별UI 빌더 어댑터(내부) — 공개 계약만 써서 빌더를 구성하고 결과 1줄을 호스트 로그에 남긴다
 using xkxk.frameworks.ui.shell.Framework;
+using xkxk.frameworks.ui.testbed;
 
 namespace xkxk.frameworks.ui.desktop;
 
 /// <summary>
 /// 데스크톱 진입부가 <see cref="XkxkUi.CreateBuilder(XkxkUiBuilderOptions)"/> 를 거치게 하는 내부 어댑터다.
-/// 모듈은 등록하지 않는다. 호스트 값은 App 정적 대입 대신 <see cref="XkxkUiBuilderOptions.Host"/> 로 넘기고 UseXkxkUi 가 App 에 연결한다(B03, UADR-0010).
+/// 시험대 모듈(<see cref="TestbedModule"/>)만 등록한다(B10). 호스트 값은 App 정적 대입 대신 <see cref="XkxkUiBuilderOptions.Host"/> 로 넘기고 UseXkxkUi 가 App 에 연결한다(B03, UADR-0010).
 /// 공개 호스트 확장(UseDesktopHost 등)은 B11 범위다.
 /// </summary>
 internal static class DesktopUiHost
@@ -24,7 +25,7 @@ internal static class DesktopUiHost
             HostKind = UiHostKinds.Desktop,
         };
         configureHost(options.Host);
-        var app = XkxkUi.CreateBuilder(options).Build();
+        var app = XkxkUi.CreateBuilder(options).AddModule<TestbedModule>().Build();
         log($"ui builder host={app.Options.HostKind} modules={app.ModuleIds.Count} diagnostics={app.Diagnostics.Entries.Count} app={app.Options.ApplicationId} host-options={HostOptionKeys(app.Options.Host)}");
         return app;
     }

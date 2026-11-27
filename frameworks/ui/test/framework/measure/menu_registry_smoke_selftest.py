@@ -9,7 +9,7 @@ def self_test():
     nav = ["A", "B"]
     good = {
         "registry_dump": {"ok": True, "result": {"menus": [{"id": "m%d" % i, "owner": "xkxk.shell"} for i in range(70)],
-                                                  "commands": [{"owner": "xkxk.shell"}] * 61, "icons": {"explicit": []}}},
+                                                  "commands": [{"owner": "xkxk.shell"}] * 58 + [{"owner": "xkxk.frameworks.ui.testbed"}] * 3, "icons": {"explicit": []}}},
         "menu_list": [{"root": "shell.mnuFile", "response": {"ok": True, "result": {"id": "shell.mnuFile", "count": 2,
                                                                                      "items": [{"id": "shell.mnuOpenGrid"}, {"id": "shell.mnuExit"}]}}}],
         "menu_add": {"ok": True, "result": {"ok": True}}, "menu_remove": {"ok": True, "result": {"ok": True}},
@@ -45,6 +45,10 @@ def self_test():
     ae["menu_list_after_add"] = {"ok": True, "result": {"id": SMOKE_AID, "items": []}}
     c, _, _ = summarize(ae, base, nav, "web")
     cases.append(("추가 확인도 items 만 셈 FAIL", not all(x["pass"] for x in c)))
+    mig = json.loads(json.dumps(good))  # 셸 61개 = 시험대 이관 미반영 → 판정이 FAIL 이어야 한다
+    mig["registry_dump"]["result"]["commands"] = [{"owner": "xkxk.shell"}] * 61
+    c, _, _ = summarize(mig, base, nav, "web")
+    cases.append(("셸 61개(이관 미반영) FAIL", not all(x["pass"] for x in c)))
     for key, mut in [("menu_list_after_remove", {"ok": True, "result": {"id": "shell.mnuFile", "items": [{"id": SMOKE_AID}]}}),
                      ("menu_icons_after_icon_add", {"ok": True, "result": {"menus": [{"items": [{"id": SMOKE_AID, "iconKey": SMOKE_ICON, "geometryFound": False}]}]}}),
                      ("menu_icons_after_icon_remove", {"ok": True, "result": {"menus": [{"items": [{"id": SMOKE_AID, "iconKey": SMOKE_ICON, "geometryFound": True}]}]}}),

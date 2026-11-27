@@ -9,6 +9,10 @@ C_CONST = 'public const string C = "xkxk.c";\n'
 C_REG = '// partial 등록 파일(모의)\nAdd(r, ShellCommandIds.C, "menu.sys.c", %s, null, Sys, c => Run(c), HasShell);\n'
 
 
+DEMO_CONST = 'public const string DemoOpen = "xkxk.demo.open";\n'  # 시험대 소유 명령 상수(모의)
+DEMO_REG = 'Add(r, ShellCommandIds.DemoOpen, "menu.t.a", CmdIconKeys.K0, null, Window, c => Run(c), HasShell);\n'
+
+
 def build_tree(m, root, **mut):
     """판정기 시험용 최소 트리. m 은 판정기 모듈(경로 상수 출처), mut 키로 한 곳만 어긋나게 만든다."""
     cmd_keys = ["PdCmdIconExit", "PdCmdIconSave"]
@@ -72,6 +76,8 @@ CASES = [  # (이름, 변형, 기대)
     ("direct_lookup_in_bitmap_fails", {"bitmap": "host.TryFindResource(key, theme, out var g);\n"}, "fail"),
     ("commands_file_missing_fails", {"drop_ids": 1}, "fail"),
     ("dictionary_file_missing_fails", {"drop_ko": 1}, "fail"),
+    ("testbed_owned_unregistered_passes", {"ids_extra": DEMO_CONST, "all_extra": ", DemoOpen"}, "pass"),
+    ("testbed_owned_registered_in_shell_fails", {"ids_extra": DEMO_CONST, "all_extra": ", DemoOpen", "defs_extra": DEMO_REG}, "fail"),
 ]
 
 

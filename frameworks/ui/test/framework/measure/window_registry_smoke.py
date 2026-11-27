@@ -33,6 +33,7 @@ DEMO = {"xkxk.demo.grid": "Grid", "xkxk.demo.gantt": "Gantt", "xkxk.demo.form": 
 OLD_KINDS = {"grid": "xkxk.demo.grid", "0": "xkxk.demo.grid", "gantt": "xkxk.demo.gantt", "1": "xkxk.demo.gantt",
              "form": "xkxk.demo.form", "2": "xkxk.demo.form"}
 FORM, GANTT, UNKNOWN, PARAM, SAVE_VERSION = "xkxk.demo.form", "xkxk.demo.gantt", "acme.none", "b09", 6
+DEMO_OWNER = "xkxk.frameworks.ui.testbed"  # B10: 데모 3종 소유가 셸에서 시험대 모듈로 이동
 WINDOW_KEYS = {"id", "owner", "aliases", "placement", "allowDuplicate", "hasContent"}
 
 
@@ -182,6 +183,7 @@ def dump_windows(s, ctx):
     s.need(len(windows) >= 3, "windows %d개" % len(windows))
     s.need(set(DEMO) <= {w.get("id") for w in windows}, "셸 기본 창 3종 없음")
     s.need(all(WINDOW_KEYS <= set(w) and w.get("owner") for w in windows), "원소 키 부족")
+    s.need(all(w.get("owner") == DEMO_OWNER for w in windows if w.get("id") in DEMO), "데모 창 owner 가 %s 가 아님: %s" % (DEMO_OWNER, {w.get("id"): w.get("owner") for w in windows if w.get("id") in DEMO}))
     s.need(UNKNOWN not in {w.get("id") for w in windows}, "모르는 창이 등록됨")
 
 

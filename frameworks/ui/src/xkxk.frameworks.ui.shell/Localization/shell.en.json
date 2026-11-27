@@ -122,6 +122,7 @@
   "shell.kind.grid": "Grid",
   "shell.kind.gantt": "Gantt",
   "shell.kind.form": "Form",
+  "testbed.typed.title": "Typed sample",
   "shell.tray.show": "Show",
   "shell.tray.hide": "Hide",
   "shell.tray.exit": "Exit",

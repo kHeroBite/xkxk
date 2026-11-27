@@ -8,7 +8,7 @@ namespace xkxk.frameworks.ui.shell.Framework;
 
 /// <summary>
 /// 앱 컨텍스트가 1개 소유하는 창 종류 저장소. 앱(<see cref="Runtime"/>)과 모듈(<see cref="ViewFor"/>)은 같은 저장소를
-/// 등록 주체(Owner)·진단 싱크만 바꿔 본다. 생성 때 셸 기본 창(<see cref="ShellDefaultWindows"/>)을 등록한다.
+/// 등록 주체(Owner)·진단 싱크만 바꿔 본다.
 /// </summary>
 /// <remarks>
 /// <para>잠금은 1개이며 구성 대리자 호출·Changed 발생·진단 보고·셸 호출은 잠금 밖에서 한다.
@@ -28,8 +28,7 @@ internal sealed partial class UiWindowStore
         _app = app ?? throw new ArgumentNullException(nameof(app));
         _runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
         Runtime = new View(this, UiRegistryOwners.App, runtime, null);
-        // 셸 기본 창은 프레임워크 주체(xkxk.shell)·실행 중 진단으로 등록한다. 다른 저장소를 부르지 않는다(재진입 없음).
-        ShellDefaultWindows.Register(new View(this, UiRegistryOwners.Shell, runtime, null));
+        // B10 부터 셸은 창을 등록하지 않는다. 데모 창(xkxk.demo.*)은 시험대 모듈이 같은 ID 로 등록한다(a10 §3).
     }
 
     /// <summary>앱 수준 보기(Owner <see cref="UiRegistryOwners.App"/>, 진단은 앱 Diagnostics).</summary>

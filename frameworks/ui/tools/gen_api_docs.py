@@ -17,6 +17,7 @@ import tempfile
 sys.dont_write_bytecode = True
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from gen_api_docs_extra import add_extra  # noqa: E402
 from gen_api_docs_parse import load_surface  # noqa: E402
 from gen_api_docs_render import OUT_DIR, render, stats_of  # noqa: E402
 
@@ -44,7 +45,7 @@ def load_menu_rows(root):
 
 
 def _surface(root):
-    surface = load_surface(root)
+    surface = add_extra(root, load_surface(root))
     surface["menu_rows"] = load_menu_rows(root)
     return surface
 
@@ -213,6 +214,10 @@ def self_test():
         ok("결정성(2회 동일)", out1 == out2 and all(v.endswith("\n") and not v.endswith("\n\n") for v in out1.values()))
         ok("생성물 머리·미분류 99", all(v.startswith("<!-- 생성물") for v in out1.values())
            and "docs/api/99_미분류.md" in out1)
+        gen_out = render({"types": {"G<T>": {"full": "Ns.G<T>", "kind": "class", "members": [], "summary": "a <b> `c<d>`",
+                                              "remarks": "", "member_docs": {}}}, "namespaces": ["Ns"]})
+        ok("제네릭 제목·본문 꺾쇠 이스케이프(코드 스팬 안은 그대로)", "## G\\<T\\>" in gen_out["docs/api/99_미분류.md"]
+           and "a \\<b\\> `c<d>`" in gen_out["docs/api/99_미분류.md"])
         ok("쓰기 후 --check rc=0", run(root) == 0 and run(root, check=True) == 0)
         _write(os.path.join(root, "docs", "api", "README.md"), "x\n")
         _write(os.path.join(root, "docs", "api", "zz.md"), "x\n")

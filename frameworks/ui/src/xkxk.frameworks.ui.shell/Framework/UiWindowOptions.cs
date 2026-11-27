@@ -67,8 +67,8 @@ public sealed class UiWindowOptions
     /// <para>반환값은 Avalonia <c>Control</c> 이어야 한다. 이 계약은 UI 라이브러리를 참조하지 않으므로 <c>object</c> 로 받고 화면 층이 검사한다.</para>
     /// <para>예외를 던지거나 null·<c>Control</c> 이 아닌 값을 돌려주면 자리표시 내용을 보이고 진단(XKUI0507)을 남긴다.</para>
     /// <para>
-    /// null 로 두면 셸 기본 창 3종(ID xkxk.demo.grid·xkxk.demo.gantt·xkxk.demo.form)만 화면 층이 기본 데모 내용을 만든다.
-    /// 그 밖의 창은 자리표시 내용을 보이고 진단(XKUI0507)을 남기므로, 솔루션이 등록하는 창은 이 함수를 채운다.
+    /// null 로 두면 자리표시 내용을 보이고 진단(XKUI0507)을 남긴다. 셸은 창을 등록하지 않으며 데모 3종의 내용은 시험대 모듈이 이 함수로 채운다(B10).
+    /// 솔루션이 등록하는 창은 이 함수를 채운다.
     /// </para>
     /// <para>저장된 레이아웃을 복원한 문서는 <see cref="UiWindowContentContext.Parameter"/> 가 null 이다. null 을 처리해야 한다.</para>
     /// </remarks>

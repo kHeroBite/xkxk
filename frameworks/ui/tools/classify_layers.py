@@ -3,7 +3,7 @@
 """
 사용: python3 tools/classify_layers.py [--check] [--json 경로] [--root 저장소]
   기본: LAYERS.md 재생성. --check: 기록된 분류와 다르면 rc=1. --json: 파일별 근거·참조 간선을 JSON 으로도 쓴다.
-분류(먼저 걸린 것): Host 호스트 프로젝트 / Ui xkxk.frameworks.ui / Views axaml·코드비하인드·Views·Themes·Input·Documents 의 Avalonia 코드·벤치·갤러리 /
+분류(먼저 걸린 것): Host 호스트 프로젝트 / Testbed 시험대 프로젝트(testbed/) / Ui xkxk.frameworks.ui / Views axaml·코드비하인드·Views·Themes·Input·Documents 의 Avalonia 코드·벤치·갤러리 /
   Diag 그 밖의 Diagnostics / Data Avalonia·Dock.Avalonia 무참조이고 참조 형식도 전부 Data(닫힘 계산) / Control 나머지.
 예외는 같은 폴더 classify_layers_overrides.json 에 사유와 함께 둔다. 소스는 읽기만 한다. 형식 참조는 정규식 근사이고 빌드가 최종 판정이다.
 """
@@ -15,7 +15,7 @@ import sys
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 
-SRC = "src"
+SRC, ROOTS, TESTBED = "src", ("src", "testbed"), "xkxk.frameworks.ui.testbed"  # 시험대는 src 밖 testbed/ 에 있다
 HOSTS = ("xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android")
 SHELL = "xkxk.frameworks.ui.shell"
 FIXED = {"xkxk.frameworks.ui": "Ui", "xkxk.frameworks.ui.views": "Views", "xkxk.frameworks.ui.data": "Data"}
@@ -41,7 +41,7 @@ def clean_cs(text):
 
 def scan(root):
     found = []
-    stack = [SRC]
+    stack = [r for r in ROOTS if os.path.isdir(os.path.join(root, r))]
     while stack:
         rel = stack.pop()
         with os.scandir(os.path.join(root, rel)) as it:
@@ -124,17 +124,17 @@ def references(rel, info, table):
 
 
 def project_of(rel):
-    return rel[len(SRC) + 1:].split("/", 1)[0]
+    return rel.split("/")[1]
 
 
 def initial_layer(rel, info, overrides):
-    key = rel[len(SRC) + 1:]
+    key = rel.split("/", 1)[1]
     if key in overrides:
         return overrides[key]["layer"], overrides[key]["reason"]
     project = project_of(rel)
-    inner = rel[len(SRC) + 1 + len(project) + 1:]
-    if project in HOSTS:
-        return "Host", "호스트 프로젝트"
+    inner = key[len(project) + 1:]
+    if project in HOSTS or project == TESTBED:
+        return ("Testbed", "시험대 프로젝트") if project == TESTBED else ("Host", "호스트 프로젝트")
     if project in FIXED:
         return FIXED[project], f"{project} 프로젝트"
     if inner.startswith("Documents/Bench/"):
@@ -196,7 +196,7 @@ def classify(root):
 
 def target_of(rel, layer, overrides):
     """이동 뒤 경로(영역 루트의 src 기준). 그대로면 None."""
-    key = rel[len(SRC) + 1:]
+    key = rel.split("/", 1)[1]
     if overrides.get(key, {}).get("target"):
         return overrides[key]["target"]
     if project_of(rel) != SHELL:
@@ -248,7 +248,7 @@ def render(infos, layers, cross, targets):
     lines += ["", f"합계 {len(layers)}개(.cs·.axaml).", "", "## 끊어야 하는 참조(현재 기준 금지 방향)", "",
               f"{len(cross)}건. Shell 이 화면을 직접 만드는 지점과 Data 후보가 밖을 보는 지점이다.", "",
               "| 참조하는 파일 | 층 | 참조되는 파일 | 층 | 형식 |", "|---|---|---|---|---|"]
-    strip = lambda p: p[len(SRC) + 1:]
+    strip = lambda p: p.split("/", 1)[1]
     lines += [f"| `{strip(e['from'])}` | {e['from_layer']} | `{strip(e['to'])}` | {e['to_layer']} | {', '.join(e['types'][:5])} |" for e in cross]
     lines += ["", f"## 층에 걸친 partial 형식", "", f"{len(splits)}건. {', '.join(splits) or '없음'}"]
     with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "classify_layers_overrides.json"), encoding="utf-8") as f:

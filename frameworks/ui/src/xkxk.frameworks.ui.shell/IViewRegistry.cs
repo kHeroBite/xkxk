@@ -46,9 +46,9 @@ public interface IViewRegistry
     /// <summary>화면 층이 가진 진단 명령을 등록한다. 제품 빌드에는 명령이 없다.</summary>
     void RegisterRemote(RemoteCommandRouter router);
 
-    /// <summary>벤치 문서가 포함된 빌드인가.</summary>
+    /// <summary>벤치 명령이 포함된 빌드인가(벤치는 문서 종류가 아니라 명령으로 연다).</summary>
     bool BenchAvailable { get; }
 
-    /// <summary>벤치 문서를 연다. 벤치 미포함 빌드에서는 아무것도 하지 않는다.</summary>
+    /// <summary>벤치 명령을 실행해 연다. 벤치 미포함 빌드에서는 아무것도 하지 않는다.</summary>
     void OpenBench(string target);
 }

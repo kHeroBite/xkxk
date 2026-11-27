@@ -22,7 +22,36 @@ public sealed class RemoteCommandRouter
     private static RemoteCommandRouter? _default;
 
     /// <summary>기본 명령 전체가 등록된 공용 라우터(처음 접근 시 생성).</summary>
-    public static RemoteCommandRouter Default => _default ??= CreateDefault();
+    public static RemoteCommandRouter Default
+    {
+        get
+        {
+            lock (ExtensionLock)
+            {
+                return _default ??= CreateDefault();
+            }
+        }
+    }
+
+    private static readonly object ExtensionLock = new();
+    private static readonly List<Action<RemoteCommandRouter>> Extensions = new();
+
+    /// <summary>
+    /// 진단 명령 확장을 더한다. 공용 라우터가 만들어지기 전이면 만들 때 기본 명령 뒤에 등록 순서대로 호출하고,
+    /// 이미 만들어졌으면 즉시 호출한다. 모듈이 자기 진단 명령을 라우터에 더하는 공개 진입점이다.
+    /// </summary>
+    public static void AddExtension(Action<RemoteCommandRouter> extension)
+    {
+        ArgumentNullException.ThrowIfNull(extension);
+        lock (ExtensionLock)
+        {
+            Extensions.Add(extension);
+            if (_default is not null)
+            {
+                extension(_default);
+            }
+        }
+    }
 
     /// <summary>명령 실행 기록(호스트 로그) — 기본은 Console. 브라우저는 개발자 도구 콘솔로 나간다.</summary>
     public static Action<string> Trace { get; set; } = line => Console.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} [remote] {line}");
@@ -106,6 +135,7 @@ public sealed class RemoteCommandRouter
         RemoteSnapAssistCommands.Register(r); // Snap Assist snapassist.state·pick·zone·skip·cancel(RemoteSnapAssistCommands.cs)
         RemoteThemeDesignCommands.Register(r); // 테마 요소별 사용자 지정 themedesign.elements·get·set·reset·resetall·contrast(RemoteThemeDesignCommands.cs)
         RemoteDesignThemeCommands.Register(r); // 디자인 테마 축 style.set·get·state·effect.set, overview.open·select·state, depth.probe, gpu.simulateSoftware(RemoteDesignThemeCommands.cs)
+        foreach (var extension in Extensions) { extension(r); } // AddExtension 으로 생성 전에 등록된 확장(등록 순서)
         return r;
     }
 

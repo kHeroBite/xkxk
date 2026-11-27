@@ -21,11 +21,11 @@ internal static class WindowRegistryChecks
     public static IEnumerable<ContractCase> All()
     {
         yield return new ContractCase("C68", "창 레지스트리 Add·Remove·Contains·TryGet·TryResolve·Items 순서·Changed·Replace, ID·별칭 이름공간·옛 이름 예약, 진단 XKUI0501~0504·0508", C68);
-        yield return new ContractCase("C69", "앱·모듈 Windows 같은 저장소·셸 기본 창 3종(Owner xkxk.shell·별칭)·Build 중/뒤 진단 위치·소유", C69);
+        yield return new ContractCase("C69", "앱·모듈 Windows 같은 저장소·시험 모듈 데모 창 3종(Owner xkxk.test.contract·옛 이름 해석)·Build 중/뒤 진단 위치·소유", C69);
         yield return new ContractCase("C70", "앱 없음 Open: 없는 창 false+XKUI0505, 셸 없음 false+XKUI0506, configure null 은 ArgumentNullException", C70);
         yield return new ContractCase("C71", "창 공개 형식: 선택 파라미터 0·공개 생성자 0(Definition·ContentContext)·서명에 Avalonia 형식 0·기본값", C71);
         yield return new ContractCase("C72", "셸·데이터 어셈블리에 이름이 DocumentKind 인 형식 0", C72);
-        yield return new ContractCase("C73", "셸 기본 grid 를 별칭 없이 Replace 해도 옛 이름·숫자가 데모 3종으로 풀림(맨 뒤 실행)", C73);
+        yield return new ContractCase("C73", "데모 grid 를 별칭 없이 Replace 해도 옛 이름·숫자가 데모 3종으로 풀림(맨 뒤 실행)", C73);
     }
 
     private static List<UiRegistryChangeKind> Watch(IUiWindowRegistry reg, string id, Action action) =>
@@ -118,7 +118,8 @@ internal static class WindowRegistryChecks
             Check.True(Resolve(reg, alias) == owner && Resolve(reg, id + ".free") == id, $"{alias} 가 {owner} 로 해석되지 않음");
         }
 
-        Diag(UiDiagnosticIds.WindowRemoveDenied, UiDiagnosticSeverity.Error, () => ok = reg.Remove(Grid), "셸 창 Remove");
+        WindowContextChecks.EnsureDemoWindows(); // B10: 다른 주체(시험 모듈) 소유 창 — 셸이 더는 등록하지 않는다
+        Diag(UiDiagnosticIds.WindowRemoveDenied, UiDiagnosticSeverity.Error, () => ok = reg.Remove(Grid), "타 주체 창 Remove");
         Check.True(!ok && reg.Contains(Grid), "다른 주체 창이 지워짐(P2)");
         Check.Throws<ArgumentNullException>(() => reg.Add(null!, _ => { }), "Add(null, configure)");
         Check.Throws<ArgumentNullException>(() => reg.Add("c68.nullcfg", null!), "Add(id, null)");
@@ -148,25 +149,24 @@ internal static class WindowRegistryChecks
 
     private static void C69()
     {
-        var reg = XkxkUi.Current.Windows;
+        var reg = WindowContextChecks.EnsureDemoWindows(); // B10: 셸은 데모 창을 등록하지 않는다 — 시험 모듈(xkxk.test.contract)이 같은 ID 로 등록
         Check.True(reg is not null, "XkxkUi.Current.Windows 가 null");
-        var shell = new (string Id, string Alias, string TitleKey, string Icon, string? Help)[]
+        var shell = new (string Id, string TitleKey, string Icon, string? Help)[]
         {
-            (Grid, "Grid", "shell.kind.grid", MenuIconCatalog.GridIconKey, "chrome.help.grid"),
-            ("xkxk.demo.gantt", "Gantt", "shell.kind.gantt", MenuIconCatalog.GanttIconKey, "chrome.help.gantt"),
-            ("xkxk.demo.form", "Form", "shell.kind.form", MenuIconCatalog.FormIconKey, null),
+            (Grid, "shell.kind.grid", MenuIconCatalog.GridIconKey, "chrome.help.grid"),
+            ("xkxk.demo.gantt", "shell.kind.gantt", MenuIconCatalog.GanttIconKey, "chrome.help.gantt"),
+            ("xkxk.demo.form", "shell.kind.form", MenuIconCatalog.FormIconKey, null),
         };
         foreach (var s in shell)
         {
-            Check.True(reg!.TryGet(s.Id, out var w) && w is not null, $"셸 기본 창 {s.Id} 미등록");
-            Check.True(w!.Owner == UiRegistryOwners.Shell && w.Aliases.Contains(s.Alias) && w.TitleKey == s.TitleKey && XkxkUi.Current.Localization.HasKey(s.TitleKey)
+            Check.True(reg!.TryGet(s.Id, out var w) && w is not null, $"시험 모듈 데모 창 {s.Id} 미등록");
+            Check.True(w!.Owner == WindowContextChecks.TestModuleId && w.Aliases.Count == 0 && w.TitleKey == s.TitleKey && XkxkUi.Current.Localization.HasKey(s.TitleKey)
                 && w.Icon == s.Icon && w.DescriptionKey == s.Help && !w.AllowDuplicate && w.CreateContent is null && w.Placement == UiWindowPlacement.Default,
                 $"{s.Id} 정의 불일치(Owner={w.Owner})");
-            Check.True(Resolve(reg, s.Alias.ToLowerInvariant()) == s.Id && Resolve(reg, s.Alias.ToUpperInvariant()) == s.Id, $"별칭 {s.Alias} 해석 실패");
         }
 
-        Check.True(reg!.Items.Take(3).Select(w => w.Id).OrderBy(i => i, StringComparer.Ordinal)
-            .SequenceEqual(shell.Select(s => s.Id).OrderBy(i => i, StringComparer.Ordinal)), "Items 앞 3개가 셸 기본 창이 아님");
+        var unresolved = Legacy.Where(l => Resolve(reg!, l.Name) != l.Id).Select(l => l.Name).ToList();
+        Check.True(unresolved.Count == 0 && shell.All(s => IndexOf(reg!, s.Id) >= 0), $"옛 이름·숫자 해석 실패({string.Join(",", unresolved)}) 또는 데모 창 Items 누락");
 
         IUiWindowRegistry? module = null;
         var builder = XkxkUi.CreateBuilder();
@@ -180,7 +180,7 @@ internal static class WindowRegistryChecks
         var app = builder.Build();
         Check.True(RegistryProbe.Count(app.Diagnostics, UiDiagnosticIds.WindowIdInvalid) == 1
             && RegistryProbe.Count(RegistryProbe.Runtime, UiDiagnosticIds.WindowIdInvalid) == runtimeBefore, "Build 중 진단은 빌더 Diagnostics 에만 가야 함");
-        Check.True(reg.TryGet("c69.mod.win", out var m) && m!.Owner == "c69.mod" && module!.Contains(Grid), "모듈 등록이 앱 저장소에 보이지 않거나 Owner 오류");
+        Check.True(reg!.TryGet("c69.mod.win", out var m) && m!.Owner == "c69.mod" && module!.Contains(Grid), "모듈 등록이 앱 저장소에 보이지 않거나 Owner 오류");
         Check.True(reg.Add("c69.app", _ => { }) && module!.TryGet("c69.app", out var p) && p!.Owner == UiRegistryOwners.App, "앱 등록이 모듈 보기에 보이지 않음");
 
         var builderCount = app.Diagnostics.Entries.Count;
@@ -292,7 +292,7 @@ internal static class WindowRegistryChecks
 
     private static void C73()
     {
-        var reg = XkxkUi.Current.Windows;
+        var reg = WindowContextChecks.EnsureDemoWindows();
         Check.True(reg.Add(Grid, o => { o.Title = "C73"; o.Replace = true; }) && reg.TryGet(Grid, out var g) && g!.Title == "C73" && g.Aliases.Count == 0, "셸 기본 grid 의 별칭 없는 교체 실패");
         var wrong = Legacy.Where(l => Resolve(reg, l.Name) != l.Id).Select(l => $"{l.Name}→{Resolve(reg, l.Name) ?? "(없음)"}").ToList();
         Check.True(wrong.Count == 0, $"교체 뒤 옛 이름·숫자 해석 불일치: {string.Join(", ", wrong)}");

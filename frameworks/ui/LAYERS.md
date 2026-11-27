@@ -8,13 +8,14 @@
 | 층 | 파일 수 |
 |---|---:|
 | Control | 314 |
-| Data | 70 |
+| Data | 73 |
 | Diag | 93 |
 | Host | 77 |
+| Testbed | 42 |
 | Ui | 26 |
-| Views | 238 |
+| Views | 204 |
 
-합계 818개(.cs·.axaml).
+합계 829개(.cs·.axaml).
 
 ## 끊어야 하는 참조(현재 기준 금지 방향)
 
@@ -262,11 +263,12 @@
 | `xkxk.frameworks.ui.shell/Docking/DocumentSplitCollapse.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(PanelDocumentDock.cs) |  | O | DocumentSplitCollapse |
 | `xkxk.frameworks.ui.shell/Docking/DocumentSplitMode.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(PanelDocumentDock.cs) |  | O | DocumentSplitMode |
 | `xkxk.frameworks.ui.shell/Docking/DocumentTabMenu.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O | O | DocumentTabMenu |
+| `xkxk.frameworks.ui.shell/Docking/DocumentWindowContext.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  | DocumentWindowContext |
 | `xkxk.frameworks.ui.shell/Docking/DocumentZoom.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  | DocumentZoom |
 | `xkxk.frameworks.ui.shell/Docking/IContentLoadReporter.cs` | Data | xkxk.frameworks.ui.data/Layout/IContentLoadReporter.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Docking/IDocumentViewFactory.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Docking/IDocumentZoomHost.cs` | Control |  | 문서 래퍼 표식 계약. 데이터가 아니라 화면 경계를 찾는 제어 어휘 |  |  |  |
-| `xkxk.frameworks.ui.shell/Docking/ILayoutStore.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(Loc.cs) |  | O |  |
+| `xkxk.frameworks.ui.shell/Docking/ILayoutStore.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(DocumentWindowContext.cs) |  | O |  |
 | `xkxk.frameworks.ui.shell/Docking/IMonitorProvider.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Docking/IPressTimeSource.cs` | Control |  | 입력 시각 추상화. 제어층 어휘 |  |  |  |
 | `xkxk.frameworks.ui.shell/Docking/IWindowHostCommands.cs` | Control |  | 창 명령 인터페이스. 제어층 어휘 |  | O |  |
@@ -390,12 +392,12 @@
 | `xkxk.frameworks.ui.shell/Framework/IUiModule.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(IUiModuleContext.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/IUiModuleContext.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(IUiCommandRegistry.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/IUiServiceProvider.cs` | Data | xkxk.frameworks.ui.data/Framework/IUiServiceProvider.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/IUiWindowContext.cs` | Data | xkxk.frameworks.ui.data/Framework/IUiWindowContext.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/IUiWindowRegistry.cs` | Data | xkxk.frameworks.ui.data/Framework/IUiWindowRegistry.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/ShellCommandIds.cs` | Data | xkxk.frameworks.ui.data/Framework/ShellCommandIds.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/ShellDefaultCommands.Menu.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  | ShellDefaultCommands |
 | `xkxk.frameworks.ui.shell/Framework/ShellDefaultCommands.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  | O | ShellDefaultCommands |
 | `xkxk.frameworks.ui.shell/Framework/ShellDefaultMenus.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  | ShellDefaultMenus |
-| `xkxk.frameworks.ui.shell/Framework/ShellDefaultWindows.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(LayoutMigration.cs) |  |  | ShellDefaultWindows |
 | `xkxk.frameworks.ui.shell/Framework/ShellMenuIds.cs` | Data | xkxk.frameworks.ui.data/Framework/ShellMenuIds.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiAppContext.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(ILayoutStore.cs) |  |  | UiAppContext |
 | `xkxk.frameworks.ui.shell/Framework/UiCommandContext.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  |  |
@@ -443,6 +445,8 @@
 | `xkxk.frameworks.ui.shell/Framework/UiWindowPlacement.cs` | Data | xkxk.frameworks.ui.data/Framework/UiWindowPlacement.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/UiWindowRegistry.Rules.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(LayoutMigration.cs) |  |  | UiWindowStore |
 | `xkxk.frameworks.ui.shell/Framework/UiWindowRegistry.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(App.cs) |  |  | UiWindowStore |
+| `xkxk.frameworks.ui.shell/Framework/UiWindowViewModel.cs` | Data | xkxk.frameworks.ui.data/Framework/UiWindowViewModel.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
+| `xkxk.frameworks.ui.shell/Framework/UiWindowViewModelOfT.cs` | Data | xkxk.frameworks.ui.data/Framework/UiWindowViewModelOfT.cs | Avalonia 무참조, 참조 형식도 전부 Data |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/XkxkUi.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(IUiAppContext.cs) |  |  |  |
 | `xkxk.frameworks.ui.shell/Framework/XkxkUiAppBuilderExtensions.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  |  |
 | `xkxk.frameworks.ui.shell/Framework/XkxkUiApplication.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(XkxkUiBuilderOptions.cs) |  |  |  |
@@ -626,42 +630,6 @@
 | `xkxk.frameworks.ui.views/DocumentTabMenu.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | DocumentTabMenu |
 | `xkxk.frameworks.ui.views/DocumentTabSwitchProbe.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | DocumentTabSwitchProbe |
 | `xkxk.frameworks.ui.views/DocumentViewLocator.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O | O |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/AllocMark.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 |  |  | AllocMark |
-| `xkxk.frameworks.ui.views/Documents/Bench/BenchDocumentView.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/BenchDocumentView.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/BenchFonts.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/BenchProbe.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/BenchRemote.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/BenchRow.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/BenchSignal.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/ChartAdapter.LiveCharts.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/ChartAdapter.OxyPlot.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/ChartAdapter.ProCharts.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/ChartAdapter.ScottPlot.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/ChartAdapters.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/ChartBenchView.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/ChartBenchView.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/Dash.Baseline.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/Dash.LiveCharts.DragGate.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/Dash.LiveCharts.DragSnapshot.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/Dash.LiveCharts.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/Dash.PdTokens.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/Dash.ScottPlot.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/Dash.TheOne.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/DashboardBench.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/DashboardBenchView.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/DashboardBenchView.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/DashboardRemote.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/DashboardSpec.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/GridBenchBands.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridBenchBands |
-| `xkxk.frameworks.ui.views/Documents/Bench/GridBenchHighlight.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridBenchHighlight |
-| `xkxk.frameworks.ui.views/Documents/Bench/GridBenchModel.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/GridBenchPro.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridBenchPro |
-| `xkxk.frameworks.ui.views/Documents/Bench/GridBenchView.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/GridBenchView.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/HangulFirstComparer.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.views/Documents/Bench/IDashboardAdapter.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.views/Documents/BenchEntry.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Documents/FormDocumentView.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Documents/FormDocumentView.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Documents/GanttCanvas.Dense.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
@@ -672,7 +640,7 @@
 | `xkxk.frameworks.ui.views/Documents/GridCellStrokes.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridCellStrokes |
 | `xkxk.frameworks.ui.views/Documents/GridColumnDrafts.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridColumnDrafts |
 | `xkxk.frameworks.ui.views/Documents/GridColumnScaler.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridColumnScaler |
-| `xkxk.frameworks.ui.views/Documents/GridDenseTarget.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | GridDenseTarget |
+| `xkxk.frameworks.ui.views/Documents/GridDenseTarget.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Documents/GridDocumentView.axaml` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Documents/GridDocumentView.axaml.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/Documents/GridDocumentViewModel.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
@@ -827,6 +795,8 @@
 | `xkxk.frameworks.ui.views/WindowIcon.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/WindowSystemMenu.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.views/WindowTitleMenu.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.views/Windows/UiWindowViewRegistration.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.views/Windows/WindowViewModelBinder.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O |  | WindowViewModelBinder |
 | `xkxk.frameworks.ui.views/ZoomDecorator.cs` | Views |  | xkxk.frameworks.ui.views 프로젝트 | O | O |  |
 | `xkxk.frameworks.ui/Controls/BusyOverlay.cs` | Ui |  | xkxk.frameworks.ui 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui/Controls/ClipBorder.cs` | Ui |  | xkxk.frameworks.ui 프로젝트 | O |  |  |
@@ -854,3 +824,45 @@
 | `xkxk.frameworks.ui/Motion/MotionPreference.cs` | Ui |  | xkxk.frameworks.ui 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui/Styles/PdUiStyles.axaml` | Ui |  | xkxk.frameworks.ui 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui/Text/UiText.cs` | Ui |  | xkxk.frameworks.ui 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/AllocMark.cs` | Testbed |  | 시험대 프로젝트 |  |  | AllocMark |
+| `xkxk.frameworks.ui.testbed/Bench/BenchDocumentView.axaml` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/BenchDocumentView.axaml.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/BenchFonts.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/BenchProbe.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/BenchRemote.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/BenchRow.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/BenchSignal.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/ChartAdapter.LiveCharts.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/ChartAdapter.OxyPlot.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/ChartAdapter.ProCharts.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/ChartAdapter.ScottPlot.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/ChartAdapters.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/ChartBenchView.axaml` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/ChartBenchView.axaml.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/Dash.Baseline.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/Dash.LiveCharts.DragGate.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/Dash.LiveCharts.DragSnapshot.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/Dash.LiveCharts.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/Dash.PdTokens.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/Dash.ScottPlot.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/Dash.TheOne.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/DashboardBench.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/DashboardBenchView.axaml` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/DashboardBenchView.axaml.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/DashboardRemote.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/DashboardSpec.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/GridBenchBands.cs` | Testbed |  | 시험대 프로젝트 | O |  | GridBenchBands |
+| `xkxk.frameworks.ui.testbed/Bench/GridBenchHighlight.cs` | Testbed |  | 시험대 프로젝트 | O |  | GridBenchHighlight |
+| `xkxk.frameworks.ui.testbed/Bench/GridBenchModel.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/GridBenchPro.cs` | Testbed |  | 시험대 프로젝트 | O |  | GridBenchPro |
+| `xkxk.frameworks.ui.testbed/Bench/GridBenchView.axaml` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/GridBenchView.axaml.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/HangulFirstComparer.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed/Bench/IDashboardAdapter.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Samples/TypedSampleView.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.testbed/Samples/TypedSampleViewModel.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed/TestbedBench.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed/TestbedCommands.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed/TestbedIds.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed/TestbedModule.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed/TestbedWindows.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |

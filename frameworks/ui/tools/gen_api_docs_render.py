@@ -24,7 +24,8 @@ GROUPS = [
     ("07_셸명령ID", ["ShellCommandIds"]),
     ("08_셸메뉴ID", ["ShellMenuIds"]),
     ("09_창", ["IUiWindowRegistry", "UiWindowOptions", "UiWindowDefinition", "UiWindowPlacement", "UiWindowOpenOptions",
-             "UiWindowContentContext"]),
+             "UiWindowContentContext", "IUiWindowContext", "UiWindowViewModel", "UiWindowViewModel<TArgs>",
+             "UiWindowViewRegistration"]),
 ]
 
 # UADR-0009 8원칙 제목 — 출처 /docs/standards/02_공개API_호환원칙.md §3(저장소 루트 기준). 원칙이 바뀌면 함께 고친다.
@@ -48,6 +49,16 @@ def _cell(text):
 
 def _code(text):
     return "`" + _cell(text) + "`"
+
+
+def _esc(text):
+    """코드 스팬(`…`) 밖의 꺾쇠를 이스케이프한다(제네릭 이름이 태그로 사라지지 않게). 꺾쇠가 없으면 그대로다."""
+    if "<" not in text and ">" not in text:
+        return text
+    parts = text.split("`")
+    for i in range(0, len(parts), 2):
+        parts[i] = parts[i].replace("<", "\\<").replace(">", "\\>")
+    return "`".join(parts)
 
 
 def _strip_ns(text, namespaces):
@@ -100,11 +111,11 @@ class _Pager:
 
 
 def _type_section(name, t, namespaces, pager, menu_rows=None):
-    head = ["## %s" % name, "", "- 종류: %s · 전체 이름: %s" % (_code(t["kind"]), _code(t["full"])), ""]
+    head = ["## %s" % _esc(name), "", "- 종류: %s · 전체 이름: %s" % (_code(t["kind"]), _code(t["full"])), ""]
     if t["summary"]:
-        head += t["summary"].split("\n") + [""]
+        head += _esc(t["summary"]).split("\n") + [""]
     if t["remarks"]:
-        head += ["> " + p for p in t["remarks"].split("\n")] + [""]
+        head += ["> " + _esc(p) for p in t["remarks"].split("\n")] + [""]
     consts = [m for m in t["members"] if m["member_kind"] == "const"]
     others = [m for m in t["members"] if m["member_kind"] != "const"]
     if not t["members"]:

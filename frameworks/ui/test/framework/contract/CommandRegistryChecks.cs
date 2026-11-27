@@ -1,4 +1,4 @@
-// 명령 레지스트리 계약 시험 C39~C45 — 기본 셸 명령 61개·앱 없음 동작·실행 문맥·규칙 진단(단축키·예약·소유)·빌더 지연 검사(P4)·변경 알림·제자리 교체를 본다(UADR-0013)
+// 명령 레지스트리 계약 시험 C39~C45 — 기본 셸 명령 61개(시험대 이관 3 제외 58 등록)·앱 없음 동작·실행 문맥·규칙 진단(단축키·예약·소유)·빌더 지연 검사(P4)·변경 알림·제자리 교체를 본다(UADR-0013)
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +14,12 @@ internal static class CommandRegistryChecks
     /// <summary>T-GESTURE 유효 사례 — 진단 없음·Gesture 보존.</summary>
     private static readonly string[] ValidGestures = { "Ctrl+Shift+N", "Ctrl+F4", "Alt+D1", "Ctrl+Enter", "Ctrl+PageUp" };
 
+    /// <summary>시험대로 이관돼 셸만 있는 앱에서는 미등록인 3명령(C78 과 같은 기대).</summary>
+    private static readonly string[] MovedToTestbed = { ShellCommandIds.DemoOpen, ShellCommandIds.DemoOpenSdi, ShellCommandIds.BenchOpen };
+
     public static IEnumerable<ContractCase> All()
     {
-        yield return new ContractCase("C39", "기본 셸 명령: ShellCommandIds.All 61개·중복 0·Owner xkxk.shell·아이콘 해석·문구 키 존재·Commands 앞 61개 순서 = All", C39);
+        yield return new ContractCase("C39", "기본 셸 명령: ShellCommandIds.All 61개·중복 0, 이관 3 제외 58개 Owner xkxk.shell·아이콘 해석·문구 키 존재·Commands 앞 58개 순서 = All(이관 3 제외), 이관 3 미등록", C39);
         yield return new ContractCase("C40", "앱 없음(Shell null): 기본 명령 CanExecute false(overview 만 true)·Execute(cascade) false·예외·Error 진단 0", C40);
         yield return new ContractCase("C41", "사용자 명령 실행: ctx.CommandId·Parameter(null·42)·App, CanExecute false 면 Execute false·대리자 미호출", C41);
         yield return new ContractCase("C42", "명령 규칙 진단 XKUI0301·0302·0303·0304·0306·0307, 단축키 표(XKUI0305), 예약 ID XKUI0308, 다른 주체 Remove XKUI0309", C42);
@@ -25,18 +28,7 @@ internal static class CommandRegistryChecks
         yield return new ContractCase("C45", "셸 기본 명령 대체: Replace=true 로 Owner 변경·새 대리자 실행·Commands 자리 유지(P3, 상태를 남기는 마지막 레지스트리 시험)", C45);
     }
 
-    private static int IndexOf(IReadOnlyList<UiCommandDefinition> list, string id)
-    {
-        for (var i = 0; i < list.Count; i++)
-        {
-            if (list[i].Id == id)
-            {
-                return i;
-            }
-        }
-
-        return -1;
-    }
+    private static int IndexOf(IReadOnlyList<UiCommandDefinition> list, string id) => list.Select(d => d.Id).ToList().IndexOf(id);
 
     private static void C39()
     {
@@ -44,7 +36,14 @@ internal static class CommandRegistryChecks
         var all = ShellCommandIds.All;
         Check.True(all.Count == 61 && all.Distinct(StringComparer.Ordinal).Count() == 61, $"ShellCommandIds.All 수 {all.Count}(중복 없는 61 기대)");
         Check.True(ShellCommandIds.WindowOverview == "xkxk.window.overview" && all.Contains(ShellCommandIds.WindowCascade), "ShellCommandIds 상수 값 오류");
-        foreach (var id in all)
+        var registered = all.Where(id => !MovedToTestbed.Contains(id)).ToList();
+        Check.True(registered.Count == 58, $"이관 3 제외 {registered.Count}개(58 기대)");
+        foreach (var id in MovedToTestbed)
+        {
+            Check.True(!ctx.Commands.Contains(id) && !ctx.Commands.TryGet(id, out _), $"이관 명령 {id} 가 셸만 있는 앱에 등록됨");
+        }
+
+        foreach (var id in registered)
         {
             Check.True(id.StartsWith(UiRegistryOwners.ReservedPrefix, StringComparison.Ordinal), $"{id} 가 예약 접두어로 시작하지 않음");
             Check.True(ctx.Commands.Contains(id), $"기본 명령 {id} 미등록");
@@ -55,10 +54,10 @@ internal static class CommandRegistryChecks
         }
 
         var list = ctx.Commands.Commands;
-        Check.True(list.Count >= all.Count, $"Commands 수 {list.Count}");
-        for (var i = 0; i < all.Count; i++)
+        Check.True(list.Count >= registered.Count, $"Commands 수 {list.Count}");
+        for (var i = 0; i < registered.Count; i++)
         {
-            Check.True(list[i].Id == all[i], $"Commands[{i}]={list[i].Id} ≠ All[{i}]={all[i]}");
+            Check.True(list[i].Id == registered[i], $"Commands[{i}]={list[i].Id} ≠ 등록 기대[{i}]={registered[i]}");
         }
     }
 

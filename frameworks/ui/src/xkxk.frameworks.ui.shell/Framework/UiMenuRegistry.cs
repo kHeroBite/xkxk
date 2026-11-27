@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using xkxk.frameworks.ui.data.Navigation;
 
 namespace xkxk.frameworks.ui.shell.Framework;
 
@@ -75,7 +77,7 @@ internal sealed partial class UiMenuStore
             Warn(sink, UiDiagnosticIds.MenuAnchorMissing, $"메뉴 '{id}' 의 기준 항목 '{o.InsertAfter ?? o.InsertBefore}' 가 같은 부모 아래 없어 맨 뒤에 붙인다.", owner); // i18n-ok 개발자 진단
         }
 
-        if (def.Kind == UiMenuItemKind.Command && def.CommandId is { } cmd && !DeferCommand(session, id, cmd, owner) && !_app.Commands.Contains(cmd))
+        if (def.Kind == UiMenuItemKind.Command && def.CommandId is { } cmd && !IsCommandOptionalRow(id, owner) && !DeferCommand(session, id, cmd, owner) && !_app.Commands.Contains(cmd))
         {
             ReportCommandMissing(sink, id, cmd, owner);
         }
@@ -83,6 +85,10 @@ internal sealed partial class UiMenuStore
         Raise(outcome.Replaced ? UiRegistryChangeKind.Replaced : UiRegistryChangeKind.Added, id);
         return true;
     }
+
+    /// <summary>셸 기본 메뉴 행 중 VisibleWhen="cmd"(명령이 등록됐을 때만 보임)는 명령이 없어도 정상이라 XKUI0405 검사에서 뺀다.</summary>
+    private static bool IsCommandOptionalRow(string id, string owner) =>
+        UiRegistryOwners.IsFramework(owner) && ShellMenuTable.Rows.Any(r => r.Id == id && r.VisibleWhen == "cmd");
 
     private Outcome AddLocked(UiMenuItemDefinition def, UiMenuItemOptions o, bool reserved)
     {

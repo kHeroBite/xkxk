@@ -1,0 +1,14 @@
+<!-- 벤치 문서 화면 — 그리드 벤치·차트 벤치 두 탭. 각 벤치는 실행 전에는 빈 상태라(데이터·차트 없음) 열어 두기만 해서는 측정에 영향이 거의 없다 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="using:xkxk.frameworks.ui.testbed.Bench"
+             x:Class="xkxk.frameworks.ui.testbed.Bench.BenchDocumentView">
+  <TabControl x:Name="Tabs" AutomationProperties.AutomationId="bench.tabs">
+    <TabItem Header="Grid bench" AutomationProperties.AutomationId="bench.tab.grid">
+      <b:GridBenchView x:Name="GridBench" />
+    </TabItem>
+    <TabItem Header="Chart bench" AutomationProperties.AutomationId="bench.tab.chart">
+      <b:ChartBenchView x:Name="ChartBench" />
+    </TabItem>
+  </TabControl>
+</UserControl>

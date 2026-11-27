@@ -1,4 +1,4 @@
-// 메뉴 레지스트리 계약 시험 C46~C53·C60·C61 — 컨텍스트 노출·셸 기본 메뉴·Add 자리·규칙 진단·예약 ID·모바일 힌트 공개 대조·셸 명령 61개를 본다(UADR-0014)
+// 메뉴 레지스트리 계약 시험 C46~C53·C60·C61 — 컨텍스트 노출·셸 기본 메뉴·Add 자리·규칙 진단·예약 ID·모바일 힌트 공개 대조·셸 명령 61개(이관 3 제외 58 등록)를 본다(UADR-0014)
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,6 +76,9 @@ internal static class MenuRegistryChecks
         "xkxk.system.inquiryList", "xkxk.system.update", "xkxk.system.changelog", "xkxk.system.help", "xkxk.system.about", "xkxk.nav.openPanel",
     };
 
+    /// <summary>시험대 이관 3명령(셸만 있는 앱에서 미등록, C78 과 같은 기대).</summary>
+    private static readonly string[] MovedToTestbed = { ShellCommandIds.DemoOpen, ShellCommandIds.DemoOpenSdi, ShellCommandIds.BenchOpen };
+
     public static IEnumerable<ContractCase> All()
     {
         yield return new ContractCase("C46", "XkxkUi.Current.Menus 비 null·같은 인스턴스, 모듈 Configure 의 ui.Menus 비 null", C46);
@@ -87,7 +90,7 @@ internal static class MenuRegistryChecks
         yield return new ContractCase("C52", "같은 ID 재등록 XKUI0402·첫 등록 유지, Replace=true 자리 유지 + Replaced(P3), 없는 ID Replace=true → Added(P1)", C52);
         yield return new ContractCase("C53", "새 xkxk.* 메뉴 ID → false + XKUI0407, 기존 xkxk.* Replace=true → true·Owner 교체 주체(상태를 남기는 마지막 메뉴 시험)", C53);
         yield return new ContractCase("C60", "모바일 힌트(공개 경로): NavMenuCatalog.Entries 63개 ↔ Menus.Items Mobile 정의 1:1 대조·셸 여분 0·소비자 항목 Mobile 사본", C60);
-        yield return new ContractCase("C61", "ShellCommandIds.All 61개·앞 23 B06 순서·신규 38 Owner xkxk.shell·셸 메뉴 CommandId 전부 등록·확대/축소 ID 없음", C61);
+        yield return new ContractCase("C61", "ShellCommandIds.All 61개·앞 23 B06 순서·신규 38 중 이관 3 제외 35 Owner xkxk.shell·셸 메뉴 CommandId 전부 등록(VisibleWhen=cmd 행 제외)·확대/축소 ID 없음", C61);
     }
 
     private static void C46()
@@ -139,7 +142,7 @@ internal static class MenuRegistryChecks
         Check.True(kids.IndexOf(OpenForm) >= 0 && kids.IndexOf(id) == kids.IndexOf(OpenForm) + 1, $"InsertAfter 자리 {kids.IndexOf(id)} ≠ openForm+1");
         Check.True(menus.TryGet(id, out var d) && d!.Kind == UiMenuItemKind.Command && d.Parent == ShellMenuIds.File && d.CommandId == cmd
             && d.Owner == UiRegistryOwners.App, "정의 Kind·Parent·CommandId·Owner 불일치");
-        Check.True(d.AutomationId == "menu." + id, $"AutomationId 기본값={d.AutomationId}");
+        Check.True(d!.AutomationId == "menu." + id, $"AutomationId 기본값={d.AutomationId}");
         var s = menus.GetState(id, UiMenuSurface.Desktop);
         Check.True(s.IsVisible && s.IsEnabled, "GetState 가 보임·활성이 아님");
         Check.True(s.Title == MenuProbe.CommandTitle && s.Icon == CmdIconKeys.Exit, $"GetState Title={s.Title}·Icon={s.Icon}(명령 기본값 기대)");
@@ -273,22 +276,20 @@ internal static class MenuRegistryChecks
         var all = ShellCommandIds.All;
         var cmds = XkxkUi.Current.Commands;
         Check.True(all.Count == B06Commands.Length + B07Commands.Length && all.Count == 61, $"ShellCommandIds.All {all.Count}개(61 기대)");
-        for (var i = 0; i < B06Commands.Length; i++)
-        {
-            Check.True(all[i] == B06Commands[i], $"All[{i}]={all[i]} ≠ B06 {B06Commands[i]}");
-        }
-
+        Check.True(all.Take(B06Commands.Length).SequenceEqual(B06Commands), $"All 앞 {B06Commands.Length}개가 B06 순서와 다름: {string.Join(",", all.Take(B06Commands.Length))}");
         for (var i = 0; i < B07Commands.Length; i++)
         {
             var id = all[B06Commands.Length + i];
             Check.True(id == B07Commands[i], $"All[{B06Commands.Length + i}]={id} ≠ 신규 {B07Commands[i]}");
-            Check.True(cmds.TryGet(id, out var d) && d!.Owner == UiRegistryOwners.Shell, $"신규 명령 {id} 미등록 또는 Owner≠xkxk.shell");
+            Check.True(MovedToTestbed.Contains(id) ? !cmds.Contains(id) : cmds.TryGet(id, out var d) && d!.Owner == UiRegistryOwners.Shell, $"신규 명령 {id}: 이관은 미등록·그 밖은 등록+Owner xkxk.shell 기대");
         }
 
         var menus = XkxkUi.Current.Menus;
+        var cmdRows = // VisibleWhen=cmd 행(데모 6행)은 명령이 시험대에서 오므로 셸만 있는 앱에서 CommandId 미등록
+            new HashSet<string>(ShellMenuTable.Rows.Where(r => r.VisibleWhen == "cmd").Select(r => r.Id), StringComparer.Ordinal);
         foreach (var mid in ShellMenuIds.All)
         {
-            if (menus.TryGet(mid, out var m) && m.Kind == UiMenuItemKind.Command)
+            if (!cmdRows.Contains(mid) && menus.TryGet(mid, out var m) && m.Kind == UiMenuItemKind.Command)
             {
                 Check.True(m.CommandId is not null && cmds.Contains(m.CommandId), $"셸 메뉴 {mid} 의 CommandId {m.CommandId} 미등록");
             }

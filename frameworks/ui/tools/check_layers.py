@@ -41,12 +41,12 @@ def line_of(text, pos):
     return text.count("\n", 0, pos) + 1
 
 
+def layer_dir(name, rules):
+    return rules["layers"][name].get("path", rules["src_root"].rstrip("/") + "/" + name)  # src_root 밖 층(testbed)은 path 키
+
+
 def layer_of(rel, rules):
-    prefix = rules["src_root"].rstrip("/") + "/"
-    if not rel.startswith(prefix):
-        return None
-    name = rel[len(prefix):].split("/", 1)[0]
-    return name if name in rules["layers"] else None
+    return next((n for n in rules["layers"] if rel.startswith(layer_dir(n, rules) + "/")), None)
 
 
 def check_csproj(rel, code, layer, rule):
@@ -138,7 +138,7 @@ def check_all(files, rules, dock_blob=None):
         elif is_limited_file(rel, rules):
             found += check_line_limit(rel, text, rules["line_limit_only"])
     for name, rule in rules["layers"].items():
-        csproj = f"{rules['src_root'].rstrip('/')}/{name}/{name}.csproj"
+        csproj = f"{layer_dir(name, rules)}/{name}.csproj"
         if rule.get("required") and csproj not in files:
             found.append(f"{csproj} 필수 프로젝트가 없다")
     return found + check_template_parts(files, rules, dock_blob, strip_comments)
@@ -155,7 +155,7 @@ def scan_dir(root, rel):
 def list_files(root, rules, pool):
     """작업 트리를 폴더 단계별로 나눠 훑는다. 미추적 신규 파일도 봐야 하는데 git ls-files --others·순차 os.walk 는 NTFS 에서 2~5초 걸려 시간 상한을 넘긴다."""
     skip = set(rules["skip_dirs"])
-    found, level = [], list(rules["scan_paths"])
+    found, level = [], [p for p in rules["scan_paths"] if os.path.isdir(os.path.join(root, p))]  # 아직 없는 층 폴더는 건너뛴다
     while level:
         next_level = []
         for files, dirs in pool.map(lambda rel: scan_dir(root, rel), level):
@@ -182,7 +182,7 @@ def read_text(root, rel):
 def self_test(rules):
     """규칙이 실제로 위반을 잡는지(진양성)와 주석·허용 경로를 건너뛰는지(진음성)를 내장 사례로 확인한다."""
     ok = "// 정상 헤더\nusing System;\n"
-    src = "src/"
+    src, tb = "src/", "testbed/xkxk.frameworks.ui.testbed/"
     parts, tpl = rules["template_parts"]["contract"], src + "xkxk.frameworks.ui.views/T.axaml"
     part = lambda **kv: "// 헤더\n" + "".join(f'public const string {k} = "{v}";\n' for k, v in kv.items())
     base = {
@@ -233,6 +233,10 @@ def self_test(rules):
         ("axaml 주석 안 정의는 불인정", {tpl: '<!-- 헤더 x:Name="PART_Header" -->\n<Border />\n'}, 1),
         ("axaml 선택자만 있으면 불인정", {tpl: '<!-- 헤더 -->\n<Style Selector="Border#PART_Header" />\n'}, 1),
         ("Name= 정의 통과", {tpl: '<!-- 헤더 -->\n<Border Name="PART_Header" />\n'}, 0),
+        ("Testbed→프레임워크 허용·헤더 통과", {tb + "x.csproj": '<!-- 헤더 -->\n<Project><ProjectReference Include="..\\..\\src\\xkxk.frameworks.ui.shell\\xkxk.frameworks.ui.shell.csproj" /></Project>\n', tb + "A.cs": "// 헤더\\nusing xkxk.frameworks.ui.shell;\\n"}, 0),
+        ("Testbed 헤더 없음", {tb + "A.cs": "using System;\\n"}, 1),
+        ("Shell→Testbed 코드", {src + "xkxk.frameworks.ui.shell/A.cs": "using xkxk.frameworks.ui.testbed;\\n"}, 1),
+        ("Views→Testbed 프로젝트", {src + "xkxk.frameworks.ui.views/xkxk.frameworks.ui.views.csproj": '<!-- 헤더 -->\n<Project><ProjectReference Include="..\\..\\testbed\\xkxk.frameworks.ui.testbed\\xkxk.frameworks.ui.testbed.csproj" /></Project>\n'}, 1),
         ("Dock 이름의 앞부분만 일치", {parts: part(Pin="PART_Pin")}, 1),
     ]
     failed = 0

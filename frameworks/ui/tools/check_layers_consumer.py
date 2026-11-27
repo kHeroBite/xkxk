@@ -78,7 +78,7 @@ def self_test_cases():
         ("소비자 Internal 네임스페이스", {tf + "T.cs": "using xkxk.frameworks.ui.shell.Framework.Internal;\n"}, 1),
         ("소비자 NonPublic 리플렉션", {tf + "T.cs": "var f = t.GetField(\"x\", BindingFlags.NonPublic);\n"}, 1),
         ("소비자 정상", {tf + "T.cs": "using xkxk.frameworks.ui.shell.Framework;\n"}, 0),
-        ("비활성 testbed 는 건너뜀", {"testbed/T.cs": "var f = BindingFlags.NonPublic;\n"}, 0),
+        ("활성 testbed 위반은 잡힌다", {"testbed/T.cs": "var f = BindingFlags.NonPublic;\n"}, 1),
         ("소비자 주석은 통과", {tf + "T.cs": "// BindingFlags.NonPublic 금지\n"}, 0),
     ]
 

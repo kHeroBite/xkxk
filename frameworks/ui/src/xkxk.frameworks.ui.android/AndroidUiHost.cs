@@ -1,5 +1,6 @@
 // Android 호스트의 별별UI 빌더 어댑터(내부) — 공개 계약만 써서 빌더를 구성하고 결과 1줄을 logcat 에 남긴다
 using xkxk.frameworks.ui.shell.Framework;
+using xkxk.frameworks.ui.testbed;
 
 namespace xkxk.frameworks.ui.android;
 
@@ -26,7 +27,7 @@ internal static class AndroidUiHost
             HostKind = UiHostKinds.Android,
         };
         configureHost(options.Host);
-        var app = XkxkUi.CreateBuilder(options).Build();
+        var app = XkxkUi.CreateBuilder(options).AddModule<TestbedModule>().Build();
         log($"ui builder host={app.Options.HostKind} modules={app.ModuleIds.Count} diagnostics={app.Diagnostics.Entries.Count} app={app.Options.ApplicationId} host-options={HostOptionKeys(app.Options.Host)}");
         return app;
     }

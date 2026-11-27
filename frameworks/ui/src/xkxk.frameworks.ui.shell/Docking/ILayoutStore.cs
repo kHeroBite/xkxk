@@ -69,7 +69,8 @@ public static class WindowDisplay
 
         try
         {
-            return create(new UiWindowContentContext(window.Id, doc.Id ?? "", doc.Title ?? "", doc.Parameter));
+            var context = DocumentWindowContext.For(window.Id, doc, app); // 문서당 같은 창 문맥을 다시 쓴다
+            return create(new UiWindowContentContext(window.Id, doc.Id ?? "", doc.Title ?? "", doc.Parameter, context));
         }
         catch (Exception ex)
         {

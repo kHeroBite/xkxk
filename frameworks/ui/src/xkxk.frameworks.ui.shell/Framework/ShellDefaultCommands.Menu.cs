@@ -30,13 +30,6 @@ internal static partial class ShellDefaultCommands
     /// <summary>B07 38개를 <see cref="ShellCommandIds.All"/> 순서대로 등록한다.</summary>
     private static void RegisterMenuCommands(IUiCommandRegistry r)
     {
-        Add(r, ShellCommandIds.DemoOpen, "menu.file.openGrid", MenuIconCatalog.GridIconKey, null, FileCategory,
-            c => Do(c, v => v.OpenCommand, Text(c)), c => Can(c, v => v.OpenCommand, Text(c)));
-        Add(r, ShellCommandIds.DemoOpenSdi, "menu.file.openGridSdi", CmdIconKeys.OpenSdi, null, FileCategory,
-            c => Do(c, v => v.OpenSdiCommand, Text(c)), c => Can(c, v => v.OpenSdiCommand, Text(c)));
-        Add(r, ShellCommandIds.BenchOpen, "menu.file.openBench", CmdIconKeys.OpenBench, null, FileCategory,
-            c => Do(c, v => v.Extras.OpenBenchCommand, Text(c)),
-            c => Vm(c) is { Extras.BenchAvailable: true } && Can(c, v => v.Extras.OpenBenchCommand, Text(c)));
         Add(r, ShellCommandIds.LayoutSaveCurrent, "menu.ws.layoutSave", CmdIconKeys.LayoutSave, null, Layout,
             c => Do(c, v => v.WindowMenu.SaveCurrentLayoutCommand, null), c => Can(c, v => v.WindowMenu.SaveCurrentLayoutCommand, null));
         Add(r, ShellCommandIds.LayoutManage, "menu.ws.layoutManage", CmdIconKeys.LayoutManage, null, Layout,

@@ -119,9 +119,15 @@ public static class UiDiagnosticIds
     /// <summary>창을 열 셸(앱 화면)이 아직 없음(Warning, 열지 않고 false).</summary>
     public const string WindowShellUnavailable = "XKUI0506";
 
-    /// <summary>창 CreateContent 가 예외를 던지거나 null·Control 이 아닌 값을 돌려줌, 또는 셸 기본 창 3종이 아닌 창에 CreateContent 가 없음(Error, 자리표시 내용으로 대신 표시).</summary>
+    /// <summary>창 CreateContent 가 예외를 던지거나 null·Control 이 아닌 값을 돌려줌, 또는 창에 CreateContent 가 없음(B10 이후 셸 기본 창은 없음)(Error, 자리표시 내용으로 대신 표시).</summary>
     public const string WindowContentFailed = "XKUI0507";
 
     /// <summary>다른 주체가 등록한 창을 지우려 함(Error, 지우지 않음).</summary>
     public const string WindowRemoveDenied = "XKUI0508";
+
+    /// <summary>강타입 창의 열 때 넘긴 인자가 뷰모델이 기대하는 형식이 아님(Error, 자리표시 내용으로 대신 표시).</summary>
+    public const string WindowArgumentMismatch = "XKUI0509";
+
+    /// <summary>강타입 창 뷰모델의 OnOpenedAsync 가 예외를 던짐(Error, 내용은 유지).</summary>
+    public const string WindowViewModelFailed = "XKUI0510";
 }

@@ -148,7 +148,7 @@ internal static class IconRegistryChecks
         var changes = RegistryProbe.Changes(h => icons.Changed += h, h => icons.Changed -= h, key, () => added = icons.AddGeometry(key, RegistryProbe.PathData));
         Check.True(added && icons.Contains(key), "AddGeometry(새 키) 실패");
         Check.True(icons.TryGet(key, out var def) && def!.Kind == UiIconKind.PathData && def.PathData == RegistryProbe.PathData, "TryGet 이 PathData 정의가 아님");
-        Check.True(def.Owner == UiRegistryOwners.App && UiRegistryOwners.App == "app", $"XkxkUi.Current 경유 Owner={def.Owner}");
+        Check.True(def!.Owner == UiRegistryOwners.App && UiRegistryOwners.App == "app", $"XkxkUi.Current 경유 Owner={def.Owner}");
         Check.True(changes.Count == 1 && changes[0] == UiRegistryChangeKind.Added, $"Added 알림 {changes.Count}건");
         var removed = false;
         changes = RegistryProbe.Changes(h => icons.Changed += h, h => icons.Changed -= h, key, () => removed = icons.Remove(key));

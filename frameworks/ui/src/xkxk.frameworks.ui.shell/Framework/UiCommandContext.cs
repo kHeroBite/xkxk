@@ -28,6 +28,9 @@ public sealed class UiCommandContext
     /// <summary>앱 컨텍스트. null 이 아니다. 셸이 아직 없으면 <see cref="IUiAppContext.Shell"/> 이 null 일 수 있다.</summary>
     public IUiAppContext App { get; }
 
+    /// <summary>창 레지스트리(<see cref="IUiAppContext.Windows"/> 와 같다). 명령 처리기가 창을 열 때 쓴다.</summary>
+    public IUiWindowRegistry Windows => App.Windows;
+
     /// <summary>실행하는 명령 ID.</summary>
     public string CommandId { get; }
 

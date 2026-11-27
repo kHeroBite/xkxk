@@ -17,6 +17,9 @@ import re
 import sys
 import urllib.parse
 
+import consumer_docs_ext as cdx
+from consumer_docs_ext import index  # noqa: F401 — 형식→멤버→반환 형식 색인(보조 모듈)
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 TOOLS = os.path.join(REPO, "tools")
@@ -58,26 +61,6 @@ def load_gen():
     return gen_api_docs, gen_api_docs_parse, gen_api_docs_render
 
 
-def base(name):
-    n = re.sub(r"<[^>]*>", "", name.split("(")[0]).split(" =")[0].strip()
-    n = re.sub(r"\.(get|set|init|add|remove)$", "", n)
-    return n.rsplit(".", 1)[-1]
-
-
-def short_type(t):
-    t = re.sub(r"<.*", "", t or "").strip().rstrip("!?[]").strip()
-    return t.rsplit(".", 1)[-1] if t else None
-
-
-def index(surface):
-    idx = {}
-    for t, info in surface.get("types", {}).items():
-        m = idx.setdefault(t, {})
-        for mem in info.get("members", []):
-            m.setdefault(base(mem.get("name", "")), set()).add(short_type(mem.get("returns")))
-    return idx
-
-
 def namespaces(root, surface):
     names = {FW_NS}
     names.update(os.path.basename(p) for p in glob.glob(os.path.join(root, "src", "xkxk.*")) if os.path.isdir(p))
@@ -88,6 +71,7 @@ def namespaces(root, surface):
                 names.update(re.findall(r"xkxk(?:\.\w+)+", fh.read()))
         except OSError:
             pass
+    names.update(cdx.declared_namespaces(root))  # 소스에 선언된 namespace(views.Windows·testbed 등)
     out = set()
     for n in names:
         parts = n.split(".")
@@ -198,6 +182,7 @@ def run(root, strict=False):
         rep.ok(False, "K10", where, f"미해석 PublicAPI 줄 `{text}`")
     rep.ok(bool(surface.get("types")), "K10", "PublicAPI", "공개 형식 0개 — txt 를 읽지 못함")
     idx = index(surface)
+    cdx.add_extensions(idx, root)  # 공개 확장 메서드(ui.Windows.Register<…>)를 수신 형식 멤버로
     codes = {d.get("code") for d in surface.get("diagnostics", [])}
     ctx = (idx, set(surface.get("const_values", [])), namespaces(root, surface), codes)
     # K1 생성물 최신

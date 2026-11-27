@@ -7,6 +7,7 @@ using Avalonia.Controls;
 using Avalonia.Styling;
 using xkxk.frameworks.ui.shell.Diagnostics.Remote;
 using xkxk.frameworks.ui.shell.Docking;
+using xkxk.frameworks.ui.shell.Framework;
 using xkxk.frameworks.ui.shell.ViewModels;
 
 namespace xkxk.frameworks.ui.views;
@@ -20,7 +21,8 @@ public sealed class PdViewRegistry : IViewRegistry
 
     public Type ChromeButtonsType => typeof(ChromeButtons);
 
-    public bool BenchAvailable => xkxk.frameworks.ui.views.Documents.BenchEntry.IsAvailable;
+    /// <summary>시험대 모듈이 벤치 명령(xkxk.bench.open)을 등록했는지로 판정한다.</summary>
+    public bool BenchAvailable => XkxkUi.Current.Commands.Contains(ShellCommandIds.BenchOpen);
 
     public Control CreateMainView(MainViewModel vm) => new MainView { DataContext = vm };
 
@@ -47,7 +49,6 @@ public sealed class PdViewRegistry : IViewRegistry
     public void RegisterRemote(RemoteCommandRouter router)
     {
 #if PD_DIAGNOSTICS
-        xkxk.frameworks.ui.views.Documents.BenchEntry.RegisterRemote(router);
         xkxk.frameworks.ui.views.Diagnostics.Gallery.ControlGallery.RegisterRemote(router);
         xkxk.frameworks.ui.views.Diagnostics.PanelPositionMenuDiag.RegisterRemote(router);
 #else
@@ -55,5 +56,6 @@ public sealed class PdViewRegistry : IViewRegistry
 #endif
     }
 
-    public void OpenBench(string target) => xkxk.frameworks.ui.views.Documents.BenchEntry.Open(target);
+    /// <summary>벤치 열기 명령(xkxk.bench.open)을 target 파라미터로 실행한다(시험대가 처리, 재귀 없음).</summary>
+    public void OpenBench(string target) => XkxkUi.Current.Commands.Execute(ShellCommandIds.BenchOpen, target);
 }

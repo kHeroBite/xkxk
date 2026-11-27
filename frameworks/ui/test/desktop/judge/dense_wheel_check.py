@@ -60,7 +60,7 @@ def static_checks():
     target = _read("xkxk.frameworks.ui.views/Documents/GridDenseTarget.cs")
     pd = _read("xkxk.frameworks.ui.views/Documents/PdDataGrid.cs")
     gridx = _read("xkxk.frameworks.ui.views/Documents/GridDocumentView.axaml")
-    bench = _read("xkxk.frameworks.ui.views/Documents/Bench/GridBenchView.axaml.cs")
+    bench = _read("../testbed/xkxk.frameworks.ui.testbed/Bench/GridBenchView.axaml.cs")
     settings = _read("xkxk.frameworks.ui.shell/Input/SettingsInput.cs")
     remote = _read("xkxk.frameworks.ui.shell/Diagnostics/Remote/RemoteWheelCommands.cs")
     doc = _read(DOC)

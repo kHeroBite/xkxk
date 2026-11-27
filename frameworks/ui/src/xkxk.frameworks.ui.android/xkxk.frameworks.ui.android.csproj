@@ -44,5 +44,6 @@
   <ItemGroup>
     <ProjectReference Include="..\xkxk.frameworks.ui.shell\xkxk.frameworks.ui.shell.csproj" />
     <ProjectReference Include="..\xkxk.frameworks.ui.views\xkxk.frameworks.ui.views.csproj" />
+    <ProjectReference Include="..\..\testbed\xkxk.frameworks.ui.testbed\xkxk.frameworks.ui.testbed.csproj" />
   </ItemGroup>
 </Project>

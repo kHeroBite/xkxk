@@ -13,7 +13,7 @@ namespace xkxk.frameworks.ui.shell.Framework;
 /// <para>프레임워크만 구현한다. 소비자는 이 인터페이스를 구현하지 않는다. 앞으로 멤버가 추가될 수 있다.</para>
 /// <para>
 /// 등록 주체: 모듈 컨텍스트에서 얻은 레지스트리는 그 모듈 ID 를, 앱 컨텍스트에서 얻은 레지스트리는 <see cref="UiRegistryOwners.App"/> 를
-/// 등록 주체(<see cref="UiWindowDefinition.Owner"/>)로 기록한다. 셸 기본 창의 주체는 <see cref="UiRegistryOwners.Shell"/> 이다.
+/// 등록 주체(<see cref="UiWindowDefinition.Owner"/>)로 기록한다. 셸은 창을 등록하지 않는다. 데모 창 3종(xkxk.demo.*)은 시험대 모듈이 같은 ID 로 등록한다(B10).
 /// 같은 저장소를 보므로 어느 쪽에서 등록해도 모두에게 보인다.
 /// </para>
 /// <para>

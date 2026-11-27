@@ -14,7 +14,7 @@ import re
 MODIFIERS = {"abstract", "const", "override", "static", "virtual", "readonly", "sealed", "new", "extern"}
 _TYPE_DECL = re.compile(
     r"^(?:(?:public|internal|private|protected|static|sealed|abstract|partial|readonly|unsafe|new|file)\s+)*"
-    r"(class|interface|enum|struct|record(?:\s+struct|\s+class)?)\s+([A-Za-z_]\w*)")
+    r"(class|interface|enum|struct|record(?:\s+struct|\s+class)?)\s+([A-Za-z_]\w*)(<[\w\s,]+>)?")
 _TYPE_KIND = re.compile(r"\b((?:(?:static|sealed|abstract|readonly)\s+)*)(?:partial\s+)?(class|interface|enum|struct|record)\b")
 _NAMESPACE = re.compile(r"^\s*namespace\s+([\w.]+)")
 _IDENT = re.compile(r"[A-Za-z_]\w*")
@@ -133,7 +133,7 @@ def _scan_cs(path, docs):
             m_t = _TYPE_DECL.match(decl)
             if m_t:
                 outer = stack[-1][0] if stack else (ns + "." if ns else "")
-                full = (outer + "." if stack else outer) + m_t.group(2)
+                full = (outer + "." if stack else outer) + m_t.group(2) + re.sub(r"\s", "", m_t.group(3) or "")
                 ent = docs.setdefault(full, {"summary": "", "remarks": "", "kind": "", "member_docs": {}, "bases": [],
                                              "sig_docs": {}})
                 bm = re.search(r"\b%s\s*(?:<[^>]*>)?\s*(?:\([^)]*\))?\s*:\s*([^{]+)" % m_t.group(2), decl)
@@ -252,7 +252,7 @@ def load_surface(root):
     types, unresolved, unparsed, projects = {}, [], [], {}
     for proj, rel, no, line in entries:
         mods, rest = _strip_mods(line)
-        if rest and " -> " not in rest and re.fullmatch(r"[A-Za-z_][\w.]*", rest):
+        if rest and " -> " not in rest and re.fullmatch(r"[A-Za-z_][\w.]*(?:<[\w\s,]+>)?", rest):
             short = rest.rsplit(".", 1)[-1]
             types[short] = {"full": rest, "kind": "", "members": [], "summary": "", "remarks": "", "member_docs": {}}
             projects.setdefault(proj, set()).add(rest)
@@ -262,7 +262,7 @@ def load_surface(root):
         if rest in (t["full"] for t in types.values()) and " -> " not in rest:
             continue
         owner = next((k for full, k in by_full if rest.startswith(full + ".")), None)
-        got = _classify(mods, owner, types[owner]["full"], rest[len(types[owner]["full"]) + 1:]) if owner else None
+        got = _classify(mods, re.sub(r"<.*>$", "", owner) if owner else owner, types[owner]["full"], rest[len(types[owner]["full"]) + 1:]) if owner else None
         if not got:
             unresolved.append("%s:%d: %s" % (rel, no, line))
             unparsed.append({"file": rel, "line": no, "text": line})

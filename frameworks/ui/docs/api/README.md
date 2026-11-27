@@ -7,7 +7,7 @@
 
 ## 범위
 
-- 공개 계약은 PublicAPI txt 에 실린 형식뿐이다. 현재 네임스페이스: `xkxk.frameworks.ui.shell.Framework`.
+- 공개 계약은 PublicAPI txt 에 실린 형식뿐이다. 현재 네임스페이스: `xkxk.frameworks.ui.shell.Framework`·`xkxk.frameworks.ui.views.Windows`.
 - 그 밖의 public 형식(셸 내부 public 등)은 공개 계약이 아니며 예고 없이 바뀔 수 있다. 공개 범위는 B16 에서 다른 라이브러리로 넓힌다.
 - 시그니처는 PublicAPI 분석기 표기다. `!` 는 null 아님, `?` 는 null 허용, `-> T` 는 반환·속성 형식이다. 위 네임스페이스 접두는 줄였다.
 - 입력: `src/xkxk.frameworks.ui.shell/PublicAPI.Shipped.txt`·`src/xkxk.frameworks.ui.shell/PublicAPI.Unshipped.txt`. 셸 메뉴 ID 표의 부모·종류·순서·명령 ID 열은 `src/xkxk.frameworks.ui.data/Navigation/ShellMenuTable.cs` 에서 읽는다.
@@ -16,7 +16,7 @@
 
 - Shipped 는 출시된 판에 실린 API 다. 지우거나 서명을 바꾸면 호환이 깨진다.
 - Unshipped 는 다음 판에 실릴 API 다. 사전판(0.x 전) 동안은 전부 Unshipped 이며 바뀔 수 있으니 고정 계약으로 가정하지 않는다.
-- 현재 줄 수: Shipped 0 · Unshipped 627.
+- 현재 줄 수: Shipped 0 · Unshipped 659.
 
 ## 호환 규칙 (UADR-0009 8원칙)
 
@@ -77,8 +77,10 @@
 | `XKUI0504` | `UiDiagnosticIds.WindowAliasConflict` | 기타 | 창 별칭이 다른 창의 ID·별칭과 겹침(Warning, 그 별칭만 버리고 창은 등록). |
 | `XKUI0505` | `UiDiagnosticIds.WindowNotRegistered` | 기타 | 등록되지 않은 창을 열거나 복원하려 함(Warning, 자리표시 창으로 대신 표시하고 Open 은 false). 셸의 열기·복원 입구만 보고하며(열기마다 1건, 복원·적용마다 창 ID 당 1건) 화면 층은 보고하지 않음. |
 | `XKUI0506` | `UiDiagnosticIds.WindowShellUnavailable` | 기타 | 창을 열 셸(앱 화면)이 아직 없음(Warning, 열지 않고 false). |
-| `XKUI0507` | `UiDiagnosticIds.WindowContentFailed` | 기타 | 창 CreateContent 가 예외를 던지거나 null·Control 이 아닌 값을 돌려줌, 또는 셸 기본 창 3종이 아닌 창에 CreateContent 가 없음(Error, 자리표시 내용으로 대신 표시). |
+| `XKUI0507` | `UiDiagnosticIds.WindowContentFailed` | 기타 | 창 CreateContent 가 예외를 던지거나 null·Control 이 아닌 값을 돌려줌, 또는 창에 CreateContent 가 없음(B10 이후 셸 기본 창은 없음)(Error, 자리표시 내용으로 대신 표시). |
 | `XKUI0508` | `UiDiagnosticIds.WindowRemoveDenied` | 기타 | 다른 주체가 등록한 창을 지우려 함(Error, 지우지 않음). |
+| `XKUI0509` | `UiDiagnosticIds.WindowArgumentMismatch` | 기타 | 강타입 창의 열 때 넘긴 인자가 뷰모델이 기대하는 형식이 아님(Error, 자리표시 내용으로 대신 표시). |
+| `XKUI0510` | `UiDiagnosticIds.WindowViewModelFailed` | 기타 | 강타입 창 뷰모델의 OnOpenedAsync 가 예외를 던짐(Error, 내용은 유지). |
 
 ## 그룹 파일
 
@@ -92,8 +94,8 @@
 | [06 진단·공통](06_진단_공통.md) | `UiDiagnostics`·`UiDiagnostic`·`UiDiagnosticSeverity`·`UiDiagnosticIds`·`UiErrorPolicy`·`UiConfigurationException`·`UiRegistryOwners`·`UiRegistryChangeKind`·`UiRegistryChangedEventArgs` |
 | [07 셸명령ID](07_셸명령ID.md) | `ShellCommandIds` |
 | [08 셸메뉴ID](08_셸메뉴ID.md) | `ShellMenuIds` |
-| [09 창](09_창.md) | `IUiWindowRegistry`·`UiWindowOptions`·`UiWindowDefinition`·`UiWindowPlacement`·`UiWindowOpenOptions`·`UiWindowContentContext` |
+| [09 창](09_창.md) | `IUiWindowRegistry`·`UiWindowOptions`·`UiWindowDefinition`·`UiWindowPlacement`·`UiWindowOpenOptions`·`UiWindowContentContext`·`IUiWindowContext`·`UiWindowViewModel`·`UiWindowViewModel<TArgs>`·`UiWindowViewRegistration` |
 
 ## 통계
 
-- PublicAPI 줄(`#` 줄 제외) 627 · 형식 51 · 멤버 576 · 설명 없는 멤버 0.
+- PublicAPI 줄(`#` 줄 제외) 659 · 형식 55 · 멤버 611 · 설명 없는 멤버 0.

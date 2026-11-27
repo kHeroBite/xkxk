@@ -1,33 +1,39 @@
 {
   "_note": "클라이언트 계층 규칙(check_layers.py 가 읽는다). 층별 금지 프로젝트 참조·패키지·코드 패턴과 신규 층 파일의 줄 수·헤더 규칙. required=true 층은 프로젝트가 없으면 위반이다.",
   "src_root": "src",
-  "scan_paths": ["src", "tools"],
+  "scan_paths": ["src", "tools", "testbed"],
   "skip_dirs": ["bin", "obj", ".vs", "node_modules", "__pycache__"],
   "layers": {
     "xkxk.frameworks.ui": {
       "required": true,
-      "forbid_projects": ["xkxk.frameworks.ui.shell", "xkxk.frameworks.ui.data", "xkxk.frameworks.ui.views", "xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android"],
+      "forbid_projects": ["xkxk.frameworks.ui.shell", "xkxk.frameworks.ui.data", "xkxk.frameworks.ui.views", "xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android", "xkxk.frameworks.ui.testbed"],
       "allow_packages": { "Avalonia": "12.1.4" },
-      "forbid_code": ["\\bxkxk\\.frameworks\\.ui\\.(shell|desktop|browser|android|data|views)\\b", "\\busing\\s+Dock\\."]
+      "forbid_code": ["\\bxkxk\\.frameworks\\.ui\\.(shell|desktop|browser|android|data|views|testbed)\\b", "\\busing\\s+Dock\\."]
     },
     "xkxk.frameworks.ui.views": {
       "required": true,
-      "forbid_projects": ["xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android"],
+      "forbid_projects": ["xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android", "xkxk.frameworks.ui.testbed"],
       "_note_avares": "벤치 글꼴 후보가 호스트 자원을 avares URI 문자열로 찾는 것은 형식 참조가 아니라 허용한다",
-      "forbid_code": ["(?<!avares://)\\bxkxk\\.frameworks\\.ui\\.(desktop|browser|android)\\b"]
+      "forbid_code": ["(?<!avares://)\\bxkxk\\.frameworks\\.ui\\.(desktop|browser|android|testbed)\\b"]
     },
     "xkxk.frameworks.ui.shell": {
       "required": true,
-      "forbid_projects": ["xkxk.frameworks.ui.views", "xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android"],
+      "forbid_projects": ["xkxk.frameworks.ui.views", "xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android", "xkxk.frameworks.ui.testbed"],
       "forbid_exts": [".axaml"],
       "_note_parts": "템플릿 부품 이름은 xkxk.frameworks.ui 의 TemplateParts 상수로만 쓴다(문자열 리터럴·조합 금지). 주석 언급은 허용",
-      "forbid_code": ["\\bxkxk\\.frameworks\\.ui\\.views\\b", "\\bPART_"]
+      "forbid_code": ["\\bxkxk\\.frameworks\\.ui\\.(views|testbed)\\b", "\\bPART_"]
     },
     "xkxk.frameworks.ui.data": {
       "required": true,
-      "forbid_projects": ["xkxk.frameworks.ui.shell", "xkxk.frameworks.ui", "xkxk.frameworks.ui.views", "xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android"],
+      "forbid_projects": ["xkxk.frameworks.ui.shell", "xkxk.frameworks.ui", "xkxk.frameworks.ui.views", "xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android", "xkxk.frameworks.ui.testbed"],
       "forbid_packages": ["Avalonia"],
       "forbid_code": ["\\bAvalonia\\b", "\\bxkxk\\.frameworks\\.ui\\b(?!\\.data\\b)"]
+    },
+    "xkxk.frameworks.ui.testbed": {
+      "_note": "시험대는 프레임워크 모든 층을 공개 형식으로 소비하는 최상위 앱이라 참조·패키지·코드 금지가 없다. Internal·NonPublic 금지는 consumer_rules 가 건다.",
+      "path": "testbed/xkxk.frameworks.ui.testbed",
+      "required": false,
+      "forbid_projects": []
     }
   },
   "template_parts": {
@@ -44,13 +50,13 @@
     "framework_forbid_code": ["\\bInternalsVisibleTo\\b"],
     "consumers": [
       { "path": "test/framework", "active": true },
-      { "path": "testbed", "active": false, "_note": "B10 활성" }
+      { "path": "testbed", "active": true }
     ],
     "consumer_forbid_code": ["\\bxkxk\\.frameworks\\.ui(\\.[A-Za-z0-9_]+)*\\.Internal\\b", "\\bBindingFlags\\.NonPublic\\b"],
     "exts": [".cs", ".csproj"]
   },
   "new_files": {
-    "prefixes": ["src/xkxk.frameworks.ui/", "src/xkxk.frameworks.ui.views/", "src/xkxk.frameworks.ui.data/", "tools/check_layers.py", "tools/check_layers_parts.py", "tools/check_layers_consumer.py", "tools/classify_layers.py", "src/xkxk.frameworks.ui.shell/Framework/"],
+    "prefixes": ["src/xkxk.frameworks.ui/", "src/xkxk.frameworks.ui.views/", "src/xkxk.frameworks.ui.data/", "tools/check_layers.py", "tools/check_layers_parts.py", "tools/check_layers_consumer.py", "tools/classify_layers.py", "src/xkxk.frameworks.ui.shell/Framework/", "testbed/"],
     "max_lines": 300,
     "exts": [".cs", ".axaml", ".csproj", ".py"],
     "exempt": []

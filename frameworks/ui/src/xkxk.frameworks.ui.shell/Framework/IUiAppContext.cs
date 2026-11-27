@@ -87,7 +87,7 @@ public interface IUiAppContext
 
     /// <summary>창 레지스트리. null 이 아니다.</summary>
     /// <remarks>
-    /// 처음 접근할 때 만들고, 그 뒤에는 항상 같은 인스턴스를 돌려준다. 셸 기본 창 3종(<c>xkxk.demo.grid</c>·<c>xkxk.demo.gantt</c>·<c>xkxk.demo.form</c>)이 등록되어 있다.
+    /// 처음 접근할 때 만들고, 그 뒤에는 항상 같은 인스턴스를 돌려준다. 셸은 창을 등록하지 않는다. 데모 창 3종(<c>xkxk.demo.*</c>)은 시험대 모듈이 같은 ID 로 등록한다(B10).
     /// 여기서 등록한 항목의 등록 주체는 앱이고, 등록·열기 진단은 <see cref="Diagnostics"/> 에 쌓인다(B09).
     /// </remarks>
     IUiWindowRegistry Windows { get; }

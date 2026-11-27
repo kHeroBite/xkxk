@@ -1,11 +1,12 @@
 // 웹(브라우저) 호스트의 별별UI 빌더 어댑터(내부) — 공개 계약만 써서 빌더를 구성하고 결과 1줄을 콘솔에 남긴다
 using xkxk.frameworks.ui.shell.Framework;
+using xkxk.frameworks.ui.testbed;
 
 namespace xkxk.frameworks.ui.browser;
 
 /// <summary>
 /// 웹 진입부가 <see cref="XkxkUi.CreateBuilder(XkxkUiBuilderOptions)"/> 를 거치게 하는 내부 어댑터다.
-/// 모듈은 등록하지 않는다. 호스트 값(저장소·윈도우 메뉴 호스트)은 App 에 직접 대입하지 않고
+/// 셸은 창·명령을 등록하지 않으며, 웹 호스트는 시험대 모듈(<see cref="TestbedModule"/>)만 추가한다(B10). 호스트 값(저장소·윈도우 메뉴 호스트)은 App 에 직접 대입하지 않고
 /// <see cref="XkxkUiBuilderOptions.Host"/> 로 넘기며, UseXkxkUi 가 App 에 1회 연결한다(B03, UADR-0010).
 /// 공개 호스트 확장(UseBrowserHost 등)은 B11 범위다.
 /// </summary>
@@ -25,7 +26,7 @@ internal static class BrowserUiHost
             HostKind = UiHostKinds.Browser,
         };
         configureHost(options.Host);
-        var app = XkxkUi.CreateBuilder(options).Build();
+        var app = XkxkUi.CreateBuilder(options).AddModule<TestbedModule>().Build();
         log($"ui builder host={app.Options.HostKind} modules={app.ModuleIds.Count} diagnostics={app.Diagnostics.Entries.Count} app={app.Options.ApplicationId} host-options={HostOptionKeys(app.Options.Host)}");
         return app;
     }

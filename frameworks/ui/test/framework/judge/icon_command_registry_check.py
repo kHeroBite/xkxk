@@ -35,6 +35,7 @@ REG = re.compile(r"\bAdd\(\s*\w+\s*,\s*ShellCommandIds\.(\w+)\s*,\s*([^,]*?)\s*,
 F_WINICON = VW + "WindowIcon.cs"
 F_BITMAP = SH + "Platform/MenuIconBitmap.cs"
 USAGE = "사용: icon_command_registry_check.py [--root <R>] [--self-test] [--help]"
+TESTBED_OWNED = ("DemoOpen", "DemoOpenSdi", "BenchOpen")  # 시험대 소유 명령 — ShellDefaultCommands*.cs 에 Add 가 없어야 PASS
 KEY_LIT = re.compile(r'"(Pd(?:CmdIcon|MenuIcon|ShellIcon)\w+|PdIcon(?:BusyStatic|BadgeSlow|BadgeError))"')
 XKEY = re.compile(r'x:Key="[^"]*"')
 
@@ -139,7 +140,7 @@ def check_commands(root, keys, bad):
         bad.append("파일 없음: " + DEFS_GLOB)
     ko, en = dict_union(root, bad)
     if ids is None or not rels or not ko or not en:
-        return 0
+        return 0, 0
     pairs = re.findall(r'public const string (\w+) = "([\w.]+)";', strip_cs(ids))
     names, vals = [p[0] for p in pairs], [p[1] for p in pairs]
     if not pairs:
@@ -155,7 +156,11 @@ def check_commands(root, keys, bad):
     dbody = "".join(strip_cs(read(root, rel) or "") for rel in rels)
     regs = REG.findall(dbody)
     reg_names = [n for n, _, _ in regs]
-    miss_reg = [n for n in names if n not in reg_names]
+    owned = [n for n in TESTBED_OWNED if n in names]  # 모의 트리에 상수가 없으면 이 규칙은 건너뛴다
+    shell_reg = [n for n in owned if n in reg_names]
+    if shell_reg:
+        bad.append("시험대 이관 명령을 셸이 등록: %s" % shell_reg)
+    miss_reg = [n for n in names if n not in reg_names and n not in owned]
     if miss_reg:
         bad.append("ShellDefaultCommands*.cs 에 Add(r, ShellCommandIds.<X>, …) 로 등록되지 않은 명령 %d개: %s" % (len(miss_reg), miss_reg[:4]))
     dup_reg = sorted({n for n in reg_names if reg_names.count(n) > 1})
@@ -181,7 +186,7 @@ def check_commands(root, keys, bad):
     if bad_i:
         bad.append("아이콘 인자가 허용 식(CmdIconKeys.<정의된 이름>·키 집합 안 \"Pd…Icon…\"·MenuIconCatalog.(Grid|Gantt|Form)IconKey)이 아님: %s"
                    % sorted(bad_i)[:4])
-    return len(names)
+    return len(names) - len(owned), len(names)
 
 
 def check_direct(root, bad):
@@ -206,14 +211,14 @@ def run(root, quiet=False):
     bad = []
     keys, _ = check_icons(root, bad)
     lits = check_literals(root, keys, bad) if keys else 0
-    cmds = check_commands(root, keys, bad)
+    cmds, consts = check_commands(root, keys, bad)
     check_direct(root, bad)
     if keys and not cmds:
         bad.append("기본 명령이 0개")
     if not quiet:
         for b in bad:
             print("FAIL " + b)
-        print("icons=%d commands=%d literals=%d result=%s" % (len(keys), cmds, lits, "FAIL" if bad else "PASS"))
+        print("icons=%d commands=%d/%d literals=%d result=%s" % (len(keys), cmds, consts, lits, "FAIL" if bad else "PASS"))
     return 1 if bad else 0
 
 

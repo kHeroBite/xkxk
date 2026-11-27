@@ -45,7 +45,7 @@ internal sealed class UiAppContext : IUiAppContext
     // B07 메뉴 저장소. 생성 연쇄(UiMenuStore → ShellDefaultMenus → Commands)는 MenuStore 를 다시 부르지 않는다.
     private readonly Lazy<UiMenuStore> _menuStore;
 
-    // B09 창 저장소. 셸 기본 창(ShellDefaultWindows) 등록은 저장소 생성 때 1회이며, 생성 연쇄는 WindowStore 를 다시 부르지 않는다.
+    // B09 창 저장소. 셸은 창을 등록하지 않는다(B10, 데모 3종은 시험대 모듈). 생성 연쇄는 WindowStore 를 다시 부르지 않는다.
     private readonly Lazy<UiWindowStore> _windowStore;
 
     private UiAppContext()

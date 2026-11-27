@@ -43,6 +43,7 @@
 | 경로 | 용도 | 재사용 이유 | 실행 명령 | 상태 |
 |---|---|---|---|---|
 | `tools/gen_api_docs.py`(보조 `gen_api_docs_parse.py` PublicAPI·`///` 주석 파서, `gen_api_docs_render.py` Markdown 렌더) | `src/*/PublicAPI.Shipped.txt`·`Unshipped.txt` 와 셸 프로젝트 `*.cs`(`bin`·`obj` 제외)의 `///` 주석, 셸 메뉴 표 `src/xkxk.frameworks.ui.data/Navigation/ShellMenuTable.cs`(08 셸 메뉴 ID 의 부모·종류·순서·명령 ID 열)로 소비자용 공개 API 명세 `docs/api/*.md` 생성 | 공개 API 를 바꿀 때마다 명세를 다시 만들고 낡음을 판정한다(손 편집 금지) | `python3 -B tools/gen_api_docs.py [--root <영역 루트>]`(생성) · `--check`(디스크와 비교, 0=같음·1=불일치·2=입력 오류) · `--prune`(생성 대상이 아닌 `docs/api/*.md` 삭제) · `--self-test` | 2026-11-26 신설(B07b) |
+| `tools/gen_api_docs_extra.py` | 공개 API 명세 생성기(`gen_api_docs.py`)의 보조 모듈. PublicAPI txt 밖이지만 소비자에게 공개하기로 한 화면 층 형식(명시 허용 목록 `EXTRA_TYPES`, 예 views 의 `UiWindowViewRegistration` 의 `Register` 오버로드)을 소스 `.cs` 에서 읽어 공개 표면에 더한다 | 소비자 공개 예외 형식을 명세에 싣기 위함. 허용 목록 밖 형식은 끌어오지 않는다 | `gen_api_docs.py` 가 import 해 쓴다(단독 실행 없음) | 2026-11-27 신설(B10) |
 
 ## 아이콘·그림
 

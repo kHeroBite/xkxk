@@ -1,0 +1,115 @@
+<!-- 그리드 벤치 화면 — 10만 행 × 20열(한글·숫자·날짜·통화), 좌 고정 2열, 실시간 열 3개. 내장 DataGrid·ProDataGrid 같은 화면으로 A/B -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="using:xkxk.frameworks.ui.testbed.Bench"
+             x:Class="xkxk.frameworks.ui.testbed.Bench.GridBenchView">
+  <UserControl.Resources>
+    <!-- ProDataGrid 조건부 서식(상태=지연) 셀 테마. 내장 빌드에서는 쓰이지 않는다 -->
+    <!-- 테마 객체는 코드(GridBenchView.Pro.cs)가 기본 DataGridCell 테마를 찾아 그 위에 만든다(테마 키가 구현마다 달라 XAML 정적 참조를 피함) -->
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector="TextBlock.cell">
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Margin" Value="8,0" />
+      <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+    <Style Selector="TextBlock.num">
+      <Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+  </UserControl.Styles>
+  <DockPanel>
+    <Border DockPanel.Dock="Top" Padding="6,4" Background="{DynamicResource PdBrushSurfaceAlt}">
+      <WrapPanel Orientation="Horizontal" ItemSpacing="6" LineSpacing="4">
+        <TextBlock x:Name="ImplText" AutomationProperties.AutomationId="bench.grid.impl" VerticalAlignment="Center" FontWeight="{DynamicResource PdFontWeightStrong}" />
+        <TextBox x:Name="RowsBox" AutomationProperties.AutomationId="bench.grid.rows" Width="90" Text="100000" />
+        <Button x:Name="LoadButton" AutomationProperties.AutomationId="bench.grid.load" Content="Load rows" Click="OnLoad" />
+        <Button x:Name="ScrollButton" AutomationProperties.AutomationId="bench.grid.scroll" Content="Scroll test (5s)" Click="OnScroll" />
+        <Button x:Name="LiveButton" AutomationProperties.AutomationId="bench.grid.live" Content="Live update (5s)" Click="OnLive" />
+        <Button x:Name="SortButton" AutomationProperties.AutomationId="bench.grid.sort" Content="Sort name (ko-KR)" Click="OnSort" />
+        <TextBox x:Name="FilterBox" AutomationProperties.AutomationId="bench.grid.filter" Width="140" PlaceholderText="Filter (IME input)" />
+        <Button x:Name="FilterButton" AutomationProperties.AutomationId="bench.grid.applyFilter" Content="Filter" Click="OnFilter" />
+        <Button x:Name="XlsxButton" AutomationProperties.AutomationId="bench.grid.xlsx" Content="Export xlsx" Click="OnXlsx" />
+        <!-- 결과는 3줄까지만 보인다(작은 화면에서 그리드를 밀어내지 않게 — otest-m-1 Fold5). 전체 JSON 은 원격 bench.result -->
+        <TextBlock x:Name="ResultText" AutomationProperties.AutomationId="bench.grid.result" VerticalAlignment="Center" Foreground="{DynamicResource PdBrushTextMuted}" TextWrapping="Wrap" MaxLines="3" TextTrimming="CharacterEllipsis" MaxWidth="900" />
+      </WrapPanel>
+    </Border>
+    <Panel x:Name="GridHost">
+      <!-- 열 폭: 두 글자 한글 머리글 + 정렬 화살표가 잘리지 않는 최소 80px(otest-1 bp1146: 60px 에서 '직급'→'직·'). GridBenchView.Pro.cs 의 병합 헤더 모드도 같은 값을 쓴다 -->
+    <DataGrid x:Name="BenchGrid"
+                AutomationProperties.AutomationId="bench.grid.main"
+                AutoGenerateColumns="False"
+                IsReadOnly="True"
+                CanUserSortColumns="True"
+                CanUserResizeColumns="True"
+                CanUserReorderColumns="True"
+                FrozenColumnCount="2"
+                SelectionMode="Extended"
+                GridLinesVisibility="Horizontal"
+                RowHeight="26">
+        <DataGrid.Columns>
+          <DataGridTemplateColumn Header="번호" SortMemberPath="No" Width="80">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell num" Text="{Binding NoText}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="이름" SortMemberPath="Name" Width="100">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell" Text="{Binding Name}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="코드" SortMemberPath="Code" Width="130">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell" Text="{Binding Code}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="부서" SortMemberPath="Dept" Width="100">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell" Text="{Binding Dept}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="직급" SortMemberPath="Grade" Width="80">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell" Text="{Binding Grade}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="프로젝트" SortMemberPath="Project" Width="140">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell" Text="{Binding Project}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="상태" SortMemberPath="Status" Width="80">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell" Text="{Binding Status}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="지역" SortMemberPath="Region" Width="80">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell" Text="{Binding Region}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="시작" SortMemberPath="Start" Width="100">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell" Text="{Binding StartText}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="종료" SortMemberPath="End" Width="100">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell" Text="{Binding EndText}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="진척" SortMemberPath="Progress" Width="80">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell num" Text="{Binding ProgressText}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="공수(h)" SortMemberPath="Hours" Width="96">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell num" Text="{Binding HoursText}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="예산" SortMemberPath="Budget" Width="120">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell num" Text="{Binding BudgetText}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="증감률" SortMemberPath="Rate" Width="96">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell num" Text="{Binding RateText}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="가격" SortMemberPath="Price" Width="90">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell num" Text="{Binding PriceText}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="등락" SortMemberPath="Change" Width="80">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell num" Text="{Binding ChangeText}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="거래량" SortMemberPath="Volume" Width="100">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell num" Text="{Binding VolumeText}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="고객" SortMemberPath="Customer" Width="100">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell" Text="{Binding Customer}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="이메일" SortMemberPath="Email" Width="160">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell" Text="{Binding Email}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <!-- 마지막 열도 고정 폭: Width="*" 를 두면 내장 DataGrid 가 별 열을 살리려고 고정 폭 열을 MinWidth(20px)까지 줄인다(b1126 otest-1 실측: 15열 붕괴). 20열은 가로 스크롤로 본다 -->
+          <DataGridTemplateColumn Header="비고" SortMemberPath="Note" Width="140">
+            <DataGridTemplateColumn.CellTemplate><DataTemplate x:DataType="b:BenchRow"><TextBlock Classes="cell" Text="{Binding Note}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
+    </Panel>
+  </DockPanel>
+</UserControl>

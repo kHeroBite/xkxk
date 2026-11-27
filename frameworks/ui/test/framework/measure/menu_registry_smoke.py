@@ -87,7 +87,9 @@ def summarize(raw, base_aids, base_nav, host):
     menus = rg.get("menus") or []
     ck("registry.dump menus 70개 이상·owner 있음", len(menus) >= 70 and all(m.get("owner") for m in menus), len(menus))
     shell_cmds = [c for c in rg.get("commands") or [] if c.get("owner") == "xkxk.shell"]
-    ck("xkxk.shell 명령 61개", len(shell_cmds) == 61, len(shell_cmds))
+    tb_cmds = [c for c in rg.get("commands") or [] if c.get("owner") == "xkxk.frameworks.ui.testbed"]
+    ck("xkxk.shell 명령 58개 + 시험대(owner xkxk.frameworks.ui.testbed) 명령 3개(벤치 미포함 빌드는 2개)",
+       len(shell_cmds) == 58 and len(tb_cmds) in (2, 3), "shell=%d testbed=%d" % (len(shell_cmds), len(tb_cmds)))
     ck("icons.explicit 목록", isinstance((rg.get("icons") or {}).get("explicit"), list))
     got = list_ids(raw.get("menu_list"))
     missing = sorted(base_aids - got)

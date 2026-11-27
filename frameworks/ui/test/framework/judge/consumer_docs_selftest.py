@@ -112,6 +112,22 @@ def add_undocumented(root):
     regen(root)
 
 
+VIEWS_REL = "src/xkxk.frameworks.ui.views/Windows/Reg.cs"
+TB_REL = "testbed/xkxk.frameworks.ui.testbed/TestbedModule.cs"
+
+
+def add_ext_sources(root):  # 확장 메서드(수신 IUiMenuRegistry)와 views·testbed 네임스페이스 선언을 소스에 둔다
+    w(os.path.join(root, VIEWS_REL), "// 시험용 확장\nnamespace xkxk.frameworks.ui.views.Windows;\n\npublic static class Reg\n{\n"
+      "    public static bool Register<TA, TB, TC>(this xkxk.frameworks.ui.shell.Framework.IUiMenuRegistry r,\n        string id) => true;\n}\n")
+    w(os.path.join(root, TB_REL), "// 시험용 시험대\nnamespace xkxk.frameworks.ui.testbed\n{\n    public class TestbedModule { }\n}\n")
+
+
+def natural_ext(root):  # 자연형 표본: 지역 변수 없이 ui.Menus.Register<…> 직접, 네임스페이스는 using 과 백틱 모두
+    add_ext_sources(root)
+    append(root, D01, "`xkxk.frameworks.ui.views.Windows`·`xkxk.frameworks.ui.testbed` 를 쓴다.\n\n"
+           "```csharp\nusing xkxk.frameworks.ui.views.Windows;\n\nui.Menus.Register<AVm, AView, AArgs>(\"acme.x\");\n```\n")
+
+
 # (이름, 변형, strict, 기대 rc 0 여부, 기대 FAIL id)
 CASES = [
     ("기준 트리 PASS(거짓 FAIL 없음)", None, False, True, None),
@@ -130,6 +146,9 @@ CASES = [
     ("K9 AI 마커 없음", lambda r: edit(r, D03, cdc.MARK_E, "끝"), False, False, "K9"),
     ("K9 AI 블록 81줄", lambda r: edit(r, D03, "- 공개 API 만 쓴다\n", "- 규칙\n" * 81), False, False, "K9"),
     ("K10 미해석 PublicAPI 줄", lambda r: append(r, TXT_REL, "this is not an api line\n"), False, False, "K10"),
+    ("K4·K6 자연형(views.Windows·testbed 네임스페이스, 확장 메서드 체인) PASS", natural_ext, False, True, None),
+    ("K6 확장 메서드 이름이 다르면 여전히 FAIL", lambda r: (add_ext_sources(r), append(r, D01, "`ui.Menus.Registre` 는 없다.\n")), False, False, "K6"),
+    ("K4 선언 안 된 xkxk.frameworks.ui.views.Nope 는 여전히 FAIL", lambda r: (add_ext_sources(r), append(r, D01, "`xkxk.frameworks.ui.views.Nope` 를 쓴다.\n")), False, False, "K4"),
     ("W1 --strict 설명 없는 멤버 FAIL", add_undocumented, True, False, "W1"),
     ("W1 기본 모드는 WARN 만(rc 0)", add_undocumented, False, True, None),
 ]

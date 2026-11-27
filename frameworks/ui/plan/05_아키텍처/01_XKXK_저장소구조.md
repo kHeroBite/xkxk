@@ -52,7 +52,7 @@
 │   ├── src/                               # 프레임워크(패키지 대상)만
 │   │   ├── xkxk.frameworks.ui · .data · .shell · .views · .fonts
 │   │   └── xkxk.frameworks.ui.hosting.desktop · .browser · .android   # 호스트 공통 코드(F3 B11 소스 분리, 패키지화는 F5)
-│   ├── testbed/                           # 시험대(IsPackable=false) — 모듈 1·호스트 3·consumer·scenarios/ (F3 B10~)
+│   ├── testbed/                           # 시험대(IsPackable=false) — 모듈 1(testbed/xkxk.frameworks.ui.testbed, B10)·호스트 3(B11)·consumer·scenarios/ (F3 B10~)
 │   ├── test/(README.md)
 │   │   └── framework/                     # 프레임워크 검증 스크립트·일괄 실행기 verify_framework (B02~)
 │   ├── tools/(README.md 신규) · assets/ · vendor/ · ref/README.md

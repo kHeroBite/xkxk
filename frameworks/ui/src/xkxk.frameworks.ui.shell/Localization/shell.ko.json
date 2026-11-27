@@ -122,6 +122,7 @@
   "shell.kind.grid": "그리드",
   "shell.kind.gantt": "간트",
   "shell.kind.form": "입력폼",
+  "testbed.typed.title": "강타입 표본",
   "shell.tray.show": "보이기",
   "shell.tray.hide": "숨기기",
   "shell.tray.exit": "종료",

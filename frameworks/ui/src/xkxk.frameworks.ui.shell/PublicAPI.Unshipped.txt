@@ -626,3 +626,35 @@ xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.HostKind.get -> string!
 xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.HostKind.set -> void
 xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.Properties.get -> System.Collections.Generic.IDictionary<string!, object?>!
 xkxk.frameworks.ui.shell.Framework.XkxkUiBuilderOptions.XkxkUiBuilderOptions() -> void
+xkxk.frameworks.ui.shell.Framework.IUiWindowContext
+xkxk.frameworks.ui.shell.Framework.IUiWindowContext.BeginBusy() -> System.IDisposable!
+xkxk.frameworks.ui.shell.Framework.IUiWindowContext.BeginBusy(string! reason) -> System.IDisposable!
+xkxk.frameworks.ui.shell.Framework.IUiWindowContext.Close() -> bool
+xkxk.frameworks.ui.shell.Framework.IUiWindowContext.Closed -> System.EventHandler?
+xkxk.frameworks.ui.shell.Framework.IUiWindowContext.DocumentId.get -> string!
+xkxk.frameworks.ui.shell.Framework.IUiWindowContext.IsOpen.get -> bool
+xkxk.frameworks.ui.shell.Framework.IUiWindowContext.Parameter.get -> object?
+xkxk.frameworks.ui.shell.Framework.IUiWindowContext.SetTitle(string! title) -> bool
+xkxk.frameworks.ui.shell.Framework.IUiWindowContext.Title.get -> string!
+xkxk.frameworks.ui.shell.Framework.IUiWindowContext.WindowId.get -> string!
+xkxk.frameworks.ui.shell.Framework.UiWindowViewModel
+xkxk.frameworks.ui.shell.Framework.UiWindowViewModel.AttachWindow(xkxk.frameworks.ui.shell.Framework.IUiWindowContext! window, object? parameter) -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowViewModel.NotifyClosed() -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowViewModel.NotifyOpenedAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+xkxk.frameworks.ui.shell.Framework.UiWindowViewModel.Parameter.get -> object?
+xkxk.frameworks.ui.shell.Framework.UiWindowViewModel.PropertyChanged -> System.ComponentModel.PropertyChangedEventHandler?
+xkxk.frameworks.ui.shell.Framework.UiWindowViewModel.UiWindowViewModel() -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowViewModel.Window.get -> xkxk.frameworks.ui.shell.Framework.IUiWindowContext!
+xkxk.frameworks.ui.shell.Framework.UiWindowViewModel<TArgs>
+xkxk.frameworks.ui.shell.Framework.UiWindowViewModel<TArgs>.Args.get -> TArgs?
+xkxk.frameworks.ui.shell.Framework.UiWindowViewModel<TArgs>.UiWindowViewModel() -> void
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.WindowArgumentMismatch = "XKUI0509" -> string!
+const xkxk.frameworks.ui.shell.Framework.UiDiagnosticIds.WindowViewModelFailed = "XKUI0510" -> string!
+xkxk.frameworks.ui.shell.Framework.UiCommandContext.Windows.get -> xkxk.frameworks.ui.shell.Framework.IUiWindowRegistry!
+xkxk.frameworks.ui.shell.Framework.UiWindowContentContext.Window.get -> xkxk.frameworks.ui.shell.Framework.IUiWindowContext!
+override xkxk.frameworks.ui.shell.Framework.UiWindowViewModel<TArgs>.AcceptParameter(object? parameter) -> bool
+virtual xkxk.frameworks.ui.shell.Framework.UiWindowViewModel.AcceptParameter(object? parameter) -> bool
+virtual xkxk.frameworks.ui.shell.Framework.UiWindowViewModel.OnOpenedAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+virtual xkxk.frameworks.ui.shell.Framework.UiWindowViewModel.OnClosed() -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowViewModel.OnPropertyChanged(string! propertyName) -> void
+xkxk.frameworks.ui.shell.Framework.UiWindowViewModel.SetProperty<T>(ref T field, T value, string! propertyName) -> bool

@@ -9,4 +9,7 @@
     <Project Path="src/xkxk.frameworks.ui.browser/xkxk.frameworks.ui.browser.csproj" />
     <Project Path="src/xkxk.frameworks.ui.android/xkxk.frameworks.ui.android.csproj" />
   </Folder>
+  <Folder Name="/testbed/">
+    <Project Path="testbed/xkxk.frameworks.ui.testbed/xkxk.frameworks.ui.testbed.csproj" />
+  </Folder>
 </Solution>

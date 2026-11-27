@@ -35,7 +35,7 @@ internal static class ShellDefaultMenus
         o.Icon = row.Icon;
         o.AutomationId = row.AutomationId;
         o.Section = row.Section;
-        o.IsVisible = row.VisibleWhen is { } visible ? Visible(visible) : null;
+        o.IsVisible = row.VisibleWhen is { } visible ? Visible(visible, row) : null;
         o.ToolTip = row.ToolTipWhen is { } tip ? ToolTip(tip) : null;
 
         var m = row.Mobile;
@@ -71,8 +71,9 @@ internal static class ShellDefaultMenus
     };
 
     /// <summary>표시 조건 키 → 대리자. 앱 없음(메인 뷰모델 null)이면 false.</summary>
-    private static Func<UiMenuContext, bool> Visible(string key) => key switch
+    private static Func<UiMenuContext, bool> Visible(string key, ShellMenuRow row) => key switch
     {
+        "cmd" => c => CommandRegistered(c.App, row), // 행(Submenu 는 자식 Command 행)의 CommandId 가 명령 레지스트리에 있을 때만 보인다.
         "bench" => c => c.App.MainViewModel is { } vm && vm.Extras.BenchAvailable,
         "gpuRestartPending" => c => c.App.MainViewModel is { } vm && vm.SystemMenu.SysGpuRestartPending,
         "logTool" => c => c.App.MainViewModel is { } vm && vm.WindowMenu.IsLogToolAvailable,
@@ -81,6 +82,25 @@ internal static class ShellDefaultMenus
         "noMonitors" => c => c.App.MainViewModel is not null && !c.App.Monitors.HasMonitors,
         _ => _ => throw new InvalidOperationException($"알 수 없는 메뉴 표시 조건 키 '{key}'."), // i18n-ok 개발자 진단
     };
+
+    /// <summary>cmd 조건 판정 — Command 행은 자기 CommandId, Submenu 행은 자식 Command 행 중 하나라도 등록돼 있으면 true.</summary>
+    private static bool CommandRegistered(IUiAppContext app, ShellMenuRow row)
+    {
+        if (row.CommandId is { } own)
+        {
+            return app.Commands.Contains(own);
+        }
+
+        foreach (var child in ShellMenuTable.Rows)
+        {
+            if (child.Kind == ShellMenuRowKind.Command && child.Parent == row.Id && child.CommandId is { } id && app.Commands.Contains(id))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /// <summary>툴팁 키 → 대리자. 앱 없음(메인 뷰모델 null)이면 null.</summary>
     private static Func<UiMenuContext, string?> ToolTip(string key) => key switch

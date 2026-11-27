@@ -16,8 +16,10 @@ namespace xkxk.frameworks.ui.views.Documents;
 /// <summary>
 /// 공개 API 만 쓴다(내장 DataGrid·ProDataGrid 공통). 세로 오프셋 설정 API 가 없어 앵커 보정은 합성 휠 1회로 한다.
 /// Shift+휠 가로 스크롤은 DataGrid 자체 처리에 맡긴다.
+/// <para>시험대 지원용, 공개 계약 아님(B16 생성 명세 제외 후보).</para>
 /// </summary>
-internal sealed class GridDenseTarget : IDenseViewTarget
+[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+public sealed class GridDenseTarget : IDenseViewTarget
 {
     /// <summary>DataGrid 의 휠 1단위 픽셀(원본 DATAGRID_mouseWheelDelta). 다르면 앵커 위치만 조금 어긋난다.</summary>
     private const double WheelUnit = 50;
@@ -28,7 +30,7 @@ internal sealed class GridDenseTarget : IDenseViewTarget
     private readonly GridColumnScaler _scaler;
     private readonly Action _reapply;
 
-    public GridDenseTarget(DataGrid grid, GridColumnScaler scaler, Action reapply)
+    internal GridDenseTarget(DataGrid grid, GridColumnScaler scaler, Action reapply)
     {
         _grid = grid;
         _scaler = scaler;
@@ -36,6 +38,7 @@ internal sealed class GridDenseTarget : IDenseViewTarget
     }
 
     /// <summary>글자 크기 비례가 없는 표(벤치)에 붙인다. 기준 행 높이를 고정값으로 두고 XAML 열 폭을 그대로 기준으로 삼는다.</summary>
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public static void AttachFixed(DataGrid grid, double rowHeight)
     {
         var scaler = new GridColumnScaler(grid, rowHeight);
