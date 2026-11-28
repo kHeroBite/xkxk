@@ -27,8 +27,8 @@ public static class BenchFonts
         {
             "avares://xkxk.frameworks.ui.testbed/Bench/Assets/Fonts/NotoSansKR-Regular-subset.ttf",
             "avares://xkxk.frameworks.ui.fonts/Assets/Fonts/NotoSansKR-Regular-subset.ttf", // 웹 기본 빌드(PdFontAssembly=true): 글꼴 전용 어셈블리
-            "avares://xkxk.frameworks.ui.browser/Assets/Fonts/NotoSansKR-Regular-subset.ttf", // -p:PdFontAssembly=false 판
-            "avares://xkxk.frameworks.ui.android/Assets/Fonts/NotoSansKR-Regular-subset.ttf",
+            "avares://xkxk.frameworks.ui.testbed.browser/Assets/Fonts/NotoSansKR-Regular-subset.ttf", // -p:PdFontAssembly=false 판
+            "avares://xkxk.frameworks.ui.testbed.android/Assets/Fonts/NotoSansKR-Regular-subset.ttf",
         },
         ["nanum"] = new[] { "avares://xkxk.frameworks.ui.testbed/Bench/Assets/Fonts/NanumGothic-Regular.ttf" },
     };

@@ -107,8 +107,9 @@ class Ctx:
 
     def fatal_count(self):
         rc, out = self.adb("logcat", "-d", "-v", "brief", "*:E")
-        lines = [l for l in out.splitlines() if re.search(r"FATAL EXCEPTION|AndroidRuntime|Fatal signal|ANR in", l) and PKG in out]
-        return len([l for l in out.splitlines() if re.search(r"FATAL EXCEPTION|Fatal signal|ANR in com\.pd\.poc", l)]), lines[:5]
+        anr = re.compile(r"ANR in " + re.escape(PKG) + r"(\s|$)")
+        lines = [l for l in out.splitlines() if (re.search(r"FATAL EXCEPTION|AndroidRuntime|Fatal signal", l) or anr.search(l)) and re.search(re.escape(PKG) + r"(?![\w.])", out)]
+        return len([l for l in out.splitlines() if re.search(r"FATAL EXCEPTION|Fatal signal", l) or anr.search(l)]), lines[:5]
 
     def pid(self):
         return self.adb("shell", "pidof", PKG)[1].strip()

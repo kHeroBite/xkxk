@@ -6,8 +6,12 @@
 음성 대조: 2026-11-05 Fold5 실측 launcher 줄(c4_debug_open.json)로 노드 0개 + 앱 이탈 = 닫힘 아님을 확인한다.
 전면을 못 읽으면 앱 안이라고 볼 근거가 없으므로 닫힘이 아니다(fail-closed).
 """
+import os
 import re
 import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "tools"))
+import host_identity  # noqa: E402  호스트 정체성 단일 출처(없으면 예외로 비0 종료)
 
 TOP_RX = re.compile(r"(?:topResumedActivity|mResumedActivity|ResumedActivity)[=:]\s*ActivityRecord\{\S+ \S+ ([^/\s]+)/")
 
@@ -24,9 +28,9 @@ def back_closed(nodes_after, foreground, pkg):
 
 
 def self_test():
-    pkg = "xkxk.frameworks.ui"
+    pkg = host_identity.get("android.package")
     launcher = "topResumedActivity=ActivityRecord{135566092 u0 com.sec.android.app.launcher/.activities.LauncherActivity t7}\n  ResumedActivity: ActivityRecord{135566092 u0 com.sec.android.app.launcher/.activities.LauncherActivity t7}"
-    app = "topResumedActivity=ActivityRecord{151762747 u0 xkxk.frameworks.ui/crc64470901fbb571b1ad.MainActivity t42}"
+    app = "topResumedActivity=ActivityRecord{151762747 u0 " + pkg + "/crc64470901fbb571b1ad.MainActivity t42}"
     cases = [
         ("전면 패키지 launcher", foreground_package(launcher), "com.sec.android.app.launcher"),
         ("전면 패키지 앱", foreground_package(app), pkg),

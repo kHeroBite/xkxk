@@ -1,4 +1,4 @@
-// 공개 계약 시험 진입점 — C01~C85 를 돌려 PASS/FAIL 을 찍고 --out JSON 을 쓴다(--canary 는 일부러 실패 1건 추가)
+// 공개 계약 시험 진입점 — C01~C94 를 돌려 PASS/FAIL 을 찍고 --out JSON 을 쓴다(--canary 는 일부러 실패 1건 추가)
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -55,6 +55,12 @@ internal static class Program
     private static int Main(string[] args)
     {
         Console.OutputEncoding = Encoding.UTF8;
+        // 자식 프로세스 사례(C86~C94) — 정적 래치를 쓰는 사례라 다른 검사·Root 읽기보다 먼저 분기한다
+        if (args.Length == 2 && args[0] == "--case" && args[1].StartsWith(HostingIdentityChecks.CaseArgPrefix, StringComparison.Ordinal))
+        {
+            return HostingIdentityChecks.RunChild(args[1][HostingIdentityChecks.CaseArgPrefix.Length..]);
+        }
+
         string? outPath = null;
         var canary = false;
         for (var i = 0; i < args.Length; i++)
@@ -71,6 +77,7 @@ internal static class Program
                     Console.WriteLine("사용: ContractCheck [--out <json>] [--canary]");
                     Console.WriteLine("  --out    결과 JSON 경로(기본 <영역 루트>/logs/contract_check.json)");
                     Console.WriteLine("  --canary 일부러 실패하는 검사 1건을 더한다(rc=1 이어야 정상)");
+                    Console.WriteLine("  --case hosting-identity:<사례> 자식 프로세스 사례 1건만 돌린다(C86~C94 가 내부에서 쓴다)");
                     return 0;
                 default:
                     Console.Error.WriteLine($"알 수 없는 인자: {args[i]}");
@@ -92,6 +99,7 @@ internal static class Program
         cases.AddRange(WindowRegistryChecks.All()); // C68~C73 — 창 레지스트리(B09): 시험마다 고유 ID, C73 만 셸 기본 grid 를 교체해 상태를 남기므로 맨 뒤
         cases.AddRange(WindowContextChecks.All()); // C74~C81 — 순서 의존: C76→C77(창 저장소는 프로세스 전역·Remove 는 소유 모듈 전용이라 원복 불가 — C76 을 맨 앞에 돌려 빈 상태를 본다), C68·C69·C73 은 EnsureDemoWindows 로 데모 창 등록
         cases.AddRange(WindowPrewarmChecks.All()); // C82~C85 — 예열 옵션(B10 batch 2): 시험마다 고유 창 ID 로 등록하고 Remove 하지 않음(창 저장소는 프로세스 전역), 다른 시험 상태에 의존하지 않음
+        cases.AddRange(HostingIdentityChecks.All()); // C86~C94 — 데이터 폴더 지정(B11-3, UADR-0018 D4): 사례마다 자식 프로세스라 이 프로세스 상태를 바꾸지 않는다(C91~C94 는 PD_DIAGNOSTICS 빌드만)
         cases.AddRange(AppContextChecks.All()); // C24~C27 — XkxkUi.Current 는 프로세스 전역·리셋 없음: C25 는 언어를 원복, C26 은 화면 등록 상태를 남기는 마지막 동작 시험(C27 은 리플렉션 구조 검사만)
         // 실행 순서: C01~C23 → C28~C72(C53 제외) → C24~C27(C26 이 상태를 남긴다) → C53(셸 메뉴 Owner 를 바꾸므로 C47·C60 뒤) → C73(셸 창 Owner 를 바꾸므로 C69 뒤 맨 끝)
         cases.Sort((a, b) =>

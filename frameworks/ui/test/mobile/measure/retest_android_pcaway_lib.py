@@ -16,10 +16,13 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import ui28_android as U  # noqa: E402
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "common"))  # D-TESTDIR: test/common/_paths.py
+import _paths  # noqa: E402
 
 ra, rr = U.ra, U.rr
 SER = "R3CW70202FP"
-PKG = "xkxk.frameworks.ui"
+PKG = _paths.get("android.package")
+RC_JSON = "files/" + "/".join(_paths.get("data.segments")) + "/remote-control.json"  # 앱 데이터 폴더 안 원격 제어 파일
 PLAY_PROTECT = []  # 설치 중 만난 Play 프로텍트 전송 질문 기록
 
 
@@ -63,7 +66,7 @@ def top_activity():
 
 
 def app_on_top():
-    return PKG in top_activity()
+    return PKG + "/" in top_activity()
 
 
 def relaunch():
@@ -138,7 +141,7 @@ def attach(c, restart=True, token_from_logcat=False, wait=80):
     if restart:
         sh("am force-stop %s" % PKG)
         if not token_from_logcat:
-            sh("run-as %s rm -f files/xkxk/frameworks/ui/remote-control.json" % PKG)
+            sh("run-as %s rm -f %s" % (PKG, RC_JSON))
         adb("logcat", "-c")
         sh("monkey -p %s -c android.intent.category.LAUNCHER 1" % PKG)
     adb("forward", "tcp:%d" % ra.HOST_PORT, "tcp:5960")
@@ -149,7 +152,7 @@ def attach(c, restart=True, token_from_logcat=False, wait=80):
             if ms:
                 info = {"url": ms[-1][0], "port": 5960, "token": ms[-1][3], "pid": int(ms[-1][2]), "bind": ms[-1][1].split(",")}
         else:
-            rc, out = adb("exec-out", "run-as", PKG, "cat", "files/xkxk/frameworks/ui/remote-control.json")
+            rc, out = adb("exec-out", "run-as", PKG, "cat", RC_JSON)
             if rc == 0 and out.strip().startswith("{"):
                 info = json.loads(out)
         if not info:

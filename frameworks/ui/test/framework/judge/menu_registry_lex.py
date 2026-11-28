@@ -13,6 +13,7 @@ F_NAV = NAV + "NavMenuCatalog.cs"
 F_TITLE = VW + "MainTitleBar.axaml"
 TABLE_GLOB = NAV + "ShellMenuTable*.cs"
 SECTIONS_GLOB = VW + "Menus/ShellMenuSections*.cs"
+TESTBED_MENUS_GLOB = "testbed/xkxk.frameworks.ui.testbed/TestbedMenus*.cs"  # B11-4: 데모·벤치 8행의 등록 위치(표에서 이전)
 DICTS = ("Localization/*.ko.json", "Localization/*.en.json")
 ROW_F = ("Id", "Parent", "Kind", "CommandId", "Param", "TitleKey", "Icon", "AutomationId", "Section", "VisibleWhen", "ToolTipWhen", "Mobile")
 MOB_F = ("InDrawer", "Available", "ReasonKey", "EntryId", "TitleKey", "CommandId", "Param", "TabOrder", "TabKey", "TabIcon", "Covers")

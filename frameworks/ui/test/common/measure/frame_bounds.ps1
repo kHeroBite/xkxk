@@ -1,5 +1,7 @@
 # 지정 프로세스의 보이는 최상위 창마다 GetWindowRect·DWMWA_EXTENDED_FRAME_BOUNDS(보이는 경계)·클라이언트 영역(화면 좌표)을 출력하는 스크립트(읽기 전용, 실입력 없음)
-param([string]$ProcName = "xkxk.frameworks.ui.desktop", [int]$ProcId = 0)
+param([string]$ProcName = "", [int]$ProcId = 0)
+if (-not $ProcName -and $ProcId -le 0) { try { $ProcName = (Get-Content (Join-Path $PSScriptRoot '..\..\..\tools\host_identity.json') -Raw -ErrorAction Stop | ConvertFrom-Json).'desktop.process_name' } catch {}
+  if (-not $ProcName) { [Console]::Error.WriteLine('ERROR: cannot read desktop.process_name from tools/host_identity.json'); exit 2 } }
 Add-Type @"
 using System;
 using System.Collections.Generic;

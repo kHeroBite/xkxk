@@ -4,17 +4,21 @@
 임시 폴더는 사례마다 만들고 바로 지운다. 판정기는 하위 프로세스로 부른다.
 """
 import os
+import json
 import shutil
 import subprocess
 import sys
 import tempfile
 
-CHECK = os.path.join(os.path.dirname(os.path.abspath(__file__)), "testbed_move_check.py")
-HOSTS = {
-    "src/xkxk.frameworks.ui.desktop/DesktopUiHost.cs": "class A { void M(){ b.AddModule<TestbedModule>(); } }\n",
-    "src/xkxk.frameworks.ui.browser/BrowserUiHost.cs": "class A { void M(){ b.AddModule<TestbedModule>(); } }\n",
-    "src/xkxk.frameworks.ui.android/AndroidUiHost.cs": "class A { void M(){ b.AddModule<TestbedModule>(); } }\n",
-}
+HERE = os.path.dirname(os.path.abspath(__file__))
+CHECK = os.path.join(HERE, "testbed_move_check.py")
+sys.path.insert(0, os.path.join(HERE, "..", "..", "..", "tools"))
+import host_identity  # 호스트 폴더 값의 단일 출처 — 가짜 트리의 host_identity.json 도 이 값으로 만든다(경로 리터럴을 두지 않는다)
+KEYS = ["desktop.project_dir", "browser.project_dir", "android.project_dir"]  # 판정기 R3 가 읽는 키(순서 desktop·browser·android)
+IDENT = json.dumps({k: host_identity.get(k) for k in KEYS})
+IDENT_PATH = "tools/host_identity.json"
+HOSTS = {host_identity.get(k) + "/Host.cs": "class A { void M(){ b.AddModule<TestbedModule>(); } }\n" for k in KEYS}
+HOSTS[IDENT_PATH] = IDENT + "\n"
 GOOD = dict(HOSTS)
 GOOD.update({
     "src/xkxk.frameworks.ui.views/V.cs": "// ClosedXML 설명 주석\nclass V { }\n",
@@ -31,7 +35,7 @@ CASES = [
     ("r1_views_csproj", {"src/xkxk.frameworks.ui.views/v.csproj": "<PackageReference Include=\"ScottPlot.Avalonia\" />\n"}, 1, {"R1"}),
     ("r1_bin_ignored", {"src/xkxk.frameworks.ui.views/bin/X.cs": "using ClosedXML;\n"}, 0, set()),
     ("r2_no_package", {"testbed/xkxk.frameworks.ui.testbed/T.csproj": "<Project />\n"}, 1, {"R2"}),
-    ("r3_host_missing", {"src/xkxk.frameworks.ui.android/AndroidUiHost.cs": "class A { }\n"}, 1, {"R3"}),
+    ("r3_host_missing", {host_identity.get(KEYS[2]) + "/Host.cs": "class A { }\n"}, 1, {"R3"}),
     ("r4_default_windows", {"src/xkxk.frameworks.ui.shell/Framework/ShellDefaultWindows.cs": "class D { }\n"}, 1, {"R4"}),
     ("r5_shell_register", {"src/xkxk.frameworks.ui.shell/Framework/Other.cs": "class O { void M(){ Reg(ShellCommandIds.BenchOpen); } }\n"}, 1, {"R5"}),
     ("r5_comment_ok", {"src/xkxk.frameworks.ui.shell/Framework/Other.cs": "// DemoOpen 상수 설명\nclass O { }\n"}, 0, set()),
@@ -51,6 +55,7 @@ MOVED = ["GridDocumentView.axaml", "GridDocumentView.axaml.cs", "GridScrollProbe
 TB = "testbed/xkxk.frameworks.ui.testbed/Documents/"
 VW = "src/xkxk.frameworks.ui.views/"
 GOOD2 = {TB + f: "class X { }\n" for f in MOVED}
+GOOD2.update(HOSTS)
 GOOD2.update({VW + "V.cs": "// GridDocumentView 설명 주석\nclass V { }\n", VW + "DocumentPrewarm.cs": "class P { }\n",
               VW + "GridViewPool.cs": "class G { }\n", VW + "WindowViewPool.Refill.cs": "class W { }\n",
               "src/xkxk.frameworks.ui.shell/S.cs": "class S { }\n"})

@@ -23,14 +23,21 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # python -I(격리 실행)에서도 같은 폴더 모듈을 찾게
 from check_i18n_rules import ITEMTPL_ALLOW, check_host_copies, scan_item_templates  # noqa: E402  ④·⑤ 규칙(분리 모듈)
+import host_identity  # noqa: E402  호스트 경로 단일 출처
 HANGUL = re.compile(r"[가-힣ᄀ-ᇿ㄰-㆏]")
 SKIP_DIRS = {"bin", "obj", "Diagnostics", "Localization", "node_modules", "wwwroot"}
 SKIP_ATTRS = {"AutomationProperties.AutomationId", "x:Name", "Name", "Classes", "x:Key", "x:Class", "xmlns"}
 # 개발자 전용 출력만 제외한다. AddLog·_log 는 화면 '로그' 패널에 그대로 보이므로 제외하지 않는다
 # (lead 01:4x: MainViewModel.Compact.cs 의 AddLog 한글 2건을 이 목록이 통째로 건너뛰어 '0건'으로 오판 — WindowCommands._log 도 AddLog 위임).
-LOG_CALL = re.compile(r"\b(Log|Trace|Warn|WarnOnce|Console\.Write\w*|Debug\.\w+|RecordStep|SetText|SetMetric|TimeOperation|Op)\s*\(|Exception\s*\(|nameof\(")
+LOG_CALL = re.compile(r"\b(Log|HostLog\.Write|Trace|Warn|WarnOnce|Console\.Write\w*|Debug\.\w+|RecordStep|SetText|SetMetric|TimeOperation|Op)\s*\(|Exception\s*\(|nameof\(")
 # 사용자에게 보이는 호스트 정적 문서(웹 첫 화면·Android 리소스) — 셸 밖이라 사전을 못 쓰는 곳이 있어 '호스트' 로 따로 센다
-HOST_GLOBS = ("src/*/wwwroot/*.html", "src/*/wwwroot/*.js", "src/*/Resources/values*/*.xml", "src/*/Properties/AndroidManifest.xml")
+# 위치는 host_identity 가 정본이다(UADR-0018 로 실행 프로젝트가 testbed 로 옮겨졌다). 경로 값은 영역 루트 기준 상대 경로라 root 아래에 이어 쓴다.
+HOST_GLOBS = (
+    host_identity.get("browser.wwwroot_src") + "/*.html",
+    host_identity.get("browser.wwwroot_src") + "/*.js",
+    host_identity.get("android.resources_dir") + "/values*/*.xml",
+    host_identity.get("android.project_dir") + "/Properties/AndroidManifest.xml",
+)
 # 영역 이름과 다른 접두를 허용하는 영역(소유 구분 경고 제외). system 은 시스템 메뉴 머리(menu.sys.*)와 공용 문구(sys.*)를 함께 가진다(UI-17 §3.7)
 AREA_PREFIX_ALIASES = {"system": ("menu", "sys")}
 KEY_AXAML = re.compile(r"\{loc:Tr\s+(?:Key=)?([A-Za-z0-9_.\-]+)\s*\}")

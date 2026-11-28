@@ -39,6 +39,9 @@ CONDITIONAL = [
     (r"shell\.mnuWinList\d|shell\.mnuWinListMore", "열린 창 수만큼만 칸을 만든다"),
     (r"shell\.mnuWinSnap\w*", "켜진 스냅 배치만 칸을 만든다"),
 ]
+OWNER_SHELL, OWNER_TB = "xkxk.shell", "xkxk.frameworks.ui.testbed"
+# B11-4 에서 셸 표 → 시험대 모듈로 옮긴 데모·벤치 8행(openBench 는 진단+벤치 빌드에서만 등록되어 7행도 허용)
+MOVED = ["xkxk.file." + n for n in ("openGrid", "openGantt", "openForm", "openSdiGroup", "openGridSdi", "openGanttSdi", "openFormSdi", "openBench")]
 RAW_KEYS = ["registry_dump", "menu_list", "menu_add", "menu_list_after_add", "menu_remove", "menu_list_after_remove", "icon_add",
             "menu_icons_after_icon_add", "icon_remove", "menu_icons_after_icon_remove", "command_run", "nav_menu"]
 
@@ -90,6 +93,9 @@ def summarize(raw, base_aids, base_nav, host):
     tb_cmds = [c for c in rg.get("commands") or [] if c.get("owner") == "xkxk.frameworks.ui.testbed"]
     ck("xkxk.shell 명령 58개 + 시험대(owner xkxk.frameworks.ui.testbed) 명령 3개(벤치 미포함 빌드는 2개)",
        len(shell_cmds) == 58 and len(tb_cmds) in (2, 3), "shell=%d testbed=%d" % (len(shell_cmds), len(tb_cmds)))
+    mv = [m for m in menus if m.get("id") in MOVED]
+    ck("이전 8행(openBench 는 벤치 빌드만)의 owner 가 시험대(%s)" % OWNER_TB, len(mv) in (7, 8) and all(m.get("owner") == OWNER_TB for m in mv),
+       sorted({m.get("owner") for m in mv}) or "행 없음")
     ck("icons.explicit 목록", isinstance((rg.get("icons") or {}).get("explicit"), list))
     got = list_ids(raw.get("menu_list"))
     missing = sorted(base_aids - got)
@@ -118,6 +124,68 @@ def summarize(raw, base_aids, base_nav, host):
         ck("nav.menu drawer id 가 기준 63행과 같은 순서(D1)", drawer == base_nav and bool(nv.get("tabs")),
            "빠짐 %s 더함 %s" % (sorted(set(base_nav) - set(drawer))[:4], sorted(set(drawer) - set(base_nav))[:4]))
     return checks, missing, allowed
+
+
+def result_menus(raw):
+    return (result_of(raw.get("registry_dump")) or {}).get("menus") or []
+
+
+def flat_items(v):
+    out = []
+    for e in v if isinstance(v, list) else [v]:
+        r = result_of(e.get("response") if isinstance(e, dict) and "response" in e else e)
+        out += [(i.get("id"), i.get("parent"), i.get("enabled"), i.get("visible"), i.get("depth"), i.get("hasChildren")) for i in (r or {}).get("items") or []]
+    return out
+
+
+def diff_registry(before, after, allow_missing=()):
+    """이전 전후 원문({키: 응답})을 비교한다. owner 가 MOVED 행에서 셸→시험대로 바뀐 것만 허용하고 그 밖의 차이는 문자열 목록으로 돌려준다.
+    비교: 메뉴 id·parent·automationId·순서·kind·command·hidden·visible·enabled·section / nav.menu tabs·drawer(모바일 InDrawer·Available·ReasonKey) / menu.list 가시 조건."""
+    out, allow = [], set(allow_missing)
+    bm = [m for m in result_menus(before) if m.get("id") not in allow]
+    am = [m for m in result_menus(after) if m.get("id") not in allow]
+    if not bm or not am:
+        return ["registry.dump menus 가 비어 있음(판정불가) before=%d after=%d" % (len(bm), len(am))]
+    bi, ai = [m.get("id") for m in bm], [m.get("id") for m in am]
+    if bi != ai:
+        out.append("메뉴 id·순서 다름(이전 %d·이후 %d): 빠짐 %s 더함 %s" % (len(bi), len(ai), sorted(set(bi) - set(ai))[:5], sorted(set(ai) - set(bi))[:5]))
+    am_by = {m.get("id"): m for m in am}
+    for b in bm:
+        a = am_by.get(b.get("id"))
+        if not a:
+            continue
+        for k in sorted((set(b) | set(a)) - {"owner"}):
+            if b.get(k) != a.get(k):
+                out.append("%s.%s %r→%r" % (b["id"], k, b.get(k), a.get(k)))
+        if b.get("owner") != a.get("owner") and not (b["id"] in MOVED and b.get("owner") == OWNER_SHELL and a.get("owner") == OWNER_TB):
+            out.append("%s.owner %r→%r (허용 밖)" % (b["id"], b.get("owner"), a.get("owner")))
+    drop = {x for i in allow for x in (i, i.rsplit(".", 1)[-1][:1].upper() + i.rsplit(".", 1)[-1][1:])}
+    bn, an = (result_of(x.get("nav_menu")) or {} for x in (before, after))
+    if bn.get("tabs") != an.get("tabs"):
+        out.append("nav tabs %r→%r" % (bn.get("tabs"), an.get("tabs")))
+    bd = [d for d in bn.get("drawer") or [] if d.get("id") not in drop]
+    ad = [d for d in an.get("drawer") or [] if d.get("id") not in drop]
+    if [d.get("id") for d in bd] != [d.get("id") for d in ad]:
+        out.append("nav drawer(InDrawer·순서) 다름: 빠짐 %s 더함 %s" % (sorted({d.get("id") for d in bd} - {d.get("id") for d in ad})[:5], sorted({d.get("id") for d in ad} - {d.get("id") for d in bd})[:5]))
+    for b, a in zip(bd, ad):
+        if b.get("id") == a.get("id") and b != a:
+            out.append("nav drawer %s %s" % (b.get("id"), [k for k in sorted(set(b) | set(a)) if b.get(k) != a.get(k)]))
+    bl = [t for t in flat_items(before.get("menu_list")) if t[0] not in allow]
+    al = [t for t in flat_items(after.get("menu_list")) if t[0] not in allow]
+    if bl != al:
+        out.append("menu.list 항목·가시 조건 다름(이전 %d·이후 %d): %s" % (len(bl), len(al), [(x, y) for x, y in zip(bl, al) if x != y][:2]))
+    return out
+
+
+def load_raw(d):
+    out = {}
+    for k in RAW_KEYS:
+        try:
+            with open(os.path.join(d, k + ".json"), encoding="utf-8") as f:
+                out[k] = json.load(f)
+        except (OSError, ValueError):
+            out[k] = None
+    return out
 
 
 def git_show(rel):
@@ -179,7 +247,15 @@ def main():
     ap.add_argument("--by", default=os.environ.get("PD_SLOT_OWNER", "menu_registry_smoke"))
     ap.add_argument("--build", default="", help="빌드 식별(로그·커밋)")
     ap.add_argument("--self-test", action="store_true")
+    ap.add_argument("--diff", nargs=2, metavar=("BEFORE_RAW", "AFTER_RAW"), help="앱 없이 이전·이후 _raw 폴더 두 개를 비교(owner 이전만 허용). rc 0=PASS 1=FAIL")
+    ap.add_argument("--before-raw", help="실행 뒤 이 이전 _raw 폴더와 같은 비교를 해 결과에 반영")
+    ap.add_argument("--allow-missing", nargs="*", default=[], help="빠져도 되는 메뉴 id(예 xkxk.file.openBench — 벤치 미포함 빌드)")
     a = ap.parse_args()
+    if a.diff:
+        d = diff_registry(load_raw(a.diff[0]), load_raw(a.diff[1]), a.allow_missing)
+        print("\n".join("DIFF " + x for x in d) or "차이 없음(owner 이전 외)")
+        print("result=%s" % ("FAIL" if d else "PASS"))
+        return 1 if d else 0
     if a.self_test:
         from menu_registry_smoke_selftest import self_test
         return self_test()
@@ -216,6 +292,9 @@ def main():
             summary["raw"][k] = p
         checks, missing, allowed = summarize(raw, base_aids(), base_nav_ids(), a.host)
         summary.update(checks=checks, missing_automation_ids=missing, allowed_missing=allowed)
+        if a.before_raw:
+            summary["registry_diff"] = diff_registry(load_raw(a.before_raw), raw, a.allow_missing)
+            checks.append({"name": "이전 전후 registry.dump 비교(owner 이전 외 차이 0)", "pass": not summary["registry_diff"], "detail": str(summary["registry_diff"])[:300]})
         summary["result"] = "PASS" if checks and all(c["pass"] for c in checks) and summary.get("pageerror", 0) == 0 else "FAIL"
         for c in checks:
             log("%s %s %s" % ("✓" if c["pass"] else "✗", c["name"], "" if c["pass"] else c["detail"]))

@@ -10,9 +10,11 @@
 | `src/xkxk.frameworks.ui.shell` | net11.0 | 컨트롤 층(명령·상태·뷰모델, Dock 조작, 계측·자동화). axaml 없음. 화면은 `IViewRegistry` 로만 연다 |
 | `src/xkxk.frameworks.ui.views` | net11.0 | 화면 조립 층(axaml·코드비하인드·테마·샘플 문서 3종·벤치·갤러리, 앱 진입점 `PdApp`). 호스트가 참조한다 |
 | `src/xkxk.frameworks.ui.data` | net11.0 | 데이터 층(로깅·저장소·백업 DTO·카탈로그). Avalonia 무참조 |
-| `src/xkxk.frameworks.ui.desktop` | net11.0 | Windows·macOS 호스트(파일 레이아웃 저장소, SDI OS 창) |
-| `src/xkxk.frameworks.ui.browser` | net11.0-browser | WASM 호스트(localStorage 레이아웃 저장소, URL 쿼리 → 자동화 인자) |
-| `src/xkxk.frameworks.ui.android` | net11.0-android | Android 호스트(Debug APK) |
+| `src/xkxk.frameworks.ui.hosting.desktop` | net11.0 | Windows·macOS 호스팅 라이브러리(파일 레이아웃 저장소, SDI OS 창, 진입 조립). 공개 진입점은 `DesktopHost`·`DesktopHostOptions` 등 7형식 안이다 |
+| `src/xkxk.frameworks.ui.hosting.browser` | net11.0-browser | WASM 호스팅 라이브러리(localStorage 레이아웃 저장소, URL 쿼리 → 자동화 인자, `BrowserHost`·`BrowserHostOptions`) |
+| `src/xkxk.frameworks.ui.hosting.android` | net11.0-android | Android 호스팅 라이브러리(`XkxkAndroidApplication`·`XkxkMainActivity`·`AndroidHostOptions` 등) |
+| `testbed/xkxk.frameworks.ui.testbed` | net11.0 | 시험대 모듈(`TestbedModule`, 데모 창·벤치·견본 문서). 프레임워크 공개 형식만 쓴다 |
+| `testbed/xkxk.frameworks.ui.testbed.desktop`·`.browser`·`.android` | net11.0·net11.0-browser·net11.0-android | 시험대 실행 프로젝트. `Program`·`wwwroot`·Android 특성·아이콘 같은 플랫폼 진입 자산을 두고 호스팅 라이브러리를 호출한다. 실제 프로젝트·실행 파일·패키지·데이터 폴더·인스턴스 이름은 `tools/host_identity.json` 의 키를 읽는다(B11-3 개명 완료). 정체성은 호스트 옵션(`DataFolderSegments`·`InstanceName`·`ApplicationId`)으로 넘긴다 |
 | `src/xkxk.frameworks.ui` | net11.0 | 순수 UI 층(재사용 컨트롤·스타일·애니메이션·`MotionPreference`·문자열 훅 `UiText`). Avalonia 만 참조한다 |
 
 패키지 버전은 Avalonia 12.1.4, Dock.Avalonia 12.1.0.12 이다(nuget.org 실측 2026-10-28).
@@ -22,9 +24,10 @@
 
 | 층 | 참조할 수 있는 것 | 참조하면 안 되는 것 |
 |---|---|---|
-| 호스트(Desktop·Browser·Android) | 아래 전부 | — |
-| `xkxk.frameworks.ui.views`(화면 조립: axaml·코드비하인드) | `xkxk.frameworks.ui.shell`, `xkxk.frameworks.ui`, `xkxk.frameworks.ui.data` | 호스트 |
-| `xkxk.frameworks.ui.shell`(컨트롤: 명령·상태·뷰모델) | `xkxk.frameworks.ui`, `xkxk.frameworks.ui.data` | `xkxk.frameworks.ui.views`, 호스트 |
+| 시험대 실행 프로젝트(`testbed/` 의 desktop·browser·android) | 호스팅 라이브러리, 프레임워크 공개 형식 | — |
+| 호스팅 라이브러리(`xkxk.frameworks.ui.hosting.desktop`·`.browser`·`.android`) | `xkxk.frameworks.ui.shell`, `xkxk.frameworks.ui.views`, `xkxk.frameworks.ui`, `xkxk.frameworks.ui.data`, 플랫폼 패키지 | 시험대·시험대 실행 프로젝트, 화면 모듈. `InternalsVisibleTo` 0 |
+| `xkxk.frameworks.ui.views`(화면 조립: axaml·코드비하인드) | `xkxk.frameworks.ui.shell`, `xkxk.frameworks.ui`, `xkxk.frameworks.ui.data` | 호스팅 라이브러리, 시험대 실행 프로젝트 |
+| `xkxk.frameworks.ui.shell`(컨트롤: 명령·상태·뷰모델) | `xkxk.frameworks.ui`, `xkxk.frameworks.ui.data` | `xkxk.frameworks.ui.views`, 호스팅 라이브러리, 시험대 실행 프로젝트 |
 | `xkxk.frameworks.ui`(순수 UI) | Avalonia 패키지만 | `xkxk.frameworks.ui.shell`, `xkxk.frameworks.ui.data`, `xkxk.frameworks.ui.views`, 호스트, Dock |
 | `xkxk.frameworks.ui.data`(DTO·저장소·직렬화) | 비 UI 패키지 | Avalonia, `xkxk.frameworks.ui.shell`, `xkxk.frameworks.ui`, `xkxk.frameworks.ui.views`, 호스트 |
 
@@ -33,18 +36,18 @@
 
 ## 빌드 (WSL 에서 Windows dotnet.exe 호출)
 
-- 대상은 .NET 11(`net11.0`·`net11.0-browser`·`net11.0-android`)이다(2026-11-12 전환, SDK 11.0.100·런타임 Microsoft.NETCore.App 11.0.0). 워크로드는 `dotnet workload install android wasm-tools` 로 설치한다(android 37.2.31, wasm-tools 11.0.100 — obuild-2 보고). `tools/` 의 `build_android.sh`·`build_browser.sh`·`build_desktop.sh`·`run_desktop_bg.sh`·`serve_browser.sh` 출력 경로는 `net11.0` 이고, `tools/check_layers_rules.json` 의 `dock_tfm` 은 NuGet 패키지 lib 폴더명이라 `net10.0` 그대로다. `poc/ui/global.json` 은 SDK 11.0.100 이상 중 가장 높은 것을 쓰도록 `rollForward: latestMajor` 로 둔다. 실행 쪽은 `poc/ui/Directory.Build.props` 가 `xkxk.frameworks.ui.desktop` 에만 `RollForward=LatestMajor` 를 주어, 프레임워크 종속 실행본이 설치된 가장 높은 주 버전 런타임으로 뜬다(runtimeconfig.json 의 rollForward).
+- 대상은 .NET 11(`net11.0`·`net11.0-browser`·`net11.0-android`)이다(2026-11-12 전환, SDK 11.0.100·런타임 Microsoft.NETCore.App 11.0.0). 워크로드는 `dotnet workload install android wasm-tools` 로 설치한다(android 37.2.31, wasm-tools 11.0.100 — obuild-2 보고). `tools/` 의 `build_android.sh`·`build_browser.sh`·`build_desktop.sh`·`run_desktop_bg.sh`·`serve_browser.sh` 출력 경로는 `net11.0` 이고, `tools/check_layers_rules.json` 의 `dock_tfm` 은 NuGet 패키지 lib 폴더명이라 `net10.0` 그대로다. `poc/ui/global.json` 은 SDK 11.0.100 이상 중 가장 높은 것을 쓰도록 `rollForward: latestMajor` 로 둔다. 실행 쪽은 시험대 데스크톱 실행 프로젝트 csproj 가 `RollForward=LatestMajor` 를 주어, 프레임워크 종속 실행본이 설치된 가장 높은 주 버전 런타임으로 뜬다(runtimeconfig.json 의 rollForward).
 ```bash
 poc/ui/tools/build_desktop.sh --bg      # LOG=…, RC=… 출력 후 즉시 반환
 poc/ui/tools/build_browser.sh --bg      # wasm-tools 워크로드 필요
 cat <RC 파일>                            # 0 이면 성공
 ```
 
-- Android SDK·JDK 경로는 환경변수 `PD_ANDROID_SDK`·`PD_JAVA_SDK`(Windows 경로)로 넘긴다. `xkxk.frameworks.ui.android.csproj` 는 이 값이 있으면 쓰고, 없으면 이 PC 의 실측 경로(`C:\Program Files (x86)\Android\android-sdk`, `C:\Program Files\Android\openjdk\jdk-21.0.8`)가 존재할 때 쓴다. `tools/build_android.sh` 는 환경변수가 비어 있을 때만 `%USERPROFILE%\pd-android\{sdk,jdk}` 가 있으면 설정하고 `WSLENV` 로 `dotnet.exe` 에 전달한다. 둘 다 없으면 워크로드 기본 탐색에 맡긴다.
-- Android: `poc/ui/tools/build_android.sh --bg [Debug|Release] [PdDiagnostics=true|false]`(기본 Debug·true). 산출물은 `src/xkxk.frameworks.ui.android/bin/<구성>/net11.0-android/xkxk.frameworks.ui-Signed.apk`.
-- **웹(.NET 11) SkiaSharp 우회**: `xkxk.frameworks.ui.browser.csproj` 에만 `SkiaSharp`·`SkiaSharp.NativeAssets.WebAssembly` 4.158.0-preview.2.26560.5 와 `HarfBuzzSharp`·`HarfBuzzSharp.NativeAssets.WebAssembly` 15.0.0-preview.2.26560.5 를 직접 참조하고, `SkiaSharp.dll`·`HarfBuzzSharp.dll` 은 `_AOT_InternalForceInterpretAssemblies`(SDK 내부 항목)로 AOT 에서 뺀다. 원인은 Avalonia.Skia 12.1.4 가 끌어오는 SkiaSharp 3.119 의 wasm 정적 라이브러리가 Emscripten 3.1.56 용이라 .NET 11(Emscripten 6.0.2)에서 `saveSetjmp` 링크 오류가 나는 것이고(근거 https://github.com/AvaloniaUI/Avalonia/issues/21700), 4.x 어셈블리를 Mono AOT 하면 크래시(`sgen-alloc.c:409`)해 해석 실행으로 둔다(크래시 위치는 obuild-2 보고). 위험: Avalonia.Skia 12.1.4 와 SkiaSharp 4.x 프리뷰는 보증된 조합이 아니며 데스크톱·Android 는 3.119 그대로라 판이 다르다. Avalonia 12.2(PR https://github.com/AvaloniaUI/Avalonia/pull/22196)가 NuGet 에 나오면 이 우회를 뺀다.
+- Android SDK·JDK 경로는 환경변수 `PD_ANDROID_SDK`·`PD_JAVA_SDK`(Windows 경로)로 넘긴다. 호스팅 라이브러리·시험대 Android 프로젝트(`android.csproj` 키가 가리키는 파일)는 이 값이 있으면 쓰고, 없으면 이 PC 의 실측 경로(`C:\Program Files (x86)\Android\android-sdk`, `C:\Program Files\Android\openjdk\jdk-21.0.8`)가 존재할 때 쓴다. `tools/build_android.sh` 는 환경변수가 비어 있을 때만 `%USERPROFILE%\pd-android\{sdk,jdk}` 가 있으면 설정하고 `WSLENV` 로 `dotnet.exe` 에 전달한다. 둘 다 없으면 워크로드 기본 탐색에 맡긴다.
+- Android: `poc/ui/tools/build_android.sh --bg [Debug|Release] [PdDiagnostics=true|false]`(기본 Debug·true). 산출물 위치·APK 이름은 `tools/host_identity.json` 의 `android.project_dir`·`android.apk_name` 키를 따른다(실행 프로젝트는 `testbed/` 아래).
+- **웹(.NET 11) SkiaSharp 우회**: 시험대 브라우저 실행 프로젝트(`browser.csproj` 키)에만 `SkiaSharp`·`SkiaSharp.NativeAssets.WebAssembly` 4.158.0-preview.2.26560.5 와 `HarfBuzzSharp`·`HarfBuzzSharp.NativeAssets.WebAssembly` 15.0.0-preview.2.26560.5 를 직접 참조하고, `SkiaSharp.dll`·`HarfBuzzSharp.dll` 은 `_AOT_InternalForceInterpretAssemblies`(SDK 내부 항목)로 AOT 에서 뺀다. 원인은 Avalonia.Skia 12.1.4 가 끌어오는 SkiaSharp 3.119 의 wasm 정적 라이브러리가 Emscripten 3.1.56 용이라 .NET 11(Emscripten 6.0.2)에서 `saveSetjmp` 링크 오류가 나는 것이고(근거 https://github.com/AvaloniaUI/Avalonia/issues/21700), 4.x 어셈블리를 Mono AOT 하면 크래시(`sgen-alloc.c:409`)해 해석 실행으로 둔다(크래시 위치는 obuild-2 보고). 위험: Avalonia.Skia 12.1.4 와 SkiaSharp 4.x 프리뷰는 보증된 조합이 아니며 데스크톱·Android 는 3.119 그대로라 판이 다르다. Avalonia 12.2(PR https://github.com/AvaloniaUI/Avalonia/pull/22196)가 NuGet 에 나오면 이 우회를 뺀다.
 - **직렬화**: 세 스크립트는 `tools/build_lock.sh` 의 `flock`(`logs/.build_<구성>.lock`)으로 같은 Configuration 빌드를 한 번에 하나만 돌린다. 헤드(Desktop·Browser·Android)·`PdDiagnostics`·`PdChannel` 이 달라도 공유 프로젝트의 `obj/<구성>` 을 같이 쓰므로 겹치면 판본이 섞인다. Desktop 의 Work·Product·R2R 은 Release 잠금을 쓴다. 대기 상한은 `PD_BUILD_LOCK_WAIT`초(기본 1800), 넘기면 rc=75.
-- **웹 프로파일 판(진단 전용, 판정 미사용)**: 브라우저 publish 에 `-p:PdDiagnostics=true -p:PdWasmProfile=true` 를 주면 wasm 함수 이름 맵과 브라우저 프로파일러 C# 구간이 들어간다(`src/xkxk.frameworks.ui.browser/xkxk.frameworks.ui.browser.csproj` 18~28행). 이 판은 SDK 제약으로 `-p:RunAOTCompilation=false`(비-AOT)라 시간 판정에 쓰지 않고 함수별 상대 몫만 본다. 프로파일 판을 만든 뒤 일반 웹 빌드는 obj 가 프로파일 상태라 `--no-incremental` 로 다시 빌드한다.
+- **웹 프로파일 판(진단 전용, 판정 미사용)**: 브라우저 publish 에 `-p:PdDiagnostics=true -p:PdWasmProfile=true` 를 주면 wasm 함수 이름 맵과 브라우저 프로파일러 C# 구간이 들어간다(시험대 브라우저 실행 프로젝트 csproj(`browser.csproj` 키) 18~28행). 이 판은 SDK 제약으로 `-p:RunAOTCompilation=false`(비-AOT)라 시간 판정에 쓰지 않고 함수별 상대 몫만 본다. 프로파일 판을 만든 뒤 일반 웹 빌드는 obj 가 프로파일 상태라 `--no-incremental` 로 다시 빌드한다.
 - **폐포 검사**: 빌드가 성공하면 끝에서 `tools/check_assembly_closure.py <폴더|apk>` 가 산출물 안 `Pd.*` 어셈블리끼리의 TypeRef·MemberRef 가 모두 정의돼 있는지 정적으로 본다(PE·webcil·APK 어셈블리 스토어 모두 — .NET 10 은 XALZ/LZ4, .NET 11 은 XABA 구조의 XAZS/Zstandard 스토어를 읽는다. Python 3.12 에 zstd 모듈이 없어 순수 Python 복호기를 내장하고, `.r2r.dll` 합성 네이티브 이미지는 메타데이터가 없어 제외한다. 외부 파일 없이 `check_assembly_closure.py --self-test` 로 파서 자가시험을 할 수 있다). 누락이면 스크립트 rc=4. 직접 실행: 누락 없음 rc=0, 누락 rc=1, 대상 없음 rc=2. 층 이동 뒤 한쪽 어셈블리만 낡은 채 묶인 산출물(예: Shell 은 `ProfileStores` 를 참조하는데 Data 에는 없음)을 실행 전에 잡는 용도다.
 
 ## 데스크톱 실행 (비전경)

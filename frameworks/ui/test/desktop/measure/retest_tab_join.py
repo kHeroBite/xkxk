@@ -13,6 +13,9 @@ L0 명령: tabjoin.drag(앱 안 포인터 끌기 — MdiTabJoinDrag 처리기를
 import argparse, glob, json, os, sys, time  # noqa: E401
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(HERE, "..", "..", "common"))  # D-TESTDIR
+import _paths  # noqa: E402
+_paths.add()
 sys.path.insert(0, HERE)
 import mdi_drag_app as app  # noqa: E402  (common/measure 경로도 여기서 붙는다)
 
@@ -26,7 +29,7 @@ FOREGROUND_NEEDED = [
 ]
 
 
-EXE_NAME = "xkxk.frameworks.ui.desktop.exe"
+EXE_NAME = _paths.get("desktop.exe_name")
 
 
 def resolve_run_dir(run_dir):

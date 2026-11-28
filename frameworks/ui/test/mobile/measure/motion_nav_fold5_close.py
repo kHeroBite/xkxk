@@ -21,6 +21,9 @@ import subprocess
 import sys
 import time
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "common"))  # test/common/_paths.py
+import _paths  # noqa: E402
+_paths.add()
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "desktop", "judge"))
 from motion_close_rules import combine, judge_close, judge_residue, layout_problem, result  # noqa: E402
 import motion_nav_fold5_frames as frames  # noqa: E402
@@ -28,7 +31,7 @@ from motion_nav_fold5_rules import close_point, may_start  # noqa: E402
 
 NOT_CLOSE_PATH = "N/A"
 BACK_CODE = ("뒤로 가기는 열린 메뉴·서랍·시트만 닫고 없으면 기본 동작(앱 이탈)이다 — "
-             "src/xkxk.frameworks.ui.android/MainActivity.cs:71(DispatchKeyEvent)·107~115(OnHostBackRequested)·118(DismissTop)")
+             "hosting.android 호스팅 라이브러리 XkxkMainActivity.cs:78(DispatchKeyEvent)·101~109(OnHostBackRequested)·DismissTop")
 SAMPLE = re.compile(r"^(Grid|Gantt|Form)-\d+$")
 SETTINGS = (("motion", "cinematic"), ("motion.switch", "none"), ("motion.open", "none"), ("motion.close", "fade"))
 SCREENS = {"cover": ("nav", "Nav"), "inner": ("dock", "DockTab")}
@@ -141,8 +144,9 @@ class Close:
     def come_back(self):
         if not may_start(self.top()):
             return  # 다른 앱이 앞이면 사람 흔적이다 — 부르지 않고 다음 안전 확인이 멈춘다
-        name = self.sh("cmd package resolve-activity --brief xkxk.frameworks.ui").splitlines()
-        if name and "/" in name[-1]:
+        pkg = _paths.get("android.package")
+        name = self.sh("cmd package resolve-activity --brief " + pkg).splitlines()
+        if name and name[-1].startswith(pkg + "/"):
             self.sh("am start -n '%s'" % name[-1])
             time.sleep(4)
 

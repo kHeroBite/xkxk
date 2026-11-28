@@ -1,7 +1,7 @@
 #!/bin/bash
-# xkxk.frameworks.ui.desktop 을 비전경(화면 밖 --bg-pos)·stdio 분리로 기동하고 프로세스 실존을 2회 확인하는 스크립트
+# 데스크톱 호스트를 비전경(화면 밖 --bg-pos)·stdio 분리로 기동하고 프로세스 실존을 2회 확인하는 스크립트
 # 사용: run_desktop_bg.sh [--conf Release|Debug|R2R|JIT] [--kill|--no-kill] -- <앱 인자...>   (R2R = build_desktop.sh R2R 게시본)
-#   기본: 다른 xkxk.frameworks.ui.desktop 프로세스가 있으면 종료하지 않고 실패(rc=3) — 실행 슬롯 충돌 방지.
+#   기본: 같은 이름의 다른 호스트 프로세스가 있으면 종료하지 않고 실패(rc=3) — 실행 슬롯 충돌 방지.
 #   --kill: 이 호출자(PD_SLOT_OWNER)가 이 스크립트로 띄워 기록한 자기 PID 만 종료하고 실행(다른 Pd 는 건드리지 않는다). 다른 Pd 가 남아 있으면 --multi-instance 없이는 rc=11.
 #   --no-kill: 기존 프로세스를 그대로 두고 함께 실행. 기존 Pd 가 있으면 --multi-instance on(진단판·lead 승인)이 필요하고, 없으면 rc=11(단일 인스턴스 신호 차단).
 #   결과는 자기 PID 기준이다: 성공이면 PID=<Windows PID> 와 RESULT=RUNNING, 단일 인스턴스에 걸리면 RESULT=SIGNALLED_EXISTING(rc=10). --multi-instance 기동은 logs/user_files/pending 을 덮지 않는다.
@@ -12,6 +12,18 @@
 set -u
 TOOLS="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$TOOLS/.." && pwd)"
+hi_req() { # 호스트 정체성 값을 조회해 변수에 담는다(조회 실패·빈 값이면 오류 종료)
+  local _v
+  _v="$(python3 -B "$TOOLS/host_identity.py" get "$2" 2>/dev/null)" && [ -n "$_v" ] || { echo "host_identity 조회 실패: $2" >&2; exit 2; }
+  printf -v "$1" '%s' "$_v"
+}
+hi_req PROJ_DIR desktop.project_dir
+hi_req IMAGE desktop.exe_name
+hi_req DLL_NAME desktop.dll_name
+hi_req HOSTING_DLL_NAME desktop.hosting_dll # 호스트 인자 해석(HostArgs 등)이 있는 호스팅 라이브러리(B11 UADR-0018)
+DATA_SEGS_RAW="$(python3 -B "$TOOLS/host_identity.py" get data.segments 2>/dev/null)" && [ -n "$DATA_SEGS_RAW" ] || { echo "host_identity 조회 실패: data.segments" >&2; exit 2; }
+DATA_REL="${DATA_SEGS_RAW//$'\n'//}"
+DATA_WINPAT="${DATA_REL//\//\\\\}"
 CONF="Release"
 KILL=check
 while [ $# -gt 0 ]; do
@@ -24,8 +36,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-EXE="$ROOT/src/xkxk.frameworks.ui.desktop/bin/$CONF/net11.0/xkxk.frameworks.ui.desktop.exe"
-IMAGE="xkxk.frameworks.ui.desktop.exe"
+EXE="$ROOT/$PROJ_DIR/bin/$CONF/net11.0/$IMAGE"
 TS="$(date +%Y%m%d_%H%M%S_%3N)" # ms 까지 — 같은 초 동시 기동 시 로그 파일 충돌 방지
 mkdir -p "$ROOT/logs"
 APP_LOG="$ROOT/logs/desktop_$TS.log"
@@ -47,11 +58,11 @@ if [ -z "$DRY" ] && [ -n "$SLOT_OWNER" ] && [ "${PD_SLOT_OWNER:-}" != "$SLOT_OWN
 fi
 [ -z "$DRY" ] && echo "$(date '+%Y-%m-%d %H:%M:%S') owner=${PD_SLOT_OWNER:-} conf=$CONF kill=$KILL args=$*" >> "$ROOT/logs/odev4b/slot_runs.log"
 
-# ⓪-b 사용자 파일 보호(lead 10:2x — 제품판은 --fresh·--exit-after 를 무시하고 사용자 %LOCALAPPDATA%\xkxk\frameworks\ui 를 쓴다)
+# ⓪-b 사용자 파일 보호(lead 10:2x — 제품판은 --fresh·--exit-after 를 무시하고 사용자 %LOCALAPPDATA% 아래 사용자 데이터 폴더를 쓴다)
 #      직전 제품판 기동의 사용자 파일 md5 대조가 남아 있으면(앱 0개일 때) 먼저 대조한다. 다르면 기동 거부(rc=9) — 백업에서 확인·복구 후
 #      logs/user_files/pending 을 지워야 다음 기동이 된다.
 UF_DIR="$ROOT/logs/user_files"
-USER_PD="$(wslpath "$(cmd.exe /c 'echo %LOCALAPPDATA%' 2>/dev/null | tr -d '\r')" 2>/dev/null)/xkxk/frameworks/ui"
+USER_PD="$(wslpath "$(cmd.exe /c 'echo %LOCALAPPDATA%' 2>/dev/null | tr -d '\r')" 2>/dev/null)/$DATA_REL"
 # 대상: layout.json·settings.json·layouts/*(진단 원격 제어가 쓰는 remote-control.json 은 제외 — 진단판 기동마다 바뀐다)
 # + 사용자 폴더 전체의 파일·폴더 이름 목록(logs\ 하위 포함, lead 10:4x — 새 파일·폴더가 생기면 불일치). remote-control.json 은 목록에서도 제외
 #   일자 로그 logs/pd-YYYYMMDD.log(숫자 정확히 8자리)도 목록에서 제외(사용자 결정 Q2, 2026-11-24 — 앱이 매일 새로 만드는 파일이라 거짓 불일치). settings.json·layout.json md5 대조는 유지
@@ -104,7 +115,7 @@ kill_recorded() {
   return 0
 }
 if [ "$KILL" = "1" ]; then kill_recorded || exit 4; fi
-# 같은 이름의 앱이 떠 있으면 --multi-instance 없이는 거부한다 — 단일 인스턴스 이름 xkxk.frameworks.ui.{채널}.Instance 가 같아 신호가 그 창으로 간다.
+# 같은 이름의 앱이 떠 있으면 --multi-instance 없이는 거부한다 — 단일 인스턴스 이름이 같아 신호가 그 창으로 간다.
 if [ -z "$DRY" ] && [ "$HAS_MULTI" -eq 0 ] && [ "$KILL" != "check" ] && [ "$(proc_count)" -gt 0 ]; then
   echo "실행 중인 $IMAGE 가 있어 기동하지 않음 — 그대로 띄우면 기존 창에 활성화 신호가 간다. 함께 띄우려면 --multi-instance on(진단판·lead 승인)을 준다."
   echo "RESULT=EXISTING_INSTANCE"; exit 11
@@ -139,8 +150,10 @@ done
 # ①-a 제품판 데이터 폴더 강제(lead 10:2x). 제품판 판별 = 구성 이름에 product 가 있거나 Desktop.dll 에 진단 호스트 인자 문자열이 없음.
 #      제품판은 항상 임시 데이터 폴더(--data-dir logs/proddata/<시각>)로 띄운다. 이 기능이 없는 옛 제품판(문자열 '--data-dir' 없음)과
 #      사용자 폴더를 가리키는 --data-dir 은 거부(rc=8). 단일 인스턴스 우회(--multi-instance on)는 기본으로 붙이지 않는다(연속 기동 시험만).
-has_u16() { python3 -c "import sys;print(int(sys.argv[2].encode('utf-16-le') in open(sys.argv[1],'rb').read()))" "$1" "$2" 2>/dev/null; }
-DLL="$(dirname "$EXE")/xkxk.frameworks.ui.desktop.dll"
+# 호스트 인자 문자열은 B11 부터 호스팅 라이브러리 dll 에 있다 — 시험대 실행 dll 과 같은 폴더의 호스팅 dll 둘 중 하나에 있으면 지원으로 본다(둘 다 없으면 옛 판과 같이 미지원).
+has_u16() { python3 -c "import sys,os;n=sys.argv[1].encode('utf-16-le');print(int(any(os.path.isfile(p) and n in open(p,'rb').read() for p in sys.argv[2:])))" "$2" "$1" "$HOSTING_DLL" 2>/dev/null; }
+DLL="$(dirname "$EXE")/$DLL_NAME"
+HOSTING_DLL="$(dirname "$EXE")/$HOSTING_DLL_NAME"
 IS_PRODUCT=0
 case "$CONF" in *product*) IS_PRODUCT=1 ;; esac
 [ "$IS_PRODUCT" -eq 0 ] && [ "$(has_u16 "$DLL" "--offscreen-guard")" != "1" ] && IS_PRODUCT=1
@@ -156,7 +169,7 @@ if [ "$HAS_DD" = "1" ]; then
     [ -n "$DRY" ] && rmdir "$DDW" 2>/dev/null # 점검 모드는 빈 폴더를 남기지 않는다
   fi
   case "$(printf '%s' "$DD" | tr 'A-Z' 'a-z' | tr '/' '\\')" in
-    *appdata\\local\\xkxk\\frameworks\\ui|*appdata\\local\\xkxk\\frameworks\\ui\\) echo "--data-dir 가 사용자 폴더($DD) — 기동 거부."; echo "RESULT=PRODUCT_USER_DATADIR"; exit 8 ;;
+    *appdata\\local\\$DATA_WINPAT|*appdata\\local\\$DATA_WINPAT\\) echo "--data-dir 가 사용자 폴더($DD) — 기동 거부."; echo "RESULT=PRODUCT_USER_DATADIR"; exit 8 ;;
   esac
   echo "임시 데이터 폴더: $DD"
   if [ -z "$DRY" ]; then # 기동 전 사용자 파일 백업·md5(다음 기동 때 자동 대조)

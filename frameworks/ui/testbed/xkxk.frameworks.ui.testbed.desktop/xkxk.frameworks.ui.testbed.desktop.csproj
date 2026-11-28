@@ -1,0 +1,32 @@
+<!-- 별별UI 시험대 데스크톱(Windows·macOS) 실행 프로젝트 — 공개 진입점 DesktopHost.Run 에 시험대 모듈을 넘긴다(B11, UADR-0018) -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- B11-3 정체성 전환: AssemblyName·RootNamespace 를 xkxk.frameworks.ui.testbed.desktop 으로 한다(UADR-0018) -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>xkxk.frameworks.ui.testbed.desktop</RootNamespace>
+    <AssemblyName>xkxk.frameworks.ui.testbed.desktop</AssemblyName>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <!-- 게시(-r <RID>) 때 ReadyToRun 사전 컴파일: 첫 프레임 JIT 비용 절감(실측 logs/odev4b diag4). 일반 build 에는 영향 없음 -->
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <!-- 앱 아이콘(tools/make_icons.py 생성): exe 아이콘. Avalonia 12.1.4 targets 가 같은 파일을 !__AvaloniaDefaultWindowIcon 로 내장한다.
+         ShellPlatform.AppIcon 이 이 자원을 읽고, AppWindowIcon 이 작업표시줄에 뜨는 창에 명시로 지정한다(트레이도 같은 원천) -->
+    <ApplicationIcon>Assets\pd.ico</ApplicationIcon>
+    <!-- 런타임 여러 개면 최신 선택(사용자 지시 2026-11-12 ".NET 이 여러 개 있을 때 최신 버전을 택하도록"): runtimeconfig.json 의 rollForward 로 들어간다.
+         근거 https://learn.microsoft.com/en-us/dotnet/core/versions/selection (LatestMajor). 옛 Directory.Build.props 이름 조건에서 본문으로 옮김(B11) -->
+    <RollForward>LatestMajor</RollForward>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\xkxk.frameworks.ui.hosting.desktop\xkxk.frameworks.ui.hosting.desktop.csproj" />
+    <ProjectReference Include="..\..\src\xkxk.frameworks.ui.views\xkxk.frameworks.ui.views.csproj" />
+    <ProjectReference Include="..\xkxk.frameworks.ui.testbed\xkxk.frameworks.ui.testbed.csproj" />
+  </ItemGroup>
+</Project>

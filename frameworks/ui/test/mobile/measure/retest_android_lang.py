@@ -165,10 +165,10 @@ def wm_size(serial, size):
 def restart(serial, r_info_path):
     """앱을 완전히 종료 후 다시 시작하고 새 토큰으로 연결 정보를 갱신한다."""
     ra.adb(serial, "shell", "am", "force-stop", ra.PKG)
-    ra.adb(serial, "shell", "run-as", ra.PKG, "rm", "-f", "files/xkxk/frameworks/ui/remote-control.json")  # 이전 프로세스의 토큰 파일을 지워 새 토큰만 읽는다
+    ra.adb(serial, "shell", "run-as", ra.PKG, "rm", "-f", "files/" + "/".join(_paths.get("data.segments")) + "/remote-control.json")  # 이전 프로세스의 토큰 파일을 지워 새 토큰만 읽는다
     ra.adb(serial, "shell", "monkey", "-p", ra.PKG, "-c", "android.intent.category.LAUNCHER", "1")
     for _ in range(40):
-        rc, out = ra.adb(serial, "exec-out", "run-as", ra.PKG, "cat", "files/xkxk/frameworks/ui/remote-control.json")
+        rc, out = ra.adb(serial, "exec-out", "run-as", ra.PKG, "cat", "files/" + "/".join(_paths.get("data.segments")) + "/remote-control.json")
         if rc == 0 and out.strip().startswith("{"):
             info = json.loads(out)
             info["port"] = ra.HOST_PORT

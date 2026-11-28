@@ -110,7 +110,7 @@ class _Pager:
         self.cur.append("")
 
 
-def _type_section(name, t, namespaces, pager, menu_rows=None):
+def _type_section(name, t, namespaces, pager, menu_rows=None, testbed_names=()):
     head = ["## %s" % _esc(name), "", "- 종류: %s · 전체 이름: %s" % (_code(t["kind"]), _code(t["full"])), ""]
     if t["summary"]:
         head += _esc(t["summary"]).split("\n") + [""]
@@ -135,7 +135,7 @@ def _type_section(name, t, namespaces, pager, menu_rows=None):
             twins = [n for n in same[m["const_value"]] if n != m["name"]]
             note = "(같은 값: %s — 같은 항목을 가리키는 별칭) " % "·".join(_code(n) for n in twins) if twins else ""
             rows.append("| %s | %s | %s | %s | %s | %s | %s |" % (_code(m["name"]), _code(m["const_value"]), where,
-                                                               kind or "섹션 이름", order or "—", run, note + desc(m)))
+                                                               kind or ("시험대 등록(표 밖)" if m["name"] in testbed_names else "섹션 이름"), order or "—", run, note + desc(m)))
         pager.table(name, ["| 상수 | 값 | 부모 | 종류 | 순서 | 명령 ID | 설명 |", "|---|---|---|---|---|---|---|"], rows)
     elif consts:
         rows = ["| %s | %s | %s |" % (_code(m["name"]), _code(m["const_value"]), desc(m)) for m in consts]
@@ -234,7 +234,7 @@ def render(surface):
     for name, members in plan:
         pager = _Pager()
         for m in members:
-            _type_section(m, types[m], namespaces, pager, surface.get("menu_rows"))
+            _type_section(m, types[m], namespaces, pager, surface.get("menu_rows"), surface.get("testbed_menu_names") or ())
         files = _finish(name, [p for p in pager.pages if p] or [[]])
         out.update(files)
         group_files.append((name, list(files), members))

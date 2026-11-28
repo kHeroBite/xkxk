@@ -26,7 +26,8 @@ import pdctl  # noqa: E402
 from retest_remote import Remote  # noqa: E402
 
 ADB = "/mnt/c/Program Files (x86)/Android/android-sdk/platform-tools/adb.exe"
-PKG = "xkxk.frameworks.ui"
+PKG = _paths.get("android.package")
+PKG_FILES = "files/" + "/".join(_paths.get("data.segments"))  # 앱 내부 저장소의 사용자 파일 폴더
 USER_FILES = ("layout.json", "settings.json")
 
 
@@ -42,7 +43,7 @@ class Host:
         if self.a.target == "desktop":
             p = os.path.join(user_dir(), name)
             return open(p, "rb").read() if os.path.exists(p) else None
-        r = subprocess.run(self.adb + ["exec-out", "run-as", PKG, "cat", "files/xkxk/frameworks/ui/" + name], capture_output=True, timeout=20)
+        r = subprocess.run(self.adb + ["exec-out", "run-as", PKG, "cat", PKG_FILES + "/" + name], capture_output=True, timeout=20)
         return r.stdout if r.returncode == 0 and r.stdout else None
 
     def write(self, name, data):
@@ -56,9 +57,9 @@ class Host:
                 f.write(data)
             return
         if data is None:
-            subprocess.run(self.adb + ["shell", "run-as", PKG, "rm", "-f", "files/xkxk/frameworks/ui/" + name], capture_output=True, timeout=20)
+            subprocess.run(self.adb + ["shell", "run-as", PKG, "rm", "-f", PKG_FILES + "/" + name], capture_output=True, timeout=20)
             return
-        subprocess.run(self.adb + ["shell", "run-as %s sh -c 'cat > files/xkxk/frameworks/ui/%s'" % (PKG, name)], input=data, capture_output=True, timeout=20)
+        subprocess.run(self.adb + ["shell", "run-as %s sh -c 'cat > %s/%s'" % (PKG, PKG_FILES, name)], input=data, capture_output=True, timeout=20)
 
     # ── 기동·종료 ──
     def launch(self, old_pid=None):
@@ -78,7 +79,7 @@ class Host:
             raise RuntimeError("데스크톱 기동 실패")
         subprocess.run(self.adb + ["shell", "monkey", "-p", PKG, "-c", "android.intent.category.LAUNCHER", "1"], capture_output=True, timeout=20)
         time.sleep(6)
-        raw = subprocess.run(self.adb + ["exec-out", "run-as", PKG, "cat", "files/xkxk/frameworks/ui/remote-control.json"], capture_output=True, timeout=20).stdout
+        raw = subprocess.run(self.adb + ["exec-out", "run-as", PKG, "cat", PKG_FILES + "/remote-control.json"], capture_output=True, timeout=20).stdout
         info = json.loads(raw.decode("utf-8"))
         info["port"] = pdctl.load_info()["port"]  # PD_REMOTE_INFO 의 forward 포트 유지
         return remote_with(info)
@@ -93,7 +94,7 @@ class Host:
     def kill(self, r):
         if self.a.target == "desktop":
             for _ in range(15):  # 메인 창 닫기 = 정상 종료 — 끝날 때까지 기다린다(강제 종료는 하지 않는다: 종료 저장 경로를 보는 시험)
-                if subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq xkxk.frameworks.ui.desktop.exe", "/NH", "/FO", "CSV"], capture_output=True).stdout.count(b"xkxk.frameworks.ui.desktop") == 0:
+                if subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq " + _paths.get("desktop.exe_name"), "/NH", "/FO", "CSV"], capture_output=True).stdout.count(_paths.get("desktop.process_name").encode()) == 0:
                     return
                 time.sleep(1)
             return
@@ -102,9 +103,9 @@ class Host:
 
 
 def user_dir():
-    found = sorted(glob.glob("/mnt/c/Users/*/AppData/Local/xkxk/frameworks/ui"), key=os.path.getmtime)
+    found = sorted(glob.glob("/mnt/c/Users/*/AppData/Local/" + "/".join(_paths.get("data.segments"))), key=os.path.getmtime)
     if not found:
-        raise RuntimeError("사용자 설정 폴더(xkxk/frameworks/ui) 없음")
+        raise RuntimeError("사용자 설정 폴더(%s) 없음" % "/".join(_paths.get("data.segments")))
     return found[-1]
 
 

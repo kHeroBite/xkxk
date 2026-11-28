@@ -10,12 +10,12 @@
 | Control | 314 |
 | Data | 74 |
 | Diag | 93 |
-| Host | 77 |
-| Testbed | 53 |
+| Host | 81 |
+| Testbed | 60 |
 | Ui | 26 |
 | Views | 195 |
 
-합계 832개(.cs·.axaml).
+합계 843개(.cs·.axaml).
 
 ## 끊어야 하는 참조(현재 기준 금지 방향)
 
@@ -37,31 +37,6 @@
 
 | 파일 | 층 | 이동 뒤 경로 | 근거 | Avalonia | Dock.Model | 내부 형식 |
 |---|---|---|---|:-:|:-:|---|
-| `xkxk.frameworks.ui.android/AndroidApp.cs` | Host |  | 호스트 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.android/AndroidDeviceInfo.cs` | Host |  | 호스트 프로젝트 |  |  | AndroidDeviceInfo |
-| `xkxk.frameworks.ui.android/AndroidLayoutStore.cs` | Host |  | 호스트 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.android/AndroidSafeArea.cs` | Host |  | 호스트 프로젝트 | O |  | AndroidSafeArea |
-| `xkxk.frameworks.ui.android/AndroidUiHost.cs` | Host |  | 호스트 프로젝트 |  |  | AndroidUiHost |
-| `xkxk.frameworks.ui.android/MainActivity.cs` | Host |  | 호스트 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.android/StartupGesture.cs` | Host |  | 호스트 프로젝트 |  |  | StartupGesture |
-| `xkxk.frameworks.ui.android/StartupHitTest.cs` | Host |  | 호스트 프로젝트 | O |  | StartupHitTest |
-| `xkxk.frameworks.ui.android/StartupMarks.cs` | Host |  | 호스트 프로젝트 |  |  | StartupMarks |
-| `xkxk.frameworks.ui.android/StartupTouchGate.Discard.cs` | Host |  | 호스트 프로젝트 | O |  | StartupTouchGate |
-| `xkxk.frameworks.ui.android/StartupTouchGate.cs` | Host |  | 호스트 프로젝트 | O |  | StartupTouchGate |
-| `xkxk.frameworks.ui.browser/AutomationExports.cs` | Host |  | 호스트 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.browser/BrowserBlobStore.cs` | Host |  | 호스트 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.browser/BrowserHostOs.cs` | Host |  | 호스트 프로젝트 |  |  | BrowserHostOs |
-| `xkxk.frameworks.ui.browser/BrowserKeyValueStore.cs` | Host |  | 호스트 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.browser/BrowserLayoutStore.cs` | Host |  | 호스트 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.browser/BrowserMotionPreference.cs` | Host |  | 호스트 프로젝트 |  |  | BrowserMotionPreference |
-| `xkxk.frameworks.ui.browser/BrowserPressTimeSource.cs` | Host |  | 호스트 프로젝트 |  |  | BrowserPressTimeSource |
-| `xkxk.frameworks.ui.browser/BrowserUiHost.cs` | Host |  | 호스트 프로젝트 |  |  | BrowserUiHost |
-| `xkxk.frameworks.ui.browser/LifecycleExports.cs` | Host |  | 호스트 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.browser/PageKeyFocus.cs` | Host |  | 호스트 프로젝트 |  |  | PageKeyFocus |
-| `xkxk.frameworks.ui.browser/PagePointerLeave.cs` | Host |  | 호스트 프로젝트 |  |  | PagePointerLeave |
-| `xkxk.frameworks.ui.browser/Program.Storage.cs` | Host |  | 호스트 프로젝트 |  |  | Program |
-| `xkxk.frameworks.ui.browser/Program.cs` | Host |  | 호스트 프로젝트 | O |  | Program |
-| `xkxk.frameworks.ui.browser/StartupTiming.cs` | Host |  | 호스트 프로젝트 | O |  | StartupTiming |
 | `xkxk.frameworks.ui.data/AppChannel.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/AppDataFolder.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Layout/BackupBundle.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
@@ -93,58 +68,87 @@
 | `xkxk.frameworks.ui.data/Theming/BackgroundImageStore.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Theming/LocalBlobStore.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.data/Theming/ThemeFileExchange.cs` | Data |  | xkxk.frameworks.ui.data 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.desktop/AppIdentity.cs` | Host |  | 호스트 프로젝트 |  |  | AppIdentity |
-| `xkxk.frameworks.ui.desktop/AppWindowIcon.cs` | Host |  | 호스트 프로젝트 | O |  | AppWindowIcon |
-| `xkxk.frameworks.ui.desktop/BgPlacement.cs` | Host |  | 호스트 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.desktop/BgWindowPolicy.cs` | Host |  | 호스트 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.desktop/CaptureProtection.cs` | Host |  | 호스트 프로젝트 | O |  | CaptureProtection |
-| `xkxk.frameworks.ui.desktop/DesktopDiagHooks.cs` | Host |  | 호스트 프로젝트 |  |  | DesktopDiagHooks |
-| `xkxk.frameworks.ui.desktop/DesktopMonitorProvider.cs` | Host |  | 호스트 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.desktop/DesktopUiHost.cs` | Host |  | 호스트 프로젝트 |  |  | DesktopUiHost |
-| `xkxk.frameworks.ui.desktop/DesktopWindowHost.cs` | Host |  | 호스트 프로젝트 | O | O |  |
-| `xkxk.frameworks.ui.desktop/FileLayoutStore.cs` | Host |  | 호스트 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.desktop/HostArgs.cs` | Host |  | 호스트 프로젝트 |  |  | HostArgs |
-| `xkxk.frameworks.ui.desktop/HostLog.cs` | Host |  | 호스트 프로젝트 |  |  | HostLog |
-| `xkxk.frameworks.ui.desktop/HostRenderOptions.cs` | Host |  | 호스트 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.desktop/LaunchOptions.cs` | Host |  | 호스트 프로젝트 | O |  | LaunchOptions |
-| `xkxk.frameworks.ui.desktop/MainBgPinHook.cs` | Host |  | 호스트 프로젝트 | O |  | MainBgPinHook |
-| `xkxk.frameworks.ui.desktop/MainNcMenuHook.cs` | Host |  | 호스트 프로젝트 | O |  | MainNcMenuHook |
-| `xkxk.frameworks.ui.desktop/MainWindowChrome.cs` | Host |  | 호스트 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.desktop/MainWindowDecorations.cs` | Host |  | 호스트 프로젝트 | O |  | MainWindowDecorations |
-| `xkxk.frameworks.ui.desktop/MaxTrackHook.cs` | Host |  | 호스트 프로젝트 | O |  | MaxTrackHook |
-| `xkxk.frameworks.ui.desktop/MonitorChangeWatcher.cs` | Host |  | 호스트 프로젝트 | O |  | MonitorChangeWatcher |
-| `xkxk.frameworks.ui.desktop/MonitorFitService.cs` | Host |  | 호스트 프로젝트 | O |  | MonitorFitService |
-| `xkxk.frameworks.ui.desktop/OffscreenGuardHook.cs` | Host |  | 호스트 프로젝트 | O |  | OffscreenGuardHook |
-| `xkxk.frameworks.ui.desktop/OsSnapProbe.cs` | Host |  | 호스트 프로젝트 |  |  | OsSnapProbe |
-| `xkxk.frameworks.ui.desktop/Program.cs` | Host |  | 호스트 프로젝트 | O |  | Program |
-| `xkxk.frameworks.ui.desktop/SdiAboveMainHook.cs` | Host |  | 호스트 프로젝트 | O |  | SdiAboveMainHook |
-| `xkxk.frameworks.ui.desktop/SdiBgPinHook.cs` | Host |  | 호스트 프로젝트 | O |  | SdiBgPinHook |
-| `xkxk.frameworks.ui.desktop/SdiDocumentIcon.cs` | Host |  | 호스트 프로젝트 | O | O | SdiDocumentIcon |
-| `xkxk.frameworks.ui.desktop/SdiHostPlacement.cs` | Host |  | 호스트 프로젝트 | O |  | SdiHostPlacement |
-| `xkxk.frameworks.ui.desktop/SdiMagnetHook.cs` | Host |  | 호스트 프로젝트 | O |  | SdiMagnetHook |
-| `xkxk.frameworks.ui.desktop/SdiMagnetSnapper.cs` | Host |  | 호스트 프로젝트 | O |  | SdiMagnetSnapper |
-| `xkxk.frameworks.ui.desktop/SdiQuietState.cs` | Host |  | 호스트 프로젝트 | O | O | SdiQuietState |
-| `xkxk.frameworks.ui.desktop/SdiResizeDebounce.cs` | Host |  | 호스트 프로젝트 | O |  | SdiResizeDebounce |
-| `xkxk.frameworks.ui.desktop/SdiShadowBitmap.cs` | Host |  | 호스트 프로젝트 |  |  | SdiShadowBitmap |
-| `xkxk.frameworks.ui.desktop/SdiShadowNative.cs` | Host |  | 호스트 프로젝트 |  |  | SdiShadowNative |
-| `xkxk.frameworks.ui.desktop/SdiShadowShape.cs` | Host |  | 호스트 프로젝트 | O |  | SdiShadowShape |
-| `xkxk.frameworks.ui.desktop/SdiShadowStack.cs` | Host |  | 호스트 프로젝트 | O |  | SdiShadowStack |
-| `xkxk.frameworks.ui.desktop/SdiShadowSurface.cs` | Host |  | 호스트 프로젝트 |  |  | SdiShadowSurface |
-| `xkxk.frameworks.ui.desktop/SdiShadowWindow.cs` | Host |  | 호스트 프로젝트 | O |  | SdiShadowWindow |
-| `xkxk.frameworks.ui.desktop/SdiSnapAssistHost.cs` | Host |  | 호스트 프로젝트 | O |  | SdiSnapAssistHost |
-| `xkxk.frameworks.ui.desktop/SdiSnapBarHost.cs` | Host |  | 호스트 프로젝트 | O |  | SdiSnapBarHost |
-| `xkxk.frameworks.ui.desktop/SdiSnapHook.cs` | Host |  | 호스트 프로젝트 | O | O | SdiSnapHook |
-| `xkxk.frameworks.ui.desktop/SdiTabJoinHook.cs` | Host |  | 호스트 프로젝트 | O |  | SdiTabJoinHook |
-| `xkxk.frameworks.ui.desktop/SdiWindowHost.cs` | Host |  | 호스트 프로젝트 | O | O |  |
-| `xkxk.frameworks.ui.desktop/SdiZOrderProbe.cs` | Host |  | 호스트 프로젝트 | O | O | SdiZOrderProbe |
-| `xkxk.frameworks.ui.desktop/SdiZOrderRaiser.cs` | Host |  | 호스트 프로젝트 | O | O | SdiZOrderRaiser |
-| `xkxk.frameworks.ui.desktop/SingleInstance.cs` | Host |  | 호스트 프로젝트 |  |  |  |
-| `xkxk.frameworks.ui.desktop/SysWindowBgPinHook.cs` | Host |  | 호스트 프로젝트 | O |  | SysWindowBgPinHook |
-| `xkxk.frameworks.ui.desktop/Win32ModalBlock.cs` | Host |  | 호스트 프로젝트 | O |  | Win32ModalBlock |
-| `xkxk.frameworks.ui.desktop/WindowDefaultMove.cs` | Host |  | 호스트 프로젝트 | O | O | WindowDefaultMove |
-| `xkxk.frameworks.ui.desktop/WindowFrameMetrics.cs` | Host |  | 호스트 프로젝트 | O |  | WindowFrameMetrics |
-| `xkxk.frameworks.ui.desktop/WindowPlacement.cs` | Host |  | 호스트 프로젝트 | O |  |  |
-| `xkxk.frameworks.ui.desktop/WindowPosTrace.cs` | Host |  | 호스트 프로젝트 | O |  | WindowPosTrace |
+| `xkxk.frameworks.ui.hosting.android/AndroidDeviceInfo.cs` | Host |  | 호스트 프로젝트 |  |  | AndroidDeviceInfo |
+| `xkxk.frameworks.ui.hosting.android/AndroidHostOptions.cs` | Host |  | 호스트 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.hosting.android/AndroidHostStartup.cs` | Host |  | 호스트 프로젝트 |  |  | AndroidHostStartup |
+| `xkxk.frameworks.ui.hosting.android/AndroidLayoutStore.cs` | Host |  | 호스트 프로젝트 |  |  | AndroidLayoutStore |
+| `xkxk.frameworks.ui.hosting.android/AndroidSafeArea.cs` | Host |  | 호스트 프로젝트 | O |  | AndroidSafeArea |
+| `xkxk.frameworks.ui.hosting.android/AndroidUiHost.cs` | Host |  | 호스트 프로젝트 |  |  | AndroidUiHost |
+| `xkxk.frameworks.ui.hosting.android/StartupGesture.cs` | Host |  | 호스트 프로젝트 |  |  | StartupGesture |
+| `xkxk.frameworks.ui.hosting.android/StartupHitTest.cs` | Host |  | 호스트 프로젝트 | O |  | StartupHitTest |
+| `xkxk.frameworks.ui.hosting.android/StartupMarks.cs` | Host |  | 호스트 프로젝트 |  |  | StartupMarks |
+| `xkxk.frameworks.ui.hosting.android/StartupTouchGate.Discard.cs` | Host |  | 호스트 프로젝트 | O |  | StartupTouchGate |
+| `xkxk.frameworks.ui.hosting.android/StartupTouchGate.cs` | Host |  | 호스트 프로젝트 | O |  | StartupTouchGate |
+| `xkxk.frameworks.ui.hosting.android/XkxkAndroidApplication.cs` | Host |  | 호스트 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.hosting.android/XkxkMainActivity.cs` | Host |  | 호스트 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.hosting.browser/BrowserBlobStore.cs` | Host |  | 호스트 프로젝트 |  |  | BrowserBlobStore |
+| `xkxk.frameworks.ui.hosting.browser/BrowserHost.Interop.cs` | Host |  | 호스트 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.hosting.browser/BrowserHost.Storage.cs` | Host |  | 호스트 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.hosting.browser/BrowserHost.cs` | Host |  | 호스트 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.hosting.browser/BrowserHostOptions.cs` | Host |  | 호스트 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.hosting.browser/BrowserHostOs.cs` | Host |  | 호스트 프로젝트 |  |  | BrowserHostOs |
+| `xkxk.frameworks.ui.hosting.browser/BrowserKeyValueStore.cs` | Host |  | 호스트 프로젝트 |  |  | BrowserKeyValueStore |
+| `xkxk.frameworks.ui.hosting.browser/BrowserLayoutStore.cs` | Host |  | 호스트 프로젝트 |  |  | BrowserLayoutStore |
+| `xkxk.frameworks.ui.hosting.browser/BrowserMotionPreference.cs` | Host |  | 호스트 프로젝트 |  |  | BrowserMotionPreference |
+| `xkxk.frameworks.ui.hosting.browser/BrowserPressTimeSource.cs` | Host |  | 호스트 프로젝트 |  |  | BrowserPressTimeSource |
+| `xkxk.frameworks.ui.hosting.browser/BrowserUiHost.cs` | Host |  | 호스트 프로젝트 |  |  | BrowserUiHost |
+| `xkxk.frameworks.ui.hosting.browser/PageKeyFocus.cs` | Host |  | 호스트 프로젝트 |  |  | PageKeyFocus |
+| `xkxk.frameworks.ui.hosting.browser/PagePointerLeave.cs` | Host |  | 호스트 프로젝트 |  |  | PagePointerLeave |
+| `xkxk.frameworks.ui.hosting.browser/StartupTiming.cs` | Host |  | 호스트 프로젝트 | O |  | StartupTiming |
+| `xkxk.frameworks.ui.hosting.desktop/AppIdentity.cs` | Host |  | 호스트 프로젝트 |  |  | AppIdentity |
+| `xkxk.frameworks.ui.hosting.desktop/AppWindowIcon.cs` | Host |  | 호스트 프로젝트 | O |  | AppWindowIcon |
+| `xkxk.frameworks.ui.hosting.desktop/BgPlacement.cs` | Host |  | 호스트 프로젝트 |  |  | BgPlacement |
+| `xkxk.frameworks.ui.hosting.desktop/BgWindowPolicy.cs` | Host |  | 호스트 프로젝트 | O |  | BgWindowPolicy |
+| `xkxk.frameworks.ui.hosting.desktop/CaptureProtection.cs` | Host |  | 호스트 프로젝트 | O |  | CaptureProtection |
+| `xkxk.frameworks.ui.hosting.desktop/DesktopDiagHooks.cs` | Host |  | 호스트 프로젝트 |  |  | DesktopDiagHooks |
+| `xkxk.frameworks.ui.hosting.desktop/DesktopHost.cs` | Host |  | 호스트 프로젝트 | O |  |  |
+| `xkxk.frameworks.ui.hosting.desktop/DesktopHostOptions.cs` | Host |  | 호스트 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.hosting.desktop/DesktopMonitorProvider.cs` | Host |  | 호스트 프로젝트 | O |  | DesktopMonitorProvider |
+| `xkxk.frameworks.ui.hosting.desktop/DesktopUiHost.cs` | Host |  | 호스트 프로젝트 |  |  | DesktopUiHost |
+| `xkxk.frameworks.ui.hosting.desktop/DesktopWindowHost.cs` | Host |  | 호스트 프로젝트 | O | O | DesktopWindowHost |
+| `xkxk.frameworks.ui.hosting.desktop/FileLayoutStore.cs` | Host |  | 호스트 프로젝트 |  |  | FileLayoutStore |
+| `xkxk.frameworks.ui.hosting.desktop/HostArgs.cs` | Host |  | 호스트 프로젝트 |  |  | HostArgs |
+| `xkxk.frameworks.ui.hosting.desktop/HostLog.cs` | Host |  | 호스트 프로젝트 |  |  | HostLog |
+| `xkxk.frameworks.ui.hosting.desktop/HostRenderOptions.cs` | Host |  | 호스트 프로젝트 | O |  | HostRenderOptions |
+| `xkxk.frameworks.ui.hosting.desktop/LaunchOptions.cs` | Host |  | 호스트 프로젝트 | O |  | LaunchOptions |
+| `xkxk.frameworks.ui.hosting.desktop/MainBgPinHook.cs` | Host |  | 호스트 프로젝트 | O |  | MainBgPinHook |
+| `xkxk.frameworks.ui.hosting.desktop/MainNcMenuHook.cs` | Host |  | 호스트 프로젝트 | O |  | MainNcMenuHook |
+| `xkxk.frameworks.ui.hosting.desktop/MainWindowChrome.cs` | Host |  | 호스트 프로젝트 | O |  | MainWindowChrome |
+| `xkxk.frameworks.ui.hosting.desktop/MainWindowDecorations.cs` | Host |  | 호스트 프로젝트 | O |  | MainWindowDecorations |
+| `xkxk.frameworks.ui.hosting.desktop/MaxTrackHook.cs` | Host |  | 호스트 프로젝트 | O |  | MaxTrackHook |
+| `xkxk.frameworks.ui.hosting.desktop/MonitorChangeWatcher.cs` | Host |  | 호스트 프로젝트 | O |  | MonitorChangeWatcher |
+| `xkxk.frameworks.ui.hosting.desktop/MonitorFitService.cs` | Host |  | 호스트 프로젝트 | O |  | MonitorFitService |
+| `xkxk.frameworks.ui.hosting.desktop/OffscreenGuardHook.cs` | Host |  | 호스트 프로젝트 | O |  | OffscreenGuardHook |
+| `xkxk.frameworks.ui.hosting.desktop/OsSnapProbe.cs` | Host |  | 호스트 프로젝트 |  |  | OsSnapProbe |
+| `xkxk.frameworks.ui.hosting.desktop/SdiAboveMainHook.cs` | Host |  | 호스트 프로젝트 | O |  | SdiAboveMainHook |
+| `xkxk.frameworks.ui.hosting.desktop/SdiBgPinHook.cs` | Host |  | 호스트 프로젝트 | O |  | SdiBgPinHook |
+| `xkxk.frameworks.ui.hosting.desktop/SdiDocumentIcon.cs` | Host |  | 호스트 프로젝트 | O | O | SdiDocumentIcon |
+| `xkxk.frameworks.ui.hosting.desktop/SdiHostPlacement.cs` | Host |  | 호스트 프로젝트 | O |  | SdiHostPlacement |
+| `xkxk.frameworks.ui.hosting.desktop/SdiMagnetHook.cs` | Host |  | 호스트 프로젝트 | O |  | SdiMagnetHook |
+| `xkxk.frameworks.ui.hosting.desktop/SdiMagnetSnapper.cs` | Host |  | 호스트 프로젝트 | O |  | SdiMagnetSnapper |
+| `xkxk.frameworks.ui.hosting.desktop/SdiQuietState.cs` | Host |  | 호스트 프로젝트 | O | O | SdiQuietState |
+| `xkxk.frameworks.ui.hosting.desktop/SdiResizeDebounce.cs` | Host |  | 호스트 프로젝트 | O |  | SdiResizeDebounce |
+| `xkxk.frameworks.ui.hosting.desktop/SdiShadowBitmap.cs` | Host |  | 호스트 프로젝트 |  |  | SdiShadowBitmap |
+| `xkxk.frameworks.ui.hosting.desktop/SdiShadowNative.cs` | Host |  | 호스트 프로젝트 |  |  | SdiShadowNative |
+| `xkxk.frameworks.ui.hosting.desktop/SdiShadowShape.cs` | Host |  | 호스트 프로젝트 | O |  | SdiShadowShape |
+| `xkxk.frameworks.ui.hosting.desktop/SdiShadowStack.cs` | Host |  | 호스트 프로젝트 | O |  | SdiShadowStack |
+| `xkxk.frameworks.ui.hosting.desktop/SdiShadowSurface.cs` | Host |  | 호스트 프로젝트 |  |  | SdiShadowSurface |
+| `xkxk.frameworks.ui.hosting.desktop/SdiShadowWindow.cs` | Host |  | 호스트 프로젝트 | O |  | SdiShadowWindow |
+| `xkxk.frameworks.ui.hosting.desktop/SdiSnapAssistHost.cs` | Host |  | 호스트 프로젝트 | O |  | SdiSnapAssistHost |
+| `xkxk.frameworks.ui.hosting.desktop/SdiSnapBarHost.cs` | Host |  | 호스트 프로젝트 | O |  | SdiSnapBarHost |
+| `xkxk.frameworks.ui.hosting.desktop/SdiSnapHook.Apply.cs` | Host |  | 호스트 프로젝트 | O | O | SdiSnapHook |
+| `xkxk.frameworks.ui.hosting.desktop/SdiSnapHook.cs` | Host |  | 호스트 프로젝트 | O | O | SdiSnapHook |
+| `xkxk.frameworks.ui.hosting.desktop/SdiTabJoinHook.cs` | Host |  | 호스트 프로젝트 | O |  | SdiTabJoinHook |
+| `xkxk.frameworks.ui.hosting.desktop/SdiWindowHost.cs` | Host |  | 호스트 프로젝트 | O | O | SdiWindowHost |
+| `xkxk.frameworks.ui.hosting.desktop/SdiZOrderProbe.cs` | Host |  | 호스트 프로젝트 | O | O | SdiZOrderProbe |
+| `xkxk.frameworks.ui.hosting.desktop/SdiZOrderRaiser.cs` | Host |  | 호스트 프로젝트 | O | O | SdiZOrderRaiser |
+| `xkxk.frameworks.ui.hosting.desktop/SingleInstance.cs` | Host |  | 호스트 프로젝트 |  |  | SingleInstance |
+| `xkxk.frameworks.ui.hosting.desktop/SysWindowBgPinHook.cs` | Host |  | 호스트 프로젝트 | O |  | SysWindowBgPinHook |
+| `xkxk.frameworks.ui.hosting.desktop/Win32ModalBlock.cs` | Host |  | 호스트 프로젝트 | O |  | Win32ModalBlock |
+| `xkxk.frameworks.ui.hosting.desktop/WindowDefaultMove.cs` | Host |  | 호스트 프로젝트 | O | O | WindowDefaultMove |
+| `xkxk.frameworks.ui.hosting.desktop/WindowFrameMetrics.cs` | Host |  | 호스트 프로젝트 | O |  | WindowFrameMetrics |
+| `xkxk.frameworks.ui.hosting.desktop/WindowPlacement.cs` | Host |  | 호스트 프로젝트 | O |  | WindowPlacement |
+| `xkxk.frameworks.ui.hosting.desktop/WindowPosTrace.cs` | Host |  | 호스트 프로젝트 | O |  | WindowPosTrace |
 | `xkxk.frameworks.ui.shell/App.cs` | Control |  | 정적 진입점 표면(App.*)을 셸 42곳·호스트가 쓴다. axaml 은 xkxk.frameworks.ui.views 의 PdApp 으로 가고 이 파일은 기반 클래스로 남는다 | O | O |  |
 | `xkxk.frameworks.ui.shell/Busy/BusyCursorDriver.cs` | Control |  | Avalonia 를 쓰는 비화면 코드: 명령·상태·서비스·도킹 | O |  | BusyCursorDriver |
 | `xkxk.frameworks.ui.shell/Busy/BusyHooks.Release.cs` | Control |  | Avalonia 무참조지만 Data 밖 참조로 Data 불가(BusyCursorDriver.cs) |  |  |  |
@@ -816,6 +820,12 @@
 | `xkxk.frameworks.ui/Motion/MotionPreference.cs` | Ui |  | xkxk.frameworks.ui 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui/Styles/PdUiStyles.axaml` | Ui |  | xkxk.frameworks.ui 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui/Text/UiText.cs` | Ui |  | xkxk.frameworks.ui 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed.android/AndroidApp.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed.android/MainActivity.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed.browser/AutomationExports.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed.browser/LifecycleExports.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed.browser/Program.cs` | Testbed |  | 시험대 프로젝트 |  |  | Program |
+| `xkxk.frameworks.ui.testbed.desktop/Program.cs` | Testbed |  | 시험대 프로젝트 | O |  | Program |
 | `xkxk.frameworks.ui.testbed/Bench/AllocMark.cs` | Testbed |  | 시험대 프로젝트 |  |  | AllocMark |
 | `xkxk.frameworks.ui.testbed/Bench/BenchDocumentView.axaml` | Testbed |  | 시험대 프로젝트 | O |  |  |
 | `xkxk.frameworks.ui.testbed/Bench/BenchDocumentView.axaml.cs` | Testbed |  | 시험대 프로젝트 | O |  |  |
@@ -867,5 +877,6 @@
 | `xkxk.frameworks.ui.testbed/TestbedBench.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.testbed/TestbedCommands.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.testbed/TestbedIds.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
+| `xkxk.frameworks.ui.testbed/TestbedMenus.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.testbed/TestbedModule.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |
 | `xkxk.frameworks.ui.testbed/TestbedWindows.cs` | Testbed |  | 시험대 프로젝트 |  |  |  |

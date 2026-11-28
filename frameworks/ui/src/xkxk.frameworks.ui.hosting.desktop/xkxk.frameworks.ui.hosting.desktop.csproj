@@ -1,0 +1,23 @@
+<!-- 별별UI 데스크톱(Windows·macOS) 호스팅 라이브러리 — 공개 진입점 DesktopHost·DesktopHostOptions 만 공개, 나머지 호스트 코드는 internal(B11 UADR-0018). 실행 프로젝트는 testbed/xkxk.frameworks.ui.testbed.desktop -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>xkxk.frameworks.ui.hosting.desktop</RootNamespace>
+    <AssemblyName>xkxk.frameworks.ui.hosting.desktop</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\xkxk.frameworks.ui.shell\xkxk.frameworks.ui.shell.csproj" />
+    <ProjectReference Include="..\xkxk.frameworks.ui.views\xkxk.frameworks.ui.views.csproj" />
+    <ProjectReference Include="..\xkxk.frameworks.ui.data\xkxk.frameworks.ui.data.csproj" />
+    <ProjectReference Include="..\xkxk.frameworks.ui\xkxk.frameworks.ui.csproj" />
+  </ItemGroup>
+</Project>

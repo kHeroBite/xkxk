@@ -112,7 +112,11 @@ def c7(a):
     os.makedirs(a.out, exist_ok=True)
     density = L.sh("wm density")
     stay = L.sh("settings get global stay_on_while_plugged_in")
-    pkgs = L.sh("pm list packages xkxk.frameworks.ui.")  # 끝 점: 본 앱(xkxk.frameworks.ui) 제외, 시험용 별도 패키지만 본다
+    # 'package:<이름>' 줄 단위 정확 비교 — 본 앱(PKG 의 상위 이름)과 시험대(PKG) 줄은 제외하고 그 아래 접두의 시험용 별도 패키지만 남긴다
+    base = L.PKG.rsplit(".", 1)[0]
+    keep = {"package:" + base, "package:" + L.PKG}
+    pkgs = "\n".join(ln for ln in L.sh("pm list packages " + base + ".").splitlines()
+                     if ln.strip().startswith("package:" + base + ".") and ln.strip() not in keep)
     st = L.sh("cmd device_state state")
     print(density, stay, pkgs, st, flush=True)
     if a.measure:

@@ -1,0 +1,40 @@
+<!-- 별별UI 브라우저(WASM) 호스트 라이브러리 프로젝트 -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- 별별UI 브라우저(WASM) 호스트 라이브러리 — 공개 진입점 BrowserHost·BrowserHostOptions 만 공개한다(UADR-0018 D1).
+       wwwroot·JSExport 형식(AutomationExports·LifecycleExports)은 실행 프로젝트(testbed)에 둔다(D2). SkiaSharp 4.x 우회 패키지와 AOT 속성도 링크 단계 소속이라 실행 프로젝트에 있다. -->
+  <PropertyGroup>
+    <TargetFramework>net11.0-browser</TargetFramework>
+    <OutputType>Library</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>xkxk.frameworks.ui.hosting.browser</RootNamespace>
+    <AssemblyName>xkxk.frameworks.ui.hosting.browser</AssemblyName>
+  </PropertyGroup>
+
+  <!-- 복원 원본(N-1): Avalonia.Browser 패치판 12.1.4-pd.1 은 로컬 피드(vendor/feed)에 있다. 복원은 프로젝트별이라 실행 프로젝트와 같은 조건을 여기에도 둔다(전역 패키지 캐시가 없는 환경에서도 복원되도록) -->
+  <PropertyGroup Condition="'$(PdAvaloniaBrowserPatch)' == 'true'">
+    <RestoreAdditionalProjectSources>$(RestoreAdditionalProjectSources);$(MSBuildThisFileDirectory)../../vendor/feed</RestoreAdditionalProjectSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 버전은 Directory.Build.props 의 PdAvaloniaBrowserVersion(기본 12.1.4, -p:PdAvaloniaBrowserPatch=true 면 로컬 피드 12.1.4-pd.1) -->
+    <PackageReference Include="Avalonia.Browser" Version="$(PdAvaloniaBrowserVersion)" />
+  </ItemGroup>
+
+  <!-- 글꼴 avares 경로 선택용 정의(코드의 PD_FONT_ASSEMBLY). 글꼴 어셈블리 참조·트리머 루트는 실행 프로젝트가 둔다. 의미는 실행 프로젝트 csproj 의 같은 이름 속성 주석 참조 -->
+  <PropertyGroup>
+    <PdFontAssembly Condition="'$(PdFontAssembly)' == ''">true</PdFontAssembly>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PdFontAssembly)' == 'true'">
+    <DefineConstants>$(DefineConstants);PD_FONT_ASSEMBLY</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\xkxk.frameworks.ui.shell\xkxk.frameworks.ui.shell.csproj" />
+    <ProjectReference Include="..\xkxk.frameworks.ui.views\xkxk.frameworks.ui.views.csproj" />
+    <ProjectReference Include="..\xkxk.frameworks.ui.data\xkxk.frameworks.ui.data.csproj" />
+    <ProjectReference Include="..\xkxk.frameworks.ui\xkxk.frameworks.ui.csproj" />
+  </ItemGroup>
+</Project>

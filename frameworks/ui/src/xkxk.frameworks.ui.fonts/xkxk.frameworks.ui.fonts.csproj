@@ -33,7 +33,7 @@
 
   <ItemGroup>
     <!-- 포함 범위는 기존 xkxk.frameworks.ui.browser 임베드와 같다(*.ttf) -->
-    <AvaloniaResource Include="..\xkxk.frameworks.ui.browser\Assets\Fonts\*.ttf" Link="Assets\Fonts\%(Filename)%(Extension)" />
+    <AvaloniaResource Include="Assets\Fonts\*.ttf" />
   </ItemGroup>
 
 </Project>

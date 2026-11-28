@@ -14,6 +14,9 @@ if "--env" in sys.argv:
     k, v = sys.argv[sys.argv.index("--env") + 1].split("=", 1)
     extra_env[k] = v
 UI = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..")) + "/"
+sys.path.insert(0, UI + "tools")
+import host_identity  # noqa: E402  정체성 값 단일 출처(tools/host_identity.json) — 없으면 예외로 종료
+PROC = host_identity.get("desktop.process_name")
 OUT = UI + "logs/otest/desktop/rt3/q10_%s/" % tag
 os.makedirs(OUT, exist_ok=True)
 env = dict(os.environ, **extra_env)
@@ -61,8 +64,8 @@ if DRY:
 
 
 def procs():
-    r = subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq xkxk.frameworks.ui.desktop.exe", "/NH", "/FO", "CSV"], capture_output=True)
-    return r.stdout.decode("cp949", "replace").count("xkxk.frameworks.ui.desktop")
+    r = subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq " + host_identity.get("desktop.exe_name"), "/NH", "/FO", "CSV"], capture_output=True)
+    return r.stdout.decode("cp949", "replace").count(PROC)
 
 
 def cpu_pct():

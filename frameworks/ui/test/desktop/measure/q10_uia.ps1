@@ -1,6 +1,6 @@
 # Q10 제품판 그리드 첫 열기 시간을 UIAutomation(L1, 실입력 없음)으로 재는 스크립트 — 파일 메뉴 펼침 → '그리드 열기' Invoke → grid.dgMain·grid.lblCount 가 나타날 때까지 폴링
 param(
-    [string]$ProcName = "xkxk.frameworks.ui.desktop",
+    [string]$ProcName = $(try { $hiv = (Get-Content -LiteralPath (Join-Path $PSScriptRoot '..\..\..\tools\host_identity.json') -Raw -Encoding UTF8 | ConvertFrom-Json).'desktop.process_name' } catch { $hiv = $null }; if ($hiv) { $hiv } else { throw 'host_identity.json 을 읽지 못했거나 desktop.process_name 키가 없다' }),
     [int]$TimeoutMs = 15000,
     [int]$PollMs = 5,
     [switch]$ParseOnly

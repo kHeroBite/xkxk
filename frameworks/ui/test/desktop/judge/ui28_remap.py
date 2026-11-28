@@ -20,10 +20,12 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+sys.path.insert(0, os.path.join(HERE, "..", "..", "common"))  # D-TESTDIR: test/common/_paths.py (정체성 조회 재노출)
+import _paths  # noqa: E402
 sys.path.insert(0, HERE)
 import ui_req3_8_rules as rules  # noqa: E402
 
-BUILD = "src/xkxk.frameworks.ui.desktop/bin/run/pcaway_r2f/xkxk.frameworks.ui.desktop.dll"
+BUILD = _paths.get("desktop.project_dir") + "/bin/run/pcaway_r2f/" + _paths.get("desktop.dll_name")
 M = "test/desktop/measure/"
 AC_TEXT = {
     "AC-3-01": "잘림 판정 순수 함수: 좌/하/알림(4방향) 조합 표본에서 잘린 모서리 집합이 기대값과 일치",

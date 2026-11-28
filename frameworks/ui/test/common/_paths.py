@@ -24,6 +24,11 @@ DIRS = [
 ]
 
 
+if TOOLS not in sys.path:  # host_identity(정체성 값 단일 출처)를 읽어 재노출한다 — 값은 tools/host_identity.json
+    sys.path.insert(1, TOOLS)
+from host_identity import *  # noqa: E402,F401,F403  load·get·path·bin_dir·apk_path·data_dir_under
+
+
 def add():
     """DIRS 를 sys.path[1:] 앞쪽에 넣는다. sys.path[0](실행한 스크립트의 폴더)은 그대로 첫 자리에 둔다."""
     for d in reversed(DIRS):

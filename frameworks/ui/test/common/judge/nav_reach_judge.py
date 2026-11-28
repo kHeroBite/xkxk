@@ -34,7 +34,8 @@ def table_leaf_ids(table):
     rows = mrc.parse_table_files(sorted(glob.glob(os.path.join(os.path.dirname(os.path.abspath(table)), "ShellMenuTable*.cs"))), errors)
     if errors:
         raise ValueError("표 판독 실패: %s" % errors[:2])
-    return mrc.leaf_aids(rows)
+    root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(table)), "..", "..", ".."))  # <R>/src/<데이터 프로젝트>/Navigation/ → <R>
+    return mrc.leaf_aids(mrc.with_testbed_rows(rows, root, errors))  # B11-4: 표에서 이전한 데모·벤치 메뉴(시험대 등록)도 정본에 넣는다
 
 
 def sibling_table(menu_dir):

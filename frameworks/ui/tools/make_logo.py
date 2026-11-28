@@ -15,6 +15,8 @@ import shutil
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 
+import host_identity as hid  # 정체성·호스트 경로 단일 출처(tools/host_identity.json)
+
 RADIUS_RATIO = 0.17  # 기존 make_icons.py 와 같은 값
 SUPERSAMPLE = 4
 ICO_SIZES = [16, 20, 24, 30, 32, 36, 40, 48, 60, 64, 72, 80, 96, 128, 256]  # 기존 14종 + 요청 128
@@ -145,7 +147,7 @@ def build(art, src_path, src_img, out, written):
         written.append(p)
     # Windows .ico
     frames = [art.masked(s) for s in ICO_SIZES]
-    p = os.path.join(srcd, "xkxk.frameworks.ui.desktop", "Assets", "pd.ico")
+    p = os.path.join(ui, *hid.get("desktop.icon").split("/"))
     os.makedirs(os.path.dirname(p), exist_ok=True)
     frames[-1].save(p, format="ICO", sizes=[(s, s) for s in ICO_SIZES], append_images=frames[:-1])
     written.append(p)
@@ -165,7 +167,7 @@ def build(art, src_path, src_img, out, written):
     # iOS (Contents.json 은 기존과 동일 내용이라 손대지 않음)
     save_png(art.opaque(1024), os.path.join(asset, "ios", "AppIcon.appiconset", "AppIcon-1024.png"), written)
     # Android 런처·adaptive 전경·알림
-    res = os.path.join(srcd, "xkxk.frameworks.ui.android", "Resources")
+    res = os.path.join(ui, *hid.get("android.resources_dir").split("/"))
     nm = notif_master(src_img)
     for name, sc in ANDROID.items():
         d = os.path.join(res, "mipmap-" + name)
@@ -178,7 +180,7 @@ def build(art, src_path, src_img, out, written):
     r, g, b, _ = art.full.getpixel((0, art.full.height // 2))
     bg = f"#{r:02X}{g:02X}{b:02X}"
     # 웹
-    www = os.path.join(srcd, "xkxk.frameworks.ui.browser", "wwwroot")
+    www = os.path.join(ui, *hid.get("browser.wwwroot_src").split("/"))
     fav = [art.masked(s) for s in FAV_SIZES]
     p = os.path.join(www, "favicon.ico")
     os.makedirs(os.path.dirname(p), exist_ok=True)

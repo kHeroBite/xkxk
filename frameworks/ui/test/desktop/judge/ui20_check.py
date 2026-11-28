@@ -3,7 +3,7 @@
 """
 사용:
   ui20_check.py [--out 결과.json] [--areas Left,Bottom,Right]
-    연결은 pdctl.py 와 같다(%LOCALAPPDATA%\\xkxk\\frameworks\\ui\\remote-control.json 또는 PD_REMOTE_INFO — Android 는 adb forward 뒤 PD_REMOTE_INFO 로 지정).
+    연결은 pdctl.py 와 같다(사용자 데이터 폴더의 remote-control.json 또는 PD_REMOTE_INFO — Android 는 adb forward 뒤 PD_REMOTE_INFO 로 지정).
   ui20_check.py --web http://127.0.0.1:5181/ [--viewport 1280x800,805x1100:touch,390x844:touch]
     웹 진단판(diag.js window.pdAutomation)을 Playwright 헤드리스로 뷰포트마다 판정한다. 폭 600 미만은 폰 모드(rc=2)여야 통과. ':touch' 는 터치 폼팩터(form-factor=touch, D-UX1).
   ui20_check.py --judge 덤프.json

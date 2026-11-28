@@ -15,12 +15,15 @@ def _root():
     except OSError: pass
     return os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "..", ".."))  # 저장소 루트(옛 Pd worktree 절대경로 폴백 대체)
 ROOT = _root()
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "tools"))  # -I 실행이라 접근자 폴더를 직접 추가한다
+import host_identity as HI  # 호스트 경로·이름의 단일 출처(tools/host_identity.json)
+def _hp(key): return "frameworks/ui/" + HI.get(key).rstrip("/") + "/"  # ROOT 기준 상대 경로(끝 슬래시)
 RUN_TIMEOUT = 60
 HOME_START = "2026-11-24T00:00:00+09:00"  # 새 홈(frameworks/ui) 이전 시각 — 계약 시각 기본값(2026-11-25 재기준)
 CYCLE_START = os.environ.get("PCAWAY_CYCLE_START", HOME_START)  # 이 사이클 지시 시각. 이전 실행 결과는 인정하지 않는다
 R2_START = os.environ.get("PCAWAY_R2_START", HOME_START)  # 2차 묶음(P·Q·T·N) 계약 시각. 새 항목은 이 시각 이전 실행 결과를 인정하지 않는다
 UI, SH, VW, VM, DK, AN, MS, JD = ("frameworks/ui/src/xkxk.frameworks.ui/", "frameworks/ui/src/xkxk.frameworks.ui.shell/", "frameworks/ui/src/xkxk.frameworks.ui.views/", "frameworks/ui/src/xkxk.frameworks.ui.shell/ViewModels/",
-    "frameworks/ui/src/xkxk.frameworks.ui.shell/Docking/", "frameworks/ui/src/xkxk.frameworks.ui.android/", "frameworks/ui/test/desktop/measure/", "frameworks/ui/test/desktop/judge/")
+    "frameworks/ui/src/xkxk.frameworks.ui.shell/Docking/", _hp("android.project_dir"), "frameworks/ui/test/desktop/measure/", "frameworks/ui/test/desktop/judge/")
 PNG = b"\x89PNG\r\n\x1a\n"
 def R(req, roles=("desktop_work",), caps=0, safety=True, human=False, files=(), has=(), lacks=(), absent=(), run=None, static=False, expect=None, themes=False, start=None):
     return {"start": start, "req": list(req), "roles": list(roles), "caps": caps, "safety": safety, "human": human, "files": list(files), "has": list(has),
@@ -44,8 +47,8 @@ GRID_TOOL_NAMES = ["grid_first_row_height", "grid_lang_en_not_narrower", "grid_l
 STATE_ON_BARS = ["rest_hover", "rest_on", "on_hover_fill", "on_onhover_border", "glyph_on_hover", "glyph_on_on"]
 # W 웹 속도. 기준 25ms·500ms 는 a9 잠정 기준(plan/04_기술스택/04_판정보고서_부록/a9 §PERF-02·창 열기) 그대로다. 완화 금지
 WEBPERF_START = os.environ.get("PCAWAY_WEBPERF_START", HOME_START)  # 웹 속도 계약 시각. 이전 실행 결과는 W3·W4 에서 인정하지 않는다
-BROWSER_DIR = "frameworks/ui/src/xkxk.frameworks.ui.browser/"
-BROWSER_CSPROJ, BUILD_BROWSER = BROWSER_DIR + "xkxk.frameworks.ui.browser.csproj", "frameworks/ui/tools/build_browser.sh"
+BROWSER_DIR = _hp("browser.project_dir")
+BROWSER_CSPROJ, BUILD_BROWSER = "frameworks/ui/" + HI.get("browser.csproj"), "frameworks/ui/tools/build_browser.sh"
 AOT_MARKS = (b"mono_aot_aot_instances_get_method", b"mono_aot_Pd_Ui_Views_get_method", b"mono_aot_Pd_Poc_Shell_get_method")  # AOT 판 dotnet.native.wasm 에만 있는 ASCII 심볼(webperf_aot_prod 실측, base_diag 에는 없음)
 W3_RULES = {"br_wasm_content_encoding": ("==", "br"), "br_js_content_encoding": ("==", "br"), "br_body_is_precompressed": ("==", True),
             "identity_without_accept_br": ("==", True), "vary_accept_encoding": ("==", True),

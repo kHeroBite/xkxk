@@ -18,6 +18,7 @@ public sealed class TestbedModule : UiModule
     {
         TestbedWindows.Register(context);
         TestbedCommands.Register(context);
+        TestbedMenus.Register(context); // 셸 표에서 옮긴 데모·벤치 메뉴 8개(명령 등록 뒤)
         TestbedBench.Register(context);
 
         // 강타입 창 등록 표본(뷰모델·화면·인자 3형식). 원격 docs.open 은 param 을 문자열로만 넘기므로 인자 형식은 string 이다.

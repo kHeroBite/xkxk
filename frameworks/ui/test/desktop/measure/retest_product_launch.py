@@ -21,6 +21,8 @@ import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.join(HERE, "..", "..", "common"))  # D-TESTDIR: test/common/_paths.py
+import _paths  # noqa: E402
 import retest_real_input as ri  # noqa: E402
 from retest_real_input import app, base, away  # noqa: E402
 
@@ -70,7 +72,7 @@ class Product:
 
     def start(self):
         run_dir = os.path.abspath(self.args.run_dir)
-        exe = os.path.join(run_dir, "xkxk.frameworks.ui.desktop.exe")
+        exe = os.path.join(run_dir, _paths.get("desktop.exe_name"))
         if "/bin/run/" not in run_dir.replace("\\", "/") or not os.path.exists(exe):
             raise SystemExit("bin/run 복사본만 실행한다: %s" % run_dir)
         stamp = time.strftime("%H%M%S")
@@ -109,7 +111,7 @@ class Product:
         return [ln.strip() for ln in self.log_text().splitlines() if "single-instance" in ln]
 
     def find_pid(self):
-        text = app.ps("(Get-CimInstance Win32_Process -Filter \"Name='xkxk.frameworks.ui.desktop.exe'\" | Where-Object { $_.CommandLine -like '*%s*' }).ProcessId" % app.win(self.data))
+        text = app.ps("(Get-CimInstance Win32_Process -Filter \"Name='%s'\" | Where-Object { $_.CommandLine -like '*%s*' }).ProcessId" % (_paths.get("desktop.exe_name"), app.win(self.data)))
         ids = [int(v) for v in text.split() if v.isdigit()]
         return ids[0] if len(ids) == 1 and ids[0] != self.args.user_pid else None
 

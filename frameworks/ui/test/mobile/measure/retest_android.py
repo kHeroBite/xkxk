@@ -21,10 +21,9 @@ import _paths  # noqa: E402
 _paths.add()
 
 ADB = os.environ.get("ADB", "/mnt/c/Program Files (x86)/Android/android-sdk/platform-tools/adb.exe")  # SDK 폴더가 없어진 머신은 ADB 환경변수로 지정한다
-PKG = "xkxk.frameworks.ui"
+PKG = _paths.get("android.package")
 HOST_PORT = 15960
-DEFAULT_APK = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
-    "src/xkxk.frameworks.ui.android/bin/Debug/net10.0-android/xkxk.frameworks.ui-Signed.apk"))
+DEFAULT_APK = os.path.normpath(os.path.join(_paths.bin_dir("android", "Debug", "net10.0-android"), _paths.get("android.apk_name")))
 DEFAULT_OUT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "logs/otest_m1/android_perf.json"))
 
 
@@ -58,7 +57,7 @@ def prepare(serial, apk, state):
     print("forward rc=%d" % rc)
     info = None
     for _ in range(40):  # 앱 기동과 원격 제어 파일 생성 대기(최대 약 80초)
-        rc, out = adb(serial, "exec-out", "run-as", PKG, "cat", "files/xkxk/frameworks/ui/remote-control.json")
+        rc, out = adb(serial, "exec-out", "run-as", PKG, "cat", "files/" + "/".join(_paths.get("data.segments")) + "/remote-control.json")
         if rc == 0 and out.strip().startswith("{"):
             info = json.loads(out)
             break

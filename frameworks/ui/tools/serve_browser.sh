@@ -7,7 +7,14 @@ TOOLS="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$TOOLS/.." && pwd)"
 CMD="${1:-start}"
 PORT="${2:-5791}"
-BUNDLE="${3:-$ROOT/src/xkxk.frameworks.ui.browser/bin/Release/net11.0-browser/publish/wwwroot}"
+if [ -n "${3:-}" ]; then
+  BUNDLE="$3"
+else
+  # 기본 번들 경로는 단일 출처(host_identity.json)에서 조회한다. 실패하면 오류 종료한다.
+  BUNDLE_REL="$(python3 -B "$TOOLS/host_identity.py" get browser.bundle_release 2>/dev/null)" && [ -n "$BUNDLE_REL" ] \
+    || { echo "host_identity 조회 실패: browser.bundle_release" >&2; exit 70; }
+  BUNDLE="$ROOT/$BUNDLE_REL"
+fi
 PIDF="$ROOT/logs/serve_browser_$PORT.pid"
 LOG="$ROOT/logs/serve_browser_$PORT.log"
 mkdir -p "$ROOT/logs"

@@ -34,7 +34,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 UI = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 JUDGE = os.path.join(HERE, "..", "judge", "perf_regress_judge.py")
 AWAY = os.path.join(UI, "test", "desktop", "measure", "pc_away_monitor.py")
-EXE = "xkxk.frameworks.ui.desktop.exe"
+sys.path.insert(0, os.path.join(UI, "tools"))
+import host_identity  # noqa: E402 — 정체성 값 단일 출처(tools/host_identity.json, 없으면 오류 종료)
+EXE = host_identity.get("desktop.exe_name")
 METRIC_MAP = {"PERF-01": "startup_ms"}
 
 
@@ -85,8 +87,20 @@ class Runner:
         ok = rc == 0 and ("오류 0개" in txt or "0 Error(s)" in txt)
         return {"rc": rc, "ok": ok, "log_tail": txt[-600:]}
 
+    base_exe = None  # 기준판 트리 자신의 host_identity 에서 읽은 실행 파일 이름(run 이 채운다)
+
+    def base_identity(self, tree):
+        """기준판 트리의 tools/host_identity.json 을 읽는다. 없으면 현재 값으로 대신하지 않고 명시 오류로 끝낸다."""
+        p = os.path.join(tree, "frameworks", "ui", "tools", "host_identity.json")
+        if not os.path.exists(p):
+            raise RuntimeError("기준 커밋에 tools/host_identity.json 이 없어 기준판 실행 파일 위치를 알 수 없다(옛 고정 경로 추정 금지) — host_identity.json 이 있는 커밋을 --base-commit 으로 지정하라")
+        with open(p, encoding="utf-8-sig") as f:
+            return json.load(f)
+
     def own_pids(self, marker):
-        ps = "Get-CimInstance Win32_Process -Filter \"Name='%s'\" | ForEach-Object { \"$($_.ProcessId)`t$($_.CommandLine)\" }" % EXE
+        names = [n for n in dict.fromkeys([EXE, self.base_exe]) if n]
+        flt = " OR ".join("Name='%s'" % n for n in names)
+        ps = "Get-CimInstance Win32_Process -Filter \"%s\" | ForEach-Object { \"$($_.ProcessId)`t$($_.CommandLine)\" }" % flt
         out = subprocess.run(["powershell.exe", "-NoProfile", "-Command", ps], capture_output=True, text=True, timeout=60).stdout
         return pids_with_marker(out, marker)
 
@@ -158,7 +172,9 @@ def run(a, rn):
         res["build"] = rn.build(tree)
         if not res["build"]["ok"]:
             raise RuntimeError("기준판 빌드 실패 rc=%s" % res["build"]["rc"])
-        exes = {"base": os.path.join(tree, "frameworks", "ui", "src", "xkxk.frameworks.ui.desktop", "bin", "Work", "net11.0", EXE),
+        bid = rn.base_identity(tree)  # 기준 커밋 시점의 정체성(현재 값 사용 금지)
+        rn.base_exe = bid["desktop.exe_name"]
+        exes = {"base": os.path.join(tree, "frameworks", "ui", *bid["desktop.project_dir"].split("/"), "bin", "Work", "net11.0", rn.base_exe),
                 "target": os.path.join(a.target_run, EXE)}
         for ver, seq in plan_order(a.runs):
             rc, msg = rn.away()
@@ -221,6 +237,13 @@ def self_test():
             if self.fail_at == "archive":
                 raise RuntimeError("의도한 실패")
 
+        no_identity = False
+
+        def base_identity(self, tree):
+            if self.no_identity:
+                return super().base_identity(tree)  # 가짜 트리에는 파일이 없어 명시 오류가 나야 한다
+            return {"desktop.exe_name": "base.exe", "desktop.project_dir": "p/base"}
+
         def build(self, tree):
             return {"rc": 0, "ok": True, "log_tail": ""}
 
@@ -247,6 +270,12 @@ def self_test():
         d = json.load(open(a.out))
         case("full_pass_path", rc == 0 and d["status"] == "PASS" and d["alternated"] is True and d["n_base"] == 3
              and d["base_tree_removed"] is True and d["pc_away_checked"] is True)
+        fk = Fake(a, td)
+        fk.no_identity = True
+        rc = run(a, fk)
+        d = json.load(open(a.out))
+        case("base_identity_missing_explicit_error", rc == 2 and d["status"] == "ERROR" and "host_identity.json" in json.dumps(d, ensure_ascii=False)
+             and d["base_tree_removed"] is True)
     try:
         kill_cmd("1234 /IM x")
         bad = False

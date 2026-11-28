@@ -44,9 +44,20 @@ def load_menu_rows(root):
     return rows
 
 
+def load_testbed_menu_names(root):
+    """셸 표에서 시험대로 옮긴 메뉴(testbed/*/TestbedMenus.cs 가 등록하는 ShellMenuIds 상수 이름) 집합. 없으면 빈 집합."""
+    names = set()
+    for path in sorted(glob.glob(os.path.join(root, "testbed", "*", "TestbedMenus.cs"))):
+        with open(path, encoding="utf-8-sig") as f:
+            text = f.read()
+        names.update(re.findall(r'(?:AddCommand\(\s*m\s*,|\bm\.Add\()\s*ShellMenuIds\.(\w+)', text))
+    return names
+
+
 def _surface(root):
     surface = add_extra(root, load_surface(root))
     surface["menu_rows"] = load_menu_rows(root)
+    surface["testbed_menu_names"] = load_testbed_menu_names(root)
     return surface
 
 

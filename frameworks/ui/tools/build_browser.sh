@@ -1,13 +1,17 @@
 #!/bin/bash
-# xkxk.frameworks.ui.browser(WASM)를 Windows dotnet.exe 로 publish 하여 정적 번들(wwwroot)을 만드는 스크립트
+# 브라우저 실행 프로젝트(WASM)를 Windows dotnet.exe 로 publish 하여 정적 번들(wwwroot)을 만드는 스크립트
 # 사용: build_browser.sh [--bg] [Release|Debug]
 #   --bg : 분리 실행(setsid nohup). 로그 경로와 rc 파일 경로를 출력하고 즉시 반환한다.
 # 직렬화: 같은 Configuration 빌드는 build_lock.sh 의 flock 으로 순서를 기다린다(다른 헤드·PdDiagnostics 여도 겹치지 않음).
-# 끝에서 check_assembly_closure.py 로 번들 xkxk.frameworks.ui* 어셈블리 참조 폐포를 검사한다(누락이면 rc=4).
+# 끝에서 check_assembly_closure.py 로 번들 안 프레임워크 어셈블리 참조 폐포를 검사한다(누락이면 rc=4).
 # 결과: logs/build_browser_<시각>.log, 같은 이름 .rc, 번들 경로는 로그 마지막 줄 BUNDLE=...
 set -u
 TOOLS="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$TOOLS/.." && pwd)"
+# 정체성·경로 값은 단일 출처(host_identity.json)에서 조회한다. 실패하면 오류 종료한다.
+hid() { local v; v="$(python3 -B "$TOOLS/host_identity.py" get "$1" 2>/dev/null)" && [ -n "$v" ] || { echo "host_identity 조회 실패: $1" >&2; return 70; }; printf '%s' "$v"; }
+BROWSER_CSPROJ="$(hid browser.csproj)" || exit 70
+BROWSER_DIR="$(hid browser.project_dir)" || exit 70
 DOTNET="${DOTNET_EXE:-/mnt/c/Program Files/dotnet/dotnet.exe}"
 # shellcheck source=build_lock.sh
 . "$TOOLS/build_lock.sh"
@@ -32,8 +36,8 @@ CONF="${1:-Release}"
 mkdir -p "$ROOT/logs"
 LOG="${BUILD_LOG:-$ROOT/logs/build_browser_$(date +%Y%m%d_%H%M%S).log}"
 rm -f "$LOG.rc"
-PROJ_DIR="$ROOT/src/xkxk.frameworks.ui.browser"
-PROJ_WIN="$(wslpath -w "$PROJ_DIR/xkxk.frameworks.ui.browser.csproj")"
+PROJ_DIR="$ROOT/$BROWSER_DIR"
+PROJ_WIN="$(wslpath -w "$ROOT/$BROWSER_CSPROJ")"
 # 진단 기능은 시험 빌드라 기본 true. PD_DIAG=false 면 제품 확인 빌드로 publish_product 에 낸다(서빙 중인 publish 를 덮지 않음).
 DIAG="${PD_DIAG:-true}"
 OUT_DIR="$PROJ_DIR/bin/$CONF/net11.0-browser/publish"

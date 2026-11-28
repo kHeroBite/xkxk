@@ -17,6 +17,7 @@ import time
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "common"))  # D-TESTDIR: test/common/_paths.py
 import _paths  # noqa: E402
 _paths.add()
+_USER_DATA_TAIL = "\\".join([""] + [s.lower() for s in _paths.get("data.segments")])  # 사용자 데이터 폴더 꼬리(host_identity 의 data.segments 를 \ 로 이음)
 import pdctl  # noqa: E402  같은 폴더의 클라이언트 재사용(연결 정보·curl.exe 호출)
 
 
@@ -164,10 +165,10 @@ def step_chrome(r):
 
 
 def shot_dir_ok(d):
-    """캡처 폴더 검사: 그 실행의 임시 데이터 폴더(Windows 경로)여야 한다. 비었거나 사용자 폴더(%LOCALAPPDATA%\\xkxk\\frameworks\\ui)면 None(D-SHOT1 — path 없는 캡처는 진단판이 사용자 폴더에 쓴다)."""
+    """캡처 폴더 검사: 그 실행의 임시 데이터 폴더(Windows 경로)여야 한다. 비었거나 사용자 폴더(%LOCALAPPDATA% 아래 호스트 데이터 폴더)면 None(D-SHOT1 — path 없는 캡처는 진단판이 사용자 폴더에 쓴다)."""
     d = (d or "").strip().rstrip("\\")
     low = d.lower().replace("/", "\\")
-    if not d or ":\\" not in d or low.endswith("appdata\\local\\xkxk\\frameworks\\ui") or "\\appdata\\local\\xkxk\\frameworks\\ui\\" in low + "\\":
+    if not d or ":\\" not in d or low.endswith("appdata\\local" + _USER_DATA_TAIL) or "\\appdata\\local" + _USER_DATA_TAIL + "\\" in low + "\\":
         return None
     return d
 

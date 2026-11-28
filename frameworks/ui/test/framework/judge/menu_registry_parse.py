@@ -19,7 +19,75 @@ def parse_table(root, errors):
     if not paths:
         errors.append("파일 없음: " + NAV + "ShellMenuTable.cs")
         return []
-    return parse_table_files(paths, errors)
+    return with_testbed_rows(parse_table_files(paths, errors), root, errors)
+
+
+_TB_CMD = re.compile(r'AddCommand\(\s*m,\s*([\w.]+),\s*([\w.]+),\s*([\w.]+),\s*"([^"]*)",\s*"([^"]*)",\s*([\w.]+),\s*"([^"]*)",\s*'
+                     r'before:\s*([\w.]+),\s*after:\s*([\w.]+),\s*pcOnly:\s*(true|false)\)')
+_TB_SUB = re.compile(r'm\.Add\(\s*(ShellMenuIds\.\w+),\s*o\s*=>\s*\{(.*?)\n\s*\}\);', re.S)
+_CONST = r'public const string (\w+) = "([\w.]+)";'
+
+
+def testbed_rows(root, errors=None):
+    """시험대 TestbedMenus*.cs 가 등록하는 메뉴(B11-4 에서 표에서 이전한 데모·벤치 8행)를 표 행과 같은 모양의 dict 로 읽는다.
+    반환: [(행, InsertBefore Id|None, InsertAfter Id|None)] 등록 순서. 파일이 없으면 빈 목록. 읽지 못한 값은 errors 에 더한다."""
+    errors = errors if errors is not None else []
+    files = rglob(root, TESTBED_MENUS_GLOB)
+    if not files:
+        return []
+    ids = dict(re.findall(_CONST, strip_cs(read(root, SH + "Framework/ShellMenuIds.cs") or "")))
+    cmds = dict(re.findall(_CONST, strip_cs(read(root, F_IDS) or "")))
+    reason = (re.search(r'ReasonPcTablet\s*=\s*"([\w.]+)"', strip_cs(read(root, F_NAV) or "")) or [None, None])[1]
+    cmd_keys = cmd_icon_keys(root)
+
+    def mid(e):
+        return None if e is None or e.strip() == "null" else ids.get(e.strip().rsplit(".", 1)[-1])
+
+    def icon(e):
+        e = e or ""
+        if e in ICON_EXPR:
+            return IconRef(e)
+        return cmd_keys.get(e.rsplit(".", 1)[-1], Unresolved(e)) if e.startswith("CmdIconKeys.") else Unresolved(e)
+
+    def row(i, parent, kind, cmd, param, title, ic, aid, pc_only):
+        mob = {"_t": "mob", "InDrawer": True, "Available": not pc_only, "ReasonKey": reason if pc_only else None, "EntryId": None,
+               "TitleKey": None, "CommandId": None, "Param": None, "TabOrder": -1, "TabKey": None, "TabIcon": None, "Covers": []}
+        return {"_t": "row", "Id": i, "Parent": parent, "Kind": kind, "CommandId": cmd, "Param": param, "TitleKey": title, "Icon": ic,
+                "AutomationId": aid, "Section": None, "VisibleWhen": "cmd", "ToolTipWhen": None, "Mobile": mob}
+
+    out = []
+    for rel in files:
+        text = strip_cs(read(root, rel))
+        for m in _TB_SUB.finditer(text):
+            b = m.group(2)
+
+            def f(pat):
+                x = re.search(pat, b)
+                return x.group(1) if x else None
+            pc = f(r'Mobile\(o,\s*"[^"]*",\s*pcOnly:\s*(true|false)') == "true"
+            out.append((m.start(), row(mid(m.group(1)), mid(f(r'o\.Parent\s*=\s*([\w.]+);')), f(r'o\.Kind\s*=\s*UiMenuItemKind\.(\w+)'), None, None,
+                                       f(r'o\.TitleKey\s*=\s*"([^"]*)"'), icon(f(r'o\.Icon\s*=\s*([\w.]+);')),
+                                       f(r'o\.AutomationId\s*=\s*"([^"]*)"'), pc), None, mid(f(r'o\.InsertAfter\s*=\s*([\w.]+);'))))
+        for m in _TB_CMD.finditer(text):
+            i, par, c, p, t, ic, aid, bef, aft, pc = m.groups()
+            out.append((m.start(), row(mid(i), mid(par), "Command", cmds.get(c.rsplit(".", 1)[-1]), p, t, icon(ic), aid, pc == "true"), mid(bef), mid(aft)))
+    out.sort(key=lambda x: x[0])  # 파일 안 등록 순서(= 옛 표 행 순서)
+    for _, r, _, _ in out:
+        if r["Id"] is None or r["Parent"] is None or r["Kind"] is None:
+            errors.append("시험대 메뉴 값 판독 실패: %s" % (r["AutomationId"] or r["Id"]))
+    return [(r, b, a) for _, r, b, a in out]
+
+
+def with_testbed_rows(rows, root, errors=None):
+    """표 행 목록에 시험대 등록 행을 끼운다. 자리 규칙은 레지스트리와 같다 — InsertBefore/After 는 그 형제 앞·뒤, 없으면 맨 뒤."""
+    rows = list(rows)
+    for r, before, after in testbed_rows(root, errors):
+        at = next((k for k, x in enumerate(rows) if x["Id"] == before), None) if before else None
+        if at is None and after:
+            k = next((k for k, x in enumerate(rows) if x["Id"] == after), None)
+            at = None if k is None else k + 1
+        rows.insert(len(rows) if at is None else at, r)
+    return rows
 
 
 def parse_table_files(paths, errors, text_of=None):

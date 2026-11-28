@@ -7,7 +7,8 @@ namespace xkxk.frameworks.ui.test.framework.contract;
 
 internal static class MenuRuleChecks
 {
-    private const string OpenForm = "xkxk.file.openForm";
+    // openForm 은 B11-4 에서 시험대 소유로 옮겨져 셸 앵커가 될 수 없다 — 셸 표에 남은 같은 File 그룹 명령 항목(saveLayout)으로 바꿨다
+    private const string ShellAnchor = "xkxk.file.saveLayout";
 
     public static IEnumerable<ContractCase> All()
     {
@@ -29,8 +30,8 @@ internal static class MenuRuleChecks
         var menus = XkxkUi.Current.Menus;
         var cmd = MenuProbe.Command();
         var r = true;
-        Check.True(RegistryProbe.Delta(UiDiagnosticIds.MenuRemoveDenied, () => r = menus.Remove(OpenForm)) == 1
-            && UiDiagnosticIds.MenuRemoveDenied == "XKUI0408" && !r && menus.Contains(OpenForm), "셸 메뉴 Remove 에 XKUI0408·false·유지가 아님");
+        Check.True(RegistryProbe.Delta(UiDiagnosticIds.MenuRemoveDenied, () => r = menus.Remove(ShellAnchor)) == 1
+            && UiDiagnosticIds.MenuRemoveDenied == "XKUI0408" && !r && menus.Contains(ShellAnchor), "셸 메뉴 Remove 에 XKUI0408·false·유지가 아님");
         Check.True(MenuProbe.LastSeverity(UiDiagnosticIds.MenuRemoveDenied) == UiDiagnosticSeverity.Error, "XKUI0408 이 Error 가 아님");
 
         Check.True(menus.Add("c54.own", o => { o.Parent = ShellMenuIds.File; o.CommandId = cmd; }), "c54.own 등록 실패");
@@ -89,11 +90,11 @@ internal static class MenuRuleChecks
         Check.True(!menus.GetState(id, UiMenuSurface.Desktop).IsVisible && menus.TryGet(id, out var d) && d!.IsHidden, "SetHidden(true) 뒤에도 보임");
         Check.True(menus.SetHidden(id, false) && menus.GetState(id, UiMenuSurface.Desktop).IsVisible, "SetHidden(false) 뒤 복귀하지 않음");
 
-        var shellHidden = menus.SetHidden(OpenForm, true);
-        var shellFound = menus.TryGet(OpenForm, out var s);
+        var shellHidden = menus.SetHidden(ShellAnchor, true);
+        var shellFound = menus.TryGet(ShellAnchor, out var s);
         Check.True(shellHidden && shellFound && s!.IsHidden, "다른 주체(셸) 항목 SetHidden 이 거부됨");
         Check.True(s!.Owner == UiRegistryOwners.Shell, "SetHidden 이 Owner 를 바꿈");
-        Check.True(menus.SetHidden(OpenForm, false) && menus.TryGet(OpenForm, out var s2) && !s2!.IsHidden, "셸 항목 SetHidden(false) 원복 실패");
+        Check.True(menus.SetHidden(ShellAnchor, false) && menus.TryGet(ShellAnchor, out var s2) && !s2!.IsHidden, "셸 항목 SetHidden(false) 원복 실패");
     }
 
     private static void C57()

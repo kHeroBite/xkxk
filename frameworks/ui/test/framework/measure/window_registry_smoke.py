@@ -25,9 +25,11 @@ import time
 HERE = os.path.dirname(os.path.abspath(__file__))
 UI = os.path.normpath(os.path.join(HERE, "..", "..", ".."))
 sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.join(UI, "tools"))
+import host_identity  # noqa: E402 — 정체성 값 단일 출처(tools/host_identity.json, 없으면 오류 종료)
 from perf_menu_open_hosts import REJECT_PORTS, launch  # noqa: E402 — 앱 없이도 불러올 수 있는 기동부
 
-BUNDLE = os.path.join(UI, "src", "xkxk.frameworks.ui.browser", "bin", "Release", "net11.0-browser", "publish", "wwwroot")
+BUNDLE = host_identity.path("browser.bundle_release")
 FIXTURE = os.path.join(UI, "test", "common", "testdata", "layout_v5_kinds.json")
 DEMO = {"xkxk.demo.grid": "Grid", "xkxk.demo.gantt": "Gantt", "xkxk.demo.form": "Form"}
 OLD_KINDS = {"grid": "xkxk.demo.grid", "0": "xkxk.demo.grid", "gantt": "xkxk.demo.gantt", "1": "xkxk.demo.gantt",
@@ -227,7 +229,7 @@ def stale_desktop_build(conf, ui=UI):
     if not starts:
         return None, {"build_log": None}  # 확인 기준이 될 빌드 로그 없음
     started, name = max(starts)
-    dll = os.path.join(ui, "src", "xkxk.frameworks.ui.desktop", "bin", conf, "net11.0", "xkxk.frameworks.ui.desktop.dll")
+    dll = os.path.join(host_identity.bin_dir("desktop", conf, "net11.0"), host_identity.get("desktop.dll_name"))
     built = os.path.getmtime(dll) if os.path.isfile(dll) else 0
     info = {"build_log": name, "build_started": started, "dll_mtime": time.strftime("%F %T", time.localtime(built)) if built else None}
     fresh = built >= time.mktime(time.strptime(started, "%Y-%m-%d %H:%M:%S")) - 5

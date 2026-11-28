@@ -54,7 +54,7 @@ def check_views(root, bad):
 
 def check_aids(root, rows, base, bad):
     """②"""
-    pool = "".join(strip_cs(read(root, r)) for r in rglob(root, TABLE_GLOB) + rglob(root, SECTIONS_GLOB))
+    pool = "".join(strip_cs(read(root, r)) for r in rglob(root, TABLE_GLOB) + rglob(root, SECTIONS_GLOB) + rglob(root, TESTBED_MENUS_GLOB))
     lits = set(re.findall(r'"(shell\.mnu[A-Za-z0-9]*)"', pool))
     miss = []
     for i in sorted(base):

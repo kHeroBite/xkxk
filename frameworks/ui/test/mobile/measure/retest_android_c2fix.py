@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 import time
 
@@ -381,7 +382,7 @@ def main(argv):
                 res["d21_fold"] = {"exception": repr(e)}
             fold(False)
         rc, log = adb("logcat", "-d", "-v", "brief", "*:E", timeout=60)
-        res["fatal_lines"] = [l for l in log.splitlines() if "FATAL" in l or "ANR in xkxk.frameworks.ui" in l]
+        res["fatal_lines"] = [l for l in log.splitlines() if "FATAL" in l or re.search(r"ANR in " + re.escape(_paths.get("android.package")) + r"(\s|$)", l)]
         res["call_errors"] = [c for c in r.calls if not c.get("ok")][:40]
         return 0
     finally:

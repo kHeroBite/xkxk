@@ -5,7 +5,7 @@
 규칙(batch 1)
   R1 views(bin·obj 제외)의 .cs·.axaml·.csproj 에 LiveCharts|ClosedXML|ScottPlot|OxyPlot|ProCharts|TheOne|Documents.Bench 식별자 0
   R2 testbed csproj 에 위 패키지(ClosedXML·ScottPlot·ProCharts·LiveCharts·OxyPlot·TheOne) 참조가 존재
-  R3 3호스트 어댑터(Desktop·Browser·Android UiHost)에 AddModule<TestbedModule>
+  R3 시험대 실행 프로젝트 3개(Desktop·Browser·Android, 폴더는 tools/host_identity.json 의 *.project_dir)의 .cs 에 AddModule<TestbedModule>
   R4 셸 Framework/ShellDefaultWindows.cs 부재
   R5 셸 소스에서 DemoOpen·DemoOpenSdi·BenchOpen 참조는 ShellCommandIds.cs(상수 정의)만 허용(등록 호출 0)
   R6 testbed 소스에 Internal 네임스페이스·BindingFlags.NonPublic 0
@@ -28,9 +28,7 @@ SKIP_DIRS = {"bin", "obj", ".git", "node_modules", "__pycache__"}
 VIEWS = "src/xkxk.frameworks.ui.views"
 SHELL = "src/xkxk.frameworks.ui.shell"
 TESTBED = "testbed/xkxk.frameworks.ui.testbed"
-HOSTS = ["src/xkxk.frameworks.ui.desktop/DesktopUiHost.cs",
-         "src/xkxk.frameworks.ui.browser/BrowserUiHost.cs",
-         "src/xkxk.frameworks.ui.android/AndroidUiHost.cs"]
+HOST_KEYS = ["desktop.project_dir", "browser.project_dir", "android.project_dir"]  # 시험대 실행 프로젝트 폴더 — tools/host_identity.json 에서만 읽는다
 BANNED_IN_VIEWS = re.compile(r"LiveCharts|ClosedXML|ScottPlot|OxyPlot|ProCharts|TheOne|Documents\.Bench")
 TESTBED_PKG = re.compile(r"ClosedXML|ScottPlot|ProCharts|LiveCharts|OxyPlot|TheOne")
 MOVED_CMD = re.compile(r"\b(DemoOpenSdi|DemoOpen|BenchOpen)\b")
@@ -83,9 +81,15 @@ def check_batch1(root):
     tb_csprojs = [p for p in walk(root, TESTBED, (".csproj",))]
     if not any(TESTBED_PKG.search(read(p)) for p in tb_csprojs):
         v.append({"rule": "R2", "file": TESTBED, "line": 0})
-    for h in HOSTS:
-        p = os.path.join(root, h)
-        if not os.path.isfile(p) or "AddModule<TestbedModule>" not in strip_comments(read(p)):
+    try:
+        with open(os.path.join(root, "tools", "host_identity.json"), encoding="utf-8") as fh:
+            ident = json.load(fh)
+        hosts = [ident[k] for k in HOST_KEYS]
+    except (OSError, ValueError, KeyError) as e:
+        print("host_identity.json 을 읽지 못함: %s" % e, file=sys.stderr)
+        return None
+    for h in hosts:
+        if not any("AddModule<TestbedModule>" in strip_comments(read(p)) for p in walk(root, h, (".cs",))):
             v.append({"rule": "R3", "file": h, "line": 0})
     if os.path.exists(os.path.join(root, SHELL, "Framework/ShellDefaultWindows.cs")):
         v.append({"rule": "R4", "file": SHELL + "/Framework/ShellDefaultWindows.cs", "line": 0})
@@ -140,7 +144,10 @@ def main():
     if not os.path.isdir(os.path.join(a.root, "src")):
         print("src 폴더가 없습니다: " + a.root, file=sys.stderr)
         return 2
-    v, scanned = (check_batch1 if a.batch == 1 else check_batch2)(a.root)
+    r = (check_batch1 if a.batch == 1 else check_batch2)(a.root)
+    if r is None:
+        return 2
+    v, scanned = r
     if scanned == 0:
         print("검사한 파일이 0개입니다", file=sys.stderr)
         return 2

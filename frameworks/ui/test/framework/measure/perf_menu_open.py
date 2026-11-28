@@ -24,6 +24,8 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 UI = os.path.normpath(os.path.join(HERE, "..", "..", ".."))
 sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.join(UI, "tools"))
+import host_identity  # noqa: E402 — 정체성 값 단일 출처(tools/host_identity.json, 없으면 오류 종료)
 SCHEMA = "perf-menu-open/1"
 REJECT_PORTS = (5180, 5220, 5242, 5791)  # 사용자 인스턴스·다른 세션 포트
 MIN_N = 20  # RECORDED 에 필요한 메뉴당 최소 시행 수
@@ -192,7 +194,7 @@ def execute(a, launch, away, log=print):
 def parse(argv):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--host", choices=["web", "desktop"], default="web")
-    ap.add_argument("--bundle", default=os.path.join(UI, "src", "xkxk.frameworks.ui.browser", "bin", "Release", "net11.0-browser", "publish", "wwwroot"))
+    ap.add_argument("--bundle", default=host_identity.path("browser.bundle_release"))
     ap.add_argument("--port", type=int, default=5833)
     ap.add_argument("--conf", default="Debug", help="데스크톱 구성(run_desktop_bg.sh --conf)")
     ap.add_argument("--n", type=int, default=None, help="메뉴당 시행 수(기본 20, --functional 은 3)")

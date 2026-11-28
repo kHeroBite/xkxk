@@ -1,7 +1,7 @@
 {
  "AC-5-01": [
   {"file": "plan/09_화면설계/03_데스크톱_화면설계.md", "must": ["Screens.Changed", "창이 열릴 때만", "400ms", "MonitorChangeWatcher"]},
-  {"file": "src/xkxk.frameworks.ui.desktop/MonitorChangeWatcher.cs", "must": ["창이 열릴 때만", "가까운 모니터 안"]},
+  {"file": "src/xkxk.frameworks.ui.hosting.desktop/MonitorChangeWatcher.cs", "must": ["창이 열릴 때만", "가까운 모니터 안"]},
   {"file": "src/xkxk.frameworks.ui.shell/Docking/PlacementRecovery.cs", "must": ["기본 위치"]}
  ],
  "AC-8-01": [

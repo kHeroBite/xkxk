@@ -185,7 +185,11 @@ if ($SelfCheck) {
 if ($ExpectedProcessId -le 0) { Fail-Guard 'expected' 'ExpectedProcessId 가 필요하다' }
 if ($ForbiddenProcessId.Count -eq 0) {
     # retest_real_input.pick_user_pid 와 같은 규칙: 사용자 실행 경로이고 --data-dir 가 없는 프로세스가 정확히 1개
-    $found = @(Get-CimInstance Win32_Process -Filter "Name='xkxk.frameworks.ui.desktop.exe'" | Where-Object { ([string]$_.ExecutablePath).ToLowerInvariant().Contains('\bin\run\otest_final\') -and -not ([string]$_.CommandLine).Contains('--data-dir') } | ForEach-Object { [int]$_.ProcessId })
+    $idJson = Join-Path $PSScriptRoot '..\..\..\tools\host_identity.json'
+    if (-not (Test-Path -LiteralPath $idJson)) { Fail-Guard 'host_identity' ("호스트 정체성 파일이 없다: {0}" -f $idJson) }
+    $exeName = [string]((Get-Content -LiteralPath $idJson -Raw -Encoding UTF8 | ConvertFrom-Json).'desktop.exe_name')
+    if ([string]::IsNullOrEmpty($exeName)) { Fail-Guard 'host_identity' 'desktop.exe_name 키가 없다' }
+    $found = @(Get-CimInstance Win32_Process -Filter "Name='$exeName'" | Where-Object { ([string]$_.ExecutablePath).ToLowerInvariant().Contains('\bin\run\otest_final\') -and -not ([string]$_.CommandLine).Contains('--data-dir') } | ForEach-Object { [int]$_.ProcessId })
     if ($found.Count -ne 1) { Fail-Guard 'user_pid' ("사용자 Pd 를 확정하지 못했다. 찾은 PID=[{0}]" -f ($found -join ',')) }
     $ForbiddenProcessId = $found
 }

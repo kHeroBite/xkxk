@@ -2,13 +2,16 @@
 # 사용: host_injection_check.py [--root <R>] [--self-test]
 # 출력: INJECT <상대경로>:<줄> <일치> / 끝 줄 HOST_INJECTION count=N files=M
 # 종료코드: 0=0건, 1=대입 있음 또는 훑은 파일 수 M<8(대상 소실 의심), 2=인자 오류·대상 폴더 없음·M=0(판정불가)
+import json
 import os
 import re
 import sys
 import tempfile
 import shutil
 
-TARGETS = ["src/xkxk.frameworks.ui.desktop", "src/xkxk.frameworks.ui.browser", "src/xkxk.frameworks.ui.android"]
+# 호스팅 라이브러리 3개(B11-2 신설 층 이름) + 시험대 실행 프로젝트 3개(경로는 tools/host_identity.json 에서만 읽는다)
+LIB_TARGETS = ["src/xkxk.frameworks.ui.hosting.desktop", "src/xkxk.frameworks.ui.hosting.browser", "src/xkxk.frameworks.ui.hosting.android"]
+IDENT_KEYS = ["desktop.project_dir", "browser.project_dir", "android.project_dir"]
 SKIP_DIRS = {"bin", "obj"}
 MIN_FILES = 8
 PATTERN = re.compile(r"\bApp\.[A-Z]\w*\s*(=(?!=)|\+=|-=|\?\?=)")
@@ -81,10 +84,24 @@ def find_hits(text):
     return hits
 
 
+def targets(root):
+    """검사 대상 폴더(영역 루트 기준 상대) 목록. host_identity.json 을 못 읽거나 키가 없으면 None."""
+    try:
+        with open(os.path.join(root, "tools", "host_identity.json"), encoding="utf-8") as f:
+            ident = json.load(f)
+        return LIB_TARGETS + [ident[k] for k in IDENT_KEYS]
+    except (OSError, ValueError, KeyError) as e:
+        print("host_identity.json 을 읽지 못함: %s" % e, file=sys.stderr)
+        return None
+
+
 def scan(root):
     """(hits, files). 대상 폴더가 없으면 None."""
     hits, files = [], 0
-    for rel in TARGETS:
+    tg = targets(root)
+    if tg is None:
+        return None
+    for rel in tg:
         base = os.path.join(root, rel)
         if not os.path.isdir(base):
             print("대상 폴더 없음: %s" % rel, file=sys.stderr)
@@ -120,14 +137,18 @@ def self_test():
     # 디렉터리 수준: 대상 없음 → 판정불가, 양성 폴더 → 1건
     tmp = tempfile.mkdtemp()
     try:
-        if scan(tmp) is not None:
+        if scan(tmp) is not None:  # tools/host_identity.json 도 없는 빈 트리
             print("SELFTEST FAIL missing_target_unjudgeable")
             bad += 1
         else:
             print("SELFTEST PASS missing_target_unjudgeable")
-        for rel in TARGETS:
+        fake = {k: "testbed/t_%d" % i for i, k in enumerate(IDENT_KEYS)}
+        os.makedirs(os.path.join(tmp, "tools"))
+        with open(os.path.join(tmp, "tools", "host_identity.json"), "w", encoding="utf-8") as f:
+            json.dump(fake, f)
+        for rel in LIB_TARGETS + list(fake.values()):
             os.makedirs(os.path.join(tmp, rel))
-        with open(os.path.join(tmp, TARGETS[0], "P.cs"), "w", encoding="utf-8") as f:
+        with open(os.path.join(tmp, LIB_TARGETS[0], "P.cs"), "w", encoding="utf-8") as f:
             f.write("class P { void M() { App.LayoutStore = x; } }\n")
         r = scan(tmp)
         ok = r is not None and len(r[0]) == 1 and r[1] == 1

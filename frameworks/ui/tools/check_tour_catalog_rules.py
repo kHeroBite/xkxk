@@ -45,6 +45,7 @@ GESTURE_AXAMLS = ("src/xkxk.frameworks.ui.views/MainView.axaml", "src/xkxk.frame
 # B07: 셸 메뉴 정본 = ShellMenuTable(데이터 층 표) + 섹션 채우기 코드, 메뉴 단축키 = 명령 레지스트리 등록 줄의 Gesture 인자
 TABLE_GLOB = "src/xkxk.frameworks.ui.data/Navigation/ShellMenuTable*.cs"
 SECTIONS_GLOB = "src/xkxk.frameworks.ui.views/Menus/ShellMenuSections*.cs"
+TESTBED_MENUS_GLOB = "testbed/xkxk.frameworks.ui.testbed/TestbedMenus*.cs"  # B11-4: 데모·벤치 8행이 표에서 시험대 모듈 등록으로 이전 — 같은 AutomationId 리터럴이 여기에 있다
 COMMAND_GLOB = "src/xkxk.frameworks.ui.shell/Framework/ShellDefaultCommands*.cs"
 COMMAND_GESTURE = re.compile(r'\bAdd\(\s*\w+\s*,\s*ShellCommandIds\.\w+\s*,\s*[^,]*?,\s*[^,]*?,\s*"([^"]+)"')
 MENU_LITERAL = re.compile(r'"(shell\.mnu[A-Za-z0-9]*)"')
@@ -183,7 +184,7 @@ def coverable_ids(src):
     ids = set()
     for rel in src.glob(MENU_GLOB):
         ids.update(i for i in AUTOMATION_AXAML.findall(XML_COMMENT.sub("", src.read(rel) or "")) if i.startswith("shell.mnu"))
-    for rel in src.glob(TABLE_GLOB) + src.glob(SECTIONS_GLOB):  # 표 행·섹션 코드의 셸 메뉴 AutomationId 리터럴
+    for rel in src.glob(TABLE_GLOB) + src.glob(SECTIONS_GLOB) + src.glob(TESTBED_MENUS_GLOB):  # 표 행·섹션 코드·시험대 메뉴 등록의 셸 메뉴 AutomationId 리터럴
         ids.update(MENU_LITERAL.findall(CS_COMMENT.sub("", src.read(rel) or "")))
     for rel in SURFACE_FILES:
         ids.update(i for i in AUTOMATION_AXAML.findall(XML_COMMENT.sub("", src.read(rel) or "")) if SURFACE_ID.match(i))
@@ -205,6 +206,7 @@ def nav_menu_ids(src, problems):
         errors = []
         rows = mrc.parse_table_files([os.path.join(src.root, t) for t in tables], errors,
                                      lambda p: src.read(os.path.relpath(p, src.root).replace(os.sep, "/")))
+        rows = mrc.with_testbed_rows(rows, src.root, errors)  # 시험대가 등록하는 행(AddCommand 로 읽힌 것)만 표 행처럼 모바일 목록 desktopIds 로 설명된다 — 표 행과 같은 규칙
         for e in errors[:3]:
             problems.append("⑥ 메뉴 표 판독 실패: %s" % e)
         for entry in mrc.derive_nav(rows):

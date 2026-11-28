@@ -6,28 +6,44 @@
   "layers": {
     "xkxk.frameworks.ui": {
       "required": true,
-      "forbid_projects": ["xkxk.frameworks.ui.shell", "xkxk.frameworks.ui.data", "xkxk.frameworks.ui.views", "xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android", "xkxk.frameworks.ui.testbed"],
+      "forbid_projects": ["xkxk.frameworks.ui.shell", "xkxk.frameworks.ui.data", "xkxk.frameworks.ui.views", "xkxk.frameworks.ui.hosting.desktop", "xkxk.frameworks.ui.hosting.browser", "xkxk.frameworks.ui.hosting.android", "xkxk.frameworks.ui.testbed", "xkxk.frameworks.ui.testbed.desktop", "xkxk.frameworks.ui.testbed.browser", "xkxk.frameworks.ui.testbed.android"],
       "allow_packages": { "Avalonia": "12.1.4" },
-      "forbid_code": ["\\bxkxk\\.frameworks\\.ui\\.(shell|desktop|browser|android|data|views|testbed)\\b", "\\busing\\s+Dock\\."]
+      "forbid_code": ["\\bxkxk\\.frameworks\\.ui\\.(shell|hosting|desktop|browser|android|data|views|testbed)\\b", "\\busing\\s+Dock\\."]
     },
     "xkxk.frameworks.ui.views": {
       "required": true,
-      "forbid_projects": ["xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android", "xkxk.frameworks.ui.testbed"],
+      "forbid_projects": ["xkxk.frameworks.ui.hosting.desktop", "xkxk.frameworks.ui.hosting.browser", "xkxk.frameworks.ui.hosting.android", "xkxk.frameworks.ui.testbed", "xkxk.frameworks.ui.testbed.desktop", "xkxk.frameworks.ui.testbed.browser", "xkxk.frameworks.ui.testbed.android"],
       "_note_avares": "벤치 글꼴 후보가 호스트 자원을 avares URI 문자열로 찾는 것은 형식 참조가 아니라 허용한다",
-      "forbid_code": ["(?<!avares://)\\bxkxk\\.frameworks\\.ui\\.(desktop|browser|android|testbed)\\b"]
+      "forbid_code": ["(?<!avares://)\\bxkxk\\.frameworks\\.ui\\.(hosting|desktop|browser|android|testbed)\\b"]
     },
     "xkxk.frameworks.ui.shell": {
       "required": true,
-      "forbid_projects": ["xkxk.frameworks.ui.views", "xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android", "xkxk.frameworks.ui.testbed"],
+      "forbid_projects": ["xkxk.frameworks.ui.views", "xkxk.frameworks.ui.hosting.desktop", "xkxk.frameworks.ui.hosting.browser", "xkxk.frameworks.ui.hosting.android", "xkxk.frameworks.ui.testbed", "xkxk.frameworks.ui.testbed.desktop", "xkxk.frameworks.ui.testbed.browser", "xkxk.frameworks.ui.testbed.android"],
       "forbid_exts": [".axaml"],
       "_note_parts": "템플릿 부품 이름은 xkxk.frameworks.ui 의 TemplateParts 상수로만 쓴다(문자열 리터럴·조합 금지). 주석 언급은 허용",
-      "forbid_code": ["\\bxkxk\\.frameworks\\.ui\\.(views|testbed)\\b", "\\bPART_"]
+      "forbid_code": ["\\bxkxk\\.frameworks\\.ui\\.(views|hosting|testbed)\\b", "\\bPART_"]
     },
     "xkxk.frameworks.ui.data": {
       "required": true,
-      "forbid_projects": ["xkxk.frameworks.ui.shell", "xkxk.frameworks.ui", "xkxk.frameworks.ui.views", "xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android", "xkxk.frameworks.ui.testbed"],
+      "forbid_projects": ["xkxk.frameworks.ui.shell", "xkxk.frameworks.ui", "xkxk.frameworks.ui.views", "xkxk.frameworks.ui.hosting.desktop", "xkxk.frameworks.ui.hosting.browser", "xkxk.frameworks.ui.hosting.android", "xkxk.frameworks.ui.testbed", "xkxk.frameworks.ui.testbed.desktop", "xkxk.frameworks.ui.testbed.browser", "xkxk.frameworks.ui.testbed.android"],
       "forbid_packages": ["Avalonia"],
       "forbid_code": ["\\bAvalonia\\b", "\\bxkxk\\.frameworks\\.ui\\b(?!\\.data\\b)"]
+    },
+    "xkxk.frameworks.ui.hosting.desktop": {
+      "required": false,
+      "_note": "호스팅 라이브러리(B11, UADR-0018). 시험대 참조 금지. required=false 는 check_layers.py --self-test 의 최소 고정물에 이 프로젝트가 없어서이다. 공개 형식 수·InternalsVisibleTo 는 시험과 consumer_rules 가 맡는다.",
+      "forbid_projects": ["xkxk.frameworks.ui.testbed", "xkxk.frameworks.ui.testbed.desktop", "xkxk.frameworks.ui.testbed.browser", "xkxk.frameworks.ui.testbed.android"],
+      "forbid_code": ["\\bxkxk\\.frameworks\\.ui\\.testbed\\b"]
+    },
+    "xkxk.frameworks.ui.hosting.browser": {
+      "required": false,
+      "forbid_projects": ["xkxk.frameworks.ui.testbed", "xkxk.frameworks.ui.testbed.desktop", "xkxk.frameworks.ui.testbed.browser", "xkxk.frameworks.ui.testbed.android"],
+      "forbid_code": ["\\bxkxk\\.frameworks\\.ui\\.testbed\\b"]
+    },
+    "xkxk.frameworks.ui.hosting.android": {
+      "required": false,
+      "forbid_projects": ["xkxk.frameworks.ui.testbed", "xkxk.frameworks.ui.testbed.desktop", "xkxk.frameworks.ui.testbed.browser", "xkxk.frameworks.ui.testbed.android"],
+      "forbid_code": ["\\bxkxk\\.frameworks\\.ui\\.testbed\\b"]
     },
     "xkxk.frameworks.ui.testbed": {
       "_note": "시험대는 프레임워크 모든 층을 공개 형식으로 소비하는 최상위 앱이라 참조·패키지·코드 금지가 없다. Internal·NonPublic 금지는 consumer_rules 가 건다.",
@@ -56,7 +72,7 @@
     "exts": [".cs", ".csproj"]
   },
   "new_files": {
-    "prefixes": ["src/xkxk.frameworks.ui/", "src/xkxk.frameworks.ui.views/", "src/xkxk.frameworks.ui.data/", "tools/check_layers.py", "tools/check_layers_parts.py", "tools/check_layers_consumer.py", "tools/classify_layers.py", "src/xkxk.frameworks.ui.shell/Framework/", "testbed/"],
+    "prefixes": ["src/xkxk.frameworks.ui/", "src/xkxk.frameworks.ui.views/", "src/xkxk.frameworks.ui.data/", "tools/check_layers.py", "tools/check_layers_parts.py", "tools/check_layers_consumer.py", "tools/classify_layers.py", "src/xkxk.frameworks.ui.shell/Framework/", "src/xkxk.frameworks.ui.hosting.desktop/", "src/xkxk.frameworks.ui.hosting.browser/", "src/xkxk.frameworks.ui.hosting.android/", "testbed/"],
     "max_lines": 300,
     "exts": [".cs", ".axaml", ".csproj", ".py"],
     "exempt": []

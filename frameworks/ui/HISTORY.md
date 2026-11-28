@@ -4,6 +4,18 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-28 — 별별UI B11 호스팅 라이브러리 분리·시험대 이동·정체성 전환·메뉴 8행 시험대 이전(O4, B11 batch 1~4, conv_179579520011)
+- 결정(UADR-0018). 호스팅 라이브러리 3개(`xkxk.frameworks.ui.hosting.desktop`·`.browser`·`.android`)를 분리하고 공개 진입점 7형식만 연다(`InternalsVisibleTo` 0). 실행 프로젝트는 `testbed/` 로 옮겼고 `wwwroot`·`[Application]`·`[Activity]`·JSExport·아이콘은 실행 프로젝트가 가진다. 정체성(실행 파일·프로세스·패키지·데이터 폴더·인스턴스 이름)은 `tools/host_identity.json` 한 곳이 정본이다.
+- batch 1(재배선). 도구·시험·빌드 스크립트의 정체성·경로 리터럴을 `host_identity.json` 읽기로 바꿨다. 폴백 리터럴·주석 리터럴을 두지 않고 키가 없으면 오류로 끝낸다. AC-101~106 PASS, 회귀 새 실패 0. 잠재 결함 교정으로 `retest_android.py` 의 `DEFAULT_APK` 가 영역 루트 기준 apk 경로가 됐다.
+- batch 2(호스트 이동). 데스크톱·브라우저·Android 호스트 코드를 호스팅 라이브러리로 옮겼다. `check_layers`·`host_paths_check` rc=0, AC-201~207·209~211·213~222 PASS, 회귀 새 실패 0. 자율 발견 D-1(`perf_baseline.py` 가 기준 커밋 트리에서 현재 정체성 값을 읽음)·D-3(i18n 검사 27건 이동 전 동일)·D-4(`run_desktop_bg.sh`) 처리.
+- batch 3(정체성 전환). 시험대 이름을 `testbed` 로 바꾸고 `AppDataFolder.UseSegments`(1회 설정, `--data-dir` 우선)·`DesktopHostOptions`·`AndroidHostOptions` 의 정체성 속성을 더했다. 모바일·top 판정을 정확 일치로 바꿨다. AC-301~304·306·307·308 PASS, 회귀 새 실패 0, CANARY-003 은 의도된 FAIL. 역라우팅 1회(SingleInstance 로그 name 필드, `motion_nav_fold5_close.py` 옛 패키지, Bench 빌드).
+- batch 4(메뉴 8행 시험대 이전). C1~C5 사전 확인이 모두 가능(`go=true`)해 이전을 진행했다. D-7: `openBench` 메뉴 등록을 `#if PD_DIAGNOSTICS && PD_BENCH` 안에 두어 비벤치 빌드의 XKUI0405 1건을 피했다. D-8: 투어 카탈로그 규칙 보정이 ⑥(설명 없는 새 항목) 판정을 시험대 쪽에서 약화시켜 고쳤고 자기시험 27건 PASS. AC-401·402·403·404·901 PASS(AC-403 은 UTODO-0049·0050 완료, `gen_api_docs.py --check` rc=0, `consumer_docs_check` 535항목 실패 0).
+- AC 판정(근거 `logs/b11/*.json`). PASS 33건, PASS(정적) 1건(AC-310 — pidof 기기 실측은 WAIT), 의도 FAIL 확인 2건(CANARY-003·004). **WAIT(Fold5 미연결, adb 목록 비어 있음, PASS 로 세지 않음)** — AC-208 의 Android 3키 부분, AC-212, AC-305, AC-309 의 기기 부분(데스크톱 부분은 옛 폴더 md5 3개 전후 동일), AC-310 pidof. 기기가 연결되면 재측정한다.
+- DONE 전이. goal A3 검수조건 결함(하위 폴더에서 `git diff --name-only` 가 저장소 루트 기준이라 `--relative` 가 없으면 항상 실패하고 5초 제한도 넘어 판정불가)으로 사용자 `/odonewaiver` 1회 면제로 통과했다. 나머지 계약 45항목은 통과.
+- 관련 정본 변경. UADR-0018, a3·a4·a5·a10, `03_향후과제_TODO`, `02_소스구조_분할규칙`, `01_XKXK_저장소구조`, `docs/01·02`·`docs/api/08`, `LAYERS.md`.
+- 자율 발견 D-5(`gen_api_docs.py` 가 hosting·data 공개 API 를 명세에 넣지 않음)·D-6(`run_desktop_bg.sh` 가 전환 뒤 항상 `USER_FILES_CHANGED`, 시험 기동이 `--data-dir` 없이 사용자 폴더를 씀 — 파일 무변경)은 후속 과제로 남는다.
+- 결과. B11 완료(batch 1~4). 남은 것은 Fold5 대기 항목 재측정과 D-5·D-6 이다.
+
 ## 2026-11-28 — 별별UI B10 batch 2 예열 일반화·데모 문서 시험대 이동(O4, B10 batch 2/2, conv_179576186006)
 - 예열 일반화. 창 정의·옵션에 `Prewarm`(`UiWindowPrewarm`: None·Warm·KeepReady)을 더했다. views 의 `WindowViewPool` 이 창 ID 별 준비 뷰 풀을 맡고(`WindowViewPool.Refill.cs`), `DocumentPrewarm` 은 그리드 고정이 아니라 등록 옵션을 기준으로 예열한다. `DocumentViewLocator` 는 KeepReady 창이면 풀의 준비 뷰를 먼저 쓴다(`WindowViewPool.TakeFor`, GridViewPool 설정이 켜진 때만). 풀 적중·실패·다시 채우기는 진단 지표로 남는다(`pool_hit`·`pool_miss`, `IWindowOpenTracking` 신설).
 - 데모 문서 11파일 시험대 이동. 그리드·간트·폼 문서 뷰와 부속(`GridRouteProbe`·`GridScrollProbe`·`GanttCanvas*`)을 `src/xkxk.frameworks.ui.views/Documents/` 에서 `testbed/xkxk.frameworks.ui.testbed/Documents/` 로 git mv 했다(R095~R099). 옛 이름 별칭은 두지 않았다.

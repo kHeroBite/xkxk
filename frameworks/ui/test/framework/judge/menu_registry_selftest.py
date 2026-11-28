@@ -1,6 +1,7 @@
 # 메뉴 레지스트리 판정기 자체 시험 — 모의 트리 사례 23건(menu_registry_check 분할 모듈)
 import json
 import os
+import re
 import shutil
 import tempfile
 
@@ -163,6 +164,19 @@ def _drop(rel):
 
 
 T = NAV + "ShellMenuTable.cs"
+TB_MENUS = "testbed/xkxk.frameworks.ui.testbed/TestbedMenus.cs"
+TB_MENUS_SRC = ("// 시험대 메뉴 등록(모의) — 표에서 이전한 openGrid 1행\nstatic class TestbedMenus\n{\n    static void Register(IUiModuleContext context)\n    {\n        var m = context.Menus;\n"
+                "        AddCommand(m, ShellMenuIds.FileOpenGrid, ShellMenuIds.File, ShellCommandIds.DemoOpen, \"Grid\", \"menu.file.openGrid\",\n"
+                "            MenuIconCatalog.GridIconKey, \"shell.mnuOpenGrid\", before: ShellMenuIds.FileOpenSdiGroup, after: null, pcOnly: false);\n    }\n}\n")
+TB_IDS = SH + "Framework/ShellMenuIds.cs"
+TB_IDS_SRC = ('public static class ShellMenuIds\n{\n    public const string File = "xkxk.file";\n    public const string FileOpenGrid = "xkxk.file.openGrid";\n'
+              '    public const string FileOpenSdiGroup = "xkxk.file.openSdiGroup";\n}\n')
+
+
+def _row_out(files):  # 표에서 openGrid 행 1줄을 뺀다(이전 뒤 상태)
+    t = files[NAV + "ShellMenuTable.cs"]
+    files[NAV + "ShellMenuTable.cs"] = re.sub(r'[^\n]*new\("xkxk\.file\.openGrid"[^\n]*\n', "", t, count=1)
+    assert files[NAV + "ShellMenuTable.cs"] != t, "자체 시험 변형 대상 없음: openGrid 행"
 ST_CASES = [  # (이름, 표 형식, 변형, 기대)
     ("tree_positional_passes", "positional", None, "pass"),
     ("tree_helper_with_named_passes", "helper", None, "pass"),
@@ -186,6 +200,9 @@ ST_CASES = [  # (이름, 표 형식, 변형, 기대)
     ("row_value_unparsable_fails", "positional", _edit(T, '"xkxk.window.next", null, "menu.window.next"', 'Unknown.Thing, null, "menu.window.next"'), "fail"),
     ("parent_missing_fails", "positional", _edit(T, '"xkxk.system.help", "xkxk.system"', '"xkxk.system.help", "xkxk.gone"'), "fail"),
     ("table_missing_fails", "positional", _drop(T), "fail"),
+    # B11-4: 데모·벤치 행이 표에서 시험대 메뉴 등록(TestbedMenus.cs)으로 이전 — 같은 AutomationId 가 거기 있으면 보존, 어디에도 없으면 실패
+    ("aid_moved_to_testbed_passes", "positional", lambda f: (_row_out(f), _put(TB_MENUS, TB_MENUS_SRC)(f), _put(TB_IDS, TB_IDS_SRC)(f)), "pass"),
+    ("aid_moved_out_nowhere_fails", "positional", _row_out, "fail"),
 ]
 
 

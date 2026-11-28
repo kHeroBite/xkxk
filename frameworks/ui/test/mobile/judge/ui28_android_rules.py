@@ -16,6 +16,8 @@ import json
 import os
 import sys
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "common"))  # D-TESTDIR: test/common/_paths.py
+import _paths  # noqa: E402
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))  # 영역 루트(frameworks/ui)
 RULES = {
     "AC-3-10": [("phone_Debug", "AC-3-10", 7), ("tablet_Debug", "AC-3-10", 4)],
@@ -24,7 +26,7 @@ RULES = {
 }
 CRASH_RUNS = ["phone_Debug", "tablet_Debug"]
 REL_RUNS = ["phone_Release", "tablet_Release"]
-APK = "src/xkxk.frameworks.ui.android/bin/Debug/net10.0-android/xkxk.frameworks.ui-Signed.apk"
+APK = os.path.relpath(os.path.join(_paths.bin_dir("android", "Debug", "net10.0-android"), _paths.get("android.apk_name")), ROOT).replace(os.sep, "/")
 SCRIPT = "test/mobile/measure/ui28_android.py"
 
 

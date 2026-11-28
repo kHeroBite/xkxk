@@ -46,14 +46,6 @@ public static class ShellMenuTable
     {
         // ── 파일 ──
         new("xkxk.file", null, ShellMenuRowKind.Submenu, null, null, "menu.file", null, "shell.mnuFile", null, null, null, Drawer),
-        new("xkxk.file.openGrid", "xkxk.file", ShellMenuRowKind.Command, "xkxk.demo.open", "Grid", "menu.file.openGrid", MenuIconCatalog.GridIconKey, "shell.mnuOpenGrid", null, "cmd", null, Drawer),
-        new("xkxk.file.openGantt", "xkxk.file", ShellMenuRowKind.Command, "xkxk.demo.open", "Gantt", "menu.file.openGantt", MenuIconCatalog.GanttIconKey, "shell.mnuOpenGantt", null, "cmd", null, Drawer),
-        new("xkxk.file.openForm", "xkxk.file", ShellMenuRowKind.Command, "xkxk.demo.open", "Form", "menu.file.openForm", MenuIconCatalog.FormIconKey, "shell.mnuOpenForm", null, "cmd", null, Drawer),
-        new("xkxk.file.openSdiGroup", "xkxk.file", ShellMenuRowKind.Submenu, null, null, "menu.file.openSdi", CmdIconKeys.OpenSdi, "shell.mnuOpenSdiGroup", null, "cmd", null, PcOnly),
-        new("xkxk.file.openGridSdi", "xkxk.file.openSdiGroup", ShellMenuRowKind.Command, "xkxk.demo.openSdi", "Grid", "menu.file.openGridSdi", MenuIconCatalog.GridIconKey, "shell.mnuOpenGridSdi", null, "cmd", null, PcOnly),
-        new("xkxk.file.openGanttSdi", "xkxk.file.openSdiGroup", ShellMenuRowKind.Command, "xkxk.demo.openSdi", "Gantt", "menu.file.openGanttSdi", MenuIconCatalog.GanttIconKey, "shell.mnuOpenGanttSdi", null, "cmd", null, PcOnly),
-        new("xkxk.file.openFormSdi", "xkxk.file.openSdiGroup", ShellMenuRowKind.Command, "xkxk.demo.openSdi", "Form", "menu.file.openFormSdi", MenuIconCatalog.FormIconKey, "shell.mnuOpenFormSdi", null, "cmd", null, PcOnly),
-        new("xkxk.file.openBench", "xkxk.file", ShellMenuRowKind.Command, "xkxk.bench.open", "grid", "menu.file.openBench", CmdIconKeys.OpenBench, "shell.mnuOpenBench", null, "cmd", null, Drawer), // 시험대 이관 명령(xkxk.bench.open) 등록 여부로 표시(D5, 'bench' 조건 대체).
         new("xkxk.file.sep1", "xkxk.file", ShellMenuRowKind.Separator, null, null, "", null, null, null, null, null, Hidden),
         new("xkxk.file.saveLayout", "xkxk.file", ShellMenuRowKind.Command, "xkxk.layout.save", null, "menu.file.saveLayout", CmdIconKeys.SaveLayout, "shell.mnuSaveLayout", null, null, null, Drawer),
         new("xkxk.file.loadLayout", "xkxk.file", ShellMenuRowKind.Command, "xkxk.layout.load", null, "menu.file.loadLayout", CmdIconKeys.LoadLayout, "shell.mnuLoadLayout", null, null, null, Drawer),

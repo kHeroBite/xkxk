@@ -1,4 +1,4 @@
-# xkxk.frameworks.ui.desktop 최상위 창들을 화면 캡처(CopyFromScreen, 실제 화면 합성 결과)로 저장하고 평균 밝기를 남기는 스크립트 — 캡처 방지(⑬) 검증용, 실입력 없음
+# 호스트 데스크톱 앱 최상위 창들을 화면 캡처(CopyFromScreen, 실제 화면 합성 결과)로 저장하고 평균 밝기를 남기는 스크립트 — 캡처 방지(⑬) 검증용, 실입력 없음
 param([string]$OutDir, [string]$Tag)
 Add-Type -AssemblyName System.Drawing
 Add-Type @"
@@ -22,7 +22,10 @@ public class W32G {
   }
 }
 "@
-$proc = Get-Process -Name xkxk.frameworks.ui.desktop -ErrorAction SilentlyContinue | Select-Object -First 1
+# 호스트 프로세스 이름은 tools/host_identity.json(desktop.process_name)에서 읽고, 못 읽으면 오류로 종료한다(폴백 없음)
+$hostProcName = $null
+try { $hid = Get-Content -Raw -Encoding UTF8 -ErrorAction Stop (Join-Path $PSScriptRoot '..\..\..\tools\host_identity.json') | ConvertFrom-Json; $hostProcName = [string]$hid.'desktop.process_name'; if (-not $hostProcName) { throw 'desktop.process_name key missing' } } catch { throw "host_identity read failed: $($_.Exception.Message)" }
+$proc = Get-Process -Name $hostProcName -ErrorAction SilentlyContinue | Select-Object -First 1
 if (-not $proc) { "no process"; exit 1 }
 $i = 0
 foreach ($h in [W32G]::ForPid([uint32]$proc.Id)) {

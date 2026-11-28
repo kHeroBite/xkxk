@@ -20,7 +20,7 @@ param(
     [string]$RunDir = '',
     [int]$UserPdPid,                            # 기본값 없음. preflight·apply·self-test 는 빠지면 rc=3 으로 거부한다
     [string]$TestPids = '',                     # 시험 앱 PID 쉼표 목록(자기 PID 만 — DISPLAY1 에 있어도 된다)
-    [string[]]$PdProcessNames = @('xkxk.frameworks.ui.desktop'),
+    [string[]]$PdProcessNames = @($(try { $hiv = (Get-Content -LiteralPath (Join-Path $PSScriptRoot '..\..\..\tools\host_identity.json') -Raw -Encoding UTF8 | ConvertFrom-Json).'desktop.process_name' } catch { $hiv = $null }; if ($hiv) { $hiv } else { throw 'host_identity.json 을 읽지 못했거나 desktop.process_name 키가 없다' })),
     [int]$DeadlineSec = 120,
     [int]$HoldSec = 30,
     [int]$SettleMs = 3000,
@@ -548,7 +548,7 @@ function Invoke-SelfTest {
     }
     # 겹침 판정(가짜 창)
     $tg = [pscustomobject]@{ l = 2560; t = 236; r = 4480; b = 1436 }
-    $mk = { param($id, $vis, $ico, $l, $t, $r, $b, $nl, $nt, $nr, $nb) [pscustomobject]@{ hwnd = $id; pid = 41312; process = 'xkxk.frameworks.ui.desktop'; class = 'x'; title = 't'; visible = $vis; iconic = $ico; zoomed = $false; cloaked = 0
+    $mk = { param($id, $vis, $ico, $l, $t, $r, $b, $nl, $nt, $nr, $nb) [pscustomobject]@{ hwnd = $id; pid = 41312; process = $PdProcessNames[0]; class = 'x'; title = 't'; visible = $vis; iconic = $ico; zoomed = $false; cloaked = 0
             rect = [pscustomobject]@{ l = $l; t = $t; r = $r; b = $b }; normal = [pscustomobject]@{ l = $nl; t = $nt; r = $nr; b = $nb } } }
     $off = & $mk 1 $true $false -2138 5 7 1303 -2138 5 7 1303
     $on = & $mk 2 $true $false 3000 300 3500 800 3000 300 3500 800

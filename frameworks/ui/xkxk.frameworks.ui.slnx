@@ -4,12 +4,15 @@
     <Project Path="src/xkxk.frameworks.ui/xkxk.frameworks.ui.csproj" />
     <Project Path="src/xkxk.frameworks.ui.views/xkxk.frameworks.ui.views.csproj" />
     <Project Path="src/xkxk.frameworks.ui.shell/xkxk.frameworks.ui.shell.csproj" />
-    <Project Path="src/xkxk.frameworks.ui.desktop/xkxk.frameworks.ui.desktop.csproj" />
+    <Project Path="src/xkxk.frameworks.ui.hosting.desktop/xkxk.frameworks.ui.hosting.desktop.csproj" />
+    <Project Path="src/xkxk.frameworks.ui.hosting.browser/xkxk.frameworks.ui.hosting.browser.csproj" />
+    <Project Path="src/xkxk.frameworks.ui.hosting.android/xkxk.frameworks.ui.hosting.android.csproj" />
     <Project Path="src/xkxk.frameworks.ui.fonts/xkxk.frameworks.ui.fonts.csproj" />
-    <Project Path="src/xkxk.frameworks.ui.browser/xkxk.frameworks.ui.browser.csproj" />
-    <Project Path="src/xkxk.frameworks.ui.android/xkxk.frameworks.ui.android.csproj" />
   </Folder>
   <Folder Name="/testbed/">
     <Project Path="testbed/xkxk.frameworks.ui.testbed/xkxk.frameworks.ui.testbed.csproj" />
+    <Project Path="testbed/xkxk.frameworks.ui.testbed.desktop/xkxk.frameworks.ui.testbed.desktop.csproj" />
+    <Project Path="testbed/xkxk.frameworks.ui.testbed.browser/xkxk.frameworks.ui.testbed.browser.csproj" />
+    <Project Path="testbed/xkxk.frameworks.ui.testbed.android/xkxk.frameworks.ui.testbed.android.csproj" />
   </Folder>
 </Solution>

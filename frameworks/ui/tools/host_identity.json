@@ -1,0 +1,21 @@
+{
+  "desktop.project_dir": "testbed/xkxk.frameworks.ui.testbed.desktop",
+  "desktop.csproj": "testbed/xkxk.frameworks.ui.testbed.desktop/xkxk.frameworks.ui.testbed.desktop.csproj",
+  "desktop.exe_name": "xkxk.frameworks.ui.testbed.desktop.exe",
+  "desktop.process_name": "xkxk.frameworks.ui.testbed.desktop",
+  "desktop.dll_name": "xkxk.frameworks.ui.testbed.desktop.dll",
+  "desktop.hosting_dll": "xkxk.frameworks.ui.hosting.desktop.dll",
+  "desktop.icon": "testbed/xkxk.frameworks.ui.testbed.desktop/Assets/pd.ico",
+  "browser.project_dir": "testbed/xkxk.frameworks.ui.testbed.browser",
+  "browser.csproj": "testbed/xkxk.frameworks.ui.testbed.browser/xkxk.frameworks.ui.testbed.browser.csproj",
+  "browser.bundle_release": "testbed/xkxk.frameworks.ui.testbed.browser/bin/Release/net11.0-browser/publish/wwwroot",
+  "browser.wwwroot_src": "testbed/xkxk.frameworks.ui.testbed.browser/wwwroot",
+  "android.project_dir": "testbed/xkxk.frameworks.ui.testbed.android",
+  "android.csproj": "testbed/xkxk.frameworks.ui.testbed.android/xkxk.frameworks.ui.testbed.android.csproj",
+  "android.package": "xkxk.frameworks.ui.testbed",
+  "android.apk_name": "xkxk.frameworks.ui.testbed-Signed.apk",
+  "android.resources_dir": "testbed/xkxk.frameworks.ui.testbed.android/Resources",
+  "fonts.dir": "src/xkxk.frameworks.ui.fonts/Assets/Fonts",
+  "data.segments": ["xkxk", "frameworks", "ui", "testbed"],
+  "instance.prefix": "xkxk.frameworks.ui.testbed"
+}

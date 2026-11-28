@@ -23,16 +23,16 @@ SRC = "src"
 SKIP_DIRS = {"bin", "obj"}
 MIN_FILES = 100
 SH = "src/xkxk.frameworks.ui.shell/"
-DK = "src/xkxk.frameworks.ui.desktop/"
+DK = "src/xkxk.frameworks.ui.hosting.desktop/"
 PFX = r"(?<![\w.])(?:global::)?(?:xkxk\.frameworks\.ui\.shell\.)?(?:Theming\.|Tour\.|ViewModels\.)?"
 REF = re.compile(PFX + r"(?:UiSettings\.Current|ThemeCatalog\.Current|TourCatalog\.Current|MonitorMenuViewModel\.(?:Instance|Provider))\b"
-                 r"|(?<![\w.])(?:global::)?(?:xkxk\.frameworks\.ui\.desktop\.)?(?:DesktopMonitorProvider|DesktopWindowHost)\.Instance\b"
+                 r"|(?<![\w.])(?:global::)?(?:xkxk\.frameworks\.ui\.hosting\.desktop\.)?(?:DesktopMonitorProvider|DesktopWindowHost)\.Instance\b"
                  r"|\busing\s+static\s+(?:global::)?xkxk\.frameworks\.ui\.(?:shell\.(?:Theming\.(?:UiSettings|ThemeCatalog)|Tour\.TourCatalog"
-                 r"|ViewModels\.MonitorMenuViewModel)|desktop\.(?:DesktopMonitorProvider|DesktopWindowHost))\s*;")
+                 r"|ViewModels\.MonitorMenuViewModel)|hosting\.desktop\.(?:DesktopMonitorProvider|DesktopWindowHost))\s*;")
 DEF_LINE = re.compile(r"public\s+static\s+\S+\s+(?:Current|Instance|Provider)\b")
 MIGRATED_FILES = ("Theming/UiSettings.cs", "Theming/ThemeCatalog.cs", "Tour/TourCatalog.cs", "ViewModels/MonitorMenuViewModel.cs",
                   "Theming/DesignThemeState.cs", "Framework/UiAppContext.cs")
-HOST_DIRS = ("src/xkxk.frameworks.ui.desktop/", "src/xkxk.frameworks.ui.android/", "src/xkxk.frameworks.ui.browser/")
+HOST_DIRS = ("src/xkxk.frameworks.ui.hosting.desktop/", "src/xkxk.frameworks.ui.hosting.android/", "src/xkxk.frameworks.ui.hosting.browser/")
 MODS = r"^\s*(?:\[[^\]]*\]\s*)*(?:(?:private|internal|public|protected|new|unsafe)\s+)*static\s+"
 TYPE = r"([\w<>\[\],?.() ]+?)"
 FIELD = re.compile(MODS + r"(?!readonly\b|class\b|partial\b|extern\b|void\b|event\b|async\b|implicit\b|explicit\b|operator\b|abstract\b)"
@@ -267,7 +267,7 @@ def self_test():
         ("ref_qualified_detect", "global::xkxk.frameworks.ui.shell.Theming.UiSettings.Current.X; Theming.UiSettings.Current.Y;\n"
                                  "xkxk.frameworks.ui.shell.ViewModels.MonitorMenuViewModel.Instance.Z;", False, 3),
         ("ref_host_instance_detect", "var m = DesktopMonitorProvider.Instance; DesktopWindowHost.Instance.Execute(c);", False, 2),
-        ("ref_using_static_detect", "using static xkxk.frameworks.ui.shell.Theming.UiSettings;\nusing static global::xkxk.frameworks.ui.desktop.DesktopWindowHost;", False, 2),
+        ("ref_using_static_detect", "using static xkxk.frameworks.ui.shell.Theming.UiSettings;\nusing static global::xkxk.frameworks.ui.hosting.desktop.DesktopWindowHost;", False, 2),
         ("ref_comment_ignored", "// UiSettings.Current\n/* ThemeCatalog.Current\n TourCatalog.Current */ var u = \"http://x\"; // DesktopWindowHost.Instance", False, 0),
         ("ref_def_line_and_lookalike_ignored", "public static UiSettings Current => XkxkUi.Current.Settings;\npublic static MonitorMenuViewModel Instance => XkxkUi.Current.Monitors;\n"
                                                "XkxkUi.Current.Settings.X; MyUiSettings.Current; LayoutModeGate.Instance; PerfProbe.Current; DesignThemeResolver.Current;"

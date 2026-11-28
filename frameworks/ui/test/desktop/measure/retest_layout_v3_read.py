@@ -48,7 +48,7 @@ def cases(base):
     yield "corner.owner", d, {"owners": {"BottomLeft": "BottomPane"}}
 
 
-EXE_NAME = "xkxk.frameworks.ui.desktop.exe"
+EXE_NAME = _paths.get("desktop.exe_name")
 
 
 def resolve_run_dir(run_dir):

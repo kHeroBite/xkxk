@@ -8,6 +8,7 @@
 import argparse
 import json
 import os
+import re
 import sys
 import time
 
@@ -358,12 +359,12 @@ def main():
             except (Exception, SystemExit) as e:  # noqa: BLE001 — 한 단계 실패(pdctl 연결 실패 SystemExit 포함)가 다음 단계를 막지 않게 한다
                 c.check(ph.__name__ + " 예외", False, repr(e), "예외 없음")
                 c.raw.setdefault("phase_errors", {})[ph.__name__] = {
-                    "err": repr(e), "pid_alive": c.sh("pidof xkxk.frameworks.ui"),
+                    "err": repr(e), "pid_alive": c.sh("pidof " + _paths.get("android.package")),
                     "logcat_tail": [l for l in c.adb("logcat", "-d", "-v", "time", "-t", "300")[1].splitlines()
-                                    if "xkxk.frameworks.ui" in l.lower() or "FATAL" in l or "ANR" in l][-25:]}
+                                    if re.search(re.escape(_paths.get("android.package")) + r"(?![\w.])", l.lower()) or "FATAL" in l or "ANR" in l][-25:]}
         c.raw["remote_calls"] = c.r.calls
         c.raw["logcat_fatal"] = [l for l in c.adb("logcat", "-d", "-v", "time")[1].splitlines()
-                                 if "FATAL" in l or "ANR in" in l][:10]
+                                 if "FATAL" in l or re.search(r"ANR in " + re.escape(_paths.get("android.package")) + r"(\s|$)", l)][:10]
         c.check("FATAL/ANR 0", not c.raw["logcat_fatal"], len(c.raw["logcat_fatal"]), 0)
     finally:
         c.adb("shell", "wm", "size", "reset")
@@ -377,7 +378,7 @@ def main():
         ra.cleanup(a.serial, state)
         c.raw["after"] = {"wm_size": c.sh("wm size"), "wm_density": c.sh("wm density"),
                           "settings": {k: c.sh("settings get %s %s" % (ns, k)) for ns, k in SETTINGS},
-                          "pkg_count": c.sh("pm list packages | grep -c xkxk.frameworks.ui")}
+                          "pkg_count": c.sh("pm list packages | grep -cx package:" + _paths.get("android.package"))}
         res = {"role": a.role, "serial": a.serial, "apk": a.apk, "orig_settings": c.orig, "checks": c.checks, "raw": c.raw,
                "pass": all(x["pass"] for x in c.checks), "n_fail": sum(1 for x in c.checks if not x["pass"])}
         with open(os.path.join(a.out, "%s_c3.json" % a.role), "w", encoding="utf-8") as f:

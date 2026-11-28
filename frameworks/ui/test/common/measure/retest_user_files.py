@@ -1,17 +1,25 @@
-# 데스크톱 시험 공용 — 사용자 상태 파일(%LOCALAPPDATA%\xkxk\frameworks\ui 의 layout·settings) 백업·md5(앱이 꺼져 있어도 폴더를 찾는다)
+# 데스크톱 시험 공용 — 사용자 상태 파일(%LOCALAPPDATA% 아래 데이터 폴더(host_identity data.segments)의 layout·settings) 백업·md5(앱이 꺼져 있어도 폴더를 찾는다)
 import glob
 import hashlib
 import os
 import shutil
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "tools"))  # 정체성 값 단일 출처(tools/host_identity.json)
+import host_identity as _hid  # noqa: E402
+
+_DATA_SEG = "/".join(_hid.get("data.segments"))  # 사용자 데이터 폴더 세그먼트(LOCALAPPDATA 아래)
+_EXE = _hid.get("desktop.exe_name")
+_PROC = _hid.get("desktop.process_name")
 
 USER_FILES = ("layout.json", "settings.json")  # 종료 자동 저장·명시 layout.save 가 덮어쓰는 사용자 상태 파일
 
 
 def user_dir():
     """사용자 설정 폴더. pdctl.info_path 는 연결 정보 파일이 없으면 sys.exit 하므로 쓰지 않는다."""
-    found = sorted(glob.glob("/mnt/c/Users/*/AppData/Local/xkxk/frameworks/ui"), key=os.path.getmtime)
+    found = sorted(glob.glob("/mnt/c/Users/*/AppData/Local/" + _DATA_SEG), key=os.path.getmtime)
     if not found:
-        raise RuntimeError("사용자 설정 폴더(xkxk/frameworks/ui) 없음")
+        raise RuntimeError("사용자 설정 폴더(%s) 없음" % _DATA_SEG)
     return found[-1]
 
 
@@ -39,8 +47,8 @@ def wait_app_exit(timeout=30):
     import subprocess
     import time
     for _ in range(timeout):
-        out = subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq xkxk.frameworks.ui.desktop.exe", "/NH", "/FO", "CSV"], capture_output=True).stdout
-        if out.count(b"xkxk.frameworks.ui.desktop") == 0:
+        out = subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq " + _EXE, "/NH", "/FO", "CSV"], capture_output=True).stdout
+        if out.count(_PROC.encode()) == 0:
             return True
         time.sleep(1)
     return False
@@ -74,13 +82,13 @@ def host_args(cmdline):
 
 def in_user_dir(win_path):
     """
-    그 Windows 경로가 사용자 폴더(%LOCALAPPDATA%\\xkxk\\frameworks\\ui)와 같거나 그 아래인가(하위 폴더·정션 포함). 판정 못 하면 True(비격리로 본다).
-    문자열 검사(…\\AppData\\Local\\xkxk\\frameworks\\ui[\\…]) 뒤, wslpath 로 바꿔 realpath(정션·심볼릭 링크 해석)를 사용자 폴더 realpath 와 대조한다.
+    그 Windows 경로가 사용자 폴더(%LOCALAPPDATA%\\<data.segments>)와 같거나 그 아래인가(하위 폴더·정션 포함). 판정 못 하면 True(비격리로 본다).
+    문자열 검사(…\\AppData\\Local\\<data.segments>[\\…]) 뒤, wslpath 로 바꿔 realpath(정션·심볼릭 링크 해석)를 사용자 폴더 realpath 와 대조한다.
     """
     import re
     import subprocess
     s = (win_path or "").replace("/", "\\").lower()
-    if not s or re.search(r"\\appdata\\local\\xkxk\\frameworks\\ui(\\|$)", s):
+    if not s or re.search(r"\\appdata\\local\\" + re.escape("\\".join(_hid.get("data.segments")).lower()) + r"(\\|$)", s):
         return True
     try:
         wsl = subprocess.run(["wslpath", "-u", win_path], capture_output=True, timeout=10).stdout.decode().strip()
@@ -89,13 +97,13 @@ def in_user_dir(win_path):
     if not wsl:
         return True
     real = os.path.realpath(wsl).lower()
-    users = [os.path.realpath(p).lower() for p in glob.glob("/mnt/c/Users/*/AppData/Local/xkxk/frameworks/ui")]
+    users = [os.path.realpath(p).lower() for p in glob.glob("/mnt/c/Users/*/AppData/Local/" + _DATA_SEG)]
     return any(real == u or real.startswith(u.rstrip("/") + "/") for u in users)
 
 
 def isolation(pid):
     """
-    (격리 여부, 상세). 격리 = 그 PID 명령줄에 사용자 폴더(%LOCALAPPDATA%\\xkxk\\frameworks\\ui, 하위 폴더·정션 포함)가 아닌 --data-dir 가 있다.
+    (격리 여부, 상세). 격리 = 그 PID 명령줄에 사용자 폴더(%LOCALAPPDATA%\\<data.segments>, 하위 폴더·정션 포함)가 아닌 --data-dir 가 있다.
     --profile-dir 만으로는 격리로 보지 않는다(앱은 로그·캡처 폴더를 --data-dir 로 정한다). --profile-dir 가 있으면 그것도 사용자 폴더가 아니어야 한다.
     명령줄을 읽지 못하거나 PID 가 없으면 격리 아님(확인 불가 = 거부). --isolated 모드의 실행 전제다.
     """
@@ -124,17 +132,17 @@ def launched_by(pid, log_name):
 
 def user_pds():
     """
-    사용자 Pd 목록 [(pid, 명령줄|None)]. 사용자 Pd = run_desktop_bg 로 띄우지 않은 xkxk.frameworks.ui.desktop 프로세스
+    사용자 Pd 목록 [(pid, 명령줄|None)]. 사용자 Pd = run_desktop_bg 로 띄우지 않은 데스크톱 호스트(desktop.process_name) 프로세스
     (명령줄에 --remote-control 과 --log …desktop_*.log 가 함께 없음). 명령줄을 못 읽으면 사용자 Pd 로 본다(확인 불가 = 거부).
     """
     import re
     import subprocess
     found = []
-    for image in ("xkxk.frameworks.ui.desktop.exe",):
+    for image in (_EXE,):
         out = subprocess.run(["tasklist.exe", "/FI", "IMAGENAME eq " + image, "/NH", "/FO", "CSV"], capture_output=True).stdout
         for line in out.decode("utf-8", "replace").splitlines():
             cols = [c.strip('"') for c in line.strip().split('","')]
-            if len(cols) > 1 and cols[0].lower().startswith("xkxk.frameworks.ui.desktop") and cols[1].isdigit():
+            if len(cols) > 1 and cols[0].lower().startswith(_PROC.lower()) and cols[1].isdigit():
                 cmd = proc_cmdline(int(cols[1]))
                 tool = cmd and "--remote-control" in cmd and re.search(r"--log\s+\"?[^\"]*desktop_[0-9_]+\.log", cmd)
                 if not tool:
@@ -152,10 +160,10 @@ def relaunch_args(args):
 
 
 def pid_alive(pid):
-    """그 PID 의 xkxk.frameworks.ui.desktop 프로세스가 살아 있는가(PID 재사용 오인 방지로 이미지 이름도 본다)."""
+    """그 PID 의 데스크톱 호스트(desktop.process_name) 프로세스가 살아 있는가(PID 재사용 오인 방지로 이미지 이름도 본다)."""
     import subprocess
     out = subprocess.run(["tasklist.exe", "/FI", "PID eq %d" % int(pid), "/NH", "/FO", "CSV"], capture_output=True).stdout
-    return ('"%d"' % int(pid)).encode() in out and b"xkxk.frameworks.ui.desktop" in out
+    return ('"%d"' % int(pid)).encode() in out and _PROC.encode() in out
 
 
 def stop_pid(pid, timeout=20):
@@ -171,7 +179,7 @@ def stop_pid(pid, timeout=20):
         if not pid_alive(pid):
             return True
         time.sleep(1)
-    subprocess.run(["taskkill.exe", "/PID", str(int(pid)), "/FI", "IMAGENAME eq xkxk.frameworks.ui.desktop.exe", "/F"], capture_output=True)  # PID 재사용 시 다른 프로그램 오종료 방지
+    subprocess.run(["taskkill.exe", "/PID", str(int(pid)), "/FI", "IMAGENAME eq " + _EXE, "/F"], capture_output=True)  # PID 재사용 시 다른 프로그램 오종료 방지
     for _ in range(10):
         if not pid_alive(pid):
             return True

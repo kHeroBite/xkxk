@@ -1,4 +1,4 @@
-# xkxk.frameworks.ui.desktop 최상위 창들의 클라이언트 영역만(보이지 않는 크기 조절 테두리·그림자 제외) 화면 캡처하는 스크립트 — otest-13 w13 용, odev4b/screen_grab.ps1 의 새 사본(원본 무수정). 실입력 없음
+# 호스트 데스크톱 앱 최상위 창들의 클라이언트 영역만(보이지 않는 크기 조절 테두리·그림자 제외) 화면 캡처하는 스크립트 — otest-13 w13 용, odev4b/screen_grab.ps1 의 새 사본(원본 무수정). 실입력 없음
 # 사용: powershell.exe -NoProfile -ExecutionPolicy Bypass -File screen_grab_client.ps1 -OutDir <폴더> -Tag <이름> [-ProcessId <pid>]
 # 전경 창이 대상 프로세스가 아니면 아무것도 찍지 않고 'REFUSE_FG' 를 출력한다(다른 앱·터미널이 찍히는 것을 막는다)
 param([string]$OutDir, [string]$Tag, [int]$ProcessId = 0)
@@ -26,7 +26,10 @@ public class W32C {
   }
 }
 "@
-if ($ProcessId -gt 0) { $proc = Get-Process -Id $ProcessId -ErrorAction SilentlyContinue } else { $proc = Get-Process -Name xkxk.frameworks.ui.desktop -ErrorAction SilentlyContinue | Select-Object -First 1 }
+# 호스트 프로세스 이름은 tools/host_identity.json(desktop.process_name)에서 읽고, 못 읽으면 오류로 종료한다(폴백 없음)
+$hostProcName = $null
+try { $hid = Get-Content -Raw -Encoding UTF8 -ErrorAction Stop (Join-Path $PSScriptRoot '..\..\..\tools\host_identity.json') | ConvertFrom-Json; $hostProcName = [string]$hid.'desktop.process_name'; if (-not $hostProcName) { throw 'desktop.process_name key missing' } } catch { throw "host_identity read failed: $($_.Exception.Message)" }
+if ($ProcessId -gt 0) { $proc = Get-Process -Id $ProcessId -ErrorAction SilentlyContinue } else { $proc = Get-Process -Name $hostProcName -ErrorAction SilentlyContinue | Select-Object -First 1 }
 if (-not $proc) { "no process"; exit 1 }
 $fgPid = 0; [void][W32C]::GetWindowThreadProcessId([W32C]::GetForegroundWindow(), [ref]$fgPid)
 if ($fgPid -ne $proc.Id) { "REFUSE_FG fgPid=$fgPid target=$($proc.Id)"; exit 9 }

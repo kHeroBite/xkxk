@@ -16,7 +16,7 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 
 SRC, ROOTS, TESTBED = "src", ("src", "testbed"), "xkxk.frameworks.ui.testbed"  # 시험대는 src 밖 testbed/ 에 있다
-HOSTS = ("xkxk.frameworks.ui.desktop", "xkxk.frameworks.ui.browser", "xkxk.frameworks.ui.android")
+HOSTS = ("xkxk.frameworks.ui.hosting.desktop", "xkxk.frameworks.ui.hosting.browser", "xkxk.frameworks.ui.hosting.android")
 SHELL = "xkxk.frameworks.ui.shell"
 FIXED = {"xkxk.frameworks.ui": "Ui", "xkxk.frameworks.ui.views": "Views", "xkxk.frameworks.ui.data": "Data"}
 SKIP = {"bin", "obj", ".vs", "node_modules", "__pycache__"}
@@ -133,8 +133,8 @@ def initial_layer(rel, info, overrides):
         return overrides[key]["layer"], overrides[key]["reason"]
     project = project_of(rel)
     inner = key[len(project) + 1:]
-    if project in HOSTS or project == TESTBED:
-        return ("Testbed", "시험대 프로젝트") if project == TESTBED else ("Host", "호스트 프로젝트")
+    if project in HOSTS or project.startswith(TESTBED):
+        return ("Testbed", "시험대 프로젝트") if project.startswith(TESTBED) else ("Host", "호스트 프로젝트")
     if project in FIXED:
         return FIXED[project], f"{project} 프로젝트"
     if inner.startswith("Documents/Bench/"):

@@ -1,15 +1,20 @@
 #!/bin/bash
-# xkxk.frameworks.ui.android 를 Windows dotnet.exe 로 비증분 빌드하는 스크립트 (WSL 에서 실행)
+# 안드로이드 실행 프로젝트를 Windows dotnet.exe 로 비증분 빌드하는 스크립트 (WSL 에서 실행)
 # 사용: build_android.sh [--bg] [Debug|Release] [PdDiagnostics=true|false]
 #   두 번째 인자 PdDiagnostics 기본 true(시험 빌드). false 면 제품 확인용 진단 제거 빌드.
 #   환경변수: PD_EXTRA_PROPS="-p:이름=값 …"(예: -p:PdChannel=prod), PD_BUILD_LOCK_WAIT=<초>
 #   --bg : 분리 실행(setsid nohup). 로그 경로와 rc 파일 경로를 출력하고 즉시 반환한다.
 # 직렬화: 같은 Configuration 빌드는 build_lock.sh 의 flock 으로 순서를 기다린다(데스크톱·브라우저와 obj 공유).
-# 끝에서 check_assembly_closure.py 로 APK 안 xkxk.frameworks.ui* 어셈블리 참조 폐포를 검사한다(누락이면 rc=4).
+# 끝에서 check_assembly_closure.py 로 APK 안 프레임워크 어셈블리 참조 폐포를 검사한다(누락이면 rc=4).
 # 결과: logs/build_android_<시각>.log, 같은 이름 .rc. 마지막 줄 APK=...
 set -u
 TOOLS="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$TOOLS/.." && pwd)"
+# 정체성·경로 값은 단일 출처(host_identity.json)에서 조회한다. 실패하면 오류 종료한다.
+hid() { local v; v="$(python3 -B "$TOOLS/host_identity.py" get "$1" 2>/dev/null)" && [ -n "$v" ] || { echo "host_identity 조회 실패: $1" >&2; return 70; }; printf '%s' "$v"; }
+ANDROID_CSPROJ="$(hid android.csproj)" || exit 70
+ANDROID_DIR="$(hid android.project_dir)" || exit 70
+ANDROID_APK_NAME="$(hid android.apk_name)" || exit 70
 DOTNET="${DOTNET_EXE:-/mnt/c/Program Files/dotnet/dotnet.exe}"
 # shellcheck source=build_lock.sh
 . "$TOOLS/build_lock.sh"
@@ -42,8 +47,8 @@ export PD_ANDROID_SDK PD_JAVA_SDK
 export WSLENV="${WSLENV:+$WSLENV:}PD_ANDROID_SDK:PD_JAVA_SDK"
 LOG="${BUILD_LOG:-$ROOT/logs/build_android_$(date +%Y%m%d_%H%M%S).log}"
 rm -f "$LOG.rc"
-PROJ_WIN="$(wslpath -w "$ROOT/src/xkxk.frameworks.ui.android/xkxk.frameworks.ui.android.csproj")"
-APK="$ROOT/src/xkxk.frameworks.ui.android/bin/$CONF/net11.0-android/xkxk.frameworks.ui-Signed.apk"
+PROJ_WIN="$(wslpath -w "$ROOT/$ANDROID_CSPROJ")"
+APK="$ROOT/$ANDROID_DIR/bin/$CONF/net11.0-android/$ANDROID_APK_NAME"
 
 {
   echo "# build_android start $(date '+%Y-%m-%d %H:%M:%S') conf=$CONF PdDiagnostics=$DIAG"

@@ -21,15 +21,9 @@
     <PdAvaloniaBrowserPatch Condition="'$(PdAvaloniaBrowserPatch)' == ''">true</PdAvaloniaBrowserPatch>
     <PdAvaloniaBrowserVersion>12.1.4</PdAvaloniaBrowserVersion>
     <PdAvaloniaBrowserVersion Condition="'$(PdAvaloniaBrowserPatch)' == 'true'">12.1.4-pd.1</PdAvaloniaBrowserVersion>
-    <RestoreAdditionalProjectSources Condition="'$(PdAvaloniaBrowserPatch)' == 'true' and '$(MSBuildProjectName)' == 'xkxk.frameworks.ui.browser'">$(RestoreAdditionalProjectSources);$(MSBuildThisFileDirectory)vendor/feed</RestoreAdditionalProjectSources>
   </PropertyGroup>
   <PropertyGroup Condition="'$(PdDiagnostics)' == 'true'">
     <DefineConstants>$(DefineConstants);PD_DIAGNOSTICS</DefineConstants>
-  </PropertyGroup>
-  <!-- 런타임 여러 개면 최신 선택(사용자 지시 2026-11-12 ".NET 이 여러 개 있을 때 최신 버전을 택하도록"): 프레임워크 종속 실행본이 설치된 가장 높은 주 버전 런타임으로 뜬다.
-       runtimeconfig.json 의 rollForward 로 들어간다. 근거 https://learn.microsoft.com/en-us/dotnet/core/versions/selection (LatestMajor). 데스크톱 실행 프로젝트만 대상 -->
-  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'xkxk.frameworks.ui.desktop'">
-    <RollForward>LatestMajor</RollForward>
   </PropertyGroup>
   <!-- 성능 대조 빌드 전용(기본 꺼짐): 그리드 열을 이전 방식(DataGridTextColumn+ReflectionBinding)으로 바꿔 열기 회귀를 판별한다. -p:PdGridTextColumns=true -->
   <PropertyGroup Condition="'$(PdGridTextColumns)' == 'true'">

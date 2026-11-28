@@ -21,7 +21,7 @@
     사용자 Chrome 캐시·데이터는 지우지 않는다. --trace 면 cold 로딩 trace 의 긴 작업(50ms 초과)·WASM 컴파일 이벤트를 요약한다.
   - 조작마다 그 시각 이후 logcat 의 [startup]·입력 관련 줄을 -d -T 로 읽어 행에 남긴다(logcat -c 를 쓰지 않는다).
   - 시행마다 <out>/webperf_<target>_<mode>.partial.json 에 누적 저장한다. 끝나면 pointer_location 원값·접힘 상태(reset)를 되돌리고 시험 탭을 닫는다.
-  - logcat -c 를 쓰지 않는다. 앱은 시험 패키지(xkxk.frameworks.ui)만 pm clear 한다.
+  - logcat -c 를 쓰지 않는다. 앱은 시험 패키지(host_identity 의 android.package)만 pm clear 한다.
 결과: <out>/webperf_<target>_<mode>.json(시행별 행·요약 중앙값/p90), 첫 시행 대표 프레임 PNG.
 """
 import argparse
@@ -39,13 +39,15 @@ import imageio_ffmpeg
 import numpy as np
 from PIL import Image
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "common"))  # D-TESTDIR: test/common/_paths.py
+import _paths  # noqa: E402
 import webperf_startup as ws  # 시작 구간·캐시 경유·탭 처음/재방문 확장(새 옵션 인자로만 켜진다)
 import webperf_inject as wi  # --settings-json 주입·doc/open_* 조작별 trace(--trace)
 import webperf_insets as wn  # dy 계산(보이는 navigationBars 만, --self-test 로 기기 없이 검사)
 
 ADB = os.environ.get("ADB", "/mnt/c/Program Files (x86)/Android/android-sdk/platform-tools/adb.exe")
 SER = os.environ.get("SERIAL", "R3CW70202FP")
-PKG = "xkxk.frameworks.ui"
+PKG = _paths.get("android.package")
 CHROME = "com.android.chrome"
 FFMPEG = imageio_ffmpeg.get_ffmpeg_exe()
 CDP_PORT = 9229
@@ -726,7 +728,7 @@ class Ctx:
 
 
 def fg_guard(c):
-    """터치 전에 앞 화면이 시험 대상(앱=xkxk.frameworks.ui, 웹=Chrome)인지 확인한다. 아니면 사용자 앱을 건드리지 않게 즉시 멈춘다.
+    """터치 전에 앞 화면이 시험 대상(앱=host_identity 의 android.package, 웹=Chrome)인지 확인한다. 아니면 사용자 앱을 건드리지 않게 즉시 멈춘다.
     (00:46 실측: 하단 제스처 영역의 스와이프로 홈이 열린 뒤 다음 스와이프가 사용자 런처에 들어갔다.)"""
     top = sh("dumpsys activity activities | grep -m1 topResumedActivity")
     want = "com.android.chrome" if c.web else PKG

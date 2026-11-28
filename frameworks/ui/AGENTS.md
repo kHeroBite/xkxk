@@ -27,7 +27,7 @@
   - 브라우저: `bash tools/build_browser.sh --bg [Release]`
   - Android: `bash tools/build_android.sh --bg [Debug|Release]`
 - `--bg` 는 `logs/build_*_<시각>.log` 와 같은 이름 `.rc` 를 남긴다. 성공은 `.rc`=0 이고 로그에 `오류 0개` 또는 `0 Error(s)` 가 있는 것이다.
-- 빌드는 한 번에 한 명만 돌린다(obj 잠금). 실행·포트·프로세스 규칙은 `INFRA.md` 4절을 따른다. 실행 파일 이름은 `xkxk.frameworks.ui.desktop.exe` 이고, 데이터 폴더(`%LOCALAPPDATA%\xkxk\frameworks\ui`)·단일 인스턴스 이름(`xkxk.frameworks.ui.<채널>.Instance`)도 옛 Pd 앱과 분리됐다. 같은 이름의 다른 프로세스는 사용자가 띄웠을 수 있으므로 자기 PID 외 프로세스는 건드리지 않는다.
+- 빌드는 한 번에 한 명만 돌린다(obj 잠금). 실행·포트·프로세스 규칙은 `INFRA.md` 4절을 따른다. 실행 파일·프로세스·패키지 이름은 문서에 적지 않고 `tools/host_identity.json` 의 키(`desktop.exe_name`·`desktop.process_name`·`android.package` 등)를 읽는다. 실행 프로젝트는 `testbed/` 아래(데스크톱·브라우저·Android)에 있고 플랫폼 공통 코드는 `src/xkxk.frameworks.ui.hosting.*` 호스팅 라이브러리에 있다(UADR-0018). 데이터 폴더·단일 인스턴스 이름도 옛 Pd 앱과 분리됐고 값은 `tools/host_identity.json` 의 `data.segments`·`instance.prefix` 키를 읽는다. 같은 이름의 다른 프로세스는 사용자가 띄웠을 수 있으므로 자기 PID 외 프로세스는 건드리지 않는다.
 
 ## 5. 레이어 원칙
 - 저장소 공통 원칙은 `/mnt/c/DATA/Project/xkxk/docs/standards/01_소스구조_공통원칙.md` 이고, 아래는 별별UI 영역 고유 규칙이다.
@@ -35,17 +35,19 @@
 
 | 층 | 참조할 수 있는 것 | 참조하면 안 되는 것 |
 |---|---|---|
-| 호스트(Desktop·Browser·Android) | 아래 전부 | — |
-| `xkxk.frameworks.ui.views`(화면 조립) | `xkxk.frameworks.ui.shell`, `xkxk.frameworks.ui`, `xkxk.frameworks.ui.data` | 호스트 |
-| `xkxk.frameworks.ui.shell`(컨트롤) | `xkxk.frameworks.ui`, `xkxk.frameworks.ui.data` | `xkxk.frameworks.ui.views`, 호스트 |
+| 시험대 실행 프로젝트(`testbed/` 의 desktop·browser·android) | 호스팅 라이브러리와 프레임워크 공개 형식 | — (`wwwroot`·`[Application]`·`[Activity]` 특성·JSExport·아이콘은 이 프로젝트가 가진다) |
+| 호스팅 라이브러리(`xkxk.frameworks.ui.hosting.desktop`·`.browser`·`.android`, 영역 `src/`) | `xkxk.frameworks.ui.shell`, `xkxk.frameworks.ui.views`, `xkxk.frameworks.ui`, `xkxk.frameworks.ui.data`, 플랫폼 패키지(Avalonia.Desktop·Browser·Android) | `xkxk.frameworks.ui.testbed`·시험대 실행 프로젝트, 화면 모듈. 공개 형식은 진입점 7개뿐이고 `InternalsVisibleTo` 는 0 이다 |
+| `xkxk.frameworks.ui.views`(화면 조립) | `xkxk.frameworks.ui.shell`, `xkxk.frameworks.ui`, `xkxk.frameworks.ui.data` | 호스팅 라이브러리, 시험대 실행 프로젝트 |
+| `xkxk.frameworks.ui.shell`(컨트롤) | `xkxk.frameworks.ui`, `xkxk.frameworks.ui.data` | `xkxk.frameworks.ui.views`, 호스팅 라이브러리, 시험대 실행 프로젝트 |
 | `xkxk.frameworks.ui`(순수 UI) | Avalonia 패키지만 | 그 밖 전부, Dock |
 | `xkxk.frameworks.ui.data`(데이터) | 비 UI 패키지 | Avalonia, 나머지 층 |
 
-- 층 정의의 정본은 `plan/04_기술스택/02_소스구조_분할규칙.md` 다.
+- 층 정의의 정본은 `plan/04_기술스택/02_소스구조_분할규칙.md` §11 이다. 시험대(`testbed/xkxk.frameworks.ui.testbed`)는 프레임워크 공개 형식만 참조하고, 프레임워크 층과 호스팅 라이브러리는 시험대를 참조하지 못한다.
 - 검사는 `python3 -B tools/check_layers.py`(규칙 `tools/check_layers_rules.json`, 자체 확인 `--self-test`)와 `python3 -B tools/classify_layers.py --check`(LAYERS.md 대조)다.
 - 층 파일은 300줄 이하에 첫 줄 한국어 헤더 주석을 둔다.
 
 ## 6. 알려진 한계
-- 프로젝트·어셈블리 이름은 폴더 경로 기준 `xkxk.frameworks.ui.*` 로 전환했다(UTODO-0007, UADR-0002). Android 패키지(`xkxk.frameworks.ui`)·데이터 폴더(`%LOCALAPPDATA%\xkxk\frameworks\ui`)·단일 인스턴스 이름(`xkxk.frameworks.ui.<채널>.Instance`)도 같은 규칙으로 전환했다(UTODO-0013·0014). 옛 폴더·설정은 이전하지 않는다.
+- 프로젝트·어셈블리 이름은 폴더 경로 기준 `xkxk.frameworks.ui.*` 로 전환했다(UTODO-0007, UADR-0002). Android 패키지·데이터 폴더·단일 인스턴스 이름도 같은 규칙으로 전환했다(UTODO-0013·0014, 시험대 값은 B11-3 에서 `testbed` 로 한 번 더 바뀌었다). 옛 폴더·설정은 이전하지 않는다.
+- 호스트 분리(B11, UADR-0018)로 시험대 실행 프로젝트 이름을 `xkxk.frameworks.ui.testbed.*` 로 바꿨다(B11-3 완료). 실행 파일·프로세스·패키지·데이터 폴더·인스턴스 이름의 실제 값은 `tools/host_identity.json` 이 정본이다. 정체성은 호스트 옵션(`DesktopHostOptions.DataFolderSegments`·`InstanceName`, `AndroidHostOptions.DataFolderSegments`·`ApplicationId`)으로 넘기고, 데이터 폴더 우선순위는 `--data-dir` > `AppDataFolder.UseSegments` > 기본값이다. 옛 데이터 폴더·기기의 옛 앱은 이전하지 않고 공존한다.
 - 일부 시험 스크립트·도구에 Pd 경로가 박혀 있다. 목록과 과제 번호(UTODO-0001)는 `plan/90_결정관리/이전기록_2026-11-24_경로고정목록.md` 에 있다.
 - `plan/09_화면설계/02_메뉴구조.md` 는 Pd 저장소의 `menu_tree.py` 가 만드는 생성물이라 이 영역에서는 재생성할 수 없다.

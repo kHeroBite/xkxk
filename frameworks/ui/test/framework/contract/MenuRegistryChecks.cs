@@ -56,7 +56,8 @@ internal static class MenuProbe
 
 internal static class MenuRegistryChecks
 {
-    private const string OpenForm = "xkxk.file.openForm";
+    // openForm 은 B11-4 에서 시험대 소유로 옮겨져 셸 앵커가 될 수 없다 — 셸 표에 남은 같은 File 그룹 명령 항목(saveLayout)으로 바꿨다
+    private const string ShellAnchor = "xkxk.file.saveLayout";
 
     /// <summary>B06 기본 명령 23개(순서·값 고정 — 뒤 판은 끝에만 더한다).</summary>
     private static readonly string[] B06Commands =
@@ -89,7 +90,7 @@ internal static class MenuRegistryChecks
         yield return new ContractCase("C51", "Kind 위반(Command 에 CommandId 없음·Section 에 Section 없음·Separator 에 CommandId) → false + XKUI0406", C51);
         yield return new ContractCase("C52", "같은 ID 재등록 XKUI0402·첫 등록 유지, Replace=true 자리 유지 + Replaced(P3), 없는 ID Replace=true → Added(P1)", C52);
         yield return new ContractCase("C53", "새 xkxk.* 메뉴 ID → false + XKUI0407, 기존 xkxk.* Replace=true → true·Owner 교체 주체(상태를 남기는 마지막 메뉴 시험)", C53);
-        yield return new ContractCase("C60", "모바일 힌트(공개 경로): NavMenuCatalog.Entries 63개 ↔ Menus.Items Mobile 정의 1:1 대조·셸 여분 0·소비자 항목 Mobile 사본", C60);
+        yield return new ContractCase("C60", "모바일 힌트(공개 경로): NavMenuCatalog.Entries 55개(시험대 이관 8 제외) ↔ Menus.Items Mobile 정의 1:1 대조·셸 여분 0·소비자 항목 Mobile 사본", C60);
         yield return new ContractCase("C61", "ShellCommandIds.All 61개·앞 23 B06 순서·신규 38 중 이관 3 제외 35 Owner xkxk.shell·셸 메뉴 CommandId 전부 등록(VisibleWhen=cmd 행 제외)·확대/축소 ID 없음", C61);
     }
 
@@ -112,6 +113,10 @@ internal static class MenuRegistryChecks
         Check.True(ShellMenuIds.Roots.SequenceEqual(expectRoots), $"ShellMenuIds.Roots={string.Join(",", ShellMenuIds.Roots)}");
         var win = MenuProbe.Children(ShellMenuIds.Window);
         Check.True(win.Count > 0 && win[0] == "xkxk.window.cascade", $"창 메뉴 첫 자식={(win.Count > 0 ? win[0] : "없음")}");
+        var movedToTestbed = new[] { ShellMenuIds.FileOpenGrid, ShellMenuIds.FileOpenGantt, ShellMenuIds.FileOpenForm, ShellMenuIds.FileOpenSdiGroup,
+            ShellMenuIds.FileOpenGridSdi, ShellMenuIds.FileOpenGanttSdi, ShellMenuIds.FileOpenFormSdi, ShellMenuIds.FileOpenBench };
+        Check.True(string.Join(",", movedToTestbed) == "xkxk.file.openGrid,xkxk.file.openGantt,xkxk.file.openForm,xkxk.file.openSdiGroup,xkxk.file.openGridSdi,xkxk.file.openGanttSdi,xkxk.file.openFormSdi,xkxk.file.openBench", "시험대 이관 메뉴 상수 값 변경(UADR-0009 위반)");
+        Check.True(movedToTestbed.All(moved => !ShellMenuIds.All.Contains(moved)), "시험대로 이관한 메뉴가 ShellMenuIds.All(셸 표 파생)에 남아 있음");
         Check.True(ShellMenuIds.All.Count > 0 && ShellMenuIds.All.Distinct(StringComparer.Ordinal).Count() == ShellMenuIds.All.Count, "ShellMenuIds.All 이 비었거나 중복");
         var autoIds = new HashSet<string>(StringComparer.Ordinal);
         foreach (var id in ShellMenuIds.All)
@@ -135,11 +140,11 @@ internal static class MenuRegistryChecks
         const string id = "c48.item";
         var ok = false;
         var changes = RegistryProbe.Changes(h => menus.Changed += h, h => menus.Changed -= h, id,
-            () => ok = menus.Add(id, o => { o.Parent = ShellMenuIds.File; o.CommandId = cmd; o.InsertAfter = OpenForm; }));
+            () => ok = menus.Add(id, o => { o.Parent = ShellMenuIds.File; o.CommandId = cmd; o.InsertAfter = ShellAnchor; }));
         Check.True(ok && menus.Contains(id), "소비자 Command 항목 Add 실패");
         Check.True(changes.Count == 1 && changes[0] == UiRegistryChangeKind.Added, $"Added 알림 {changes.Count}건");
         var kids = MenuProbe.Children(ShellMenuIds.File);
-        Check.True(kids.IndexOf(OpenForm) >= 0 && kids.IndexOf(id) == kids.IndexOf(OpenForm) + 1, $"InsertAfter 자리 {kids.IndexOf(id)} ≠ openForm+1");
+        Check.True(kids.IndexOf(ShellAnchor) >= 0 && kids.IndexOf(id) == kids.IndexOf(ShellAnchor) + 1, $"InsertAfter 자리 {kids.IndexOf(id)} ≠ 앵커+1");
         Check.True(menus.TryGet(id, out var d) && d!.Kind == UiMenuItemKind.Command && d.Parent == ShellMenuIds.File && d.CommandId == cmd
             && d.Owner == UiRegistryOwners.App, "정의 Kind·Parent·CommandId·Owner 불일치");
         Check.True(d!.AutomationId == "menu." + id, $"AutomationId 기본값={d.AutomationId}");
@@ -152,9 +157,9 @@ internal static class MenuRegistryChecks
     {
         var menus = XkxkUi.Current.Menus;
         var cmd = MenuProbe.Command();
-        Check.True(menus.Add("c49.before", o => { o.Parent = ShellMenuIds.File; o.CommandId = cmd; o.InsertBefore = OpenForm; }), "InsertBefore Add 실패");
+        Check.True(menus.Add("c49.before", o => { o.Parent = ShellMenuIds.File; o.CommandId = cmd; o.InsertBefore = ShellAnchor; }), "InsertBefore Add 실패");
         var kids = MenuProbe.Children(ShellMenuIds.File);
-        Check.True(kids.IndexOf("c49.before") >= 0 && kids.IndexOf("c49.before") == kids.IndexOf(OpenForm) - 1, "InsertBefore 자리가 openForm 바로 앞이 아님");
+        Check.True(kids.IndexOf("c49.before") >= 0 && kids.IndexOf("c49.before") == kids.IndexOf(ShellAnchor) - 1, "InsertBefore 자리가 앵커(saveLayout) 바로 앞이 아님");
         var ok = false;
         Check.True(RegistryProbe.Delta(UiDiagnosticIds.MenuAnchorMissing, () => ok = menus.Add("c49.tail",
             o => { o.Parent = ShellMenuIds.File; o.CommandId = cmd; o.InsertAfter = "c49.no.anchor"; })) == 1
@@ -171,7 +176,7 @@ internal static class MenuRegistryChecks
         var r = true;
         Check.True(RegistryProbe.Delta(UiDiagnosticIds.MenuParentMissing, () => r = menus.Add("c50.orphan", o => { o.Parent = "c50.no.such.parent"; o.CommandId = cmd; })) == 1
             && UiDiagnosticIds.MenuParentMissing == "XKUI0403" && !r && !menus.Contains("c50.orphan"), "없는 Parent 에 XKUI0403·false·미등록이 아님");
-        Check.True(RegistryProbe.Delta(UiDiagnosticIds.MenuParentMissing, () => r = menus.Add("c50.undercmd", o => { o.Parent = OpenForm; o.CommandId = cmd; })) == 1
+        Check.True(RegistryProbe.Delta(UiDiagnosticIds.MenuParentMissing, () => r = menus.Add("c50.undercmd", o => { o.Parent = ShellAnchor; o.CommandId = cmd; })) == 1
             && !r && !menus.Contains("c50.undercmd"), "Command 종류 Parent 에 XKUI0403·false·미등록이 아님");
         Check.True(MenuProbe.LastSeverity(UiDiagnosticIds.MenuParentMissing) == UiDiagnosticSeverity.Error, "XKUI0403 이 Error 가 아님");
     }
@@ -235,7 +240,7 @@ internal static class MenuRegistryChecks
     {
         var menus = XkxkUi.Current.Menus;
         var entries = NavMenuCatalog.Entries;
-        Check.True(entries.Count == 63, $"NavMenuCatalog.Entries {entries.Count}개(63 기대)");
+        Check.True(entries.Count == 55, $"NavMenuCatalog.Entries {entries.Count}개(55 기대 — 63 에서 시험대로 이관한 데모·벤치 8행 제외)");
         var items = menus.Items;
         var entryIds = new HashSet<string>(StringComparer.Ordinal);
         foreach (var e in entries)

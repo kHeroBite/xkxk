@@ -4,6 +4,7 @@ import json
 import os
 import re
 
+import host_identity  # 호스트 경로 단일 출처(check_i18n.py 가 tools 폴더를 sys.path 에 넣는다)
 
 LIST_TAG = re.compile(r"<(ComboBox|ListBox|ItemsControl|ListView)\b([^>]*?)(/?)>", re.S)
 
@@ -25,7 +26,8 @@ def check_host_copies(root, dicts, problems):
     main.js 가 .NET 이전에 웹 사본을 읽으므로 한쪽만 고치면 기동 화면과 앱 화면 문구가 어긋난다 → 언어 집합·키 집합·값이 모두 같아야 한다.
     """
     shell = dicts.get("host")
-    webs = glob.glob(os.path.join(root, "src", "*", "wwwroot", "host.i18n.json"))
+    # 웹 사본 위치는 실행 프로젝트(host_identity browser.wwwroot_src)가 정본이다 — wwwroot 가 src 에서 testbed 로 옮겨졌다(UADR-0018)
+    webs = glob.glob(os.path.join(root, *host_identity.get("browser.wwwroot_src").split("/"), "host.i18n.json"))
     if not shell and not webs:
         return
     if not shell or not webs:
