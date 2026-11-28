@@ -4,6 +4,11 @@
 > 2026-11-24 에 Pd 저장소(`Pd:HISTORY.md`, 기준 커밋 157403c)에서 UI 관련 항목만 원순서로 옮겨 만들었다. 추출 기준은 본문에 `poc/ui`·`UI PoC`·`09_화면설계` 중 하나가 있는 `## ` 항목이다.
 > 옮긴 항목 안의 경로는 Pd 저장소 기준이다(`poc/ui/` 는 이 저장소의 `frameworks/ui/` 에 해당한다).
 
+## 2026-11-28 — 별별UI B11 잔여 실측 완료: Fold5 대기 항목 PASS·AC-103 검수조건 교정(O2, 이월 G-B11CARRY1, conv_179579520011)
+- 아래 B11 항목의 WAIT 5건을 Fold5(R3CW70202FP, 접지 않음) 실기기로 실측했다. AC-208 Android 3키(host-options=layout,settings,library — 이동 전 `logs/b03_smoke_android.json` 과 같음, gpu 줄 같음, aumid 는 desktop 전용이라 N/A, motion 은 Android 기준 줄 없음 N/A, dock owner 는 줄 존재 확인만)·AC-212(새 Debug APK `install -r` — 새 패키지가 없어 신규 공존 설치, 기동·첫 화면)·AC-305(새·옛 패키지 공존, `run-as` 로 `files/xkxk/frameworks/ui/testbed/remote-control.json` 227B 확인)·AC-309(pm list 차이는 새 패키지 1건, 옛 `xkxk.frameworks.ui` dumpsys 동일, 옛 데스크톱 데이터 폴더 목록 diff 0)·AC-310(pidof 확인) 모두 PASS. 근거 `logs/b11/AC-208.json`·`AC-208_logcat.txt`·`AC-212.json`·`AC-305.json`·`AC-309.json`·`AC-310.json`.
+- AC-103 은 검수조건 결함(영역 폴더에서 `git diff` 가 저장소 루트 기준 경로를 내 항상 불일치, 제한 시간 미지정)이라 직전 사이클에 판정불가였다. `git diff --relative` 와 제한 시간 60초로 고쳐 다시 판정해 PASS(62파일 ast 파싱, 3.8초). 근거 `logs/b11/AC-103.json`.
+- Debug APK 는 14:29 빌드가 커밋 6672028 보다 오래돼 다시 빌드했다(rc=0, 오류 0개, `logs/build_android_20261128_211733.log`). 소스 변경 없음. 옛 `com.pd.poc` 는 기기에 없었고 옛 앱·새 패키지 모두 제거하지 않았다.
+
 ## 2026-11-28 — 별별UI B11 호스팅 라이브러리 분리·시험대 이동·정체성 전환·메뉴 8행 시험대 이전(O4, B11 batch 1~4, conv_179579520011)
 - 결정(UADR-0018). 호스팅 라이브러리 3개(`xkxk.frameworks.ui.hosting.desktop`·`.browser`·`.android`)를 분리하고 공개 진입점 7형식만 연다(`InternalsVisibleTo` 0). 실행 프로젝트는 `testbed/` 로 옮겼고 `wwwroot`·`[Application]`·`[Activity]`·JSExport·아이콘은 실행 프로젝트가 가진다. 정체성(실행 파일·프로세스·패키지·데이터 폴더·인스턴스 이름)은 `tools/host_identity.json` 한 곳이 정본이다.
 - batch 1(재배선). 도구·시험·빌드 스크립트의 정체성·경로 리터럴을 `host_identity.json` 읽기로 바꿨다. 폴백 리터럴·주석 리터럴을 두지 않고 키가 없으면 오류로 끝낸다. AC-101~106 PASS, 회귀 새 실패 0. 잠재 결함 교정으로 `retest_android.py` 의 `DEFAULT_APK` 가 영역 루트 기준 apk 경로가 됐다.
